@@ -73,6 +73,36 @@ void esp_wifi_internal_free_rx_buffer(void* buffer);
   */
 bool esp_wifi_internal_tx(wifi_interface_t wifi_if, void *buffer, u16_t len);
 
+/**
+  * @brief   Transmit the buffer via wifi driver
+  *
+  * @param   u8_t ifx : wifi interface id
+  * @param   void *buffer : the buffer to be transmitted
+  * @param   u16_t len : the length of buffer
+  * @param   u8_t *dst: pointer to the destination mac address
+  *
+  * @return  0 : succeed
+  * @return  -1: Out of memory; -15: Invalid arguments; -16: Invalid interface
+  */
+int esp_wifi_mesh_tx(u8_t ifx, void *buffer, u16_t len, u8_t *dst);
+
+/**
+  * @brief   Define function pointer for mesh receive callback
+  *
+  * @param   u8_t ifx : pointer to wifi interface id
+  * @param   void *buffer : the buffer to be transmitted
+  * @param   u16_t len : the length of buffer
+  * @param   u8_t *src: pointer to the source mac address
+  */
+typedef void (*esp_wifi_mesh_rxcb_t) (u8_t ifx, void *buffer, u16_t len, u8_t* src);
+
+/**
+  * @brief   Register the mesh receive callback function
+  *
+  * @param   esp_wifi_mesh_rxcb_t fn : mesh receive callback
+  */
+void esp_wifi_mesh_reg_rxcb(esp_wifi_mesh_rxcb_t fn);
+
 #ifdef __cplusplus
 }
 #endif
