@@ -89,7 +89,7 @@ esp_err_t esp_wifi_mesh_tx(wifi_interface_t ifx, void* buffer, uint16_t len, uin
   * @param   uint16_t len : the length of buffer
   * @param   uint8_t* src: pointer to the source mac address
   */
-typedef void (*esp_wifi_mesh_rxcb_t) (wifi_interface_t ifx, void* buffer, uint16_t len, uint8_t* src);
+typedef void (*esp_wifi_mesh_rxcb_t) (wifi_interface_t ifx, const void* buffer, uint16_t len, const uint8_t* src);
 
 /**
   * @brief   Register the mesh receive callback function

@@ -589,6 +589,26 @@ typedef void (*esp_vendor_ie_cb_t) (void *ctx, wifi_vendor_ie_type_t type, const
   */
 esp_err_t esp_wifi_set_vendor_ie_cb(esp_vendor_ie_cb_t cb, void *ctx);
 
+/**
+  * @brief     Set the current value of beacon interval variable
+  *
+  * @param     int interval_ms : the interval value
+  *
+  * @return    0: succeed
+  *            others: fail
+  */
+esp_err_t esp_wifi_set_beacon_interval(int interval_ms);
+
+/**
+  * @brief     Get the current value of beacon interval variable
+  *
+  * @param     int *interval_ms : pointer to interval value
+  *
+  * @return    0: succeed
+  *            others: fail
+  */
+esp_err_t esp_wifi_get_beacon_interval(int* interval_ms);
+
 #ifdef __cplusplus
 }
 #endif
