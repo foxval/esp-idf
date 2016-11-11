@@ -98,6 +98,45 @@ typedef void (*esp_wifi_mesh_rxcb_t) (wifi_interface_t ifx, const void* buffer, 
   */
 void esp_wifi_mesh_reg_rxcb(esp_wifi_mesh_rxcb_t fn);
 
+/**
+  * @brief   Get number of APs found in last scan
+  *
+  * @param   int type : only support mesh type (0)
+  * @param   int* ies_num : store the number of mesh APs
+  * @param   int* normal_num : store the number of non-mesh APs
+  *
+  * @attention This API can only be called when the scan is completed, otherwise it may get wrong value
+  *
+  * @return  ESP_OK : succeed
+  * @return  others : fail
+  */
+esp_err_t esp_wifi_scan_get_ap_all_num(int type, int* ies_num, int* normal_num);
+
+typedef struct {
+    uint8_t *mesh_ie;
+    uint8_t *data;
+    int len;
+} wifi_ies_t;
+
+typedef struct {
+    wifi_ap_record_t* ap_record;
+    wifi_ies_t ies;
+} wifi_ap_ies_record_t;
+
+/**
+  * @brief   Get AP list found in last scan
+  *
+  * @param   int type : only support mesh type (0)
+  * @param   int ies_num : the number of mesh APs
+  * @param   wifi_ap_ies_record_t* ies_records : pointer to the found mesh APs
+  * @param   int num : the number of non-mesh APs
+  * @param   wifi_ap_record_t* ap_records : pointer to the found non-mesh APs
+  *
+  * @return  ESP_OK : succeed
+  * @return  others : fail
+  */
+esp_err_t esp_wifi_scan_get_ap_all_records(int type, int ies_num, wifi_ap_ies_record_t* ies_records, int num, wifi_ap_record_t* ap_records);
+
 #ifdef __cplusplus
 }
 #endif
