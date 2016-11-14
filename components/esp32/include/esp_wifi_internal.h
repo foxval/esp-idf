@@ -137,6 +137,52 @@ typedef struct {
   */
 esp_err_t esp_wifi_scan_get_ap_all_records(int type, int ies_num, wifi_ap_ies_record_t* ies_records, int num, wifi_ap_record_t* ap_records);
 
+typedef struct {
+    uint8_t mesh_type;
+    uint8_t mesh_group[6];
+    uint8_t layer_cap;
+    uint8_t layer_lvl;
+    uint8_t dev_cap;
+    uint8_t dev_assoc;
+    uint8_t leaf_cap;
+    uint8_t leaf_assoc;
+    uint16_t total_cap;
+    uint16_t total_assoc;
+    uint16_t leaf_left;
+    uint8_t ap_rssi;
+    uint8_t router_rssi;
+}wifi_vnd_mesh_assoc_t;
+
+/**
+  * @brief   Initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_init(void);
+
+/**
+  * @brief   De-initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_deinit(void);
+
+/**
+  * @brief   Set the mesh associate structure
+  *
+  * @param   const wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_set(const wifi_vnd_mesh_assoc_t* assoc);
+
+/**
+  * @brief   Get the mesh associate structure value
+  *
+  * @param   wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_get(wifi_vnd_mesh_assoc_t* assoc);
+
 #ifdef __cplusplus
 }
 #endif
