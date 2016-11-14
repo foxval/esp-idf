@@ -602,12 +602,32 @@ esp_err_t esp_wifi_set_beacon_interval(int interval_ms);
 /**
   * @brief     Get the current value of beacon interval variable
   *
-  * @param     int *interval_ms : pointer to interval value
+  * @param     int *interval_ms : store the interval value
   *
-  * @return    0: succeed
+  * @return    ESP_OK: succeed
   *            others: fail
   */
 esp_err_t esp_wifi_get_beacon_interval(int* interval_ms);
+
+/**
+  * @brief     Get the latest RSSI value
+  *
+  * @param     int *rssi : store the RSSI value
+  *
+  * @return    ESP_OK: succeed
+  *            others: fail
+  */
+esp_err_t esp_wifi_get_rssi(int* rssi);
+
+/**
+  * @brief     Deauthenticate a STA which may or may not be associated to softAP
+  *
+  * @param     wifi_mac_t* mac : Pointer to a variable containing the MAC address to which the deauthentication will be sent
+  *
+  * @return    ESP_OK: succeed
+  *            others: fail
+  */
+esp_err_t esp_wifi_ap_deauth(wifi_mac_t* mac);
 
 #ifdef __cplusplus
 }
