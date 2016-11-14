@@ -28,34 +28,29 @@
 #define __ESP_WIFI_INTERNAL_H__
 
 #include <stdint.h>
-#include <stdbool.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/queue.h"
-#include "rom/queue.h"
 #include "esp_err.h"
 #include "esp_wifi_types.h"
-#include "esp_event.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
-  * @brief  get whether the wifi driver is allowed to transmit data or not
+  * @brief  Get whether the wifi driver is allowed to transmit data or not
   *
   * @param  none
   *
-  * @return    true  : upper layer should stop to transmit data to wifi driver
-  * @return    false : upper layer can transmit data to wifi driver
+  * @return  true  : upper layer should stop transmitting data to wifi driver
+  * @return  false : upper layer can transmit data to wifi driver
   */
 bool esp_wifi_internal_tx_is_stop(void);
 
 /**
-  * @brief  free the rx buffer which allocated by wifi driver
+  * @brief  Free the rx buffer which allocated by wifi driver
   *
   * @param  void* buffer: rx buffer pointer
   *
-  * @return    nonoe
+  * @return  none
   */
 void esp_wifi_internal_free_rx_buffer(void* buffer);
 
@@ -65,16 +60,131 @@ void esp_wifi_internal_free_rx_buffer(void* buffer);
   * @attention1 TODO should modify the return type from bool to int
   * 
   * @param  wifi_interface_t wifi_if : wifi interface id
-  * @param  void *buffer : the buffer to be tansmit
-  * @param  u16_t len : the length of buffer
+  * @param  void* buffer : the buffer to be transmitted
+  * @param  uint16_t len : the length of buffer
   *
   * @return True : success transmit the buffer to wifi driver
   *         False : failed to transmit the buffer to wifi driver
   */
-bool esp_wifi_internal_tx(wifi_interface_t wifi_if, void *buffer, u16_t len);
+bool esp_wifi_internal_tx(wifi_interface_t wifi_if, void* buffer, uint16_t len);
+
+/**
+  * @brief   Transmit the buffer via wifi driver
+  *
+  * @param   wifi_interface_t ifx : wifi interface id
+  * @param   void* buffer : the buffer to be transmitted
+  * @param   uint16_t len : the length of buffer
+  * @param   uint8_t* dst: pointer to the destination mac address
+  *
+  * @return  0 : succeed
+  * @return  -1: Out of memory; -15: Invalid arguments; -16: Invalid interface
+  */
+esp_err_t esp_wifi_mesh_tx(wifi_interface_t ifx, void* buffer, uint16_t len, uint8_t* dst);
+
+/**
+  * @brief   Define function pointer for mesh receive callback
+  *
+  * @param   wifi_interface_t ifx : pointer to wifi interface id
+  * @param   void* buffer : the buffer to be transmitted
+  * @param   uint16_t len : the length of buffer
+  * @param   uint8_t* src: pointer to the source mac address
+  */
+typedef void (*esp_wifi_mesh_rxcb_t) (wifi_interface_t ifx, const void* buffer, uint16_t len, const uint8_t* src);
+
+/**
+  * @brief   Register the mesh receive callback function
+  *
+  * @param   esp_wifi_mesh_rxcb_t fn : mesh receive callback
+  */
+void esp_wifi_mesh_reg_rxcb(esp_wifi_mesh_rxcb_t fn);
+
+/**
+  * @brief   Get number of APs found in last scan
+  *
+  * @param   int type : only support mesh type (0)
+  * @param   int* ies_num : store the number of mesh APs
+  * @param   int* normal_num : store the number of non-mesh APs
+  *
+  * @attention This API can only be called when the scan is completed, otherwise it may get wrong value
+  *
+  * @return  ESP_OK : succeed
+  * @return  others : fail
+  */
+esp_err_t esp_wifi_scan_get_ap_all_num(int type, int* ies_num, int* normal_num);
+
+typedef struct {
+    uint8_t *mesh_ie;
+    uint8_t *data;
+    int len;
+} wifi_ies_t;
+
+typedef struct {
+    wifi_ap_record_t* ap_record;
+    wifi_ies_t ies;
+} wifi_ap_ies_record_t;
+
+/**
+  * @brief   Get AP list found in last scan
+  *
+  * @param   int type : only support mesh type (0)
+  * @param   int ies_num : the number of mesh APs
+  * @param   wifi_ap_ies_record_t* ies_records : pointer to the found mesh APs
+  * @param   int num : the number of non-mesh APs
+  * @param   wifi_ap_record_t* ap_records : pointer to the found non-mesh APs
+  *
+  * @return  ESP_OK : succeed
+  * @return  others : fail
+  */
+esp_err_t esp_wifi_scan_get_ap_all_records(int type, int ies_num, wifi_ap_ies_record_t* ies_records, int num, wifi_ap_record_t* ap_records);
+
+typedef struct {
+    uint8_t mesh_type;
+    uint8_t mesh_group[6];
+    uint8_t layer_cap;
+    uint8_t layer_lvl;
+    uint8_t dev_cap;
+    uint8_t dev_assoc;
+    uint8_t leaf_cap;
+    uint8_t leaf_assoc;
+    uint16_t total_cap;
+    uint16_t total_assoc;
+    uint16_t leaf_left;
+    uint8_t ap_rssi;
+    uint8_t router_rssi;
+}wifi_vnd_mesh_assoc_t;
+
+/**
+  * @brief   Initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_init(void);
+
+/**
+  * @brief   De-initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_deinit(void);
+
+/**
+  * @brief   Set the mesh associate structure
+  *
+  * @param   const wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_set(const wifi_vnd_mesh_assoc_t* assoc);
+
+/**
+  * @brief   Get the mesh associate structure value
+  *
+  * @param   wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_get(wifi_vnd_mesh_assoc_t* assoc);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __ESP_WIFI_H__ */
+#endif /* __ESP_WIFI_INTERNAL_H__ */
