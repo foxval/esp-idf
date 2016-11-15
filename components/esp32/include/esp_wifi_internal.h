@@ -28,8 +28,13 @@
 #define __ESP_WIFI_INTERNAL_H__
 
 #include <stdint.h>
+#include <stdbool.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+#include "rom/queue.h"
 #include "esp_err.h"
 #include "esp_wifi_types.h"
+#include "esp_event.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,33 +45,65 @@ extern "C" {
   *
   * @param  none
   *
-  * @return  true  : upper layer should stop transmitting data to wifi driver
-  * @return  false : upper layer can transmit data to wifi driver
+  * @return true  : upper layer should stop to transmit data to wifi driver
+  * @return false : upper layer can transmit data to wifi driver
   */
 bool esp_wifi_internal_tx_is_stop(void);
 
 /**
-  * @brief  Free the rx buffer which allocated by wifi driver
+  * @brief  free the rx buffer which allocated by wifi driver
   *
   * @param  void* buffer: rx buffer pointer
   *
-  * @return  none
+  * @return    nonoe
   */
 void esp_wifi_internal_free_rx_buffer(void* buffer);
 
 /**
   * @brief  transmit the buffer via wifi driver
   *
-  * @attention1 TODO should modify the return type from bool to int
-  * 
   * @param  wifi_interface_t wifi_if : wifi interface id
-  * @param  void* buffer : the buffer to be transmitted
-  * @param  uint16_t len : the length of buffer
+  * @param  void *buffer : the buffer to be tansmit
+  * @param  u16_t len : the length of buffer
   *
-  * @return True : success transmit the buffer to wifi driver
-  *         False : failed to transmit the buffer to wifi driver
+  * @return
+  *    - ERR_OK  : Successfully transmit the buffer to wifi driver
+  *    - ERR_MEM : Out of memory
+  *    - ERR_IF : WiFi driver error
+  *    - ERR_ARG : Invalid argument
   */
-bool esp_wifi_internal_tx(wifi_interface_t wifi_if, void* buffer, uint16_t len);
+int esp_wifi_internal_tx(wifi_interface_t wifi_if, void *buffer, u16_t len);
+
+/**
+  * @brief     The WiFi RX callback function
+  *
+  *            Each time the WiFi need to forward the packets to high layer, the callback function will be called
+  *
+  */
+typedef esp_err_t (*wifi_rxcb_t)(void *buffer, uint16_t len, void *eb);
+
+/**
+  * @brief     Set the WiFi RX callback
+  *
+  * @attention 1. Currently we support only one RX callback for each interface
+  *
+  * @param     wifi_interface_t ifx : interface
+  * @param     wifi_rxcb_t fn : WiFi RX callback
+  *
+  * @return    ESP_OK : succeed
+  * @return    others : fail
+  */
+esp_err_t esp_wifi_internal_reg_rxcb(wifi_interface_t ifx, wifi_rxcb_t fn);
+
+/**
+  * @brief     Notify WIFI driver that the station got ip successfully
+  *
+  * @param     none
+  *
+  * @return    ESP_OK : succeed
+  * @return    others : fail
+  */
+esp_err_t esp_wifi_internal_set_sta_ip(void);
 
 /**
   * @brief   Transmit the buffer via wifi driver
@@ -76,8 +113,11 @@ bool esp_wifi_internal_tx(wifi_interface_t wifi_if, void* buffer, uint16_t len);
   * @param   uint16_t len : the length of buffer
   * @param   uint8_t* dst: pointer to the destination mac address
   *
-  * @return  0 : succeed
-  * @return  -1: Out of memory; -15: Invalid arguments; -16: Invalid interface
+  * @return
+  *    - ERR_OK  : succeed
+  *    - ERR_MEM : Out of memory
+  *    - ERR_IF  : WiFi driver error
+  *    - ERR_ARG : Invalid argument
   */
 esp_err_t esp_wifi_mesh_tx(wifi_interface_t ifx, void* buffer, uint16_t len, wifi_mac_t* dst);
 
@@ -122,6 +162,11 @@ esp_err_t esp_wifi_scan_get_cur_ap_info(int type, int* len);
 esp_err_t esp_wifi_scan_get_cur_ap_record(int type, wifi_ap_record_t* ap_records,  void* buffer);
 
 typedef struct {
+    uint8_t eid;
+    uint8_t len;
+    uint8_t oui[3];
+    uint8_t type;
+    uint8_t version;
     uint8_t mesh_type;
     uint8_t mesh_group[6];
     uint8_t layer_cap;
@@ -166,6 +211,20 @@ esp_err_t esp_wifi_vnd_mesh_set(const wifi_vnd_mesh_assoc_t* assoc);
   * @return  none
   */
 esp_err_t esp_wifi_vnd_mesh_get(wifi_vnd_mesh_assoc_t* assoc);
+
+typedef enum {
+	ESP_VND_MESH_ASSOC_TYPE_IDLE,
+	ESP_VND_MESH_ASSOC_TYPE_ROOT,
+	ESP_VND_MESH_ASSOC_TYPE_NODE,
+	ESP_VND_MESH_ASSOC_TYPE_LEAF,
+}wifi_vnd_mesh_type_t;
+
+#define ESP_VND_MESH_ASSOC_TYPE             (1)
+#define ESP_VND_MESH_ASSOC_VERSION          (2)
+
+#define ESP_VND_MESH_ASSOC_LAYER_CAP_MAX    (128)
+#define ESP_VND_MESH_ASSOC_DEV_CAP_MAX      (32)
+#define ESP_VND_MESH_ASSOC_LEAF_CAP_MAX     (32)
 
 #ifdef __cplusplus
 }
