@@ -179,6 +179,7 @@ typedef enum {
     WIFI_VND_IE_TYPE_PROBE_RESP,
     WIFI_VND_IE_TYPE_ASSOC_REQ,
     WIFI_VND_IE_TYPE_ASSOC_RESP,
+    WIFI_VND_IE_TYPE_NUM,
 } wifi_vendor_ie_type_t;
 
 /**
