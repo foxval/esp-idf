@@ -61,6 +61,8 @@
 #include "esp_core_dump.h"
 #include "trax.h"
 
+#include "psram.h"
+
 #define STRINGIFY(s) STRINGIFY2(s)
 #define STRINGIFY2(s) #s
 
