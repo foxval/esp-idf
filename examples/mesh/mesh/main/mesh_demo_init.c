@@ -24,7 +24,6 @@ bool MESH_FUNC_ATTR mesh_router_init()
 {
     wifi_sta_config_t sta;
 
-    MESH_PRINT("mesh version:\n");
     esp32_mesh_print_ver();
 
     MESH_MEMSET(&sta, 0, sizeof(sta));

@@ -147,29 +147,28 @@ mesh_connect_server()
         goto CONNECT_SERVER_ERR;
     }
 
+    sock_addr.sin_family = AF_INET;
+    sock_addr.sin_port = htons(g_mesh_server_info.port);
+#if 0
     const char MESH_SERVER_HOSTNAME[] = "iot.espressif.cn";
     uint32_t server_ip;
     esp_hostname_lookup(MESH_SERVER_HOSTNAME, &server_ip);
     MESH_MEMSET(&sock_addr, 0, sizeof(sock_addr));
-    sock_addr.sin_family = AF_INET;
-#if 0
     sock_addr.sin_addr.s_addr = server_ip;
 #else
     MESH_MEMCPY(&sock_addr.sin_addr, g_mesh_server_info.ip,
             sizeof(sock_addr.sin_addr));
 #endif
-    sock_addr.sin_port = htons(g_mesh_server_info.port);
-
-    MESH_LOGI("Connect server ip:%d.%d.%d.%d, port:%d\n",
+    MESH_LOGI("Connect server ip:%d.%d.%d.%d:%d, socket:%d",
             g_mesh_server_info.ip[0], g_mesh_server_info.ip[1],
             g_mesh_server_info.ip[2], g_mesh_server_info.ip[3],
-            g_mesh_server_info.port);
+            g_mesh_server_info.port, g_server_sock);
     if (connect(g_server_sock, (struct sockaddr * )&sock_addr,
             sizeof(sock_addr)) != ESP_OK) {
-        MESH_DEBUG("conn server err, ip:%d.%d.%d.%d, port:%d\n",
+        MESH_LOGE("Failed, ip:%d.%d.%d.%d, port:%d, errno:%d",
                 g_mesh_server_info.ip[0], g_mesh_server_info.ip[1],
                 g_mesh_server_info.ip[2], g_mesh_server_info.ip[3],
-                g_mesh_server_info.port);
+                g_mesh_server_info.port, errno);
         goto CONNECT_SERVER_ERR;
     }
     MESH_LOGI("Connect server done\n");
