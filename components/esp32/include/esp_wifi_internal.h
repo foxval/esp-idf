@@ -101,6 +101,127 @@ esp_err_t esp_wifi_internal_reg_rxcb(wifi_interface_t ifx, wifi_rxcb_t fn);
   */
 esp_err_t esp_wifi_internal_set_sta_ip(void);
 
+/**
+  * @brief   Transmit the buffer via wifi driver
+  *
+  * @param   wifi_interface_t ifx : wifi interface id
+  * @param   void* buffer : the buffer to be transmitted
+  * @param   uint16_t len : the length of buffer
+  * @param   uint8_t* dst: pointer to the destination mac address
+  *
+  * @return
+  *    - ERR_OK  : succeed
+  *    - ERR_MEM : Out of memory
+  *    - ERR_IF  : WiFi driver error
+  *    - ERR_ARG : Invalid argument
+  */
+esp_err_t esp_wifi_mesh_tx(wifi_interface_t ifx, void* buffer, uint16_t len, wifi_mac_t* dst);
+
+/**
+  * @brief   Define function pointer for mesh receive callback
+  *
+  * @param   wifi_interface_t ifx : pointer to wifi interface id
+  * @param   void* buffer : the buffer to be transmitted
+  * @param   uint16_t len : the length of buffer
+  * @param   uint8_t* src: pointer to the source mac address
+  */
+typedef void (*esp_wifi_mesh_rxcb_t) (wifi_interface_t ifx, const void* buffer, uint16_t len, const wifi_mac_t* src);
+
+/**
+  * @brief   Register the mesh receive callback function
+  *
+  * @param   esp_wifi_mesh_rxcb_t fn : mesh receive callback
+  */
+void esp_wifi_mesh_reg_rxcb(esp_wifi_mesh_rxcb_t fn);
+
+/**
+  * @brief   Get scanned AP ie length
+  *
+  * @param   int type : specify an ie type
+  * @param   int* len : store the returned ie length
+  *
+  * @return  ESP_OK : succeed
+  *          others : fail
+  */
+esp_err_t esp_wifi_scan_get_cur_ap_info(int type, int* len);
+
+/**
+  * @brief   Get scanned AP ie record
+  *
+  * @param   int type : specify an ie type
+  * @param   wifi_ap_record_t* ap_records : store the returned AP record
+  * @param   void* buffer : store the ie data
+  *
+  * @return  ESP_OK : succeed
+  *          others : fail
+  */
+esp_err_t esp_wifi_scan_get_cur_ap_record(int type, wifi_ap_record_t* ap_records,  void* buffer);
+
+typedef struct {
+    uint8_t eid;
+    uint8_t len;
+    uint8_t oui[3];
+    uint8_t type;
+    uint8_t version;
+    uint8_t mesh_type;
+    uint8_t mesh_group[6];
+    uint8_t layer_cap;
+    uint8_t layer_lvl;
+    uint8_t dev_cap;
+    uint8_t dev_assoc;
+    uint8_t leaf_cap;
+    uint8_t leaf_assoc;
+    uint16_t total_cap;
+    uint16_t total_assoc;
+    uint16_t leaf_left;
+    uint8_t ap_rssi;
+    uint8_t router_rssi;
+}wifi_vnd_mesh_assoc_t;
+
+/**
+  * @brief   Initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_init(void);
+
+/**
+  * @brief   De-initialize the mesh associate structure
+  *
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_deinit(void);
+
+/**
+  * @brief   Set the mesh associate structure
+  *
+  * @param   const wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_set(const wifi_vnd_mesh_assoc_t* assoc);
+
+/**
+  * @brief   Get the mesh associate structure value
+  *
+  * @param   wifi_vnd_mesh_assoc_t* assoc : pointer to a mesh associate structure
+  * @return  none
+  */
+esp_err_t esp_wifi_vnd_mesh_get(wifi_vnd_mesh_assoc_t* assoc);
+
+typedef enum {
+	ESP_VND_MESH_ASSOC_TYPE_IDLE,
+	ESP_VND_MESH_ASSOC_TYPE_ROOT,
+	ESP_VND_MESH_ASSOC_TYPE_NODE,
+	ESP_VND_MESH_ASSOC_TYPE_LEAF,
+}wifi_vnd_mesh_type_t;
+
+#define ESP_VND_MESH_ASSOC_TYPE             (1)
+#define ESP_VND_MESH_ASSOC_VERSION          (2)
+
+#define ESP_VND_MESH_ASSOC_LAYER_CAP_MAX    (128)
+#define ESP_VND_MESH_ASSOC_DEV_CAP_MAX      (32)
+#define ESP_VND_MESH_ASSOC_LEAF_CAP_MAX     (32)
+
 #ifdef __cplusplus
 }
 #endif

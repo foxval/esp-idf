@@ -167,6 +167,10 @@ typedef enum {
     WIFI_STORAGE_RAM,    /**< all configuration will only store in the memory */
 } wifi_storage_t;
 
+typedef struct {
+    uint8_t mac[6];  /**< Unique 6-byte MAC address */
+}wifi_mac_t;
+
 /**
   * @brief     Vendor IE type
   *
