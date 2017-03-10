@@ -13,37 +13,11 @@
 #include "mesh_common.h"
 #include "mesh_log.h"
 #include "bfc_cloud.h"
-#include "driver/gpio.h"
+#include "bfc_light.h"
 
 static const char *TAG = "bfc_cloud";
 static bfc_t bfc = { .delay = 0, .brightness = 100, .fix_brightness = 100,
         .ping_time = 10, };
-
-#define BLINK_GPIO GPIO_NUM_0
-
-void mesh_bfc_set_gpio(int value)
-{
-    static bool inited = false;
-    if (inited == false) {
-        gpio_pad_select_gpio(BLINK_GPIO);
-        /* Set the GPIO as a push/pull output */
-        gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-        inited = true;
-    }
-    gpio_set_level(BLINK_GPIO, value);
-}
-
-esp_err_t mesh_bfc_set_light(int brightness)
-{
-
-    return ESP_FAIL;
-}
-
-esp_err_t mesh_bfc_get_light(int* brightness)
-{
-
-    return ESP_FAIL;
-}
 
 void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
 {
