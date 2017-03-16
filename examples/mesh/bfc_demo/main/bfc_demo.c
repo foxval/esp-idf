@@ -14,12 +14,10 @@
 #include "mesh.h"
 #include "mesh_wifi.h"
 #include "bfc_demo.h"
-
-#define MESH_DISABLE_TEST (0)
+#include "bfc_light.h"
 
 void mesh_usr_task(void *pvParameter);
 void mesh_enable_cb(enum mesh_op_result_t result);
-
 extern void MESH_FUNC_ATTR mesh_bfc_start(void);
 
 void mesh_enable_cb(enum mesh_op_result_t result)
@@ -35,6 +33,8 @@ void mesh_usr_task(void *pvParameter)
 
 void app_main(void)
 {
+    mesh_bfc_light_init();
+
     if (!mesh_wifi_init()) return;
 
     if (!mesh_usr_init()) return;

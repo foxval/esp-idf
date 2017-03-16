@@ -3,8 +3,9 @@
 
 #include "esp_err.h"
 
-esp_err_t mesh_bfc_set_gpio(int value);
-esp_err_t mesh_bfc_set_light(int brightness);
-esp_err_t mesh_bfc_get_light(int* brightness);
+esp_err_t mesh_bfc_gpio_set(int value);
+esp_err_t mesh_bfc_light_init(void);
+esp_err_t mesh_bfc_light_set(int brightness);
+esp_err_t mesh_bfc_light_get(int* brightness);
 
 #endif /* _BFC_LIGHT_H_ */

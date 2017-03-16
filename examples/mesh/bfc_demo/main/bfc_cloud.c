@@ -39,8 +39,9 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     MESH_MEMCPY(&buf[5], mac, 6);        // bssid 6 bytes
     buf[11] = BFC_VALUE_P_BSSID;
     MESH_MEMCPY(&buf[12], ap.bssid, 6);  // parent bssid 6 bytes
+    buf[17] -= 1;                        // parent sta MAC instead of parent softAP MAC
     buf[18] = BFC_VALUE_BRIGHTNESS;
-    if (mesh_bfc_get_light(&brightness) == ESP_OK) {
+    if (mesh_bfc_light_get(&brightness) == ESP_OK) {
         buf[19] = brightness;
     } else {
         buf[19] = bfc.brightness;
@@ -63,16 +64,20 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     MESH_MEMSET(&header, 0, sizeof(header));
     header.ocr = 1;
     header.proto.protocol = M_PROTO_BIN;
-    header.len = sizeof(header) - 2 * sizeof(uint32_t) + sizeof(buf);
+    header.len = sizeof(header) + sizeof(buf);
     esp_wifi_get_mac(ESP_IF_WIFI_STA, header.src_addr);
     MESH_MEMCPY(header.dst_addr, g_mesh_server_info.ip,
             sizeof(g_mesh_server_info.ip));
     MESH_MEMCPY(header.dst_addr + sizeof(g_mesh_server_info.ip),
             &g_mesh_server_info.port, sizeof(g_mesh_server_info.port));
+#if 0
     MESH_MEMCPY(ping_buf, (uint8_t*) &header,
             sizeof(header) - 2 * sizeof(uint32_t)); //without seq & ack
     MESH_MEMCPY(&ping_buf[16], buf, sizeof(buf));
-
+#else
+    MESH_MEMCPY(ping_buf, (uint8_t*) &header, sizeof(header)); //seq & ack
+    MESH_MEMCPY(&ping_buf[24], buf, sizeof(buf));
+#endif
 }
 
 esp_err_t mesh_bfc_parse_protocol(uint8_t *buf, uint16_t start_index,
@@ -120,15 +125,13 @@ esp_err_t mesh_bfc_parse_protocol(uint8_t *buf, uint16_t start_index,
     if (type == BFC_CMD_RPC) {
         switch (buf[start_index]) {
             case BFC_VALUE_BRIGHTNESS:
-                MESH_LOGW("%s,%d brightness: %d\n", __func__, __LINE__,
-                        buf[start_index + 1])
-                ;
+                MESH_LOGW("brightness:%d\n", buf[start_index + 1]);
                 brightness = buf[start_index + 1];
-                if (mesh_bfc_set_light(brightness) == ESP_FAIL) {
+                if (mesh_bfc_light_set(brightness) == ESP_FAIL) {
                     if (buf[start_index + 1] == 0) {
-                        mesh_bfc_set_gpio(0);
+                        mesh_bfc_gpio_set(0);
                     } else {
-                        mesh_bfc_set_gpio(1);
+                        mesh_bfc_gpio_set(1);
                     }
                 }
                 break;
