@@ -3,7 +3,6 @@
 
 #include "lwip/sockets.h"
 
-#define MESH_TCPIP_SOCK_INVALID    (-1)
 
 extern xTaskHandle g_mesh_tcpip_rx_task_handle;
 extern xTaskHandle g_mesh_tcpip_tx_task_handle;
@@ -18,4 +17,4 @@ void mesh_connect_server();
 void mesh_tcpip_tx_task(void *pvPara);
 void mesh_tcpip_rx_task(void *pvPara);
 
-#endif
+#endif /* _MESH_TCPIP_H_ */
