@@ -95,6 +95,24 @@ esp_err_t mesh_bfc_gpio_set(int value)
     return ESP_OK;
 }
 
+esp_err_t mesh_bfc_gpio_get(int* value)
+{
+    int val_0 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
+#if 0
+    int val_1 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1);
+    int val_2 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
+    int val_3 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3);
+#endif
+    if(val_0 == 0) {
+        *value = 0;
+    } else {
+        *value = 100;
+    }
+
+    return ESP_OK;
+}
+
+
 esp_err_t mesh_bfc_light_set(int brightness)
 {
 

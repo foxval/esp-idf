@@ -22,6 +22,7 @@ static bfc_t bfc = { .delay = 0, .brightness = 100, .fix_brightness = 100,
 void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
 {
     uint8_t buf[33];
+    int buf_size;
     uint8_t mac[6];
     int restart_cnt = 0;
     int rssi;
@@ -41,43 +42,45 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     MESH_MEMCPY(&buf[12], ap.bssid, 6);  // parent bssid 6 bytes
     buf[17] -= 1;                        // parent sta MAC instead of parent softAP MAC
     buf[18] = BFC_VALUE_BRIGHTNESS;
+#if 0
     if (mesh_bfc_light_get(&brightness) == ESP_OK) {
         buf[19] = brightness;
     } else {
         buf[19] = bfc.brightness;
     }
-    buf[20] = BFC_VALUE_FIX_BRIGHTNESS;
-    buf[21] = bfc.fix_brightness;         // fix-brightness 1 byte
-    buf[22] = BFC_VALUE_DELAY;
-    buf[23] = (bfc.delay) >> 8;
-    buf[24] = (bfc.delay) & 0xff;        // 0 means forever
-    buf[25] = BFC_VALUE_PING_TIME;
-    buf[26] = (bfc.ping_time) >> 8;
-    buf[27] = (bfc.ping_time) & 0xff;    //ping time 2 bytes
-    buf[28] = BFC_VALUE_RSSI;
-    buf[29] = 0 - rssi;
+#else
+    mesh_bfc_gpio_get(&brightness);
+    buf[19] = brightness;
+#endif
+    buf[20] = BFC_VALUE_RSSI;
+    buf[21] = 0 - rssi;
+#if 0
+    buf[22] = BFC_VALUE_FIX_BRIGHTNESS;
+    buf[23] = bfc.fix_brightness;         // fix-brightness 1 byte
+    buf[24] = BFC_VALUE_DELAY;
+    buf[25] = (bfc.delay) >> 8;
+    buf[26] = (bfc.delay) & 0xff;        // 0 means forever
+    buf[27] = BFC_VALUE_PING_TIME;
+    buf[28] = (bfc.ping_time) >> 8;
+    buf[29] = (bfc.ping_time) & 0xff;    //ping time 2 bytes
     buf[30] = BFC_VALUE_REBOOT_CNT;
     buf[31] = restart_cnt >> 8;
     buf[32] = restart_cnt & 0xff;
-
+#endif
+    buf_size = 22; // application data size
     struct mesh_header_format header;
     MESH_MEMSET(&header, 0, sizeof(header));
     header.ocr = 1;
     header.proto.protocol = M_PROTO_BIN;
-    header.len = sizeof(header) + sizeof(buf);
+    header.len = sizeof(header) + buf_size;
     esp_wifi_get_mac(ESP_IF_WIFI_STA, header.src_addr);
     MESH_MEMCPY(header.dst_addr, g_mesh_server_info.ip,
             sizeof(g_mesh_server_info.ip));
     MESH_MEMCPY(header.dst_addr + sizeof(g_mesh_server_info.ip),
             &g_mesh_server_info.port, sizeof(g_mesh_server_info.port));
-#if 0
-    MESH_MEMCPY(ping_buf, (uint8_t*) &header,
-            sizeof(header) - 2 * sizeof(uint32_t)); //without seq & ack
-    MESH_MEMCPY(&ping_buf[16], buf, sizeof(buf));
-#else
     MESH_MEMCPY(ping_buf, (uint8_t*) &header, sizeof(header)); //seq & ack
-    MESH_MEMCPY(&ping_buf[24], buf, sizeof(buf));
-#endif
+    MESH_MEMCPY(&ping_buf[24], buf, buf_size);
+
 }
 
 esp_err_t mesh_bfc_parse_protocol(uint8_t *buf, uint16_t start_index,
