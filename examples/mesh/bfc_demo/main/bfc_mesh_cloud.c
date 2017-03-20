@@ -23,6 +23,8 @@ void mesh_bfc_task_tx(void *pvParameter);
 void mesh_bfc_task_rx(void *pvParameter);
 void mesh_bfc_tx(void);
 
+#define BFC_PING_PERIOD_MS (10000)
+
 void mesh_bfc_tx(void)
 {
     uint8_t ping_buf[49];
@@ -52,7 +54,7 @@ void mesh_bfc_tx(void)
 #endif
 
         esp32_mesh_send(header, header->len, 3000);
-        vTaskDelay(5000 / portTICK_RATE_MS);
+        vTaskDelay(BFC_PING_PERIOD_MS / portTICK_RATE_MS);
     }
 }
 
