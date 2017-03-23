@@ -13,6 +13,7 @@
 struct mesh_packet_context_t
 {
     void *buf;
+    uint16_t buf_len;
     uint8_t src[MESH_HWADDR_LEN];
     uint8_t dst[MESH_HWADDR_LEN];
     uint8_t ifidx;

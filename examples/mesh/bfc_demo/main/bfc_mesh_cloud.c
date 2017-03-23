@@ -40,7 +40,7 @@ void mesh_bfc_tx(void)
                 "[%d]ms, Send PING to server, len:%d, SRC:"MACSTR", AP:%02x:%02x:%02x:%02x:%02x:%02x, heap:%d",
                 (cur_time - old_time) / 1000, header->len,
                 MAC2STR(header->src_addr), ping_buf[36], ping_buf[37],
-                ping_buf[38], ping_buf[39], ping_buf[40], ping_buf[41], system_get_free_heap_size());
+                ping_buf[38], ping_buf[39], ping_buf[40], ping_buf[41], esp_get_free_heap_size());
         old_time = cur_time;
 #if 0
         {
@@ -73,9 +73,9 @@ void mesh_bfc_rx(void)
         while ((size = esp32_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
             struct mesh_header_format *header =
                     (struct mesh_header_format *) buf;
-            MESH_LOGW("[%d]ms, Receive from server, len:%d, DST:"MACSTR", heap:%d",
-                    (cur_time - old_time) / 1000, size,
-                    MAC2STR(header->dst_addr), system_get_free_heap_size());
+//            MESH_LOGW("[%d]ms, Receive from server, len:%d, DST:"MACSTR", heap:%d",
+//                    (cur_time - old_time) / 1000, size,
+//                    MAC2STR(header->dst_addr), esp_get_free_heap_size());
             oe_size = 0;
             if (size > header_size) {
                 if (header->oe) {

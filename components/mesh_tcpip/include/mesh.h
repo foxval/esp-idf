@@ -153,6 +153,8 @@ struct mesh_header_format
     struct mesh_header_option_header_type option[0];  // mesh option
 } __packed;
 
+typedef struct mesh_header_format mesh_header_t;
+
 struct mesh_scan_para_type
 {
     esp32_mesh_usr_callback_t usr_scan_cb; // scan done callback

@@ -316,8 +316,10 @@ mesh_tcpip_rx_task(void *pvPara)
     int size;
     fd_set rdset, exset;
     int cur_time, old_time = 0;
+    mesh_header_t* header = NULL;
     uint8_t mac[6] = { 0, };
     esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
+
 
     while (1) {
         if (tcp_cli_sock == -1 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
@@ -360,13 +362,14 @@ mesh_tcpip_rx_task(void *pvPara)
                  * check read set pending in LWIP, we get packet from LWIP,
                  * and send packet to mesh layer
                  */
-//                MESH_LOGE("heap:%d", system_get_free_heap_size());
+//                MESH_LOGE("heap:%d", esp_get_free_heap_size());
                 ctx = (struct mesh_packet_context_t *) MESH_ZALLOC(
                         sizeof(*ctx));
-//                MESH_LOGE("ctx:%p, heap:%d", ctx, system_get_free_heap_size());
+//                MESH_LOGE("ctx:%p, heap:%d", ctx, esp_get_free_heap_size());
                 if (ctx) {
                     ctx->buf = MESH_ZALLOC(ESP_MESH_PKT_LEN_MAX);
                     uint8_t* buf = (uint8_t*) ctx->buf;
+                    MESH_LOGE("buf:%p", buf);
                     if (ctx->buf) {
                         ctx->ifidx = WIFI_IF_STA;
                         MESH_MEMCPY(ctx->src, mac, sizeof(mac));
@@ -374,14 +377,19 @@ mesh_tcpip_rx_task(void *pvPara)
                         cur_time = system_get_time();
                         size = recv(tcp_cli_sock, ctx->buf,
                                 ESP_MESH_PKT_LEN_MAX, MSG_DONTWAIT);
+                        ctx->buf_len = size;
+                        header = (mesh_header_t*)ctx->buf;
                         if (size) {
                             MESH_LOGW(
-                                    "[%d]ms, Receive from server len:%d, DST:%02x:%02x:%02x:%02x:%02x:%02x, socketID:%d",
-                                    (cur_time - old_time) / 1000, size, buf[4],
+                                    "[%d]ms, Receive from server len:%d, mlen:%d, DST:%02x:%02x:%02x:%02x:%02x:%02x, socketID:%d",
+                                    (cur_time - old_time) / 1000, size, header->len, buf[4],
                                     buf[5], buf[6], buf[7], buf[8], buf[9],
                                     tcp_cli_sock);
                         }
                         old_time = cur_time;
+                        if(size != header->len) {
+                            MESH_LOGE("!!! Be careful size:%d, mlen:%d\n", size, header->len);
+                        }
 #if 0
                         if (size > 0) {
                             int i;

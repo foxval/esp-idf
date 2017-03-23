@@ -25,7 +25,7 @@ void mesh_enable_cb(enum mesh_op_result_t result);
 void mesh_disable_cb(enum mesh_op_result_t result);
 void MESH_FUNC_ATTR mesh_disable_cb(enum mesh_op_result_t result)
 {
-    printf("mesh disable result:%d, heap:%u\n", result, system_get_free_heap_size());
+    printf("mesh disable result:%d, heap:%u\n", result, esp_get_free_heap_size());
     xTaskCreate(mesh_usr_task, "mudt", 4096, NULL, 5, NULL);
 }
 #endif
@@ -33,7 +33,7 @@ void MESH_FUNC_ATTR mesh_disable_cb(enum mesh_op_result_t result)
 void MESH_FUNC_ATTR mesh_enable_cb(enum mesh_op_result_t result)
 {
     printf("mesh enable result:%d, heap:%u\n", result,
-            system_get_free_heap_size());
+            esp_get_free_heap_size());
 #if MESH_DISABLE_TEST
     printf("disable mesh\n");
     esp32_mesh_disable(mesh_disable_cb);
@@ -44,7 +44,7 @@ void MESH_FUNC_ATTR mesh_enable_cb(enum mesh_op_result_t result)
 
 void MESH_FUNC_ATTR mesh_usr_task(void *pvParameter)
 {
-    printf("mesh demo, free heap:%u\n", system_get_free_heap_size());
+    printf("mesh demo, free heap:%u\n", esp_get_free_heap_size());
     esp32_mesh_enable(mesh_enable_cb, MESH_ONLINE);
     printf("mesh demo delete!\n");
     vTaskDelete(NULL);

@@ -152,7 +152,7 @@ static void MESH_FUNC_ATTR mesh_performance_bench_rx()
 static void MESH_FUNC_ATTR mesh_performance_task_tx(void *pvParameter)
 {
     printf("mesh performance bench tx, free heap:%u\n",
-            system_get_free_heap_size());
+            esp_get_free_heap_size());
     mesh_performance_bench_tx(ESP_MESH_PKT_LEN_MAX - ESP_MESH_HLEN, 0x4000);
     vTaskDelete(NULL);
 }
@@ -160,7 +160,7 @@ static void MESH_FUNC_ATTR mesh_performance_task_tx(void *pvParameter)
 static void MESH_FUNC_ATTR mesh_performance_task_rx(void *pvParameter)
 {
     printf("mesh performance bench rx, free heap:%u\n",
-            system_get_free_heap_size());
+            esp_get_free_heap_size());
     mesh_performance_bench_rx();
     vTaskDelete(NULL);
 }
