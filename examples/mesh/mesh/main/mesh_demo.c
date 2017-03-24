@@ -1,4 +1,4 @@
-/* ESP32-MESH Demo
+/* ESP-MESH Demo
 
  This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -36,16 +36,16 @@ void MESH_FUNC_ATTR mesh_enable_cb(enum mesh_op_result_t result)
             esp_get_free_heap_size());
 #if MESH_DISABLE_TEST
     printf("disable mesh\n");
-    esp32_mesh_disable(mesh_disable_cb);
+    esp_mesh_disable(mesh_disable_cb);
 #endif
-    esp32_mesh_set_wifi_retry_delay(MESH_WIFI_RETRY_DELAY);
+    esp_mesh_set_wifi_retry_delay(MESH_WIFI_RETRY_DELAY);
     mesh_performance_start();
 }
 
 void MESH_FUNC_ATTR mesh_usr_task(void *pvParameter)
 {
     printf("mesh demo, free heap:%u\n", esp_get_free_heap_size());
-    esp32_mesh_enable(mesh_enable_cb, MESH_ONLINE);
+    esp_mesh_enable(mesh_enable_cb, MESH_ONLINE);
     printf("mesh demo delete!\n");
     vTaskDelete(NULL);
 }

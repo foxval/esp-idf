@@ -1,4 +1,4 @@
-/* ESP32-MESH Performance Demo
+/* ESP-MESH Performance Demo
 
  This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -44,15 +44,15 @@ static void MESH_FUNC_ATTR mesh_performance_bench_tx(uint16_t len,
      * root sends packet to server
      * normal nodes send packet to parent
      */
-    if (esp32_mesh_get_hop() == ESP_MESH_HOP_ONE) {
+    if (esp_mesh_get_hop() == ESP_MESH_HOP_ONE) {
         MESH_MEMCPY(dst, g_mesh_server_info.ip, sizeof(g_mesh_server_info.ip));
         MESH_MEMCPY(dst + sizeof(g_mesh_server_info.ip),
                 &g_mesh_server_info.port, sizeof(g_mesh_server_info.port));
     } else {
-        esp32_mesh_get_parent_mac(dst);
+        esp_mesh_get_parent_mac(dst);
     }
 
-    header = (struct mesh_header_format *) esp32_mesh_create_packet(dst, // destiny address of parent
+    header = (struct mesh_header_format *) esp_mesh_create_packet(dst, // destiny address of parent
             src,     // source address
             M_PROTO_BIN,   // packe with JSON format
             pkt_len,       // data length
@@ -72,9 +72,9 @@ static void MESH_FUNC_ATTR mesh_performance_bench_tx(uint16_t len,
         MESH_PRINT("h->dst:" ESP_MESH_MACSTR "\n",
                 ESP_MESH_MAC2STR(header->dst_addr));
         for (i = 0; i < pkt_count; i++) {
-            if (esp32_mesh_send(header, header->len, 10000) <= 0) break;
+            if (esp_mesh_send(header, header->len, 10000) <= 0) break;
 
-            if (esp32_mesh_get_hop() == ESP_MESH_HOP_ONE)
+            if (esp_mesh_get_hop() == ESP_MESH_HOP_ONE)
                 vTaskDelay(5000 / portTICK_RATE_MS);
             pkts++;
             bytes += header->len;
@@ -87,14 +87,14 @@ static void MESH_FUNC_ATTR mesh_performance_bench_tx(uint16_t len,
         bps = bytes * 1000.0 / diff;
         MESH_PRINT(
                 "\n\n============================================================\n");
-        MESH_PRINT("ESP32-MESH Performance Bench TX:\n");
+        MESH_PRINT("ESP-MESH Performance Bench TX:\n");
         MESH_PRINT("pkt_len:%u, pkt_count:%u\n", pkt_len, pkt_count);
         MESH_PRINT("start:%u, end:%u, diff:%u\n", start, end, diff);
         MESH_PRINT("tx_pkt:%u, tx_bystes:%u\n", pkts, bytes);
         MESH_PRINT("performance:%.3f kpps, bps:%.2f kbps\n", pps, bps * 8);
         MESH_PRINT(
                 "============================================================\n\n");
-        if (esp32_mesh_get_hop() == ESP_MESH_HOP_ONE)
+        if (esp_mesh_get_hop() == ESP_MESH_HOP_ONE)
             vTaskDelay(5000 / portTICK_RATE_MS);
         mesh_print_task_info();
     }
@@ -121,7 +121,7 @@ static void MESH_FUNC_ATTR mesh_performance_bench_rx()
         pkts = 0;
         bytes = 0;
         start = 0;
-        while ((res = esp32_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
+        while ((res = esp_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
 #if 0
             struct mesh_header_format *header = (struct mesh_header_format *)buf;
             MESH_PRINT("recv len:%u, from:" ESP_MESH_MACSTR "\n",
@@ -136,7 +136,7 @@ static void MESH_FUNC_ATTR mesh_performance_bench_rx()
         end = system_get_time();
         MESH_PRINT(
                 "\n\n============================================================\n");
-        MESH_PRINT("ESP32-MESH Performance Bench RX:\n");
+        MESH_PRINT("ESP-MESH Performance Bench RX:\n");
         diff = (uint32_t) (end - start);
         pps = pkts * 1000.0 / diff;
         bps = bytes * 1000.0 / diff;

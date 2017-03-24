@@ -10,7 +10,7 @@
 #include "mesh_parent.h"
 #include "mesh_schedule.h"
 
-void MESH_FUNC_ATTR esp32_mesh_event_set_cb(system_event_cb_t event_cb)
+void MESH_FUNC_ATTR esp_mesh_event_set_cb(system_event_cb_t event_cb)
 {
     esp_event_loop_set_cb(event_cb, NULL);
 }

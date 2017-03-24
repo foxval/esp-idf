@@ -1,4 +1,4 @@
-/* ESP32-MESH Bin Demo
+/* ESP-MESH Bin Demo
 
  This example code is in the Public Domain (or CC0 licensed, at your option.)
 
@@ -34,7 +34,7 @@ mesh_json_bcast_test()
     MESH_SPRINTF(buf + MESH_STRLEN(buf), "%s", "\"}\r\n");
 
     MESH_MEMSET(dst, 0, sizeof(dst)); // use bcast to get all the devices working in mesh from root.
-    header = (struct mesh_header_format *) esp32_mesh_create_packet(dst, // destiny address (bcast)
+    header = (struct mesh_header_format *) esp_mesh_create_packet(dst, // destiny address (bcast)
             src,     // source address
             M_PROTO_JSON,      // packe with JSON format
             MESH_STRLEN(buf),  // data length
@@ -45,13 +45,13 @@ mesh_json_bcast_test()
         return;
     }
 
-    if (!esp32_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
+    if (!esp_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
         MESH_PRINT("bcast set user data fail\n");
         MESH_FREE(header);
         return;
     }
 
-    if (esp32_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
+    if (esp_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
         MESH_PRINT("bcast mesh is busy\n");
     }
 
@@ -69,10 +69,10 @@ mesh_json_ucast_test()
     /*
      * root device doesn't send ucast to parent
      */
-    if (esp32_mesh_get_hop() == ESP_MESH_HOP_ONE) return;
+    if (esp_mesh_get_hop() == ESP_MESH_HOP_ONE) return;
 
     esp_wifi_get_mac(WIFI_IF_STA, src);
-    esp32_mesh_get_parent_mac(dst);
+    esp_mesh_get_parent_mac(dst);
 
     /*
      * current node sends ucast to parent
@@ -82,7 +82,7 @@ mesh_json_ucast_test()
     MESH_SPRINTF(buf + MESH_STRLEN(buf), MACSTR, MAC2STR(src));
     MESH_SPRINTF(buf + MESH_STRLEN(buf), "%s", "\"}\r\n");
 
-    header = (struct mesh_header_format *) esp32_mesh_create_packet(dst, // destiny address
+    header = (struct mesh_header_format *) esp_mesh_create_packet(dst, // destiny address
             src,     // source address
             M_PROTO_JSON,      // packe with JSON format
             MESH_STRLEN(buf),  // data length
@@ -93,13 +93,13 @@ mesh_json_ucast_test()
         return;
     }
 
-    if (!esp32_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
+    if (!esp_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
         MESH_PRINT("p2p set user data fail\n");
         MESH_FREE(header);
         return;
     }
 
-    if (esp32_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
+    if (esp_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
         MESH_PRINT("p2p mesh is busy\n");
     }
 
@@ -155,7 +155,7 @@ mesh_json_mcast_test()
     + op_count * (sizeof(*option) + sizeof(*root) * ESP_MESH_DEV_MAX_PER_OP)
     + sizeof(*option) + (dev_count - op_count * ESP_MESH_DEV_MAX_PER_OP) * sizeof(*root);
 
-    header = (struct mesh_header_format *)esp32_mesh_create_packet(
+    header = (struct mesh_header_format *)esp_mesh_create_packet(
             dst,// destiny address
             src,// source address
             M_PROTO_JSON,// packe with JSON format
@@ -168,7 +168,7 @@ mesh_json_mcast_test()
     }
 
     while (i < op_count) {
-        option = (struct mesh_header_option_format *)esp32_mesh_create_option(
+        option = (struct mesh_header_option_format *)esp_mesh_create_option(
                 M_O_MCAST_GRP, (uint8_t *)(list + i * ESP_MESH_DEV_MAX_PER_OP),
                 (uint8_t)(sizeof(*root) * ESP_MESH_DEV_MAX_PER_OP));
         if (!option) {
@@ -176,7 +176,7 @@ mesh_json_mcast_test()
             goto MCAST_FAIL;
         }
 
-        if (!esp32_mesh_add_option(header, option)) {
+        if (!esp_mesh_add_option(header, option)) {
             MESH_PRINT("mcast %d set option fail\n", i);
             goto MCAST_FAIL;
         }
@@ -200,7 +200,7 @@ mesh_json_mcast_test()
             MESH_MEMCPY(rest_dev + sizeof(*root),
                     list + i * ESP_MESH_DEV_MAX_PER_OP,
                     (rest - 1) * sizeof(*root));
-            option = (struct mesh_header_option_format *)esp32_mesh_create_option(
+            option = (struct mesh_header_option_format *)esp_mesh_create_option(
                     M_O_MCAST_GRP, rest_dev, sizeof(*root) * rest);
             MESH_FREE(rest_dev);
             if (!option) {
@@ -208,19 +208,19 @@ mesh_json_mcast_test()
                 goto MCAST_FAIL;
             }
 
-            if (!esp32_mesh_add_option(header, option)) {
+            if (!esp_mesh_add_option(header, option)) {
                 MESH_PRINT("mcast set the last option fail\n");
                 goto MCAST_FAIL;
             }
         }
     }
 
-    if (!esp32_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
+    if (!esp_mesh_set_usr_data(header, buf, MESH_STRLEN(buf))) {
         MESH_PRINT("mcast set user data fail\n");
         goto MCAST_FAIL;
     }
 
-    if (esp32_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
+    if (esp_mesh_send(header, header->len, MESH_JSON_MAX_WAIT) < 0) {
         MESH_PRINT("mcast mesh is busy\n");
     }
 

@@ -27,7 +27,7 @@ void mesh_enable_cb(enum mesh_op_result_t result)
 
 void mesh_usr_task(void *pvParameter)
 {
-    esp32_mesh_enable(mesh_enable_cb, MESH_ONLINE);
+    esp_mesh_enable(mesh_enable_cb, MESH_ONLINE);
     vTaskDelete(NULL);
 }
 

@@ -35,14 +35,14 @@ struct mesh_mac_tab_t
 
 extern struct mesh_mac_tab_t g_mesh_route_table;
 
-int8_t esp32_mesh_route_init();
-int8_t esp32_mesh_route_deinit();
-int8_t esp32_mesh_lookup_route(void *dst);
-int16_t esp32_mesh_lookup_sub_route(void *dst, int8_t cidx);
-void esp32_mesh_print_route_table();
-uint32_t esp32_mesh_count_sub_dev();
-bool esp32_mesh_adjust_rtable(int8_t cidx, enum update_type type);
-bool esp32_mesh_update_route_table(int8_t cidx, uint8_t *r_opt,
+int8_t _mesh_route_init();
+int8_t _mesh_route_deinit();
+int8_t _mesh_lookup_route(void *dst);
+int16_t _mesh_lookup_sub_route(void *dst, int8_t cidx);
+void _mesh_print_route_table();
+uint32_t _mesh_count_sub_dev();
+bool _mesh_adjust_rtable(int8_t cidx, enum update_type type);
+bool _mesh_update_route_table(int8_t cidx, uint8_t *r_opt,
         enum update_type type);
 
 #endif

@@ -53,7 +53,7 @@ void mesh_bfc_tx(void)
         }
 #endif
 
-        esp32_mesh_send(header, header->len, 3000);
+        esp_mesh_send(header, header->len, 3000);
         vTaskDelay(BFC_PING_PERIOD_MS / portTICK_RATE_MS);
     }
 }
@@ -70,7 +70,7 @@ void mesh_bfc_rx(void)
     int old_time = 0, cur_time = system_get_time();
 
     while (1) {
-        while ((size = esp32_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
+        while ((size = esp_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
             struct mesh_header_format *header =
                     (struct mesh_header_format *) buf;
 //            MESH_LOGW("[%d]ms, Receive from server, len:%d, DST:"MACSTR", heap:%d",

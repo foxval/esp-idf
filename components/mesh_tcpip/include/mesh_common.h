@@ -144,11 +144,11 @@ extern struct mesh_parent_info_t g_mesh_parent_info;
 extern struct mesh_router_rssi_info_type g_mesh_router_rssi;
 
 void *zalloc(size_t len);
-void esp32_mesh_free_packet_contxt(void *ctx);
-void esp32_mesh_clear_ap_list(struct mesh_ap_list_head_t *ap_list_head);
-bool esp32_mesh_ap_list_find(struct mesh_ap_list_head_t *ap_list_head,
+void esp_mesh_free_packet_contxt(void *ctx);
+void esp_mesh_clear_ap_list(struct mesh_ap_list_head_t *ap_list_head);
+bool esp_mesh_ap_list_find(struct mesh_ap_list_head_t *ap_list_head,
         mesh_ap_info_t *ap, bool update);
-void esp32_mesh_ap_enqueue(struct mesh_ap_list_head_t *ap_list_head,
+void esp_mesh_ap_enqueue(struct mesh_ap_list_head_t *ap_list_head,
         mesh_ap_info_t *ap);
 void mesh_print_task_info();
 #endif

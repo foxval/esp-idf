@@ -237,7 +237,7 @@ mesh_tcpip_tx_task(void *pvPara)
 #if 0
             MESH_DEBUG("server_sock tx:%d\n", tcp_cli_sock);
             mesh_print_ap_info();
-            if (esp32_mesh_is_enabled()) {
+            if (esp_mesh_is_enabled()) {
                 mesh_print_task_info();
             }
 #endif
@@ -252,7 +252,7 @@ mesh_tcpip_tx_task(void *pvPara)
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
                 MESH_DEBUG("tx exception\n");
-                if (!esp32_mesh_is_enabled()) {
+                if (!esp_mesh_is_enabled()) {
                     MESH_DEBUG("tx not enable\n");
                     break;
                 }
@@ -277,7 +277,7 @@ mesh_tcpip_tx_task(void *pvPara)
                         send(tcp_cli_sock, head, head->len, MSG_DONTWAIT);
                         old_time = cur_time;
                     }
-                    esp32_mesh_free_packet_contxt(ctx);
+                    esp_mesh_free_packet_contxt(ctx);
                     ctx = NULL;
                 }
             }
@@ -289,7 +289,7 @@ mesh_tcpip_tx_task(void *pvPara)
      */
     if (g_mesh_tcpip_queue_handler) {
         while (xQueueReceive(g_mesh_tcpip_queue_handler, &ctx, 0) == pdTRUE) {
-            esp32_mesh_free_packet_contxt(ctx);
+            esp_mesh_free_packet_contxt(ctx);
             ctx = NULL;
         }
     }
@@ -338,7 +338,7 @@ mesh_tcpip_rx_task(void *pvPara)
 #if 0
             MESH_DEBUG("server_sock rx:%d\n", tcp_cli_sock);
             mesh_print_ap_info();
-            if (esp32_mesh_is_enabled()) {
+            if (esp_mesh_is_enabled()) {
                 mesh_print_task_info();
             }
 #endif
@@ -352,7 +352,7 @@ mesh_tcpip_rx_task(void *pvPara)
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
                 MESH_DEBUG("rx exception\n");
-                if (!esp32_mesh_is_enabled()) {
+                if (!esp_mesh_is_enabled()) {
                     MESH_DEBUG("rx not enable\n");
                     break;
                 }
@@ -417,7 +417,7 @@ mesh_tcpip_rx_task(void *pvPara)
                         }
                     }
                 }
-                esp32_mesh_free_packet_contxt(ctx);
+                esp_mesh_free_packet_contxt(ctx);
                 ctx = NULL;
             }
         }

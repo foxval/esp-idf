@@ -6,7 +6,7 @@
 
 /************ mesh configure information *******************************/
 #define ESP_MESH_CONNECT_MAX              (4)
-#define ESP_MESH_ESP32_VER                (1)
+#define ESP_MESH_VERSION                  (1)
 #define ESP_MESH_DEFAULT_MAX_HOP          (4)
 #define ESP_MESH_PKT_PENDING_MAX          (ESP_MESH_CONNECT_MAX << 2)
 #define ESP_MESH_PKT_PENDING_SWITCH       (ESP_MESH_CONNECT_MAX >> 2)
@@ -66,8 +66,8 @@ enum mesh_node_t
     MESH_NODE_PARENT, MESH_NODE_CHILD, MESH_NODE_ALL,
 };
 
-typedef void (*esp32_mesh_op_callback_t)(enum mesh_op_result_t result);
-typedef void (*esp32_mesh_usr_callback_t)(void *para);
+typedef void (*esp_mesh_op_callback_t)(enum mesh_op_result_t result);
+typedef void (*esp_mesh_usr_callback_t)(void *para);
 
 /* mesh header format:
  * |0 1 2  3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7|
@@ -157,7 +157,7 @@ typedef struct mesh_header_format mesh_header_t;
 
 struct mesh_scan_para_type
 {
-    esp32_mesh_usr_callback_t usr_scan_cb; // scan done callback
+    esp_mesh_usr_callback_t usr_scan_cb; // scan done callback
     uint8_t grp_id[MESH_GRP_ID_LEN];  // group id
     bool grp_set;                           // group set
 };
@@ -197,65 +197,66 @@ struct mesh_sub_node_info_t
     uint8_t mac[MESH_HWADDR_LEN];
 } __packed;
 
-void * esp32_mesh_create_packet(void *dst_addr, void *src_addr,
+
+void * esp_mesh_create_packet(void *dst_addr, void *src_addr,
         enum mesh_usr_proto_type proto, uint16_t data_len, bool option,
         uint16_t ot_len);
-void * esp32_mesh_create_option(uint8_t otype, void *ovalue, uint8_t val_len);
-void * esp32_mesh_get_usr_context();
-bool esp32_mesh_add_option(struct mesh_header_format *head,
+void * esp_mesh_create_option(uint8_t otype, void *ovalue, uint8_t val_len);
+void * esp_mesh_get_usr_context();
+bool esp_mesh_add_option(struct mesh_header_format *head,
         struct mesh_header_option_format *option);
-bool esp32_mesh_get_option(struct mesh_header_format *head,
+bool esp_mesh_get_option(struct mesh_header_format *head,
         enum mesh_option_type otype, uint16_t oidx,
         struct mesh_header_option_format **option);
-bool esp32_mesh_get_usr_data(struct mesh_header_format *head, void **usr_data,
+bool esp_mesh_get_usr_data(struct mesh_header_format *head, void **usr_data,
         uint16_t *data_len);
-bool esp32_mesh_set_usr_data(struct mesh_header_format *head, void *usr_data,
+bool esp_mesh_set_usr_data(struct mesh_header_format *head, void *usr_data,
         uint16_t data_len);
-bool esp32_mesh_get_src_addr(struct mesh_header_format *head, void **src_addr);
-bool esp32_mesh_get_dst_addr(struct mesh_header_format *head, void **dst_addr);
-bool esp32_mesh_set_src_addr(struct mesh_header_format *head, void *src_addr);
-bool esp32_mesh_set_dst_addr(struct mesh_header_format *head, void *dst_addr);
-bool esp32_mesh_get_usr_data_proto(struct mesh_header_format *head,
+bool esp_mesh_get_src_addr(struct mesh_header_format *head, void **src_addr);
+bool esp_mesh_get_dst_addr(struct mesh_header_format *head, void **dst_addr);
+bool esp_mesh_set_src_addr(struct mesh_header_format *head, void *src_addr);
+bool esp_mesh_set_dst_addr(struct mesh_header_format *head, void *dst_addr);
+bool esp_mesh_get_usr_data_proto(struct mesh_header_format *head,
         enum mesh_usr_proto_type *proto);
-bool esp32_mesh_set_usr_data_proto(struct mesh_header_format *head,
+bool esp_mesh_set_usr_data_proto(struct mesh_header_format *head,
         enum mesh_usr_proto_type proto);
-bool esp32_mesh_is_root();
-bool esp32_mesh_is_root_candidate();
-bool esp32_mesh_get_node_info(enum mesh_node_t type, void **info,
+bool esp_mesh_is_root();
+bool esp_mesh_is_root_candidate();
+bool esp_mesh_get_node_info(enum mesh_node_t type, void **info,
         uint16_t *count);
-bool esp32_mesh_get_router(wifi_sta_config_t *router);
-bool esp32_mesh_set_router(wifi_sta_config_t *router);
-bool esp32_mesh_encrypt_init(wifi_auth_mode_t mode, void *passwd,
+bool esp_mesh_get_router(wifi_sta_config_t *router);
+bool esp_mesh_set_router(wifi_sta_config_t *router);
+bool esp_mesh_encrypt_init(wifi_auth_mode_t mode, void *passwd,
         uint8_t pw_len);
-bool esp32_mesh_group_id_init(void *grp_id, uint16_t gid_len);
-bool esp32_mesh_regist_rebuild_fail_cb(esp32_mesh_usr_callback_t cb);
-bool esp32_mesh_regist_usr_cb(esp32_mesh_usr_callback_t cb);
-bool esp32_mesh_server_init(ip_addr_t *ip, uint16_t port);
-bool esp32_mesh_set_max_hops(uint8_t max_hops);
-bool esp32_mesh_set_scan_retries(uint8_t retries);
-bool esp32_mesh_set_rssi_threshold(int8_t threshold);
-bool esp32_mesh_set_policy(bool policy);
-bool esp32_mesh_set_wifi_retry_delay(uint16_t time_ms);
+bool esp_mesh_group_id_init(void *grp_id, uint16_t gid_len);
+bool esp_mesh_regist_rebuild_fail_cb(esp_mesh_usr_callback_t cb);
+bool esp_mesh_regist_usr_cb(esp_mesh_usr_callback_t cb);
+bool esp_mesh_server_init(ip_addr_t *ip, uint16_t port);
+bool esp_mesh_set_max_hops(uint8_t max_hops);
+bool esp_mesh_set_scan_retries(uint8_t retries);
+bool esp_mesh_set_rssi_threshold(int8_t threshold);
+bool esp_mesh_set_policy(bool policy);
+bool esp_mesh_set_wifi_retry_delay(uint16_t time_ms);
 
-int8_t esp32_mesh_get_status();
-int esp32_mesh_send(void *buf, uint16_t len, uint32_t tick);
-int esp32_mesh_recv(void *buf, uint16_t len, uint32_t tick);
+int8_t esp_mesh_get_status();
+int esp_mesh_send(void *buf, uint16_t len, uint32_t tick);
+int esp_mesh_recv(void *buf, uint16_t len, uint32_t tick);
 
-uint8_t esp32_mesh_get_max_hops();
-uint8_t esp32_mesh_get_hop();
+uint8_t esp_mesh_get_max_hops();
+uint8_t esp_mesh_get_hop();
 
-uint16_t esp32_mesh_get_sub_dev_count();
+uint16_t esp_mesh_get_sub_dev_count();
 
-bool esp32_mesh_is_enabled();
-bool esp32_mesh_enable(esp32_mesh_op_callback_t enable_cb, enum mesh_type type);
-bool esp32_mesh_disable(esp32_mesh_op_callback_t disable_cb);
-void esp32_mesh_deauth_all();
-void esp32_mesh_deauth_child(int8_t cidx);
-void esp32_mesh_disp_route_table();
-void esp32_mesh_get_parent_mac(void *mac);
-void esp32_mesh_print_status(uint8_t qidx);
-void esp32_mesh_print_ver();
-void esp32_mesh_release_congest();
-void esp32_mesh_scan(struct mesh_scan_para_type *para);
+bool esp_mesh_is_enabled();
+bool esp_mesh_enable(esp_mesh_op_callback_t enable_cb, enum mesh_type type);
+bool esp_mesh_disable(esp_mesh_op_callback_t disable_cb);
+void esp_mesh_deauth_all();
+void esp_mesh_deauth_child(int8_t cidx);
+void esp_mesh_disp_route_table();
+void esp_mesh_get_parent_mac(void *mac);
+void esp_mesh_print_status(uint8_t qidx);
+void esp_mesh_print_ver();
+void esp_mesh_release_congest();
+void esp_mesh_scan(struct mesh_scan_para_type *para);
 
 #endif

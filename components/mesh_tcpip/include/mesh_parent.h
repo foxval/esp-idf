@@ -44,15 +44,14 @@ struct mesh_ctx_t
     uint8_t init;
 };
 
-bool esp32_mesh_ctx_init(struct mesh_ctx_t *ctx);
-bool esp32_mesh_ctx_deinit(struct mesh_ctx_t *ctx);
-bool es32_mesh_get_child_mac(int8_t cidx, void *mac);
-uint8_t es32_mesh_get_child_count();
-int8_t es32_mesh_get_child_idx(void *mac);
-uint16_t es32_mesh_get_sub_dev_count();
+bool _mesh_ctx_init(struct mesh_ctx_t *ctx);
+bool _mesh_ctx_deinit(struct mesh_ctx_t *ctx);
+bool esp_mesh_get_child_mac(int8_t cidx, void *mac);
+uint8_t esp_mesh_get_child_count();
+int8_t esp_mesh_get_child_idx(void *mac);
 void mesh_init_wifi(void);
 bool mesh_fsm_task_init(void);
 esp_err_t mesh_event_cb(void *ctx, system_event_t *event);
-void esp32_mesh_event_set_cb(system_event_cb_t event_cb);
+void _mesh_event_set_cb(system_event_cb_t event_cb);
 
 #endif
