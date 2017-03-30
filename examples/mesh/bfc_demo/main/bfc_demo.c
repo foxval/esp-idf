@@ -22,7 +22,9 @@ extern void MESH_FUNC_ATTR mesh_bfc_start(void);
 
 void mesh_enable_cb(enum mesh_op_result_t result)
 {
-    mesh_bfc_start();
+    if(result == MESH_OP_SUC) {
+        mesh_bfc_start();
+    }
 }
 
 void mesh_usr_task(void *pvParameter)

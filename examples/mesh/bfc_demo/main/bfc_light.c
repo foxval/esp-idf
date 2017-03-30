@@ -70,27 +70,56 @@ esp_err_t mesh_bfc_light_init(void)
     //initialize fade service.
     ledc_fade_func_install(0);
     //default on
-    mesh_bfc_gpio_set(100);
+    mesh_bfc_gpio_set(RGB_LIGHT_INIT);
     return ESP_OK;
 }
 
 esp_err_t mesh_bfc_gpio_set(int value)
 {
-    if (value) {
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 100);
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 300);
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 500);
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, 3000);
+    if (value == RGB_LIGHT_RED) {
+        /* Red */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
+    } else if (value == RGB_LIGHT_GREEN) {
+        /* Green */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
+    } else if (value == RGB_LIGHT_BLUE) {
+        /* Blue */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
+    } else if (value == RGB_LIGHT_YELLOW) {
+        /* Yellow */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
+    } else if (value == RGB_LIGHT_PINK) {
+        /* Pink */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
+    } else if (value == RGB_LIGHT_INIT) {
+        /* can't say */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
+    } else if (value == RGB_LIGHT_WARNING) {
+        /* warning */
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
+        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
     } else {
+        /* off */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3, 0);
     }
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1);
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
-    ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3);
 
     return ESP_OK;
 }
@@ -103,7 +132,7 @@ esp_err_t mesh_bfc_gpio_get(int* value)
     int val_2 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
     int val_3 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3);
 #endif
-    if(val_0 == 0) {
+    if (val_0 == 0) {
         *value = 0;
     } else {
         *value = 100;
@@ -111,7 +140,6 @@ esp_err_t mesh_bfc_gpio_get(int* value)
 
     return ESP_OK;
 }
-
 
 esp_err_t mesh_bfc_light_set(int brightness)
 {

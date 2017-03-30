@@ -40,7 +40,7 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     MESH_MEMCPY(&buf[5], mac, 6);        // bssid 6 bytes
     buf[11] = BFC_VALUE_P_BSSID;
     MESH_MEMCPY(&buf[12], ap.bssid, 6);  // parent bssid 6 bytes
-    buf[17] -= 1;                        // parent sta MAC instead of parent softAP MAC
+    buf[17] -= 1;                 // parent sta MAC instead of parent softAP MAC
     buf[18] = BFC_VALUE_BRIGHTNESS;
 #if 0
     if (mesh_bfc_light_get(&brightness) == ESP_OK) {
@@ -59,10 +59,10 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     buf[23] = bfc.fix_brightness;         // fix-brightness 1 byte
     buf[24] = BFC_VALUE_DELAY;
     buf[25] = (bfc.delay) >> 8;
-    buf[26] = (bfc.delay) & 0xff;        // 0 means forever
+    buf[26] = (bfc.delay) & 0xff;// 0 means forever
     buf[27] = BFC_VALUE_PING_TIME;
     buf[28] = (bfc.ping_time) >> 8;
-    buf[29] = (bfc.ping_time) & 0xff;    //ping time 2 bytes
+    buf[29] = (bfc.ping_time) & 0xff;//ping time 2 bytes
     buf[30] = BFC_VALUE_REBOOT_CNT;
     buf[31] = restart_cnt >> 8;
     buf[32] = restart_cnt & 0xff;
@@ -128,13 +128,39 @@ esp_err_t mesh_bfc_parse_protocol(uint8_t *buf, uint16_t start_index,
     if (type == BFC_CMD_RPC) {
         switch (buf[start_index]) {
             case BFC_VALUE_BRIGHTNESS:
-                MESH_LOGW("brightness:%d\n", buf[start_index + 1]);
+//                MESH_LOGW("brightness:%d\n", buf[start_index + 1])
+                ;
                 brightness = buf[start_index + 1];
                 if (mesh_bfc_light_set(brightness) == ESP_FAIL) {
                     if (buf[start_index + 1] == 0) {
                         mesh_bfc_gpio_set(0);
                     } else {
+#if 1
+                        if (esp_mesh_get_hop() == 1) {
+                            /* layer one: pink */
+                            mesh_bfc_gpio_set(RGB_LIGHT_PINK);
+                        } else if (esp_mesh_get_hop() == 2) {
+                            /* layer two: yellow */
+                            mesh_bfc_gpio_set(RGB_LIGHT_YELLOW);
+                        } else if (esp_mesh_get_hop() == 3) {
+                            /* layer one: red */
+                            mesh_bfc_gpio_set(RGB_LIGHT_RED);
+                        } else if (esp_mesh_get_hop() == 4) {
+                            /* layer one: blue */
+                            mesh_bfc_gpio_set(RGB_LIGHT_BLUE);
+                        } else if (esp_mesh_get_hop() == 5) {
+                            /* layer one: green */
+                            mesh_bfc_gpio_set(RGB_LIGHT_GREEN);
+                        } else if (esp_mesh_get_hop() >= 6) {
+                            /* layer one: white */
+                            mesh_bfc_gpio_set(RGB_LIGHT_WARNING);
+                        } else {
+                            mesh_bfc_gpio_set(1);
+                        }
+
+#else
                         mesh_bfc_gpio_set(1);
+#endif
                     }
                 }
                 break;
@@ -166,11 +192,12 @@ void mesh_bfc_process_received_data(uint8_t* buf, uint16_t len)
 //header: 0 10 19 0 24 a c4 3 b8 dc 0 0 0 0 0 0
 //cmd   : 2 0 bf c0 6 0 8 0 3
 
-#if 1
+#if 0
     if (len) {
         int i;
-        for (i = 0; i < len; i++)
+        for (i = 0; i < len; i++) {
             printf("%x ", buf[i]);
+        }
         printf("\n");
     }
 #endif
@@ -182,11 +209,11 @@ void mesh_bfc_process_received_data(uint8_t* buf, uint16_t len)
     }
     switch (buf[0]) {
         case BFC_ACK | BFC_CMD_PING:
-            printf("Receive BFC_PING_ACK \r\n");
+//            printf("Receive BFC_PING_ACK \r\n");
             break;
 
         case BFC_CMD_RPC:
-            printf("Receive BFC_RPC\r\n");
+//            printf("Receive BFC_RPC\r\n");
             mesh_bfc_parse_protocol(buf, 4, len, BFC_CMD_RPC);
             break;
 
