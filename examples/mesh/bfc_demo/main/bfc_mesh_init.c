@@ -84,8 +84,7 @@ bool MESH_FUNC_ATTR mesh_usr_init()
     /*
      * set cloud server ip and port for mesh node
      */
-    if (!esp_mesh_server_init((ip_addr_t *) MESH_SERVER_IP,
-            MESH_SERVER_PORT)) {
+    if (!esp_mesh_server_init((ip_addr_t *) MESH_SERVER_IP, MESH_SERVER_PORT)) {
         MESH_PRINT("server_init fail\n");
         return false;
     }

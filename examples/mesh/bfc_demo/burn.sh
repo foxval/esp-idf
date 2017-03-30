@@ -15,28 +15,18 @@ sudo chmod 777 /dev/ttyUSB*
 # make V=1
 make
 
-echo "----------------------"
-echo "input ttyUSB index"
-read input
-baud=921600
-if [ -z "$input" ]; then
-    dev=/dev/ttyUSB0
-else
-    if [ "$input" -gt 9 ]; then
-        baud=115200
-    fi
-    dev=/dev/ttyUSB$input
-fi
-echo "you select device:"
-echo $dev
-echo $baud
-echo "----------------------"
-
-
 #idf 0.9
 #sudo python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud $baud write_flash -z --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 $(pwd)/build/#bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh-demo.bin 0x4000 $(pwd)/build/partitions_singleapp.bin
 
 #idf 2.0
+#sudo python /home/qiyuexia/Working/mesh/esp32/master/esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud 921600 --before default_reset --after hard_reset write_flash -z --#flash_mode dio --flash_freq 40m --flash_size detect 0x1000 /home/qiyuexia/Working/mesh/esp32/master/esp-idf/examples/mesh/bfc_demo/build/bootloader/bootloader.bin 0x10000 /home/qiyuexia/Working/mesh/#esp32/master/esp-idf/examples/mesh/bfc_demo/build/bfc_demo.bin 0x8000 /home/qiyuexia/Working/mesh/esp32/master/esp-idf/examples/mesh/bfc_demo/build/partitions_singleapp.bin
+
+baud=1152000 #1 3 5 7 9 11 13 15 17 
+for i in 20 22 24 26
+do 
+    dev=/dev/ttyUSB$i
+    echo port:$dev
 sudo python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/bfc_demo.bin 0x8000 $(pwd)/build/partitions_singleapp.bin
+done
 
 
