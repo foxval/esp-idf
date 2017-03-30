@@ -5,9 +5,9 @@
 #include "mesh_common.h"
 
 /************ mesh configure information *******************************/
-#define ESP_MESH_CONNECT_MAX              (4)
+#define ESP_MESH_CONNECT_MAX              (6)
 #define ESP_MESH_VERSION                  (1)
-#define ESP_MESH_DEFAULT_MAX_HOP          (4)
+#define ESP_MESH_DEFAULT_MAX_HOP          (5)
 #define ESP_MESH_PKT_PENDING_MAX          (ESP_MESH_CONNECT_MAX << 2)
 #define ESP_MESH_PKT_PENDING_SWITCH       (ESP_MESH_CONNECT_MAX >> 2)
 /***********************************************************************/
