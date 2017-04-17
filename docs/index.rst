@@ -38,6 +38,7 @@ Contents:
    Deep Sleep Wake Stubs <deep-sleep-stub>
    ULP Coprocessor <ulp>
    Unit Testing <unit-tests>
+   External RAM <spiram>
 
 .. toctree::
    :caption: API Reference
