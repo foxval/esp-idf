@@ -186,7 +186,7 @@ endif
 	@echo $(ESPTOOLPY_WRITE_FLASH) $(ESPTOOL_ALL_FLASH_ARGS)
 
 
-IDF_VER := $(shell git -C $(IDF_PATH) describe --always --tags --dirty)
+IDF_VER := $(shell cd ${IDF_PATH} && git describe --always --tags --dirty)
 
 # Set default LDFLAGS
 
@@ -414,7 +414,7 @@ clean: config-clean
 check-submodules:
 
 # Dump the git status for the whole working copy once, then grep it for each submodule. This saves a lot of time on Windows.
-GIT_STATUS := $(shell cd ${IDF_PATH} && git status --porcelain=v1 --ignore-submodules=dirty)
+GIT_STATUS := $(shell cd ${IDF_PATH} && git status --porcelain --ignore-submodules=dirty)
 
 # Generate a target to check this submodule
 # $(1) - submodule directory, relative to IDF_PATH

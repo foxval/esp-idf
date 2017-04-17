@@ -4,11 +4,11 @@ Set up of Toolchain for Windows
 Step 1: Quick Steps
 ===================
 
-Windows doesn't have a built-in "make" environment, so as well as installing the toolchain you will need a GNU-compatible environment. We use the MSYS2_ environment to provide this. You don't need to use this environment all the time (you can use Eclipse_ or some other front-end), but it runs behind the scenes.
+Windows doesn't have a built-in "make" environment, so as well as installing the toolchain you will need a GNU-compatible environment. We use the MSYS2_ environment to provide this. You don't need to use this environment all the time (you can use :doc:`Eclipse </eclipse-setup>` or some other front-end), but it runs behind the scenes.
 
 The quick setup is to download the Windows all-in-one toolchain & MSYS zip file from dl.espressif.com:
 
-https://dl.espressif.com/dl/esp32_win32_msys2_environment_and_toolchain-20170321.zip
+https://dl.espressif.com/dl/esp32_win32_msys2_environment_and_toolchain-20170330.zip
 
 Unzip the zip file to ``C:\`` (or some other location, but this guide assumes ``C:\``) and it will create an "msys32" directory with a pre-prepared environment.
 
@@ -56,16 +56,14 @@ You can also find a range of example projects under the "examples" directory in 
 Step 4: Configuring the project
 ===============================
 
-Open an MSYS2 terminal window by running ``C:\msys32\msys2_shell.cmd``. The environment in this window is a bash shell.
+Open an MSYS2 terminal window by running ``C:\msys32\mingw32.exe``. The environment in this window is a bash shell.
 
 Type a command like this to set the path to ESP-IDF directory: ``export IDF_PATH="C:/path/to/esp-idf"`` (note the forward-slashes not back-slashes for the path). If you don't want to run this command every time you open an MSYS2 window, create a new file in ``C:/msys32/etc/profile.d/`` and paste this line in - then it will be run each time you open an MYS2 terminal.
 
 Use ``cd`` to change to the project directory (not the ESP-IDF directory.) Type ``make menuconfig`` to configure your project, then ``make`` to build it, ``make clean`` to remove built files, and ``make flash`` to flash (use the menuconfig to set the serial port for flashing.)
 
-If you'd like to use the Eclipse IDE instead of running ``make``, check out the Eclipse setup guide in this directory.
+If you'd like to use the Eclipse IDE instead of running ``make``, check out the :doc:`Eclipse guide </eclipse-setup>`.
 
 
-.. _Eclipse: eclipse-setup.rst
-.. _MSYS2: https://msys2.github.io/
 .. _github: https://github.com/espressif/esp-idf-template
 .. _known issue: https://github.com/espressif/esp-idf/issues/11
