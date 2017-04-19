@@ -366,6 +366,11 @@ static esp_err_t esp_system_event_debug(system_event_t *event)
         break;
     }
 
+    case SYSTEM_EVENT_MESH_IE_CHANGE: {
+        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_IE_CHANGE");
+        break;
+    }
+
     default: {
         ESP_LOGW(TAG, "no such kind of event!");
         break;

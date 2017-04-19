@@ -174,6 +174,7 @@ typedef struct {
     uint16_t total_cap;
     uint16_t total_assoc;
     uint16_t leaf_left;
+    uint16_t scan_ap_num;
     uint8_t ap_rssi;
     uint8_t router_rssi;
 }wifi_vnd_mesh_assoc_t;
