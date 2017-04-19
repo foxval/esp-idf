@@ -1,40 +1,47 @@
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef __MESH_H__
 #define __MESH_H__
 
-#include <stdint.h>
 #include "mesh_common.h"
 
-/************ mesh configure information *******************************/
+/*******************************************************
+ *                Constants
+ *******************************************************/
 #define ESP_MESH_CONNECT_MAX              (6)
 #define ESP_MESH_VERSION                  (1)
 #define ESP_MESH_DEFAULT_MAX_HOP          (5)
 #define ESP_MESH_PKT_PENDING_MAX          (ESP_MESH_CONNECT_MAX << 2)
 #define ESP_MESH_PKT_PENDING_SWITCH       (ESP_MESH_CONNECT_MAX >> 2)
-/***********************************************************************/
 
-/************ mesh constant and check information **********************/
-#define ESP_MESH_MACSTR                   "%02x:%02x:%02x:%02x:%02x:%02x"
-#define ESP_MESH_MAC2STR(addr)            ((uint8_t *)addr)[0], ((uint8_t *)addr)[1],\
-                                          ((uint8_t *)addr)[2], ((uint8_t *)addr)[3],\
-                                          ((uint8_t *)addr)[4], ((uint8_t *)addr)[5]
 #define ESP_MESH_ARRAY_ELEM_COUNT(array)  (sizeof((array))/sizeof((array)[0]))
 #define ESP_MESH_IDX_NONE                 (-1)
 #define ESP_MESH_VALID_CIDX(cidx)         ((cidx) >=0 && (cidx) < ESP_MESH_CONNECT_MAX)
 #define ESP_MESH_HOP_ONE                  (1)
-/***********************************************************************/
 
-/************ mesh packet information **********************************/
+/* mesh packet information */
 #define ESP_MESH_PKT_LEN_MAX              (1460)
 #define ESP_MESH_OPTION_MAX_LEN           (255)
 #define ESP_MESH_OT_LEN_LEN               (sizeof(uint16_t))
-#define ESP_MESH_HLEN                     (sizeof(struct mesh_header_format))
+#define ESP_MESH_HLEN                     (sizeof(mesh_hdr_t))
 #define ESP_MESH_OPTION_HLEN              (sizeof(struct mesh_header_option_format))
 #define ESP_MESH_OP_MAX_PER_PKT           ((ESP_MESH_PKT_LEN_MAX - ESP_MESH_HLEN) / ESP_MESH_OPTION_MAX_LEN)
 #define ESP_MESH_DEV_MAX_PER_OP           ((ESP_MESH_OPTION_MAX_LEN - ESP_MESH_OPTION_HLEN) / MESH_HWADDR_LEN)
 #define ESP_MESH_DEV_MAX_PER_PKT          (ESP_MESH_OP_MAX_PER_PKT * ESP_MESH_DEV_MAX_PER_OP)
-/***********************************************************************/
 
-/************* mesh error no *******************************************/
+/* mesh error code */
 #define ESP_MESH_ERR_NOT_ENABLED          (-1)
 #define ESP_MESH_ERR_NO_DATA              (-2)
 #define ESP_MESH_ERR_NO_MEM               (-3)
@@ -49,26 +56,76 @@
 #define ESP_MESH_MCAST_NO_TYPE            (-12)
 #define ESP_MESH_MCAST_NO_ELEM            (-13)
 #define ESP_MESH_NO_CHILD                 (-14)
-/***********************************************************************/
 
-enum mesh_op_result_t
+/*******************************************************
+ *                Enumerations
+ *******************************************************/
+typedef enum
 {
-    MESH_OP_SUC, MESH_OP_FAIL,
-};
+    ESP_MESH_EVENT_SUCCESS = 0,
+    ESP_MESH_EVENT_NO_AP_FOUND = 1,
+    ESP_MESH_EVENT_PARENT_DONE = 2,
+    ESP_MESH_EVENT_CONNECTED = 3,
+    ESP_MESH_EVENT_DISCONNECTED = 4,
+    ESP_MESH_EVENT_LAYER_CHANGE = 5,
+    ESP_MESH_EVENT_TCP_CONNECT = 6,
+    ESP_MESH_EVENT_TCP_CONNECTED = 7,
+    ESP_MESH_EVENT_TCP_DISCONNECTED = 8,
+    ESP_MESH_EVENT_FAIL,
+} esp_mesh_event_t;
 
-enum mesh_type
+typedef enum
 {
-    MESH_NONE = 0x00, MESH_ONLINE, MESH_LOCAL,
-};
+    ESP_MESH_TCP_CONNECTED = 10, ESP_MESH_TCP_DISCONNECTED = 11,
+} esp_mesh_tcpip_event_t;
+
+typedef enum
+{
+    MESH_NONE = 0, MESH_ONLINE = 1, MESH_LOCAL = 2,
+} esp_mesh_mode_t;
 
 enum mesh_node_t
 {
     MESH_NODE_PARENT, MESH_NODE_CHILD, MESH_NODE_ALL,
 };
 
-typedef void (*esp_mesh_op_callback_t)(enum mesh_op_result_t result);
+enum mesh_option_type
+{
+    M_O_CONGEST_REQ = 0,      // local flow request option
+    M_O_CONGEST_RESP,         // flow response option
+    M_O_ROUTER_SPREAD,        // router information spread option
+    M_O_ROUTE_ADD,            // route table update (node joins mesh) option
+    M_O_ROUTE_DEL,            // route table update (node leaves mesh) option
+    M_O_TOPO_REQ,             // topology request option
+    M_O_TOPO_RESP,            // topology response option
+    M_O_MCAST_GRP,            // group list of mcast
+    M_O_MESH_FRAG,            // mesh management fragment option
+    M_O_USR_FRAG,             // user data fragment
+    M_O_USR_OPTION,           // user option
+    M_O_CONGEST_OREQ,         // online flow request option
+    M_O_ROUTER_RS,            // router RSSI solicit
+    M_O_ROUTER_RI,            // router RSSI information
+    M_O_ROUTER_RA,            // router RSSI advertisement
+    M_O_INVALID = 0xFFFF      // invalid option type
+};
+
+enum mesh_usr_proto_type
+{
+    M_PROTO_NONE = 0,       // used to delivery mesh management packet
+    M_PROTO_HTTP,           // user data formated with HTTP protocol
+    M_PROTO_JSON,           // user data formated with JSON protocol
+    M_PROTO_MQTT,           // user data formated with MQTT protocol
+    M_PROTO_BIN,            // user data is binary stream
+};
+/*******************************************************
+ *                Type Definitions
+ *******************************************************/
+typedef void (*esp_mesh_event_cb_t)(esp_mesh_event_t event);
 typedef void (*esp_mesh_usr_callback_t)(void *para);
 
+/*******************************************************
+ *                Structures
+ *******************************************************/
 /* mesh header format:
  * |0 1 2  3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7|
  * __________________________________________________________________
@@ -152,8 +209,17 @@ struct mesh_header_format
     uint32_t c :1;
     struct mesh_header_option_header_type option[0];  // mesh option
 } __packed;
+typedef struct mesh_header_format mesh_hdr_t;
 
-typedef struct mesh_header_format mesh_header_t;
+typedef struct
+{
+    void *buf;
+    uint16_t buf_len;
+    uint8_t src[MESH_HWADDR_LEN];
+    uint8_t dst[MESH_HWADDR_LEN];
+    uint8_t ifidx;
+    uint32_t wait;
+} mesh_ctx_t;
 
 struct mesh_scan_para_type
 {
@@ -162,72 +228,41 @@ struct mesh_scan_para_type
     bool grp_set;                           // group set
 };
 
-enum mesh_option_type
-{
-    M_O_CONGEST_REQ = 0,      // local flow request option
-    M_O_CONGEST_RESP,         // flow response option
-    M_O_ROUTER_SPREAD,        // router information spread option
-    M_O_ROUTE_ADD,            // route table update (node joins mesh) option
-    M_O_ROUTE_DEL,            // route table update (node leaves mesh) option
-    M_O_TOPO_REQ,             // topology request option
-    M_O_TOPO_RESP,            // topology response option
-    M_O_MCAST_GRP,            // group list of mcast
-    M_O_MESH_FRAG,            // mesh management fragment option
-    M_O_USR_FRAG,             // user data fragment
-    M_O_USR_OPTION,           // user option
-    M_O_CONGEST_OREQ,         // online flow request option
-    M_O_ROUTER_RS,            // router RSSI solicit
-    M_O_ROUTER_RI,            // router RSSI information
-    M_O_ROUTER_RA,            // router RSSI advertisement
-    M_O_INVALID = 0xFFFF      // invalid option type
-};
-
-enum mesh_usr_proto_type
-{
-    M_PROTO_NONE = 0,       // used to delivery mesh management packet
-    M_PROTO_HTTP,           // user data formated with HTTP protocol
-    M_PROTO_JSON,           // user data formated with JSON protocol
-    M_PROTO_MQTT,           // user data formated with MQTT protocol
-    M_PROTO_BIN,            // user data is binary stream
-};
-
 struct mesh_sub_node_info_t
 {
     uint16_t sub_count;
     uint8_t mac[MESH_HWADDR_LEN];
 } __packed;
 
-
+/*******************************************************
+ *                Function Definitions
+ *******************************************************/
 void * esp_mesh_create_packet(void *dst_addr, void *src_addr,
         enum mesh_usr_proto_type proto, uint16_t data_len, bool option,
         uint16_t ot_len);
 void * esp_mesh_create_option(uint8_t otype, void *ovalue, uint8_t val_len);
 void * esp_mesh_get_usr_context();
-bool esp_mesh_add_option(struct mesh_header_format *head,
+bool esp_mesh_add_option(mesh_hdr_t *head,
         struct mesh_header_option_format *option);
-bool esp_mesh_get_option(struct mesh_header_format *head,
-        enum mesh_option_type otype, uint16_t oidx,
-        struct mesh_header_option_format **option);
-bool esp_mesh_get_usr_data(struct mesh_header_format *head, void **usr_data,
+bool esp_mesh_get_option(mesh_hdr_t *head, enum mesh_option_type otype,
+        uint16_t oidx, struct mesh_header_option_format **option);
+bool esp_mesh_get_usr_data(mesh_hdr_t *head, void **usr_data,
         uint16_t *data_len);
-bool esp_mesh_set_usr_data(struct mesh_header_format *head, void *usr_data,
-        uint16_t data_len);
-bool esp_mesh_get_src_addr(struct mesh_header_format *head, void **src_addr);
-bool esp_mesh_get_dst_addr(struct mesh_header_format *head, void **dst_addr);
-bool esp_mesh_set_src_addr(struct mesh_header_format *head, void *src_addr);
-bool esp_mesh_set_dst_addr(struct mesh_header_format *head, void *dst_addr);
-bool esp_mesh_get_usr_data_proto(struct mesh_header_format *head,
+bool esp_mesh_set_usr_data(mesh_hdr_t *head, void *usr_data, uint16_t data_len);
+bool esp_mesh_get_src_addr(mesh_hdr_t *head, void **src_addr);
+bool esp_mesh_get_dst_addr(mesh_hdr_t *head, void **dst_addr);
+bool esp_mesh_set_src_addr(mesh_hdr_t *head, void *src_addr);
+bool esp_mesh_set_dst_addr(mesh_hdr_t *head, void *dst_addr);
+bool esp_mesh_get_usr_data_proto(mesh_hdr_t *head,
         enum mesh_usr_proto_type *proto);
-bool esp_mesh_set_usr_data_proto(struct mesh_header_format *head,
+bool esp_mesh_set_usr_data_proto(mesh_hdr_t *head,
         enum mesh_usr_proto_type proto);
-bool esp_mesh_is_root();
 bool esp_mesh_is_root_candidate();
 bool esp_mesh_get_node_info(enum mesh_node_t type, void **info,
         uint16_t *count);
 bool esp_mesh_get_router(wifi_sta_config_t *router);
-bool esp_mesh_set_router(wifi_sta_config_t *router);
-bool esp_mesh_encrypt_init(wifi_auth_mode_t mode, void *passwd,
-        uint8_t pw_len);
+bool esp_mesh_set_router(wifi_sta_config_t *router, int channel);
+bool esp_mesh_encrypt_init(wifi_auth_mode_t mode, void *passwd, uint8_t pw_len);
 bool esp_mesh_group_id_init(void *grp_id, uint16_t gid_len);
 bool esp_mesh_regist_rebuild_fail_cb(esp_mesh_usr_callback_t cb);
 bool esp_mesh_regist_usr_cb(esp_mesh_usr_callback_t cb);
@@ -237,19 +272,9 @@ bool esp_mesh_set_scan_retries(uint8_t retries);
 bool esp_mesh_set_rssi_threshold(int8_t threshold);
 bool esp_mesh_set_policy(bool policy);
 bool esp_mesh_set_wifi_retry_delay(uint16_t time_ms);
-
 int8_t esp_mesh_get_status();
-int esp_mesh_send(void *buf, uint16_t len, uint32_t tick);
-int esp_mesh_recv(void *buf, uint16_t len, uint32_t tick);
-
-uint8_t esp_mesh_get_max_hops();
-uint8_t esp_mesh_get_hop();
-
 uint16_t esp_mesh_get_sub_dev_count();
 
-bool esp_mesh_is_enabled();
-bool esp_mesh_enable(esp_mesh_op_callback_t enable_cb, enum mesh_type type);
-bool esp_mesh_disable(esp_mesh_op_callback_t disable_cb);
 void esp_mesh_deauth_all();
 void esp_mesh_deauth_child(int8_t cidx);
 void esp_mesh_disp_route_table();
@@ -259,4 +284,17 @@ void esp_mesh_print_ver();
 void esp_mesh_release_congest();
 void esp_mesh_scan(struct mesh_scan_para_type *para);
 
-#endif
+uint8_t esp_mesh_get_max_hops();
+uint8_t esp_mesh_get_hop(void);
+bool esp_mesh_is_enabled(void);
+bool esp_mesh_is_root(void);
+esp_err_t esp_mesh_wifi_start(void);
+esp_err_t esp_mesh_enable(esp_mesh_event_cb_t event_cb, esp_mesh_mode_t mode);
+esp_err_t esp_mesh_disable(esp_mesh_event_cb_t event_cb);
+esp_err_t esp_mesh_send(void *buf, uint16_t len, uint32_t tick);
+esp_err_t esp_mesh_recv(void *buf, uint16_t len, uint32_t tick);
+esp_err_t esp_mesh_push_to_recv_queue(void* message, uint32_t timeout_ms);
+esp_err_t esp_mesh_pop_from_tcpip_queue(void* message, uint32_t timeout_ms);
+esp_err_t esp_mesh_update_event(esp_mesh_tcpip_event_t event);
+
+#endif /* __MESH_H__ */

@@ -1,13 +1,8 @@
 #ifndef __MESH_WIFI_H__
 #define __MESH_WIFI_H__
 
-#include <stdint.h>
-#include <xtensa/xos_types.h>
-#include "esp_wifi.h"
-#include "esp_wifi_internal.h"
+#include "esp_err.h"
 
-void mesh_rx_task(void *pvPara);
-bool mesh_wifi_init();
-
+esp_err_t esp_mesh_wifi_init(uint8_t channel, uint8_t mac_connections);
 
 #endif /* __MESH_WIFI_H__ */

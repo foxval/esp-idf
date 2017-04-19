@@ -1,69 +1,63 @@
-#include "esp_system.h"
-#include "nvs_flash.h"
-#include "esp_event_loop.h"
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include "mesh.h"
 #include "mesh_wifi.h"
-#include "mesh_route.h"
-#include "mesh_tcpip.h"
 #include "mesh_config.h"
 #include "mesh_common.h"
-#include "mesh_parent.h"
-#include "mesh_schedule.h"
 
-void MESH_FUNC_ATTR esp_mesh_event_set_cb(system_event_cb_t event_cb)
+/*******************************************************
+ *                Function Definitions
+ *******************************************************/
+void esp_mesh_event_set_cb(system_event_cb_t event_cb)
 {
     esp_event_loop_set_cb(event_cb, NULL);
 }
 
-void MESH_FUNC_ATTR mesh_print_task_info()
-{
-#if 0
-    static char t_info_buf[2048];
-    MESH_MEMSET(t_info_buf, 0, sizeof(t_info_buf));
-    vTaskList((char *)t_info_buf);
-    MESH_PRINT(t_info_buf);
-#endif
-}
-
-bool MESH_FUNC_ATTR mesh_wifi_init()
+esp_err_t esp_mesh_wifi_init(uint8_t channel, uint8_t max_connections)
 {
     static bool init = false;
-
-    if (init) return true;
+    if (init) {
+        return ESP_OK;
+    }
     init = true;
-
-    mesh_print_task_info();
-
     ESP_ERROR_CHECK(nvs_flash_init());
     system_init();
-
     tcpip_adapter_init();
     ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
-
-    ESP_ERROR_CHECK(esp_event_loop_init(mesh_event_cb, NULL));
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
+    ;
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
     esp_wifi_set_mode(WIFI_MODE_APSTA);
-#if 1
     {
         /* Change softAP settings */
         uint8_t mac[6];
+        char ssid[32] = { 0, };
+        wifi_config_t config;
+        memset(&config, 0, sizeof(config));
         esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
-        char ssid[32] = {0, };
         sprintf(ssid, "ESP_%02X%02X%02X", mac[3], mac[4], mac[5]);
-        wifi_config_t conf;
-        memcpy(conf.ap.ssid, ssid, strlen(ssid));
-        conf.ap.ssid_len = strlen(ssid);
-        conf.ap.authmode = WIFI_AUTH_OPEN;
-        conf.ap.channel = 1;
-        conf.ap.max_connection = ESP_MESH_CONNECT_MAX;
-        memset(&conf, 0, sizeof(conf));
-        esp_wifi_get_config(ESP_IF_WIFI_AP, &conf);
-        printf("softAP:%s, max connection:%d", (char*)conf.ap.ssid, conf.ap.max_connection);
+        memcpy(config.ap.ssid, ssid, strlen(ssid));
+        config.ap.ssid_len = strlen(ssid);
+        config.ap.authmode = WIFI_AUTH_OPEN;
+        config.ap.channel = channel;
+        config.ap.max_connection = max_connections;
+        esp_wifi_set_config(ESP_IF_WIFI_AP, &config);
     }
-#endif
-    esp_wifi_start();
 
-    return true;
+    esp_mesh_wifi_start();
+
+    return ESP_OK;
 }

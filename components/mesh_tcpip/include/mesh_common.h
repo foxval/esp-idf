@@ -1,3 +1,17 @@
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef __MESH_COMMON_H__
 #define __MESH_COMMON_H__
 
@@ -10,50 +24,38 @@
 #include <freertos/queue.h>
 #include <freertos/task.h>
 #include "nvs.h"
+#include "nvs_flash.h"
 #include "esp_err.h"
+#include "esp_system.h"
 #include "esp_event.h"
-#include "esp_wifi.h"
 #include "esp_event_loop.h"
+#include "esp_wifi.h"
 #include "esp_wifi_types.h"
 #include "esp_wifi_internal.h"
 
-/***************** mesh constant *****************/
+/*******************************************************
+ *                Constants
+ *******************************************************/
 #define MESH_GRP_ID_LEN                   (6)
 #define MESH_HWADDR_LEN                   (6)
 #define MESH_SSID_LEN_MAX                 (32)
 #define MESH_IP_ADDR_LEN                  (4)
 #define MESH_PASSWD_LEN_MAX               (64)
-#define MESH_INVALID_NVS_HANDLE           ((uint32_t)-1)
-#define MESH_DESTROY_CTX                  ((void *)-1)
-/*************************************************/
 
-#define MESH_FREE    free
-#define MESH_ZALLOC  zalloc
-#define MESH_MALLOC  malloc
-#define MESH_MEMCPY  memcpy
-#define MESH_MEMCMP  memcmp
-#define MESH_MEMSET  memset
-#define MESH_DEBUG   printf
-#define MESH_PRINT   printf
-#define MESH_STRLEN  strlen
-#define MESH_SPRINTF sprintf
-#define MESH_OTA_DBG
+#define MESH_DEBUG ets_printf
+#define MESH_PRINT ets_printf
 
 #define MESH_ENTER_CRITICAL()
 #define MESH_EXIT_CRITICAL()
 
-//#define MESH_FUNC_ATTR ICACHE_FLASH_ATTR
-#define MESH_FUNC_ATTR
-
-typedef struct
-{
-    u32_t addr;
-} esp_ip_addr_t;
-
-typedef wifi_sta_config_t mesh_wifi_stat_t;
+/*******************************************************
+ *                Type Definitions
+ *******************************************************/
 typedef wifi_vnd_mesh_assoc_t mesh_ie_t;
-//typedef esp_ip_addr_t ip_addr_t;
 
+/*******************************************************
+ *                Structures
+ *******************************************************/
 typedef struct
 {
     uint8_t bssid[MESH_HWADDR_LEN];
@@ -100,55 +102,18 @@ struct mesh_server_info_t
 
 typedef struct mesh_router_info
 {
-    mesh_wifi_stat_t router;
+    wifi_sta_config_t router;
     uint8_t set;
 } mesh_router_info_t;
 
-struct mesh_parent_info_t
-{
-    uint8_t bssid[MESH_HWADDR_LEN];
-    uint8_t ssid[MESH_SSID_LEN_MAX];
-    uint8_t ssid_len;
-    uint8_t channel;
-    int8_t rssi;
-    wifi_auth_mode_t authmode;
-};
-
-struct mesh_ap_list_head_t
-{
-    struct mesh_ap_elem_t *ap_list;
-    uint8_t count;
-};
-
-extern bool g_fix_channel;
-extern bool g_mesh_as_root;
-extern uint8_t g_mesh_max_hop;
-extern uint8_t g_mesh_last_hop;
-extern uint8_t g_mesh_scan_retries;
-extern int8_t g_mesh_rssi_threshold;
-extern struct mesh_ctx_t g_mesh_ctx;
-extern nvs_handle g_mesh_nvs_handler;
-extern wifi_vnd_mesh_assoc_t g_mesh_ie;
-extern xTaskHandle g_mesh_rx_task_handle;
-extern struct mesh_grp_id_t g_mesh_grp_id;
-extern struct mesh_encrypt_t g_mesh_encrypt;
-extern mesh_router_info_t g_mesh_router_info;
-extern QueueHandle_t g_mesh_rx_queue_handler;
-extern QueueHandle_t g_mesh_fsm_queue_handler;
-extern QueueHandle_t g_mesh_nvs_queue_handler;
-extern QueueHandle_t g_schedule_queue_handler;
-extern QueueHandle_t g_mesh_usr_queue_handler;
-extern QueueHandle_t g_mesh_tcpip_queue_handler;
+/*******************************************************
+ *                Variables Declarations
+ *******************************************************/
 extern struct mesh_server_info_t g_mesh_server_info;
-extern struct mesh_parent_info_t g_mesh_parent_info;
-extern struct mesh_router_rssi_info_type g_mesh_router_rssi;
 
-void *zalloc(size_t len);
+/*******************************************************
+ *                Function Definitions
+ *******************************************************/
 void esp_mesh_free_packet_contxt(void *ctx);
-void esp_mesh_clear_ap_list(struct mesh_ap_list_head_t *ap_list_head);
-bool esp_mesh_ap_list_find(struct mesh_ap_list_head_t *ap_list_head,
-        mesh_ap_info_t *ap, bool update);
-void esp_mesh_ap_enqueue(struct mesh_ap_list_head_t *ap_list_head,
-        mesh_ap_info_t *ap);
-void mesh_print_task_info();
+
 #endif

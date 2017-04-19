@@ -1,19 +1,30 @@
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef __MESH_CONFIG_H__
 #define __MESH_CONFIG_H__
 
-#include "mesh_parent.h"
 #include "mesh_common.h"
 
-/***************** mesh configure **************************************/
+/*******************************************************
+ *                Constants
+ *******************************************************/
 #define MESH_DEFAULT_TASK_PRI              (3)
 #define MESH_DEFAULT_SCAN_RETRIES          (3)
-#define MESH_DEFAULT_NO_AP_RETRIES         (3)
+#define MESH_DEFAULT_NO_AP_RETRIES         (32)
 #define MESH_DEFAULT_MAX_HOP               (10)
-#define MESH_PARENT_FACTOR                 (10)
-#define MESH_ASSOC_FACTOR                  (3)
-/***********************************************************************/
 
-/***************** namespace and key used in mesh **********************/
 #define MESH_NVS_NAMESPACE                 "MESH"
 #define MESH_NVS_KEY_ROUTER_NAME           "ROUTER"
 #define MESH_NVS_KEY_VER_NAME              "VERSION"
@@ -25,44 +36,20 @@
 #define MESH_NVS_KEY_ENCRYPT_NAME          "ENCRYPT"
 #define MESH_NVS_KEY_RSSI_TH_NAME          "RSSITH"
 #define MESH_NVS_KEY_SERVER_INFO_NAME      "SERVER"
-/***********************************************************************/
 
-/***************** MESH SAVE TASK **************************************/
-#define MESH_SAVE_TASK_NAME                "MNVS"
-#define MESH_SAVE_TASK_HEAP                (1024)
-#define MESH_SAVE_TASK_PRI                 (MESH_DEFAULT_TASK_PRI)
-/***********************************************************************/
-
-/***************** MESH FSM TASK***********************************/
-#define MESH_FSM_TASK_NAME                 "MFSM"
-#define MESH_FSM_TASK_HEAP                 (1024)
-#define MESH_FSM_TASK_PRI                  (MESH_DEFAULT_TASK_PRI + 1)
-/***********************************************************************/
-
-/***************** mesh save task **************************************/
-#define MESH_RX_TASK_NAME                  "MRX"
-#define MESH_RX_TASK_HEAP                  (4096)
-#define MESH_RX_TASK_PRI                   (MESH_DEFAULT_TASK_PRI + 1)
-/***********************************************************************/
-
-/***************** MESH TCPIP RX TASK***********************************/
 #define MESH_TCPIP_RX_TASK_NAME            "MTRX"
-#define MESH_TCPIP_RX_TASK_HEAP            (1024)
+#define MESH_TCPIP_RX_TASK_STACK           (1024*2)
 #define MESH_TCPIP_RX_TASK_PRI             (MESH_DEFAULT_TASK_PRI + 1)
-/***********************************************************************/
 
-/***************** MESH TCPIP TX TASK***********************************/
 #define MESH_TCPIP_TX_TASK_NAME            "MTTX"
-#define MESH_TCPIP_TX_TASK_HEAP            (1024)
+#define MESH_TCPIP_TX_TASK_STACK           (1024*2)
 #define MESH_TCPIP_TX_TASK_PRI             (MESH_DEFAULT_TASK_PRI + 1)
-/***********************************************************************/
 
-/***************** mesh version ****************************************/
 #define MESH_VER_LEN                       (8)
-extern char g_mesh_version[MESH_VER_LEN];
-/***********************************************************************/
 
-/***************** mesh save task operation*****************************/
+/*******************************************************
+ *                Enumerations
+ *******************************************************/
 enum MESH_NVS_OPERATE
 {
     MESH_WRITE_ROUTER = 0x01,      // router AP information
@@ -90,15 +77,6 @@ enum MESH_NVS_OPERATE
     MESH_OPERATE_IDX_MAX,
     MESH_NVS_DESTROY,
 };
-/***********************************************************************/
 
-extern uint8_t g_mesh_last_hop;
-extern nvs_handle g_mesh_nvs_handler;
-extern xTaskHandle g_mesh_save_task_handle;
-extern mesh_router_info_t g_mesh_router_info;
-extern QueueHandle_t g_mesh_nvs_queue_handler;
-extern struct mesh_router_rssi_info_type g_mesh_router_rssi;
 
-extern bool mesh_save_task_init();
-
-#endif
+#endif /* __MESH_CONFIG_H__ */
