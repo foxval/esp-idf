@@ -121,6 +121,27 @@ int adc1_get_voltage(adc1_channel_t channel);
 void adc1_ulp_enable();
 
 /**
+ * @brief Take an ADC1 reading of LNA output
+ *
+ * @note Call adc1_config_width() before the first time this
+ * function is called.
+ *
+ * LNA amplifies voltage difference between SENSOR_VP (GPIO36) and
+ * SENSOR_VN (GPIO39) pins. The board must have sampling capacitors connected
+ * between SENSOR_VP - SENSOR_CAPP, SENSOR_VN - SENSOR_CAPN.
+ *
+ * LNA output is Vout = Vcm + (Vp - Vn) * (Cext/Cint) / 2,
+ *
+ * where Cext is the external sampling capacitor value, Cint is the internal
+ * sampling capacitor value (approximately 0.5pF), Vp and Vn are input voltages
+ * at SENSOR_VP and SENSOR_VN pins, Vcm is the common-mode voltage.
+ *
+ * @return  LNA output voltage sampled by ADC1
+ */
+int adc1_get_lna_voltage();
+
+
+/**
  * @brief Read Hall Sensor
  *
  * @note The Hall Sensor uses channels 0 and 3 of ADC1. Do not configure

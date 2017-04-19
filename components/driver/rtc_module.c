@@ -590,13 +590,14 @@ int adc1_get_voltage(adc1_channel_t channel)
 
     RTC_MODULE_CHECK(channel < ADC1_CHANNEL_MAX, "ADC Channel Err", ESP_ERR_INVALID_ARG);
     portENTER_CRITICAL(&rtc_spinlock);
-    //Adc Controler is Rtc module,not ulp coprocessor
-    SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, 1, 1, SENS_MEAS1_START_FORCE_S); //force pad mux and force start
+    // ADC is controlled by RTC module, not the ULP coprocessor
+    //force pad mux and force start
+    SET_PERI_REG_MASK(SENS_SAR_MEAS_START1_REG, SENS_MEAS1_START_FORCE);
     //Bit1=0:Fsm  Bit1=1(Bit0=0:PownDown Bit10=1:Powerup)
     SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT2_REG, SENS_FORCE_XPD_SAR, 0, SENS_FORCE_XPD_SAR_S); //force XPD_SAR=0, use XPD_FSM
     //Disable Amp Bit1=0:Fsm  Bit1=1(Bit0=0:PownDown Bit10=1:Powerup)
     SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT2_REG, SENS_FORCE_XPD_AMP, 0x2, SENS_FORCE_XPD_AMP_S); //force XPD_AMP=0
-    //Open the ADC1 Data port Not ulp coprocessor
+    //Open the ADC1 Data port not ULP coprocessor port
     SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, 1, 1, SENS_SAR1_EN_PAD_FORCE_S); //open the ADC1 data port
     //Select channel
     SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, SENS_SAR1_EN_PAD, (1 << channel), SENS_SAR1_EN_PAD_S); //pad enable
@@ -626,6 +627,81 @@ void adc1_ulp_enable(void)
     SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT1_REG, SENS_SAR_AMP_WAIT2, 0x1, SENS_SAR_AMP_WAIT2_S);
     SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT2_REG, SENS_SAR_AMP_WAIT3, 0x1, SENS_SAR_AMP_WAIT3_S);
     portEXIT_CRITICAL(&rtc_spinlock);
+}
+
+int adc1_get_lna_voltage()
+{
+    portENTER_CRITICAL(&rtc_spinlock);
+    SET_PERI_REG_MASK(SENS_SAR_MEAS_START1_REG, SENS_MEAS1_START_FORCE);
+    //XPD_SAR controlled by FSM
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT2_REG, SENS_FORCE_XPD_SAR, 0, SENS_FORCE_XPD_SAR_S);
+    //XPD_AMP controlled by FSM
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_WAIT2_REG, SENS_FORCE_XPD_AMP, 0, SENS_FORCE_XPD_AMP_S);
+    //enable ADC1_CH0 (SENSOR_VP)
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, SENS_SAR1_EN_PAD, 1, SENS_SAR1_EN_PAD_S);
+    //open the ADC1 data port
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, 1, 1, SENS_SAR1_EN_PAD_FORCE_S);
+
+    /* Configure AMP FSM
+     *
+     * FSM controls sampling, charge transfer, and conversion process.
+     *
+     * It has 4 stages:
+     * - stage 1: charge external sampling capacitor
+     * - stage 2: intermediate stage, sampling capacitor is disconnected from
+     *            both the input and an internal capacitor
+     * - stage 3: charge transfer from external sampling capacitor to the
+     *            internal one
+     * - stage 4: ADC conversion
+     *
+     * What happens in hardware at each of the stages is configured using the
+     * fields SENS_SAR_MEAS_CTRL_REG. See "Structure of Low Noise Amplifier"
+     * figure in the TRM. For each field:
+     * - BIT(3) - means that corresponding block is enabled at stage 0
+     * - BIT(2) — at stage 1
+     * - BIT(1) - at stage 2
+     * - BIT(0) - at stage 3
+     */
+
+    const int S1 = BIT(3);
+    const int S2 = BIT(2);
+    const int S3 = BIT(1);
+    const int S4 = BIT(0);
+    const int OFF = 0;
+    const int ALL = S1 | S2 | S3 | S4;
+
+    // SHORT_REF_GND switch is always open
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_AMP_SHORT_REF_GND_FSM, S1);
+    // SHORT_REF switch is closed at charge transfer and conversion stages
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_AMP_SHORT_REF_FSM, S1);
+    // SAR ADC is enabled at charge transfer and conversion stages
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_SAR_RSTB_FSM, S3 | S4);
+    // RST_FB switch is closed at initial sampling stage
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_AMP_RST_FB_FSM, S1);
+    // Amplifier and ADC are enabled at all stages
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_XPD_SAR_AMP_FSM, ALL);
+    REG_SET_FIELD(SENS_SAR_MEAS_CTRL_REG, SENS_XPD_SAR_FSM, ALL);
+
+    // Set durations of each stage, in RTC_FAST_CLK cycles
+    const int stage1_cycles = 1000;
+    const int stage2_cycles = 1;
+    const int stage3_cycles = 4;
+    REG_SET_FIELD(SENS_SAR_MEAS_WAIT1_REG, SENS_SAR_AMP_WAIT1, stage1_cycles);
+    REG_SET_FIELD(SENS_SAR_MEAS_WAIT1_REG, SENS_SAR_AMP_WAIT2, stage2_cycles);
+    REG_SET_FIELD(SENS_SAR_MEAS_WAIT2_REG, SENS_SAR_AMP_WAIT3, stage3_cycles);
+
+    // Trigger force start
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, 1, 0, SENS_MEAS1_START_SAR_S);
+    SET_PERI_REG_BITS(SENS_SAR_MEAS_START1_REG, 1, 1, SENS_MEAS1_START_SAR_S);
+
+    // Wait for done flag to be set
+    while (GET_PERI_REG_MASK(SENS_SAR_MEAS_START1_REG, SENS_MEAS1_DONE_SAR) == 0) {
+        ets_delay_us(1);
+    };
+
+    uint32_t adc_value = GET_PERI_REG_BITS2(SENS_SAR_MEAS_START1_REG, SENS_MEAS1_DATA_SAR, SENS_MEAS1_DATA_SAR_S);
+    portEXIT_CRITICAL(&rtc_spinlock);
+    return adc_value;
 }
 
 /*---------------------------------------------------------------
