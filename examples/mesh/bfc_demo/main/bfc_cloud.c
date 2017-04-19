@@ -1,24 +1,33 @@
-/* Mesh Demo with BFC Server
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 
- This example code is in the Public Domain (or CC0 licensed, at your option.)
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
- Unless required by applicable law or agreed to in writing, this
- software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
- CONDITIONS OF ANY KIND, either express or implied.
- */
-
-#include "esp_wifi.h"
-#include "esp_err.h"
 #include "mesh.h"
 #include "mesh_common.h"
 #include "mesh_log.h"
 #include "bfc_cloud.h"
 #include "bfc_light.h"
 
+/*******************************************************
+ *                Variable Definitions
+ *******************************************************/
 static const char *TAG = "bfc_cloud";
 static bfc_t bfc = { .delay = 0, .brightness = 100, .fix_brightness = 100,
         .ping_time = 10, };
 
+/*******************************************************
+ *                Function Definitions
+ *******************************************************/
 void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
 {
     uint8_t buf[33];
@@ -35,11 +44,11 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     buf[0] = BFC_SEND | BFC_CMD_PING;
     buf[1] = BFC_VALUE_TOKEN;
     buf[2] = 0xbf;
-    buf[3] = 0xc0;                       // token 2 bytes
+    buf[3] = 0xc0;                     // token 2 bytes
     buf[4] = BFC_VALUE_BSSID;
-    MESH_MEMCPY(&buf[5], mac, 6);        // bssid 6 bytes
+    memcpy(&buf[5], mac, 6);           // bssid 6 bytes
     buf[11] = BFC_VALUE_P_BSSID;
-    MESH_MEMCPY(&buf[12], ap.bssid, 6);  // parent bssid 6 bytes
+    memcpy(&buf[12], ap.bssid, 6);     // parent bssid 6 bytes
     buf[17] -= 1;                 // parent sta MAC instead of parent softAP MAC
     buf[18] = BFC_VALUE_BRIGHTNESS;
 #if 0
@@ -67,19 +76,19 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     buf[31] = restart_cnt >> 8;
     buf[32] = restart_cnt & 0xff;
 #endif
-    buf_size = 22; // application data size
-    struct mesh_header_format header;
-    MESH_MEMSET(&header, 0, sizeof(header));
+    buf_size = 22;                       // application data size
+    mesh_hdr_t header;
+    memset(&header, 0, sizeof(header));
     header.ocr = 1;
     header.proto.protocol = M_PROTO_BIN;
     header.len = sizeof(header) + buf_size;
     esp_wifi_get_mac(ESP_IF_WIFI_STA, header.src_addr);
-    MESH_MEMCPY(header.dst_addr, g_mesh_server_info.ip,
+    memcpy(header.dst_addr, g_mesh_server_info.ip,
             sizeof(g_mesh_server_info.ip));
-    MESH_MEMCPY(header.dst_addr + sizeof(g_mesh_server_info.ip),
+    memcpy(header.dst_addr + sizeof(g_mesh_server_info.ip),
             &g_mesh_server_info.port, sizeof(g_mesh_server_info.port));
-    MESH_MEMCPY(ping_buf, (uint8_t*) &header, sizeof(header)); //seq & ack
-    MESH_MEMCPY(&ping_buf[24], buf, buf_size);
+    memcpy(ping_buf, (uint8_t*) &header, sizeof(header)); //seq & ack
+    memcpy(&ping_buf[24], buf, buf_size);
 
 }
 

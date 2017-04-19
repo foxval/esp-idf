@@ -1,6 +1,23 @@
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef _BFC_CLOUD_H_
 #define _BFC_CLOUD_H_
 
+/*******************************************************
+ *                Enumerations
+ *******************************************************/
 enum
 {
     BFC_SEND, BFC_ACK = 128,
@@ -59,6 +76,9 @@ enum BFC_PROTO_VALUE
     BFC_VALUE_RESPONSE = 127
 };
 
+/*******************************************************
+ *                Structures
+ *******************************************************/
 typedef struct
 {
     uint16_t delay;           //change color duration accordingly
@@ -76,6 +96,9 @@ typedef struct
     uint16_t token_val;
 } bfc_token_t;
 
+/*******************************************************
+ *                Function Definitions
+ *******************************************************/
 void mesh_bfc_process_received_data(uint8_t* buf, uint16_t len);
 void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len);
 
