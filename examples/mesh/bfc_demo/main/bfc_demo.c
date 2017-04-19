@@ -31,6 +31,7 @@ void esp_mesh_event_cb(esp_mesh_event_t event);
  *                Function Declarations
  *******************************************************/
 extern void mesh_bfc_start(void);
+extern void mesh_bfc_stop(void);
 extern esp_err_t esp_mesh_usr_init(void);
 
 /*******************************************************
@@ -136,6 +137,16 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
                 break;
             }
             mesh_bfc_start();
+            break;
+
+        case ESP_MESH_EVENT_TCP_DISCONNECTED:
+            /* root disconnects with server */
+            MESH_LOGI("MESH_EVENT_TCP_DISCONNECTED")
+            ;
+            if (!esp_mesh_is_root()) {
+                break;
+            }
+            mesh_bfc_stop();
             break;
 
         case ESP_MESH_EVENT_FAIL:

@@ -22,27 +22,28 @@
  *                Constants
  *******************************************************/
 static const char *TAG = "mesh_bfc_cloud";
+static volatile bool is_started = false;
+static volatile bool is_running = true;
 
 #define BFC_PING_PERIOD_MS (10000)
 
 /*******************************************************
  *                Function Declarations
  *******************************************************/
-void mesh_bfc_rx(void);
-void mesh_bfc_task_tx(void *pvParameter);
-void mesh_bfc_task_rx(void *pvParameter);
-void mesh_bfc_tx(void);
+void mesh_bfc_tx_task_main(void *pvPara);
+void mesh_bfc_rx_task_main(void *pvPara);
 
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void mesh_bfc_tx(void)
+void mesh_bfc_tx_task_main(void *pvPara)
 {
     uint8_t ping_buf[49];
     int old_time = 0;
     int cur_time = 0;
+    is_running = true;
 
-    while (1) {
+    while (is_running) {
         cur_time = system_get_time();
         mesh_bfc_pack_ping(ping_buf, sizeof(ping_buf));
         mesh_hdr_t* header = (mesh_hdr_t *) ping_buf;
@@ -66,22 +67,27 @@ void mesh_bfc_tx(void)
         esp_mesh_send(header, header->len, 3000);
         vTaskDelay(BFC_PING_PERIOD_MS / portTICK_RATE_MS);
     }
+
+    vTaskDelete(NULL);
 }
 
-void mesh_bfc_rx(void)
+void mesh_bfc_rx_task_main(void *pvPara)
 {
     int size;
-    uint16_t len = 256;
-    uint8_t recv_buf[256];
-    void *buf = (void*) recv_buf;
+    uint8_t* buf = NULL;
+    uint16_t len = 1024;
+    mesh_hdr_t *header = NULL;
     int header_size = sizeof(mesh_hdr_t);
     int oe_size = 0;
     int offset = 0;
     int old_time = 0, cur_time = system_get_time();
+    is_running = true;
 
-    while (1) {
+    buf = (uint8_t*) malloc(len);
+    while (is_running) {
+        memset(buf, 0, len);
         while ((size = esp_mesh_recv(buf, len, portMAX_DELAY)) > 0) {
-            mesh_hdr_t *header = (mesh_hdr_t *) buf;
+            header = (mesh_hdr_t *) buf;
 //            MESH_LOGW("[%d]ms, Receive from server, len:%d, DST:"MACSTR", heap:%d",
 //                    (cur_time - old_time) / 1000, size,
 //                    MAC2STR(header->dst_addr), esp_get_free_heap_size());
@@ -96,28 +102,28 @@ void mesh_bfc_rx(void)
             }
         }
     }
-}
 
-void mesh_bfc_task_tx(void *pvParameter)
-{
-    mesh_bfc_tx();
-    vTaskDelete(NULL);
-}
-
-void mesh_bfc_task_rx(void *pvParameter)
-{
-    mesh_bfc_rx();
+    free(buf);
+    buf = NULL;
     vTaskDelete(NULL);
 }
 
 void mesh_bfc_start(void)
 {
-    static bool is_started = false;
     if (is_started) {
         return;
     }
     is_started = true;
-
-    xTaskCreate(mesh_bfc_task_tx, "MPTX", 2048, NULL, 5, NULL);
-    xTaskCreate(mesh_bfc_task_rx, "MPRX", 2048, NULL, 5, NULL);
+    xTaskCreate(mesh_bfc_tx_task_main, "MBTX", 2048, NULL, 5, NULL);
+    xTaskCreate(mesh_bfc_rx_task_main, "MBRX", 2048, NULL, 5, NULL);
 }
+
+void mesh_bfc_stop(void)
+{
+    if (!is_started) {
+        return;
+    }
+    is_started = false;
+    is_running = false;
+}
+
