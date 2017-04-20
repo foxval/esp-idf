@@ -28,9 +28,15 @@ static const char *TAG = "mesh_tcpip";
 #define MESH_CNX_STATE_CONNECTING    (2)
 #define MESH_CNX_STATE_CONNECTED     (3)
 
+#define SERVER_CONNECTED             (1)
+#define SERVER_DISCONNECTED          (0)
+
+/*******************************************************
+ *                Variable Definitions
+ *******************************************************/
 static xTaskHandle mesh_tcpip_tx_task = NULL;
 static xTaskHandle mesh_tcpip_rx_task = NULL;
-static int tcp_cli_sock = -1;
+static volatile int tcp_cli_sock = -1;
 static int server_port = -1;
 static char server_hostname[128] = { 0, };
 static volatile uint8_t mesh_cnx_state = MESH_CNX_STATE_IDLE;
@@ -182,7 +188,8 @@ static esp_err_t _tcpip_connect_fail(void)
 
 static esp_err_t mesh_tcpip_connect_server(void)
 {
-    printf("%s,%d mesh_cnx_state:%d\n", __func__, __LINE__, mesh_cnx_state);
+    MESH_LOGW("server state:%s\n",
+            (mesh_cnx_state == MESH_CNX_STATE_IDLE) ? "idle" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTING) ? "connecting" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTED) ? "connected" : "wrong state");
     int opt = 1;
     int keep_idle = 60;
     int keep_cnt = 3;
@@ -266,6 +273,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
         mesh_cnx_state = MESH_CNX_STATE_CONNECTED;
         esp_mesh_update_event(ESP_MESH_TCP_CONNECTED);
     }
+
     return ESP_OK;
 }
 
@@ -279,6 +287,15 @@ static esp_err_t mesh_tcpip_disconnect_server(void)
     return ESP_OK;
 }
 
+int is_server_connected(void)
+{
+    if (tcp_cli_sock < 0 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
+        return SERVER_DISCONNECTED;
+    } else {
+        return SERVER_CONNECTED;
+    }
+}
+
 static void mesh_tcpip_tx_task_main(void *pvPara)
 {
     fd_set wrset, exset;
@@ -286,20 +303,14 @@ static void mesh_tcpip_tx_task_main(void *pvPara)
     mesh_hdr_t *head = NULL;
     int cur_time, old_time = 0;
 
-    if (tcp_cli_sock == -1 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
-        mesh_tcpip_connect_server();
-    }
     is_running = true;
-
     while (is_running) {
         if (!esp_mesh_is_root()) {
             /* non-root */
             break;
         }
-        if (tcp_cli_sock == -1 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
-            mesh_tcpip_connect_server();
+        if (is_server_connected() == SERVER_DISCONNECTED) {
             vTaskDelay(3000 / portTICK_PERIOD_MS);
-            MESH_LOGE("reconnect to server ...");
             continue;
         }
 
@@ -321,11 +332,12 @@ static void mesh_tcpip_tx_task_main(void *pvPara)
                 }
                 MESH_DEBUG("tx exception\n");
                 if (!esp_mesh_is_enabled()) {
-                    MESH_DEBUG("tx not enable\n");
+                    MESH_DEBUG("mesh not enabled\n");
                     break;
                 }
             }
             if (FD_ISSET(tcp_cli_sock, &wrset)) {
+
                 /*
                  * check write set
                  * if there is packet waiting in queue, we get packet from queue,
@@ -341,7 +353,9 @@ static void mesh_tcpip_tx_task_main(void *pvPara)
                                 (cur_time - old_time) / 1000, head->len,
                                 MAC2STR(head->src_addr), tcp_cli_sock);
 
-                        send(tcp_cli_sock, head, head->len, MSG_DONTWAIT);
+                        if (is_server_connected() == SERVER_CONNECTED) {
+                            send(tcp_cli_sock, head, head->len, MSG_DONTWAIT);
+                        }
                         old_time = cur_time;
                     }
                     esp_mesh_free_packet_contxt(ctx);
@@ -373,26 +387,25 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
     mesh_hdr_t* header = NULL;
     uint8_t* buf = NULL;
     uint8_t mac[6] = { 0, };
-    is_running = true;
 
+    is_running = true;
     esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
     while (is_running) {
         if (esp_mesh_get_hop() != 1) {
             /* non-root */
             break;
         }
-        if (tcp_cli_sock == -1 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
-            //sleep and wait tx task to do the connection
-            vTaskDelay(3000 / portTICK_PERIOD_MS);
-//            MESH_LOGE("reconnect to TCP server ...");
-            continue;
+        if (is_server_connected() == SERVER_DISCONNECTED) {
+            if (mesh_tcpip_connect_server() != ESP_OK) {
+                vTaskDelay(3000 / portTICK_PERIOD_MS);
+                continue;
+            }
         }
 
         FD_ZERO(&rdset);
         FD_SET(tcp_cli_sock, &rdset);
         FD_ZERO(&exset);
         FD_SET(tcp_cli_sock, &exset);
-
         if (select(tcp_cli_sock + 1, &rdset, NULL, &exset, NULL) > 0) {
             ctx = NULL;
             if (FD_ISSET(tcp_cli_sock, &exset)) {
@@ -404,7 +417,7 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
                 }
                 MESH_DEBUG("rx exception\n");
                 if (!esp_mesh_is_enabled()) {
-                    MESH_DEBUG("rx not enable\n");
+                    MESH_DEBUG("mesh not enabled\n");
                     break;
                 }
             }
@@ -415,7 +428,6 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
                 if (ctx) {
                     ctx->buf = malloc(ESP_MESH_PKT_LEN_MAX);
                     buf = (uint8_t*) ctx->buf;
-//                    MESH_LOGE("buf:%p", buf);
                     if (ctx->buf) {
                         memset(ctx->buf, 0, ESP_MESH_PKT_LEN_MAX);
                         ctx->ifidx = WIFI_IF_STA;
