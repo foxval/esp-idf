@@ -62,6 +62,11 @@ void esp_mesh_connected(void)
     }
 }
 
+void esp_mesh_disconnected(void)
+{
+    mesh_bfc_gpio_set(RGB_LIGHT_WARNING);
+}
+
 void esp_mesh_event_cb(esp_mesh_event_t event)
 {
     switch (event) {
@@ -105,6 +110,11 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             /* wifi disconnected */
             MESH_LOGI("MESH_EVENT_DISCONNECTED")
             ;
+            esp_mesh_disconnected();
+            if (!esp_mesh_is_root()) {
+                /* non-root stop application tasks */
+                mesh_bfc_stop();
+            }
             break;
 
         case ESP_MESH_EVENT_LAYER_CHANGE:
@@ -122,31 +132,28 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             /* root starts to connect to server */
             MESH_LOGI("MESH_EVENT_TCP_CONNECT")
             ;
-            if (!esp_mesh_is_root()) {
-                break;
+            if (esp_mesh_is_root()) {
+                esp_mesh_tcp_client_start(MESH_SERVER_HOSTNAME,
+                        strlen(MESH_SERVER_HOSTNAME), MESH_SERVER_PORT);
             }
-            esp_mesh_tcp_client_start(MESH_SERVER_HOSTNAME,
-                    strlen(MESH_SERVER_HOSTNAME), MESH_SERVER_PORT);
             break;
 
         case ESP_MESH_EVENT_TCP_CONNECTED:
             /* root connects with server */
             MESH_LOGI("MESH_EVENT_TCP_CONNECTED")
             ;
-            if (!esp_mesh_is_root()) {
-                break;
+            if (esp_mesh_is_root()) {
+                mesh_bfc_start();
             }
-            mesh_bfc_start();
             break;
 
         case ESP_MESH_EVENT_TCP_DISCONNECTED:
             /* root disconnects with server */
             MESH_LOGI("MESH_EVENT_TCP_DISCONNECTED")
             ;
-            if (!esp_mesh_is_root()) {
-                break;
+            if (esp_mesh_is_root()) {
+                mesh_bfc_stop();
             }
-            mesh_bfc_stop();
             break;
 
         case ESP_MESH_EVENT_FAIL:
@@ -166,7 +173,6 @@ void mesh_usr_task(void *pvParameter)
     esp_mesh_enable(esp_mesh_event_cb, MESH_ONLINE);
     vTaskDelete(NULL);
 }
-
 
 void app_main(void)
 {
