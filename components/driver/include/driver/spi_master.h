@@ -131,7 +131,7 @@ typedef struct spi_device_t* spi_device_handle_t;  ///< Handle for a device on a
  *         - ESP_ERR_NO_MEM        if out of memory
  *         - ESP_OK                on success
  */
-esp_err_t spi_bus_initialize(spi_host_device_t host, spi_bus_config_t *bus_config, int dma_chan);
+esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus_config, int dma_chan);
 
 /**
  * @brief Free a SPI bus
@@ -152,6 +152,9 @@ esp_err_t spi_bus_free(spi_host_device_t host);
  * This initializes the internal structures for a device, plus allocates a CS pin on the indicated SPI master
  * peripheral and routes it to the indicated GPIO. All SPI master devices have three CS pins and can thus control
  * up to three devices.
+ *
+ * @note While in general, speeds up to 80MHz on the dedicated SPI pins and 40MHz on GPIO-matrix-routed pins are
+ *       supported, full-duplex transfers routed over the GPIO matrix only support speeds up to 26MHz.
  *
  * @param host SPI peripheral to allocate device on
  * @param dev_config SPI interface protocol config for the device
