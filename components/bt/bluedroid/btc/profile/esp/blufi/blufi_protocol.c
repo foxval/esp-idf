@@ -99,6 +99,14 @@ void btc_blufi_protocol_handler(uint8_t type, uint8_t *data, int len)
             btc_blufi_send_encap(type, &data[0], sizeof(data));
             break;
         }
+        case BLUFI_TYPE_CTRL_SUBTYPE_DISCONNECT_BLE:{
+            printf("BLUFI_TYPE_CTRL_SUBTYPE_DISCONNECT_BLE\n");
+            msg.sig = BTC_SIG_API_CB;
+            msg.pid = BTC_PID_BLUFI;
+            msg.act = ESP_BLUFI_EVENT_RECV_SLAVER_DISCONNECT_BLE;     
+            btc_transfer_context(&msg, NULL, 0, NULL);
+            break;
+        }
         default:
             LOG_ERROR("%s Unkown Ctrl pkt %02x\n", __func__, type);
             break;
