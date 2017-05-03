@@ -115,7 +115,9 @@ typedef enum {
     I2S_MODE_SLAVE = 2,
     I2S_MODE_TX = 4,
     I2S_MODE_RX = 8,
-    I2S_MODE_DAC_BUILT_IN = 16
+    I2S_MODE_DAC_BUILT_IN = 16,       /*!< Output I2S data to built-in DAC, no matter the data format is 16bit or 32 bit, the DAC module will only take the least 8bit*/
+    //I2S_MODE_ADC_BUILT_IN = 32,       /*!< Currently not supported yet, will be added for the next version*/
+    I2S_MODE_PDM = 64,
 } i2s_mode_t;
 
 /**
