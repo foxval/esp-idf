@@ -36,7 +36,7 @@ This is the documentation for Espressif IoT Development Framework (`esp-idf <htt
 .. toctree::
    :hidden:
 
-   Get Started <get-started/index> 
+   Get Started <get-started/index>
    API Reference <api-reference/index>
    H/W Reference <hw-reference/index>
    API Guides <api-guides/index>

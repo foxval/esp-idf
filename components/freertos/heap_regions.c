@@ -153,7 +153,7 @@ task.h is included from an application file. */
 typedef struct A_BLOCK_LINK
 {
     struct A_BLOCK_LINK *pxNextFreeBlock;   /*<< The next free block in the list. */
-    int xBlockSize: 24;                     /*<< The size of the free block. */
+    unsigned int xBlockSize: 24;            /*<< The size of the free block. */
     int xTag: 7;                            /*<< Tag of this region */
     int xAllocated: 1;                      /*<< 1 if allocated */
 } BlockLink_t;
@@ -419,6 +419,7 @@ uint8_t *puc;
     than the block being inserted. */
     for( pxIterator = &xStart; pxIterator->pxNextFreeBlock < pxBlockToInsert; pxIterator = pxIterator->pxNextFreeBlock )
     {
+
         /* Nothing to do here, just iterate to the right position. */
     }
 

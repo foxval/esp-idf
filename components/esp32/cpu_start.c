@@ -63,6 +63,9 @@
 #include "esp_app_trace.h"
 #include "esp_clk.h"
 #include "trax.h"
+#include "esp_psram_tst.h"
+
+#include "esp_psram.h"
 
 #define STRINGIFY(s) STRINGIFY2(s)
 #define STRINGIFY2(s) #s
@@ -90,6 +93,17 @@ extern void (*__init_array_end)(void);
 extern volatile int port_xSchedulerRunning[2];
 
 static const char* TAG = "cpu_start";
+
+
+#if CONFIG_FREERTOS_UNICORE
+#define PSRAM_MODE PSRAM_VADDR_MODE_NORMAL
+#else
+#if CONFIG_MEMMAP_SPIRAM_CACHE_EVENODD
+#define PSRAM_MODE PSRAM_VADDR_MODE_EVENODD
+#else
+#define PSRAM_MODE PSRAM_VADDR_MODE_LOWHIGH
+#endif
+#endif
 
 /*
  * We arrive here after the bootloader finished loading the program from flash. The hardware is mostly uninitialized,
@@ -133,13 +147,27 @@ void IRAM_ATTR call_start_cpu0()
         memset(&_rtc_bss_start, 0, (&_rtc_bss_end - &_rtc_bss_start) * sizeof(_rtc_bss_start));
     }
 
+#if CONFIG_MEMMAP_SPIRAM_ENABLE
+    if ( psram_enable(PSRAM_CACHE_F40M_S40M, PSRAM_MODE) != ESP_OK) {
+        ESP_EARLY_LOGE(TAG, "PSRAM enabled but initialization failed. Bailing out.");
+        abort();
+    } else {
+        ESP_EARLY_LOGI(TAG, "PSRAM initialized, cache is in %s mode.", (PSRAM_MODE==PSRAM_VADDR_MODE_EVENODD)?"even/odd (2-core)":"normal (1-core");
+    }
+#endif
     ESP_EARLY_LOGI(TAG, "Pro cpu up.");
+
 
 #if !CONFIG_FREERTOS_UNICORE
     ESP_EARLY_LOGI(TAG, "Starting app cpu, entry point is %p", call_start_cpu1);
     //Flush and enable icache for APP CPU
+
+    CLEAR_PERI_REG_MASK(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DRAM1);
+
+    cache_sram_mmu_set( 1, 0, 0x3f800000, 0, 32, 128 );
     Cache_Flush(1);
     Cache_Read_Enable(1);
+
     esp_cpu_unstall(1);
     //Enable clock gating and reset the app cpu.
     SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
@@ -147,6 +175,7 @@ void IRAM_ATTR call_start_cpu0()
     SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
     CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
     ets_set_appcpu_boot_addr((uint32_t)call_start_cpu1);
+
 
     while (!app_cpu_started) {
         ets_delay_us(100);
@@ -163,7 +192,6 @@ void IRAM_ATTR call_start_cpu0()
        works around this problem. */
     heap_alloc_caps_init();
 
-
     ESP_EARLY_LOGI(TAG, "Pro cpu start user code");
     start_cpu0();
 }
@@ -175,7 +203,7 @@ void IRAM_ATTR call_start_cpu1()
                   "wsr    %0, vecbase\n" \
                   ::"r"(&_init_start));
 
-    ets_set_appcpu_boot_addr(0); 
+    ets_set_appcpu_boot_addr(0);
     cpu_configure_region_protection();
 
 #if CONFIG_CONSOLE_UART_NONE
@@ -250,6 +278,10 @@ void start_cpu0_default(void)
     esp_core_dump_init();
 #endif
 
+#if CONFIG_SPIRAM_CACHE_WORKAROUND_TEST
+    psram_tst_setup();
+#endif
+
     xTaskCreatePinnedToCore(&main_task, "main",
             ESP_TASK_MAIN_STACK, NULL,
             ESP_TASK_MAIN_PRIO, NULL, 0);
@@ -277,6 +309,9 @@ void start_cpu1_default(void)
     //has started, but it isn't active *on this CPU* yet.
     esp_cache_err_int_init();
     esp_crosscore_int_init();
+#if CONFIG_SPIRAM_CACHE_WORKAROUND_TEST
+    psram_tst_setup();
+#endif
 
     ESP_EARLY_LOGI(TAG, "Starting scheduler on APP CPU.");
     xPortStartScheduler();

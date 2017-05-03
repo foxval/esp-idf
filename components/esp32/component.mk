@@ -11,7 +11,11 @@ ifdef CONFIG_WIFI_ENABLED
 LIBS += net80211 pp wpa smartconfig coexist wps wpa2
 endif
 
+ifeq ("$(CONFIG_SPIRAM_CACHE_WORKAROUND)","y")
+LINKER_SCRIPTS += esp32.common.ld esp32.rom.psram_workaround.ld esp32.peripherals.ld
+else
 LINKER_SCRIPTS += esp32.common.ld esp32.rom.ld esp32.peripherals.ld
+endif
 
 ifeq ("$(CONFIG_NEWLIB_NANO_FORMAT)","y")
 LINKER_SCRIPTS += esp32.rom.nanofmt.ld
@@ -27,6 +31,8 @@ COMPONENT_ADD_LDFLAGS := -lesp32 \
                          $(addprefix -l,$(LIBS)) \
                          -L $(COMPONENT_PATH)/ld \
                          -T esp32_out.ld \
+                         -u ld_include_panic_highint_hdl \
+                         -u ld_include_psram_tst \
                          $(addprefix -T ,$(LINKER_SCRIPTS))
 
 ALL_LIB_FILES := $(patsubst %,$(COMPONENT_PATH)/lib/lib%.a,$(LIBS))
