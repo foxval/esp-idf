@@ -295,6 +295,12 @@ static size_t vfs_fat_write(void* ctx, int fd, const void * data, size_t size)
             return -1;
         }
     }
+    res = f_sync(file);
+    if (res != FR_OK) {
+        ESP_LOGD(TAG, "%s: fresult=%d", __func__, res);
+        errno = fresult_to_errno(res);
+        return -1;
+    }
     return written;
 }
 
