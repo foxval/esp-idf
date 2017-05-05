@@ -100,10 +100,8 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_hop())
             ;
             esp_mesh_connected();
-            if (!esp_mesh_is_root()) {
-                /* non-root starts application tasks */
-                mesh_bfc_start();
-            }
+            mesh_bfc_start();
+
             break;
 
         case ESP_MESH_EVENT_DISCONNECTED:
@@ -111,9 +109,9 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             MESH_LOGI("MESH_EVENT_DISCONNECTED")
             ;
             esp_mesh_disconnected();
-            if (!esp_mesh_is_root()) {
-                /* non-root stop application tasks */
-                mesh_bfc_stop();
+            mesh_bfc_stop();
+            if (esp_mesh_is_root()) {
+                esp_mesh_tcp_client_stop();
             }
             break;
 
@@ -142,18 +140,12 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             /* root connects with server */
             MESH_LOGI("MESH_EVENT_TCP_CONNECTED")
             ;
-            if (esp_mesh_is_root()) {
-                mesh_bfc_start();
-            }
             break;
 
         case ESP_MESH_EVENT_TCP_DISCONNECTED:
             /* root disconnects with server */
             MESH_LOGI("MESH_EVENT_TCP_DISCONNECTED")
             ;
-            if (esp_mesh_is_root()) {
-                mesh_bfc_stop();
-            }
             break;
 
         case ESP_MESH_EVENT_FAIL:

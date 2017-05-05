@@ -89,26 +89,6 @@ enum mesh_node_t
     MESH_NODE_PARENT, MESH_NODE_CHILD, MESH_NODE_ALL,
 };
 
-enum mesh_option_type
-{
-    M_O_CONGEST_REQ = 0,      // local flow request option
-    M_O_CONGEST_RESP,         // flow response option
-    M_O_ROUTER_SPREAD,        // router information spread option
-    M_O_ROUTE_ADD,            // route table update (node joins mesh) option
-    M_O_ROUTE_DEL,            // route table update (node leaves mesh) option
-    M_O_TOPO_REQ,             // topology request option
-    M_O_TOPO_RESP,            // topology response option
-    M_O_MCAST_GRP,            // group list of mcast
-    M_O_MESH_FRAG,            // mesh management fragment option
-    M_O_USR_FRAG,             // user data fragment
-    M_O_USR_OPTION,           // user option
-    M_O_CONGEST_OREQ,         // online flow request option
-    M_O_ROUTER_RS,            // router RSSI solicit
-    M_O_ROUTER_RI,            // router RSSI information
-    M_O_ROUTER_RA,            // router RSSI advertisement
-    M_O_INVALID = 0xFFFF      // invalid option type
-};
-
 enum mesh_usr_proto_type
 {
     M_PROTO_NONE = 0,       // used to delivery mesh management packet
@@ -258,10 +238,7 @@ bool esp_mesh_get_usr_data_proto(mesh_hdr_t *head,
 bool esp_mesh_set_usr_data_proto(mesh_hdr_t *head,
         enum mesh_usr_proto_type proto);
 bool esp_mesh_is_root_candidate();
-bool esp_mesh_get_node_info(enum mesh_node_t type, void **info,
-        uint16_t *count);
-bool esp_mesh_get_router(wifi_sta_config_t *router);
-bool esp_mesh_set_router(wifi_sta_config_t *router, int channel);
+
 bool esp_mesh_encrypt_init(wifi_auth_mode_t mode, void *passwd, uint8_t pw_len);
 bool esp_mesh_group_id_init(void *grp_id, uint16_t gid_len);
 bool esp_mesh_regist_rebuild_fail_cb(esp_mesh_usr_callback_t cb);
@@ -284,6 +261,8 @@ void esp_mesh_print_ver();
 void esp_mesh_release_congest();
 void esp_mesh_scan(struct mesh_scan_para_type *para);
 
+bool esp_mesh_get_router(wifi_sta_config_t *router);
+bool esp_mesh_set_router(wifi_sta_config_t *router, int channel);
 uint8_t esp_mesh_get_max_hops();
 uint8_t esp_mesh_get_hop(void);
 bool esp_mesh_is_enabled(void);

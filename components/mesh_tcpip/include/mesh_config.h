@@ -20,7 +20,7 @@
 /*******************************************************
  *                Constants
  *******************************************************/
-#define MESH_DEFAULT_TASK_PRI              (3)
+#define MESH_DEFAULT_TASK_PRI              (5)
 #define MESH_DEFAULT_SCAN_RETRIES          (3)
 #define MESH_DEFAULT_NO_AP_RETRIES         (32)
 #define MESH_DEFAULT_MAX_HOP               (10)
@@ -38,12 +38,12 @@
 #define MESH_NVS_KEY_SERVER_INFO_NAME      "SERVER"
 
 #define MESH_TCPIP_RX_TASK_NAME            "MTRX"
-#define MESH_TCPIP_RX_TASK_STACK           (1024*2)
-#define MESH_TCPIP_RX_TASK_PRI             (MESH_DEFAULT_TASK_PRI + 1)
+#define MESH_TCPIP_RX_TASK_STACK           (2048)
+#define MESH_TCPIP_RX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
 
 #define MESH_TCPIP_TX_TASK_NAME            "MTTX"
-#define MESH_TCPIP_TX_TASK_STACK           (1024*2)
-#define MESH_TCPIP_TX_TASK_PRI             (MESH_DEFAULT_TASK_PRI + 1)
+#define MESH_TCPIP_TX_TASK_STACK           (2048)
+#define MESH_TCPIP_TX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
 
 #define MESH_VER_LEN                       (8)
 
