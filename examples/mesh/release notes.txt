@@ -1,0 +1,61 @@
+version 0.6
+------------------------
+New Features:
+=============
+
+1. Add timer to print the routing table which holds the total children directory.
+2. Add routing table manipulation(add/del).
+3. Modify scan time from (300~500)ms to (120~300)ms.
+
+BugFixes:
+=========
+1. Fix bugs in unicast forwarding due to wrong routine.
+2. Fix bugs in handling cyclic network.
+
+
+API Changes:
+============
+None
+
+version 0.5
+------------------------
+New Features:
+=============
+
+1. Separate mesh packets from receiving stream on TCP session.
+2. Add root conflict mechanism after POR.
+3. Modify mesh framework and provide two APIs for data interaction between the TCP session and mesh engine.
+4. Add mesh events.
+5. Add rogue parent selection mechanism.
+6. Modify to connect the AP on a given channel.
+7. Add multicast forwarding.
+8. Add mutex protection for variables manipulated by multi-threads.
+9. Remove self address from forwarding routine to prevent unnecessary lookup.
+10. Modify routing table architecture for better managements.
+11. Optimize the forward lookup function.
+12. Add scan_ap_num value to mesh IE structure.
+13. Add cyclic network handler.
+
+BugFixes:
+=========
+1. Fix bugs in rejoin to mesh network.
+2. Fix layer value incorrect issue.
+
+
+API Changes:
+============
+1. Callback for mesh events.
+2. New API esp_mesh_push_to_recv_queue() to push the message to mesh forward engine.
+3. New API esp_mesh_pop_from_tcpip_queue() to pop message for TCP send.
+3. New API esp_mesh_wifi_start() to start wifi.
+4. Add channel parameter for esp_mesh_set_router().
+
+version 0.1.1
+
+New Features:
+=============
+
+1. Sync with IDF from v0.9 to v2.0 and bugfix depands on the changes on IDF.
+2. Rename the API prefix from "esp32_mesh_" to "esp_mesh_".
+
+
