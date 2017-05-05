@@ -49,6 +49,7 @@ typedef enum {
     ESP_BLUFI_EVENT_RECV_SERVER_CERT,                    /*<! When Phone send Server certificate to ESP32, this event happen */
     ESP_BLUFI_EVENT_RECV_CLIENT_PRIV_KEY,                /*<! When Phone send Client Private key to ESP32, this event happen */
     ESP_BLUFI_EVENT_RECV_SERVER_PRIV_KEY,                /*<! When Phone send Server Private key to ESP32, this event happen */
+    ESP_BLUFI_EVENT_RECV_SLAVER_DISCONNECT_BLE,
 } esp_blufi_cb_event_t;
 
 /// BLUFI config status
@@ -122,6 +123,8 @@ typedef union {
 	 */
     struct blufi_connect_evt_param {
         esp_bd_addr_t remote_bda;                   /*!< Blufi Remote bluetooth device address */
+        uint8_t    server_if;
+        uint16_t   conn_id;
     } connect;									    /*!< Blufi callback param of ESP_BLUFI_EVENT_CONNECT */
 
     /**
@@ -352,6 +355,7 @@ esp_err_t esp_blufi_send_wifi_conn_report(wifi_mode_t opmode, esp_blufi_sta_conn
  *
  */
 uint16_t esp_blufi_get_version(void);
+esp_err_t esp_blufi_close(esp_gatt_if_t gatts_if, uint16_t conn_id);
 
 #ifdef __cplusplus
 }

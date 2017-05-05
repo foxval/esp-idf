@@ -115,6 +115,7 @@ SECTIONS
     KEEP(*(.sdata2.*))
     KEEP(*(.gnu.linkonce.s2.*))
     KEEP(*(.jcr))
+    *libphy.a:(.rodata .rodata.*)
     *(.dram1 .dram1.*)
     *libesp32.a:panic.o(.rodata .rodata.*)
     *libesp32.a:app_trace.o(.rodata .rodata.*)
