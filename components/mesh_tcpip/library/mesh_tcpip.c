@@ -42,6 +42,7 @@ static char server_hostname[128] = { 0, };
 static volatile uint8_t mesh_cnx_state = MESH_CNX_STATE_IDLE;
 static volatile bool is_running = true;
 static bool is_dhcp_stopped = false;
+static bool is_inited = false;
 
 /*******************************************************
  *                Function Declarations
@@ -77,7 +78,6 @@ void esp_mesh_tcpip_disable_dhcp(void)
 esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
         int port)
 {
-    static bool is_inited = false;
     if (!hostname || !hostname_len || port == -1) {
         return ESP_FAIL;
     }
@@ -100,6 +100,7 @@ esp_err_t esp_mesh_tcp_client_stop(void)
 {
     MESH_LOGE("ERROR:task stop");
     is_running = false;
+    is_inited = false;
     return ESP_OK;
 }
 
