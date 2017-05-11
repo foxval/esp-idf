@@ -440,6 +440,7 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
             if (FD_ISSET(tcp_cli_sock, &rdset)) {
 //                MESH_LOGE("heap:%d", esp_get_free_heap_size());
                 ctx = (mesh_ctx_t *) malloc(sizeof(*ctx));
+                memset(ctx, 0, sizeof(*ctx));
 //                MESH_LOGE("ctx:%p, heap:%d", ctx, esp_get_free_heap_size());
                 if (ctx) {
                     ctx->buf = malloc(ESP_MESH_PKT_LEN_MAX);
@@ -473,16 +474,22 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
                         if (size != header->len) {
                             MESH_LOGE("!!! Be careful size:%d, mlen:%d\n", size,
                                     header->len);
-                        }
 #if 0
-                        if (size > 0) {
-                            int i;
-                            for (i = 0; i < size; i++) {
-                                ets_printf("%x ", buf[i]);
+                            if (size > 0) {
+                                int i, j = 0;
+                                for (i = 0; i < size; i++) {
+                                    ets_printf("%x ", buf[i]);
+                                    j++;
+                                    if (j >= header->len) {
+                                        ets_printf("\n");
+                                        j = 0;
+                                    }
+                                }
+                                ets_printf("\n");
                             }
-                            ets_printf("\n");
-                        }
 #endif
+                        }
+
                         if ((size > 0)
                                 && esp_mesh_push_to_recv_queue((void*) &ctx, 0)
                                         == ESP_OK) {

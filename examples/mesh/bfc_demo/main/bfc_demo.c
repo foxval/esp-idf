@@ -109,7 +109,7 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             MESH_LOGI("MESH_EVENT_DISCONNECTED")
             ;
             esp_mesh_disconnected();
-            mesh_bfc_stop();
+//            mesh_bfc_stop();
             if (esp_mesh_is_root()) {
                 esp_mesh_tcp_client_stop();
             }

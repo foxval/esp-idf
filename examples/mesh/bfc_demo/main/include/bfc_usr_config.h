@@ -18,6 +18,9 @@
 #include <stdint.h>
 #include "esp_wifi_types.h"
 
+//#define INTERNAL_FORWARDING_TEST
+#define INTERNAL_FORWARDING_MAX_NODE_NUM   (5)
+
 /*******************************************************
  *                Constants
  *******************************************************/
@@ -39,5 +42,7 @@ static const uint32_t UART_BAUD_RATIO = 115200; /*UART BAUD RATIO*/
 static const uint8_t MESH_GROUP_ID[6] = { 0x18, 0xfe, 0x34, 0x32, 0x00, 0x50 }; /*MESH_GROUP_ID REPRESENTS ONE MESH NETWORK*/
 static const uint8_t MESH_ROUTER_BSSID[6] =
         { 0xF0, 0xB4, 0x29, 0x2C, 0x7C, 0x72 }; /*MAC OF ROUTER*/
+static const uint8_t MESH_IFORWARDING_ADDR[6] = { 0x30, 0xae, 0xa4, 2, 0x55,
+        0x7d }; /*MAC OF INTERNAL FORWARDING*/
 
 #endif /* _BFC_USR_CONFIG_H_ */

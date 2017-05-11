@@ -17,6 +17,7 @@
 #include "mesh_log.h"
 #include "bfc_cloud.h"
 #include "bfc_light.h"
+#include "bfc_usr_config.h"
 
 /*******************************************************
  *                Variable Definitions
@@ -83,10 +84,17 @@ void mesh_bfc_pack_ping(uint8_t* ping_buf, uint8_t len)
     header.proto.protocol = M_PROTO_BIN;
     header.len = sizeof(header) + buf_size;
     esp_wifi_get_mac(ESP_IF_WIFI_STA, header.src_addr);
+
+#ifdef INTERNAL_FORWARDING_TEST
+    memcpy(header.dst_addr, MESH_IFORWARDING_ADDR,
+            sizeof(MESH_IFORWARDING_ADDR));
+#else /* INTERNAL_FORWARDING_TEST */
     memcpy(header.dst_addr, g_mesh_server_info.ip,
             sizeof(g_mesh_server_info.ip));
     memcpy(header.dst_addr + sizeof(g_mesh_server_info.ip),
             &g_mesh_server_info.port, sizeof(g_mesh_server_info.port));
+#endif /* INTERNAL_FORWARDING_TEST */
+
     memcpy(ping_buf, (uint8_t*) &header, sizeof(header)); //seq & ack
     memcpy(&ping_buf[24], buf, buf_size);
 
@@ -192,7 +200,6 @@ esp_err_t mesh_bfc_parse_protocol(uint8_t *buf, uint16_t start_index,
 
 void mesh_bfc_process_received_data(uint8_t* buf, uint16_t len)
 {
-
 //ping ack
 //header: 0 10 14 0 24 a c4 3 b8 dc 0 0 0 0 0 0
 //cmd   : 81 0 bf c0
