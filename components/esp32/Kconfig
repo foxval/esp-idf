@@ -28,8 +28,8 @@ config MEMMAP_SMP
         to save some memory. (ToDo: Make this automatically depend on unicore support)
 
 config MEMMAP_TRACEMEM
-	bool
-	default "n"
+    bool
+    default "n"
 
 config MEMMAP_TRACEMEM_TWOBANKS
     bool
@@ -69,8 +69,8 @@ choice ESP32_COREDUMP_TO_FLASH_OR_UART
     help
         Select place to store core dump: flash, uart or none (to disable core dumps generation).
 
-        If core dump is configured to be stored in flash and custom partition table is used add 
-        corresponding entry to your CSV. For examples, please see predefined partition table CSV descriptions 
+        If core dump is configured to be stored in flash and custom partition table is used add
+        corresponding entry to your CSV. For examples, please see predefined partition table CSV descriptions
         in the components/partition_table directory.
 
 config ESP32_ENABLE_COREDUMP_TO_FLASH
@@ -147,23 +147,127 @@ config ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TRAX_THRESH
 config MEMMAP_SPISRAM
     bool "Use external SPI SRAM chip as main memory"
     depends on ESP32_NEEDS_NEW_SILICON_REV
+config MEMMAP_SPIRAM_ENABLE
+    bool "Capability allocator can allocate SPI RAM memory"
     default "n"
     help
-        The ESP32 can control an external SPI SRAM chip, adding the memory it contains to the
-        main memory map. Enable this if you have this hardware and want to use it in the same
-        way as on-chip RAM.
+        The ESP32 can control an external SPI RAM chip, adding the memory it contains to the
+        memory map. Enable this if you have this hardware (eg when you have the ESP-WROVER module, or
+        a board containing that module) and want to allocate memory from it using
+        pvPortMallocCaps(size, MALLOC_CAP_SPIRAM ); This also enables the code that initializes the
+        RAM chip.
+        This only works correctly with v1 (post Feb 2017) and later ESP32 revisions.
+
+if MEMMAP_SPIRAM_ENABLE
+
+config SPIRAM_CACHE_WORKAROUND
+    bool "Enable workaround for bug in SPI RAM cache for Rev1 ESP32s"
+    default "y"
+    help
+        Revision 1 of the ESP32 has a bug that can cause a write to PSRAM not to take place in some situations
+        when the cache line needs to be fetched from external RAM and an interrupt occurs. This enables a
+        fix in the compiler that makes sure the specific code that is vulnerable to this will not be emitted.
+
+        This will also not use any bits of newlib that are located in ROM, opting for a version that is compiled
+        with the workaround and located in flash instead.
+
+config SPIRAM_CACHE_ALWAYS_MEMBARRIER
+    bool "Heavy-handed workaround for bug: Always do memory barrier"
+    default "n"
+    help
+        This will introduce a memory barrier before EVERY load/store. This will get rid of most coherency
+        issues, but at the cost of a lot of performance. Don't enable unless you know you need this!
+
+config SPIRAM_CACHE_WORKAROUND_TEST
+    bool "Debug: Test workaround by generating a lot of interrupts"
+    default "n"
+    help
+        This setting helps testing the SPIRAM cache workaround. It generates a lot of interrupts so
+        the bug, if still existing, triggers quicker.
+
+choice MEMMAP_SPIRAM_CACHE_TYPE
+    depends on !FREERTOS_UNICORE
+    prompt "Type of dual-core PSRAM caching strategy"
+    default MEMMAP_SPIRAM_CACHE_EVENODD
+    help
+        The PSRAM cache can work in two ways for dual-core operation: the cache of one CPU
+        can handle the even cache lines while the other one can handle the odd cache lines
+        (even/odd) or the cache of the PRO CPU handles the low 2MiB while the APP CPU cache
+        handles the high 2MiB.
+
+config MEMMAP_SPIRAM_CACHE_EVENODD
+    bool "Even/Odd"
+config MEMMAP_SPIRAM_CACHE_LOWHIGH
+    bool "Low/High"
+
+endchoice
+
+
+choice MEMMAP_SPIRAM_TYPE
+    prompt "Type of SPI RAM chip in use"
+    default MEMMAP_SPIRAM_TYPE_ESPPSRAM32
+
+config MEMMAP_SPIRAM_TYPE_ESPPSRAM32
+    bool "ESP-PSRAM32 or IS25WP032"
+
+endchoice
+
+config MEMMAP_SPIRAM_SIZE
+    int
+    default 4194304 if MEMMAP_SPIRAM_ENABLE && MEMMAP_SPIRAM_TYPE_ESPPSRAM32
+    default 0
+    help
+        Size of external SPI RAM
+
+config MEMMAP_SPIRAM_NO_HEAPALLOC
+    bool "Initialize PSRAM memory but do not add to heap allocator"
+    default "n"
+    help
+        This initializes the PSRAM as normal, but does not make the heap allocator aware of the
+        memory region. You can use the memory region from 0x3F800000-0x3FBFFFFF freely, but
+        need to do your own memory management there.
+
+config MEMMAP_SPIRAM_TEST
+    bool "On SPI RAM init, do a quick memory test"
+    depends on !MEMMAP_SPIRAM_NO_HEAPALLOC
+    default "n"
+    help
+        This does a quick memory test on boot-up. This takes about a second for 4MiB of SPI RAM.
+
+config MEMMAP_SPIRAM_ENABLE_MALLOC
+    bool "malloc() can also allocate in SPI SRAM"
+    depends on !MEMMAP_SPIRAM_NO_HEAPALLOC
+    default "n"
+    help
+        If enabled, malloc() will return pointers to both internal as well as external
+        RAM. It will use a heuristic to determine when to return which. For now, the
+        heuristic is to allocate internal RAM for anything smaller than
+        MEMMAP_SPIRAM_ALLOC_LIMIT_INTERNAL bytes and external RAM for bigger sizes.
+
+config MEMMAP_SPIRAM_ALLOC_LIMIT_INTERNAL
+    int "Always put malloc()s smaller than this size, in bytes, in internal RAM"
+    depends on MEMMAP_SPIRAM_ENABLE_MALLOC
+    range 4096 4194304
+    default 4096
+    help
+        Always tries to allocate heap allocation requests smaller than defined here in
+        internal RAM instead of PSRAM; allocations larger than this will initially
+        go to PSRAM. If either of these initial allocations fails, allocation in the
+        other memory region will be attempted as a backup option.
+
+endif
 
 choice BASE_MAC_ADDRESS_STORAGE
     prompt "Storage of the base MAC address"
     default BASE_MAC_STORED_DEFAULT_EFUSE
     help
-        Select storage of the base MAC address which is used for all network interfaces when networking is initialized. 
+        Select storage of the base MAC address which is used for all network interfaces when networking is initialized.
         If "Default place in EFUSE" is selected, esp32 will use the base MAC address which is written into default
-        place in EFUSE when the chip is manufactured. 
+        place in EFUSE when the chip is manufactured.
         If "Customer-defined place in EFUSE" is selected, ESP32 will use customer-defined base MAC address which
         is written into EFUSE Block 3 words 0, 1.
         If "Other customer-defined place" is selected, esp32 will use customer-defined base MAC address from other
-        place(flash, EEPROM, etc). User code must call esp_base_mac_addr_set_external to set the base MAC address 
+        place(flash, EEPROM, etc). User code must call esp_base_mac_addr_set_external to set the base MAC address
         before network features are initialised.
 
 config BASE_MAC_STORED_DEFAULT_EFUSE
@@ -173,7 +277,7 @@ config BASE_MAC_STORED_CUSTOMER_DEFINED_EFUSE
 config BASE_MAC_STORED_OTHER_CUSTOMER_DEFINED_PLACE
     bool "Other customer-defined place"
 endchoice
-        
+
 choice NUMBER_OF_MAC_ADDRESS_GENERATED_FROM_EFUSE
     bool "Number of MAC address generated from the hardware MAC address in efuse"
     default FOUR_MAC_ADDRESS_FROM_EFUSE
@@ -181,7 +285,7 @@ choice NUMBER_OF_MAC_ADDRESS_GENERATED_FROM_EFUSE
         Config the number of MAC address which is generated from the base MAC address in efuse.
         If the number is two, the MAC addresses of WiFi station and bluetooth are generated from
         the base MAC address in efuse. The MAC addresses of WiFi softap and ethernet are derived
-        from that of WiFi station and bluetooth respectively. 
+        from that of WiFi station and bluetooth respectively.
         If the number is four, the MAC addresses of WiFi station, WiFi softap, bluetooth and ethernet
         are all generated from the base MAC address in efuse.
 
@@ -192,9 +296,9 @@ config FOUR_MAC_ADDRESS_FROM_EFUSE
 endchoice
 
 config NUMBER_OF_MAC_ADDRESS_GENERATED_FROM_EFUSE
-    int 
-    default 2 if TWO_MAC_ADDRESS_FROM_EFUSE 
-    default 4 if FOUR_MAC_ADDRESS_FROM_EFUSE 
+    int
+    default 2 if TWO_MAC_ADDRESS_FROM_EFUSE
+    default 4 if FOUR_MAC_ADDRESS_FROM_EFUSE
 
 config SYSTEM_EVENT_QUEUE_SIZE
     int "System event queue size"
@@ -224,15 +328,16 @@ config NEWLIB_STDOUT_ADDCR
         cursor one line down, not also move it to the beginning of the line. This
         is usually done by an added CR character. Enabling this will make the
         standard output code automatically add a CR character before a LF.
-        
-        With this option enabled, C standard library functions which read from UART 
+
+        With this option enabled, C standard library functions which read from UART
         (like scanf) will convert "\r\n" character sequences back to "\n".
-        
+
         This option doesn't affect behavior of the UART driver (drivers/uart.h).
 
 config NEWLIB_NANO_FORMAT
     bool "Enable 'nano' formatting options for printf/scanf family"
     default n
+    depends on !SPIRAM_CACHE_WORKAROUND
     help
         ESP32 ROM contains parts of newlib C library, including printf/scanf family
         of functions. These functions have been compiled with so-called "nano"
@@ -553,7 +658,7 @@ config ESP32_RTC_CLK_CAL_CYCLES
         by the calibration routine. Higher numbers increase calibration
         precision, which may be important for applications which spend a lot of
         time in deep sleep. Lower numbers reduce startup time.
-        
+
         When this option is set to 0, clock calibration will not be performed at
         startup, and approximate clock frequencies will be assumed:
         - 150000 Hz if internal RC oscillator is used as clock source
@@ -631,7 +736,7 @@ config ESP32_WIFI_STATIC_RX_BUFFER_NUM
     help
         Set the number of WiFi static rx buffers. Each buffer takes approximately 1.6KB of RAM.
         The static rx buffers are allocated when esp_wifi_init is called, they are not freed
-        until esp_wifi_deinit is called. 
+        until esp_wifi_deinit is called.
         WiFi hardware use these buffers to receive packets, generally larger number for higher
         throughput but more memory, smaller number for lower throughput but less memory.
 
@@ -646,24 +751,24 @@ config ESP32_WIFI_DYNAMIC_RX_BUFFER_NUM
         For each received packet in static rx buffers, WiFi driver makes a copy
         to dynamic rx buffers and then deliver it to high layer stack. The dynamic rx buffer
         is freed when the application, such as socket, successfully received the packet.
-        For some applications, the WiFi driver receiving speed is faster than application 
+        For some applications, the WiFi driver receiving speed is faster than application
         consuming speed, we may run out of memory if no limitation for the dynamic rx buffer
         number.  Generally the number of dynamic rx buffer should be no less than static
-        rx buffer number if it is not 0. 
+        rx buffer number if it is not 0.
 
 choice ESP32_WIFI_TX_BUFFER
     prompt "Type of WiFi TX buffers"
     depends on WIFI_ENABLED
     default ESP32_WIFI_DYNAMIC_TX_BUFFER
     help
-        Select type of WiFi tx buffers and show the submenu with the number of WiFi tx buffers choice. 
+        Select type of WiFi tx buffers and show the submenu with the number of WiFi tx buffers choice.
         If "STATIC" is selected, WiFi tx buffers are allocated when WiFi is initialized and released
         when WiFi is de-initialized. If "DYNAMIC" is selected, WiFi tx buffer is allocated when tx
         data is delivered from LWIP to WiFi and released when tx data is sent out by WiFi.
-        The size of each static tx buffers is fixed to about 1.6KB and the size of dynamic tx buffers is 
+        The size of each static tx buffers is fixed to about 1.6KB and the size of dynamic tx buffers is
         depend on the length of the data delivered from LWIP.
-        If PSRAM is enabled, "STATIC" should be selected to guarantee enough WiFi tx buffers. 
-        If PSRAM is disabled, "DYNAMIC" should be selected to improve the utilization of RAM. 
+        If PSRAM is enabled, "STATIC" should be selected to guarantee enough WiFi tx buffers.
+        If PSRAM is disabled, "DYNAMIC" should be selected to improve the utilization of RAM.
 
 config ESP32_WIFI_STATIC_TX_BUFFER
     bool "STATIC"
@@ -679,7 +784,7 @@ config ESP32_WIFI_TX_BUFFER_TYPE
 
 config ESP32_WIFI_STATIC_TX_BUFFER_NUM
     int "Max number of WiFi static TX buffers"
-    depends on WIFI_ENABLED 
+    depends on WIFI_ENABLED
     depends on ESP32_WIFI_STATIC_TX_BUFFER
     range 16 64
     default 32
@@ -689,11 +794,11 @@ config ESP32_WIFI_STATIC_TX_BUFFER_NUM
         until esp_wifi_deinit is called.
         For each tx packet from high layer stack, WiFi driver make a copy of it. For some applications,
         especially the UDP application, the high layer deliver speed is faster than the WiFi tx
-        speed, we may run out of static tx buffers. 
+        speed, we may run out of static tx buffers.
 
 config ESP32_WIFI_DYNAMIC_TX_BUFFER_NUM
     int "Max number of WiFi dynamic TX buffers"
-    depends on WIFI_ENABLED 
+    depends on WIFI_ENABLED
     depends on ESP32_WIFI_DYNAMIC_TX_BUFFER
     range 16 64
     default 32
@@ -702,7 +807,7 @@ config ESP32_WIFI_DYNAMIC_TX_BUFFER_NUM
         allocation. The size of dynamic tx buffers is not fixed.
         For each tx packet from high layer stack, WiFi driver make a copy of it. For some applications,
         especially the UDP application, the high layer deliver speed is faster than the WiFi tx
-        speed, we may run out of memory if no limitation for the dynamic tx buffer number. 
+        speed, we may run out of memory if no limitation for the dynamic tx buffer number.
 
 config ESP32_WIFI_AMPDU_ENABLED
     bool "WiFi AMPDU"
@@ -720,12 +825,12 @@ config ESP32_WIFI_NVS_ENABLED
         Select this option to enable WiFi NVS flash
 
 config PHY_ENABLED
-	bool
-	default y if WIFI_ENABLED || BT_ENABLED
+    bool
+    default y if WIFI_ENABLED || BT_ENABLED
 
 menu PHY
-	visible if PHY_ENABLED
-	
+    visible if PHY_ENABLED
+
 config ESP32_PHY_CALIBRATION_AND_DATA_STORAGE
     bool "Do phy calibration and store calibration data in NVS"
     depends on PHY_ENABLED
@@ -733,7 +838,7 @@ config ESP32_PHY_CALIBRATION_AND_DATA_STORAGE
     help
         If this option is enabled, NVS will be initialized and calibration data will be loaded from there.
         PHY calibration will be skipped on deep sleep wakeup. If calibration data is not found, full calibration
-        will be performed and stored in NVS. In all other cases, only partial calibration will be performed. 
+        will be performed and stored in NVS. In all other cases, only partial calibration will be performed.
 
         If unsure, choose 'y'.
 
@@ -753,7 +858,7 @@ config ESP32_PHY_INIT_DATA_IN_PARTITION
         into the application binary.
 
         If unsure, choose 'n'.
-	
+
 config ESP32_PHY_MAX_WIFI_TX_POWER
     int "Max WiFi TX power (dBm)"
     range 0 20
@@ -764,9 +869,9 @@ config ESP32_PHY_MAX_WIFI_TX_POWER
         data rates may be lower than this setting.
 
 config ESP32_PHY_MAX_TX_POWER
-	int
-	depends on PHY_ENABLED
-	default 20 if !WIFI_ENABLED
-	default ESP32_PHY_MAX_WIFI_TX_POWER if WIFI_ENABLED
+    int
+    depends on PHY_ENABLED
+    default 20 if !WIFI_ENABLED
+    default ESP32_PHY_MAX_WIFI_TX_POWER if WIFI_ENABLED
 
 endmenu
