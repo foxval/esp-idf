@@ -95,6 +95,7 @@ build_esp_idf_tests:
       - ./tools/unit-test-app/build/*.bin
       - ./tools/unit-test-app/build/*.elf
       - ./tools/unit-test-app/build/*.map
+      - ./tools/unit-test-app/build/download.config
       - ./tools/unit-test-app/build/bootloader/*.bin
       - ./components/idf_test/unit_test/TestCaseAll.yml
       - ./components/idf_test/unit_test/CIConfigs/*.yml
@@ -103,6 +104,8 @@ build_esp_idf_tests:
   script:
     - cd tools/unit-test-app
     - make TESTS_ALL=1
+    # cut last line in case make V=0/1 is set by default
+    - make print_flash_cmd | tail -n 1 > build/download.config
     - python tools/UnitTestParser.py
 
 build_examples:
@@ -147,6 +150,15 @@ test_nvs_on_host:
   script:
     - cd components/nvs_flash/test_nvs_host
     - make test
+
+test_partition_table_on_host:
+  stage: test
+  image: $CI_DOCKER_REGISTRY/esp32-ci-env
+  tags:
+    - build
+  script:
+    - cd components/partition_table/test_gen_esp32part_host
+    - ./gen_esp32part_tests.py
 
 test_wl_on_host:
   stage: test

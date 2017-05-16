@@ -49,6 +49,7 @@
 #include "esp_spi_flash.h"
 #include "esp_ipc.h"
 #include "esp_crosscore_int.h"
+#include "esp_dport_access.h"
 #include "esp_log.h"
 #include "esp_vfs_dev.h"
 #include "esp_newlib.h"
@@ -155,6 +156,7 @@ void IRAM_ATTR call_start_cpu0()
         ESP_EARLY_LOGI(TAG, "PSRAM initialized, cache is in %s mode.", (PSRAM_MODE==PSRAM_VADDR_MODE_EVENODD)?"even/odd (2-core)":"normal (1-core");
     }
 #endif
+
     ESP_EARLY_LOGI(TAG, "Pro cpu up.");
 
 
@@ -170,10 +172,10 @@ void IRAM_ATTR call_start_cpu0()
 
     esp_cpu_unstall(1);
     //Enable clock gating and reset the app cpu.
-    SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
-    CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_C_REG, DPORT_APPCPU_RUNSTALL);
-    SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
-    CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
+    DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_C_REG, DPORT_APPCPU_RUNSTALL);
+    DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
     ets_set_appcpu_boot_addr((uint32_t)call_start_cpu1);
 
 
@@ -182,7 +184,7 @@ void IRAM_ATTR call_start_cpu0()
     }
 #else
     ESP_EARLY_LOGI(TAG, "Single core mode");
-    CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
 #endif
 
     /* Initialize heap allocator. WARNING: This *needs* to happen *after* the app cpu has booted.
@@ -270,6 +272,9 @@ void start_cpu0_default(void)
     esp_cache_err_int_init();
     esp_crosscore_int_init();
     esp_ipc_init();
+#ifndef CONFIG_FREERTOS_UNICORE
+    esp_dport_access_int_init();
+#endif
     spi_flash_init();
     /* init default OS-aware flash access critical section */
     spi_flash_guard_set(&g_flash_guard_default_ops);
@@ -309,6 +314,7 @@ void start_cpu1_default(void)
     //has started, but it isn't active *on this CPU* yet.
     esp_cache_err_int_init();
     esp_crosscore_int_init();
+    esp_dport_access_int_init();
 #if CONFIG_SPIRAM_CACHE_WORKAROUND_TEST
     psram_tst_setup();
 #endif

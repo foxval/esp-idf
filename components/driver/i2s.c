@@ -97,16 +97,16 @@ static esp_err_t i2s_reset_fifo(i2s_port_t i2s_num)
     return ESP_OK;
 }
 
-inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv) 
+inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv)
 {
     //if pin = -1, do not need to configure
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
         gpio_set_direction(gpio, GPIO_MODE_DEF_OUTPUT);
         gpio_matrix_out(gpio, signal_idx, out_inv, oen_inv);
-    } 
-} 
-inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv) 
+    }
+}
+inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv)
 {
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
@@ -205,7 +205,6 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
     i2s_stop(i2s_num);
 
     p_i2s_obj[i2s_num]->channel_num = (ch == 2) ? 2 : 1;
-    //removed the unnecessary default values here
 
     if (bits != p_i2s_obj[i2s_num]->bits_per_sample) {
 
@@ -251,7 +250,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         if (p_i2s_obj[i2s_num]->mode & I2S_MODE_RX) {
 
             save_rx = p_i2s_obj[i2s_num]->rx;
-            
+
             p_i2s_obj[i2s_num]->rx = i2s_create_dma_queue(i2s_num, p_i2s_obj[i2s_num]->dma_buf_count, p_i2s_obj[i2s_num]->dma_buf_len);
             if (p_i2s_obj[i2s_num]->rx == NULL){
                 ESP_LOGE(I2S_TAG, "Failed to create rx dma buffer");
@@ -266,7 +265,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
                 i2s_destroy_dma_queue(i2s_num, save_rx);
             }
         }
-        
+
     }
 
     double mclk;
@@ -524,13 +523,25 @@ esp_err_t i2s_stop(i2s_port_t i2s_num)
     return 0;
 }
 
-static esp_err_t configure_dac_pin(void)
+esp_err_t i2s_set_dac_mode(i2s_dac_mode_t dac_mode)
 {
-    dac_i2s_enable();
-    //DAC1, right channel
-    dac_output_enable(DAC_CHANNEL_1);
-    //DAC2, left channel
-    dac_output_enable(DAC_CHANNEL_2);
+    I2S_CHECK((dac_mode < I2S_DAC_CHANNEL_MAX), "i2s dac mode error", ESP_ERR_INVALID_ARG);
+    if(dac_mode == I2S_DAC_CHANNEL_DISABLE) {
+        dac_output_disable(DAC_CHANNEL_1);
+        dac_output_disable(DAC_CHANNEL_1);
+        dac_i2s_disable();
+    } else {
+        dac_i2s_enable();
+    }
+
+    if (dac_mode & I2S_DAC_CHANNEL_RIGHT_EN) {
+        //DAC1, right channel, GPIO25
+        dac_output_enable(DAC_CHANNEL_1);
+    }
+    if (dac_mode & I2S_DAC_CHANNEL_LEFT_EN) {
+        //DAC2, left channel, GPIO26
+        dac_output_enable(DAC_CHANNEL_2);
+    }
     return ESP_OK;
 }
 
@@ -538,7 +549,7 @@ esp_err_t i2s_set_pin(i2s_port_t i2s_num, const i2s_pin_config_t *pin)
 {
     I2S_CHECK((i2s_num < I2S_NUM_MAX), "i2s_num error", ESP_ERR_INVALID_ARG);
     if (pin == NULL) {
-        return configure_dac_pin();
+        return i2s_set_dac_mode(I2S_DAC_CHANNEL_BOTH_EN);
     }
     if (pin->bck_io_num != -1 && !GPIO_IS_VALID_GPIO(pin->bck_io_num)) {
         ESP_LOGE(I2S_TAG, "bck_io_num error");
@@ -725,7 +736,7 @@ static esp_err_t i2s_param_config(i2s_port_t i2s_num, const i2s_config_t *i2s_co
         I2S[i2s_num]->conf.rx_right_first = 0;
         I2S[i2s_num]->conf.rx_slave_mod = 0; // Master
         I2S[i2s_num]->fifo_conf.rx_fifo_mod_force_en = 1;
-        
+
         if (i2s_config->mode & I2S_MODE_SLAVE) {
             I2S[i2s_num]->conf.rx_slave_mod = 1;//RX Slave
         }

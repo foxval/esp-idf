@@ -2,6 +2,10 @@
 # Component Makefile
 #
 
+#ifdef IS_BOOTLOADER_BUILD
+CFLAGS += -DBOOTLOADER_BUILD
+#endif
+
 COMPONENT_SRCDIRS := . hwcrypto
 LIBS := core rtc
 ifdef CONFIG_PHY_ENABLED # BT || WIFI
@@ -33,6 +37,7 @@ COMPONENT_ADD_LDFLAGS := -lesp32 \
                          -T esp32_out.ld \
                          -u ld_include_panic_highint_hdl \
                          -u ld_include_psram_tst \
+                         -u ld_include_dport_int \
                          $(addprefix -T ,$(LINKER_SCRIPTS))
 
 ALL_LIB_FILES := $(patsubst %,$(COMPONENT_PATH)/lib/lib%.a,$(LIBS))
