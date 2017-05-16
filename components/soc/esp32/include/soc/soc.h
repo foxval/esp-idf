@@ -140,6 +140,7 @@
 #define ASSERT_IF_DPORT_REG(_r, OP)
 #endif
 
+#ifndef __ASSEMBLER__
 //write value to register
 #define REG_WRITE(_r, _v) ({                                                                                           \
             ASSERT_IF_DPORT_REG(_r, REG_WRITE);                                                                        \
@@ -256,6 +257,8 @@
 
 #endif /* !__ASSEMBLER__ */
 //}}
+
+#endif /* !__ASSEMBLER__ */
 
 //Periheral Clock {{
 #define  APB_CLK_FREQ_ROM                            ( 26*1000000 )

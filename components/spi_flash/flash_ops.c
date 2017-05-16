@@ -31,6 +31,7 @@
 #include "esp_spi_flash.h"
 #include "esp_log.h"
 #include "cache_utils.h"
+#include "esp_heap_alloc_caps.h"
 
 /* bytes erased by SPIEraseBlock() ROM function */
 #define BLOCK_ERASE_SIZE 65536
