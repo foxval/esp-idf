@@ -170,7 +170,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
 {
     int factor = (256%bits)? 384 : 256; // According to hardware codec requirement(supported 256fs or 384fs)
     int clkmInteger, clkmDecimals, bck = 0;
-    double denom = (double)1 / 64;
+    float denom = (float)1 / 64;
     int channel = 2;
     i2s_dma_t *save_tx = NULL, *save_rx = NULL;
 
@@ -187,7 +187,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         return ESP_FAIL;
     }
 
-    double clkmdiv = (double)I2S_BASE_CLK / (rate * factor);
+    float clkmdiv = (float)I2S_BASE_CLK / (rate * factor);
 
     if (clkmdiv > 256) {
         ESP_LOGE(I2S_TAG, "clkmdiv is too large\r\n");
@@ -268,15 +268,15 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
 
     }
 
-    double mclk;
+    float mclk;
     if (p_i2s_obj[i2s_num]->mode & I2S_MODE_DAC_BUILT_IN) {
         //DAC uses bclk as sample clock, not WS. WS can be something arbitrary.
         //Rate as given to this function is the intended sample rate;
-        //According to the TRM, WS clk equals to the sample rate, and bclk is double the speed of WS
+        //According to the TRM, WS clk equals to the sample rate, and bclk is float the speed of WS
         uint32_t b_clk = rate * 2;
         int factor2 = 60;
         mclk = b_clk * factor2;
-        clkmdiv = ((double) I2S_BASE_CLK) / mclk;
+        clkmdiv = ((float) I2S_BASE_CLK) / mclk;
         clkmInteger = clkmdiv;
         clkmDecimals = (clkmdiv - clkmInteger) / denom;
         bck = mclk / b_clk;
@@ -291,7 +291,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         }
         int factor2 = 5 ;
         mclk = b_clk * factor2;
-        clkmdiv = ((double) I2S_BASE_CLK) / mclk;
+        clkmdiv = ((float) I2S_BASE_CLK) / mclk;
         clkmInteger = clkmdiv;
         clkmDecimals = (clkmdiv - clkmInteger) / denom;
         bck = mclk / b_clk;
@@ -310,9 +310,9 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
     I2S[i2s_num]->sample_rate_conf.rx_bck_div_num = bck;
     I2S[i2s_num]->sample_rate_conf.tx_bits_mod = bits;
     I2S[i2s_num]->sample_rate_conf.rx_bits_mod = bits;
-    double real_rate = (double) (I2S_BASE_CLK / (bck * bits * clkmInteger) / 2);
+    float real_rate = (float) (I2S_BASE_CLK / (bck * bits * clkmInteger) / 2);
     ESP_LOGI(I2S_TAG, "Req RATE: %d, real rate: %0.3f, BITS: %u, CLKM: %u, BCK: %u, MCLK: %0.3f, SCLK: %f, diva: %d, divb: %d",
-        rate, real_rate, bits, clkmInteger, bck, (double)I2S_BASE_CLK / mclk, real_rate*bits*channel, 64, clkmDecimals);
+        rate, real_rate, bits, clkmInteger, bck, (float)I2S_BASE_CLK / mclk, real_rate*bits*channel, 64, clkmDecimals);
 
     // wait all writing on-going finish
     if ((p_i2s_obj[i2s_num]->mode & I2S_MODE_TX) && p_i2s_obj[i2s_num]->tx) {
