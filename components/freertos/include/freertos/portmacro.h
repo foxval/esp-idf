@@ -77,7 +77,7 @@ extern "C" {
 #include <xtensa/tie/xt_core.h>
 #include <xtensa/hal.h>
 #include <xtensa/config/core.h>
-#include <xtensa/config/system.h>	/* required for XSHAL_CLIB */
+#include <xtensa/config/system.h>   /* required for XSHAL_CLIB */
 #include <xtensa/xtruntime.h>
 #include "esp_crosscore_int.h"
 
@@ -100,24 +100,24 @@ extern "C" {
 
 /* Type definitions. */
 
-#define portCHAR		int8_t
-#define portFLOAT		float
-#define portDOUBLE		double
-#define portLONG		int32_t
-#define portSHORT		int16_t
-#define portSTACK_TYPE	uint8_t
-#define portBASE_TYPE	int
+#define portCHAR        int8_t
+#define portFLOAT       float
+#define portDOUBLE      double
+#define portLONG        int32_t
+#define portSHORT       int16_t
+#define portSTACK_TYPE  uint8_t
+#define portBASE_TYPE   int
 
-typedef portSTACK_TYPE			StackType_t;
-typedef portBASE_TYPE			BaseType_t;
-typedef unsigned portBASE_TYPE	UBaseType_t;
+typedef portSTACK_TYPE          StackType_t;
+typedef portBASE_TYPE           BaseType_t;
+typedef unsigned portBASE_TYPE  UBaseType_t;
 
 #if( configUSE_16_BIT_TICKS == 1 )
-	typedef uint16_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffff
+    typedef uint16_t TickType_t;
+    #define portMAX_DELAY ( TickType_t ) 0xffff
 #else
-	typedef uint32_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+    typedef uint32_t TickType_t;
+    #define portMAX_DELAY ( TickType_t ) 0xffffffffUL
 #endif
 /*-----------------------------------------------------------*/
 
@@ -130,10 +130,10 @@ typedef unsigned portBASE_TYPE	UBaseType_t;
 
 
 typedef struct {
-	volatile uint32_t mux;
+    volatile uint32_t mux;
 #ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-	const char *lastLockedFn;
-	int lastLockedLine;
+    const char *lastLockedFn;
+    int lastLockedLine;
 #endif
 } portMUX_TYPE;
 
@@ -146,26 +146,26 @@ typedef struct {
   * The magic number in the top 16 bits is there so we can detect uninitialized and corrupted muxes.
   */
 
-#define portMUX_MAGIC_VAL		0xB33F0000
-#define portMUX_FREE_VAL		0xB33FFFFF
-#define portMUX_MAGIC_MASK		0xFFFF0000
-#define portMUX_MAGIC_SHIFT		16
-#define portMUX_CNT_MASK		0x0000FF00
-#define portMUX_CNT_SHIFT		8
-#define portMUX_VAL_MASK		0x000000FF
-#define portMUX_VAL_SHIFT		0
+#define portMUX_MAGIC_VAL       0xB33F0000
+#define portMUX_FREE_VAL        0xB33FFFFF
+#define portMUX_MAGIC_MASK      0xFFFF0000
+#define portMUX_MAGIC_SHIFT     16
+#define portMUX_CNT_MASK        0x0000FF00
+#define portMUX_CNT_SHIFT       8
+#define portMUX_VAL_MASK        0x000000FF
+#define portMUX_VAL_SHIFT       0
 
 //Keep this in sync with the portMUX_TYPE struct definition please.
 #ifndef CONFIG_FREERTOS_PORTMUX_DEBUG
-#define portMUX_INITIALIZER_UNLOCKED { 					\
-		.mux = portMUX_MAGIC_VAL|portMUX_FREE_VAL 		\
-	}
+#define portMUX_INITIALIZER_UNLOCKED {                  \
+        .mux = portMUX_MAGIC_VAL|portMUX_FREE_VAL       \
+    }
 #else
-#define portMUX_INITIALIZER_UNLOCKED { 					\
-		.mux = portMUX_MAGIC_VAL|portMUX_FREE_VAL, 		\
-		.lastLockedFn = "(never locked)", 				\
-		.lastLockedLine = -1							\
-	}
+#define portMUX_INITIALIZER_UNLOCKED {                  \
+        .mux = portMUX_MAGIC_VAL|portMUX_FREE_VAL,      \
+        .lastLockedFn = "(never locked)",               \
+        .lastLockedLine = -1                            \
+    }
 #endif
 
 /* Critical section management. NW-TODO: replace XTOS_SET_INTLEVEL with more efficient version, if any? */
@@ -177,12 +177,12 @@ typedef struct {
 void vPortAssertIfInISR();
 
 
-#define portCRITICAL_NESTING_IN_TCB 1 
+#define portCRITICAL_NESTING_IN_TCB 1
 
 /*
 Modifications to portENTER_CRITICAL:
 
-The original portENTER_CRITICAL only disabled the ISRs. This is enough for single-CPU operation: by 
+The original portENTER_CRITICAL only disabled the ISRs. This is enough for single-CPU operation: by
 disabling the interrupts, there is no task switch so no other tasks can meddle in the data, and because
 interrupts are disabled, ISRs can't corrupt data structures either.
 
@@ -246,9 +246,9 @@ static inline unsigned portENTER_CRITICAL_NESTED() { unsigned state = XTOS_SET_I
  */
 static inline void uxPortCompareSet(volatile uint32_t *addr, uint32_t compare, uint32_t *set) {
     __asm__ __volatile__(
-        "WSR 	    %2,SCOMPARE1 \n"
+        "WSR        %2,SCOMPARE1 \n"
         "ISYNC      \n"
-        "S32C1I     %0, %1, 0	 \n"
+        "S32C1I     %0, %1, 0    \n"
         :"=r"(*set)
         :"r"(addr), "r"(compare), "0"(*set)
         );
@@ -258,10 +258,10 @@ static inline void uxPortCompareSet(volatile uint32_t *addr, uint32_t compare, u
 /*-----------------------------------------------------------*/
 
 /* Architecture specifics. */
-#define portSTACK_GROWTH			( -1 )
-#define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portBYTE_ALIGNMENT			4
-#define portNOP()					XT_NOP()
+#define portSTACK_GROWTH            ( -1 )
+#define portTICK_PERIOD_MS          ( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+#define portBYTE_ALIGNMENT          4
+#define portNOP()                   XT_NOP()
 /*-----------------------------------------------------------*/
 
 /* Fine resolution time */
@@ -270,8 +270,8 @@ static inline void uxPortCompareSet(volatile uint32_t *addr, uint32_t compare, u
 /* Kernel utilities. */
 void vPortYield( void );
 void _frxt_setup_switch( void );
-#define portYIELD()					vPortYield()
-#define portYIELD_FROM_ISR()		_frxt_setup_switch()
+#define portYIELD()                 vPortYield()
+#define portYIELD_FROM_ISR()        _frxt_setup_switch()
 
 static inline uint32_t xPortGetCoreID();
 
@@ -295,35 +295,35 @@ static inline uint32_t xPortGetCoreID();
 // MPU wrappers, coprocessor area pointer, trace code structure, and more if needed.
 // The field is normally used for memory protection. FreeRTOS should create another general purpose field.
 typedef struct {
-	#if XCHAL_CP_NUM > 0
-	volatile StackType_t* coproc_area; // Pointer to coprocessor save area; MUST BE FIRST
-	#endif
+    #if XCHAL_CP_NUM > 0
+    volatile StackType_t* coproc_area; // Pointer to coprocessor save area; MUST BE FIRST
+    #endif
 
-	#if portUSING_MPU_WRAPPERS
-	// Define here mpu_settings, which is port dependent
-	int mpu_setting; // Just a dummy example here; MPU not ported to Xtensa yet
-	#endif
+    #if portUSING_MPU_WRAPPERS
+    // Define here mpu_settings, which is port dependent
+    int mpu_setting; // Just a dummy example here; MPU not ported to Xtensa yet
+    #endif
 
-	#if configUSE_TRACE_FACILITY_2
-	struct {
-		// Cf. porttraceStamp()
-		int taskstamp;        /* Stamp from inside task to see where we are */
-		int taskstampcount;   /* A counter usually incremented when we restart the task's loop */
-	} porttrace;
-	#endif
+    #if configUSE_TRACE_FACILITY_2
+    struct {
+        // Cf. porttraceStamp()
+        int taskstamp;        /* Stamp from inside task to see where we are */
+        int taskstampcount;   /* A counter usually incremented when we restart the task's loop */
+    } porttrace;
+    #endif
 } xMPU_SETTINGS;
 
 // Main hack to use MPU_wrappers even when no MPU is defined (warning: mpu_setting should not be accessed; otherwise move this above xMPU_SETTINGS)
 #if (XCHAL_CP_NUM > 0 || configUSE_TRACE_FACILITY_2) && !portUSING_MPU_WRAPPERS   // If MPU wrappers not used, we still need to allocate coproc area
-	#undef portUSING_MPU_WRAPPERS
-	#define portUSING_MPU_WRAPPERS 1   // Enable it to allocate coproc area
-	#define MPU_WRAPPERS_H             // Override mpu_wrapper.h to disable unwanted code
-	#define PRIVILEGED_FUNCTION
-	#define PRIVILEGED_DATA
+    #undef portUSING_MPU_WRAPPERS
+    #define portUSING_MPU_WRAPPERS 1   // Enable it to allocate coproc area
+    #define MPU_WRAPPERS_H             // Override mpu_wrapper.h to disable unwanted code
+    #define PRIVILEGED_FUNCTION
+    #define PRIVILEGED_DATA
 #endif
 
 
-void _xt_coproc_release(void * coproc_sa_base);
+void _xt_coproc_release(volatile void * coproc_sa_base);
 
 
 // porttrace
