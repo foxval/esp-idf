@@ -19,6 +19,7 @@
 #include "mesh_log.h"
 #include "bfc_light.h"
 #include "bfc_usr_config.h"
+#include "nvs.h"
 
 /*******************************************************
  *                Variable Definitions
@@ -39,22 +40,23 @@ extern esp_err_t esp_mesh_usr_init(void);
  *******************************************************/
 void esp_mesh_connected(void)
 {
-    if (esp_mesh_get_hop() == 1) {
+    uint8_t layer = esp_mesh_get_hop();
+    if (layer == 1) {
         /* layer one: pink */
         mesh_bfc_gpio_set(RGB_LIGHT_PINK);
-    } else if (esp_mesh_get_hop() == 2) {
+    } else if (layer == 2) {
         /* layer two: yellow */
         mesh_bfc_gpio_set(RGB_LIGHT_YELLOW);
-    } else if (esp_mesh_get_hop() == 3) {
+    } else if (layer == 3) {
         /* layer one: red */
         mesh_bfc_gpio_set(RGB_LIGHT_RED);
-    } else if (esp_mesh_get_hop() == 4) {
+    } else if (layer == 4) {
         /* layer one: blue */
         mesh_bfc_gpio_set(RGB_LIGHT_BLUE);
-    } else if (esp_mesh_get_hop() == 5) {
+    } else if (layer == 5) {
         /* layer one: green */
         mesh_bfc_gpio_set(RGB_LIGHT_GREEN);
-    } else if (esp_mesh_get_hop() >= 6) {
+    } else if (layer >= 6) {
         /* layer one: white */
         mesh_bfc_gpio_set(RGB_LIGHT_WARNING);
     } else {
@@ -84,21 +86,15 @@ void esp_mesh_event_cb(esp_mesh_event_t event)
             /* TODO handler for the failure */
             break;
 
-        case ESP_MESH_EVENT_PARENT_DONE:
-            /* parent selected */
-            MESH_LOGI("MESH_EVENT_PARENT_DONE")
+        case ESP_MESH_EVENT_CONNECTED:
+            /* wifi connected */
+            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_hop())
             ;
             if (esp_mesh_is_root()) {
                 esp_mesh_tcpip_enable_dhcp();
             } else {
                 esp_mesh_tcpip_disable_dhcp();
             }
-            break;
-
-        case ESP_MESH_EVENT_CONNECTED:
-            /* wifi connected */
-            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_hop())
-            ;
             esp_mesh_connected();
             mesh_bfc_start();
 
@@ -168,12 +164,19 @@ void mesh_usr_task(void *pvParameter)
 
 void app_main(void)
 {
-
     mesh_bfc_light_init();
 
     if (esp_mesh_wifi_init(MESH_ROUTER_CHANNEL, ESP_MESH_CONNECT_MAX) != ESP_OK) {
         return;
     }
+
+#if 0
+    nvs_handle handle;
+    nvs_open("MESH", NVS_READWRITE, &handle);
+    nvs_erase_all(handle);
+    nvs_close(handle);
+#endif
+
 #if 0
     {
         wifi_config_t config;

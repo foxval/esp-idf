@@ -47,6 +47,8 @@ void mesh_bfc_tx_task_main(void *pvPara)
     int old_time = 0;
     int cur_time = 0;
     is_running = true;
+    esp_err_t ret = ESP_OK;
+
 #ifdef INTERNAL_FORWARDING_TEST
     uint32_t send_cnt = 0;
 #endif /* INTERNAL_FORWARDING_TEST */
@@ -78,14 +80,14 @@ void mesh_bfc_tx_task_main(void *pvPara)
                 esp_get_free_heap_size(), send_cnt);
         old_time = cur_time;
 #else /* INTERNAL_FORWARDING_TEST */
-        esp_mesh_send(header, header->len, 0);
+        ret = esp_mesh_send(header, header->len, 0);
         vTaskDelay(BFC_PING_PERIOD_MS / portTICK_RATE_MS);
         MESH_LOGI(
-                "[%d]ms, Send PING to server, len:%d, SRC:"MACSTR", AP:%02x:%02x:%02x:%02x:%02x:%02x, heap:%d",
+                "[%d]ms, Send PING to server, len:%d, SRC:"MACSTR", AP:%02x:%02x:%02x:%02x:%02x:%02x, heap:%d[%d]",
                 (cur_time - old_time) / 1000, header->len,
                 MAC2STR(header->src_addr), ping_buf[36], ping_buf[37],
                 ping_buf[38], ping_buf[39], ping_buf[40], ping_buf[41],
-                esp_get_free_heap_size());
+                esp_get_free_heap_size(), ret);
         old_time = cur_time;
 
 #endif /* INTERNAL_FORWARDING_TEST */
@@ -115,11 +117,11 @@ void mesh_bfc_rx_task_main(void *pvPara)
         uint16_t recv_cnt;
         bool has_value;
         uint32_t recv_time;
-    } child_mac_t;
+    }child_mac_t;
 
     child_mac_t child_mac[INTERNAL_FORWARDING_MAX_NODE_NUM];
     memset(child_mac, 0,
-    INTERNAL_FORWARDING_MAX_NODE_NUM * sizeof(child_mac_t));
+            INTERNAL_FORWARDING_MAX_NODE_NUM * sizeof(child_mac_t));
 #endif /* INTERNAL_FORWARDING_TEST  */
 
     while (is_running) {
