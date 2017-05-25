@@ -9,6 +9,11 @@ echo "---------------------"
 
 sudo chmod 777 /dev/ttyUSB*
 
+touch $IDF_PATH/components/esp32/lib/libmesh.a
+touch $IDF_PATH/components/esp32/lib/libnet80211.a
+touch $IDF_PATH/components/esp32/lib/libpp.a
+
+
 # make bootloader
 # make partition
 # make clean
