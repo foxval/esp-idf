@@ -225,11 +225,11 @@ void mesh_bfc_process_received_data(uint8_t* buf, uint16_t len)
     }
     switch (buf[0]) {
         case BFC_ACK | BFC_CMD_PING:
-//            printf("Receive BFC_PING_ACK \r\n");
+            printf("Receive BFC_PING_ACK \r\n");
             break;
 
         case BFC_CMD_RPC:
-//            printf("Receive BFC_RPC\r\n");
+            printf("Receive BFC_RPC\r\n");
             mesh_bfc_parse_protocol(buf, 4, len, BFC_CMD_RPC);
             break;
 

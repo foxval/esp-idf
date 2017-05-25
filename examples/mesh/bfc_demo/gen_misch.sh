@@ -7,7 +7,6 @@ echo "IDF_PATH"
 echo $IDF_PATH
 echo "---------------------"
 
-sudo chmod 777 /dev/ttyUSB*
 
 touch $IDF_PATH/components/esp32/lib/libmesh.a
 touch $IDF_PATH/components/esp32/lib/libnet80211.a
@@ -42,6 +41,6 @@ echo "----------------------"
 #sudo python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud $baud write_flash -z --flash_mode dio --flash_freq 40m --flash_size 2MB 0x1000 $(pwd)/build/#bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh-demo.bin 0x4000 $(pwd)/build/partitions_singleapp.bin
 
 #idf 2.0
-sudo python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/bfc_demo.bin 0x8000 $(pwd)/build/partitions_singleapp.bin
+python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port $dev --baud 921600 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/bfc_demo.bin 0x8000 $(pwd)/build/partitions_singleapp.bin
 
 
