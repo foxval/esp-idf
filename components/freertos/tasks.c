@@ -488,6 +488,8 @@ extern void esp_vApplicationTickHook( void );
  * Utility task that simply returns pdTRUE if the task referenced by xTask is
  * currently in the Suspended state, or pdFALSE if the task referenced by xTask
  * is in any other state.
+ *
+ * Caller must hold xTaskQueueMutex before calling this function.
  */
 #if ( INCLUDE_vTaskSuspend == 1 )
 	static BaseType_t prvTaskIsTaskSuspended( const TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
@@ -559,7 +561,7 @@ static void prvAddCurrentTaskToDelayedList( const portBASE_TYPE xCoreID, const T
  */
 #if ( ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) )
 
-	static uint16_t prvTaskCheckFreeStackSpace( const uint8_t * pucStackByte ) PRIVILEGED_FUNCTION;
+	static uint32_t prvTaskCheckFreeStackSpace( const uint8_t * pucStackByte ) PRIVILEGED_FUNCTION;
 
 #endif
 
@@ -722,7 +724,7 @@ void taskYIELD_OTHER_CORE( BaseType_t xCoreID, UBaseType_t uxPriority )
 
 				prvInitialiseNewTask(	pxTaskDefinition->pvTaskCode,
 										pxTaskDefinition->pcName,
-										( uint32_t ) pxTaskDefinition->usStackDepth,
+										pxTaskDefinition->usStackDepth,
 										pxTaskDefinition->pvParameters,
 										pxTaskDefinition->uxPriority,
 										pxCreatedTask, pxNewTCB,
@@ -744,7 +746,7 @@ void taskYIELD_OTHER_CORE( BaseType_t xCoreID, UBaseType_t uxPriority )
 
 	BaseType_t xTaskCreatePinnedToCore(	TaskFunction_t pxTaskCode,
 							const char * const pcName,
-							const uint16_t usStackDepth,
+							const uint32_t usStackDepth,
 							void * const pvParameters,
 							UBaseType_t uxPriority,
 							TaskHandle_t * const pxCreatedTask,
@@ -819,7 +821,7 @@ void taskYIELD_OTHER_CORE( BaseType_t xCoreID, UBaseType_t uxPriority )
 			}
 			#endif /* configSUPPORT_STATIC_ALLOCATION */
 
-			prvInitialiseNewTask( pxTaskCode, pcName, ( uint32_t ) usStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL, xCoreID );
+			prvInitialiseNewTask( pxTaskCode, pcName, usStackDepth, pvParameters, uxPriority, pxCreatedTask, pxNewTCB, NULL, xCoreID );
 			prvAddNewTaskToReadyList( pxNewTCB, pxTaskCode, xCoreID );
 			xReturn = pdPASS;
 		}
@@ -1044,6 +1046,11 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 {
 	TCB_t *curTCB, *tcb0, *tcb1;
 
+	/* Assure that xCoreID is valid or we'll have an out-of-bounds on pxCurrentTCB 
+	   You will assert here if e.g. you only have one CPU enabled in menuconfig and 
+	   are trying to start a task on core 1. */
+	configASSERT( xCoreID == tskNO_AFFINITY || xCoreID < portNUM_PROCESSORS);
+
     /* Ensure interrupts don't access the task lists while the lists are being
 	updated. */
 	taskENTER_CRITICAL(&xTaskQueueMutex);
@@ -1243,6 +1250,11 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 				required. */
 				portPRE_TASK_DELETE_HOOK( pxTCB, &xYieldPending[xPortGetCoreID()] );
 				portYIELD_WITHIN_API();
+			}
+			else if ( portNUM_PROCESSORS > 1 && pxTCB == pxCurrentTCB[ !xPortGetCoreID() ] )
+			{
+				/* if task is running on the other CPU, force a yield on that CPU to take it off */
+				vPortYieldOtherCore( !xPortGetCoreID() );
 			}
 			else
 			{
@@ -1716,13 +1728,11 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 /*-----------------------------------------------------------*/
 
 #if ( INCLUDE_vTaskSuspend == 1 )
-/* ToDo: Make this multicore-compatible. */
 	void vTaskSuspend( TaskHandle_t xTaskToSuspend )
 	{
 	TCB_t *pxTCB;
         TCB_t *curTCB;
 
-		UNTESTED_FUNCTION();
 		taskENTER_CRITICAL(&xTaskQueueMutex);
 		{
 			/* If null is passed in here then it is the running task that is
@@ -1810,15 +1820,13 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 /*-----------------------------------------------------------*/
 
 #if ( INCLUDE_vTaskSuspend == 1 )
-
 	static BaseType_t prvTaskIsTaskSuspended( const TaskHandle_t xTask )
 	{
 	BaseType_t xReturn = pdFALSE;
 	const TCB_t * const pxTCB = ( TCB_t * ) xTask;
 
 		/* Accesses xPendingReadyList so must be called from a critical
-		section. */
-		taskENTER_CRITICAL(&xTaskQueueMutex);
+		   section (caller is required to hold xTaskQueueMutex). */
 
 		/* It does not make sense to check if the calling task is suspended. */
 		configASSERT( xTask );
@@ -1849,7 +1857,6 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 		{
 			mtCOVERAGE_TEST_MARKER();
 		}
-		taskEXIT_CRITICAL(&xTaskQueueMutex);
 
 		return xReturn;
 	} /*lint !e818 xTask cannot be a pointer to const because it is a typedef. */
@@ -1859,12 +1866,10 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB, TaskFunction_t pxTaskCode
 
 #if ( INCLUDE_vTaskSuspend == 1 )
 
-/* ToDo: Make this multicore-compatible. */
 	void vTaskResume( TaskHandle_t xTaskToResume )
 	{
 	TCB_t * const pxTCB = ( TCB_t * ) xTaskToResume;
 
-		UNTESTED_FUNCTION();
 		/* It does not make sense to resume the calling task. */
 		configASSERT( xTaskToResume );
 
@@ -3545,9 +3550,16 @@ static void prvCheckTasksWaitingTermination( void )
 
 				{
 					pxTCB = ( TCB_t * ) listGET_OWNER_OF_HEAD_ENTRY( ( &xTasksWaitingTermination ) );
-					( void ) uxListRemove( &( pxTCB->xGenericListItem ) );
-					--uxCurrentNumberOfTasks;
-					--uxTasksDeleted;
+					/* We only want to kill tasks that ran on this core because e.g. _xt_coproc_release needs to
+					   be called on the core the process is pinned on, if any */
+					if( pxTCB->xCoreID == tskNO_AFFINITY || pxTCB->xCoreID == xPortGetCoreID()) {
+						( void ) uxListRemove( &( pxTCB->xGenericListItem ) );
+						--uxCurrentNumberOfTasks;
+						--uxTasksDeleted;
+					} else {
+						/* Need to wait until the idle task on the other processor kills that task first. */
+						break;
+					}
 				}
 				
 				#if ( configNUM_THREAD_LOCAL_STORAGE_POINTERS > 0 ) && ( configTHREAD_LOCAL_STORAGE_DELETE_CALLBACKS )
@@ -3705,7 +3717,7 @@ BaseType_t xTaskGetAffinity( TaskHandle_t xTask )
 
 #if ( ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) )
 
-	static uint16_t prvTaskCheckFreeStackSpace( const uint8_t * pucStackByte )
+	static uint32_t prvTaskCheckFreeStackSpace( const uint8_t * pucStackByte )
 	{
 	uint32_t ulCount = 0U;
 
@@ -3717,7 +3729,7 @@ BaseType_t xTaskGetAffinity( TaskHandle_t xTask )
 
 		ulCount /= ( uint32_t ) sizeof( StackType_t ); /*lint !e961 Casting is not redundant on smaller architectures. */
 
-		return ( uint16_t ) ulCount;
+		return ( uint32_t ) ulCount;
 	}
 
 #endif /* ( ( configUSE_TRACE_FACILITY == 1 ) || ( INCLUDE_uxTaskGetStackHighWaterMark == 1 ) ) */
@@ -3764,6 +3776,10 @@ BaseType_t xTaskGetAffinity( TaskHandle_t xTask )
 			_reclaim_reent( &( pxTCB->xNewLib_reent ) );
 		}
 		#endif /* configUSE_NEWLIB_REENTRANT */
+
+		#if ( portUSING_MPU_WRAPPERS == 1 )
+			vPortReleaseTaskMPUSettings( &( pxTCB->xMPUSettings) );
+		#endif
 
 		#if( ( configSUPPORT_DYNAMIC_ALLOCATION == 1 ) && ( configSUPPORT_STATIC_ALLOCATION == 0 ) && ( portUSING_MPU_WRAPPERS == 0 ) )
 		{

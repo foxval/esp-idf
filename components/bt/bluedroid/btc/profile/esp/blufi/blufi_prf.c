@@ -35,6 +35,8 @@
 
 #include "esp_blufi_api.h"
 
+#if (GATTS_INCLUDED == TRUE)
+
 #define BT_BD_ADDR_STR         "%02x:%02x:%02x:%02x:%02x:%02x"
 #define BT_BD_ADDR_HEX(addr)   addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]
 
@@ -767,9 +769,9 @@ void btc_blufi_cb_handler(btc_msg_t *msg)
     case ESP_BLUFI_EVENT_RECV_SERVER_PRIV_KEY:
         btc_blufi_cb_to_app(ESP_BLUFI_EVENT_RECV_SERVER_PRIV_KEY, param);
         break;
-    case ESP_BLUFI_EVENT_RECV_SLAVER_DISCONNECT_BLE:
-        btc_blufi_cb_to_app(ESP_BLUFI_EVENT_RECV_SLAVER_DISCONNECT_BLE, param);
-        break; 
+    case ESP_BLUFI_EVENT_RECV_SLAVE_DISCONNECT_BLE:
+        btc_blufi_cb_to_app(ESP_BLUFI_EVENT_RECV_SLAVE_DISCONNECT_BLE, param);
+        break;
     default:
         LOG_ERROR("%s UNKNOWN %d\n", __func__, msg->act);
         break;
@@ -922,3 +924,5 @@ uint16_t btc_blufi_get_version(void)
 {
     return BTC_BLUFI_VERSION;
 }
+
+#endif	///GATTS_INCLUDED == TRUE
