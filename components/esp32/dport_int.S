@@ -18,7 +18,7 @@ _l5_intr_stack:
 
     .section .iram1,"ax"
     .global     xt_highint5
-    .type       _xt_highint5,@function
+    .type       xt_highint5,@function
     .align      4
 xt_highint5:
 
