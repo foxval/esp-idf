@@ -25,6 +25,7 @@ esp_err_t esp_mesh_router_init(void)
     memset(&sta, 0, sizeof(sta));
     memcpy(sta.ssid, MESH_ROUTER_SSID, strlen(MESH_ROUTER_SSID));
     memcpy(sta.password, MESH_ROUTER_PASSWD, strlen(MESH_ROUTER_PASSWD));
+    sta.channel = MESH_ROUTER_CHANNEL;
 
     if (!esp_mesh_set_router(&sta, MESH_ROUTER_CHANNEL)) {
         MESH_PRINT("set router fail\n");
