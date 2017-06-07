@@ -94,15 +94,15 @@ static esp_err_t i2s_reset_fifo(i2s_port_t i2s_num)
     return ESP_OK;
 }
 
-inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv) 
+inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv)
 {
     //if pin = -1, do not need to configure
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
         gpio_matrix_out(gpio, signal_idx, out_inv, oen_inv);
-    } 
-} 
-inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv) 
+    }
+}
+inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv)
 {
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
@@ -205,16 +205,22 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
 
     i2s_stop(i2s_num);
 
-    p_i2s_obj[i2s_num]->channel_num = (ch == 2) ? 2 : 1;
-    I2S[i2s_num]->conf_chan.tx_chan_mod =  (ch == 2) ? 0 : 1; // 0-two channel;1-right;2-left;3-righ;4-left
-    I2S[i2s_num]->fifo_conf.tx_fifo_mod =  (ch == 2) ? 0 : 1; // 0-right&left channel;1-one channel
-    I2S[i2s_num]->conf.tx_mono = 0;
+    uint32_t cur_mode = 0;
+    if (p_i2s_obj[i2s_num]->channel_num != ch) {
+        p_i2s_obj[i2s_num]->channel_num = (ch == 2) ? 2 : 1;
+        cur_mode = I2S[i2s_num]->fifo_conf.tx_fifo_mod;
+        I2S[i2s_num]->fifo_conf.tx_fifo_mod = (ch == 2) ? cur_mode - 1 : cur_mode + 1;
+        cur_mode = I2S[i2s_num]->fifo_conf.rx_fifo_mod;
+        I2S[i2s_num]->fifo_conf.rx_fifo_mod = (ch == 2) ? cur_mode -1  : cur_mode + 1;
+        I2S[i2s_num]->conf_chan.tx_chan_mod = (ch == 2) ? 0 : 1;
+        I2S[i2s_num]->conf_chan.rx_chan_mod = (ch == 2) ? 0 : 1;
+    }
 
-    I2S[i2s_num]->conf_chan.rx_chan_mod = (ch == 2) ? 0 : 1; 
+    I2S[i2s_num]->conf_chan.rx_chan_mod = (ch == 2) ? 0 : 1;
     I2S[i2s_num]->fifo_conf.rx_fifo_mod =  (ch == 2) ? 0 : 1;
     I2S[i2s_num]->conf.rx_mono = 0;
 
-    
+
     if (bits != p_i2s_obj[i2s_num]->bits_per_sample) {
 
         //change fifo mode
@@ -259,7 +265,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         if (p_i2s_obj[i2s_num]->mode & I2S_MODE_RX) {
 
             save_rx = p_i2s_obj[i2s_num]->rx;
-            
+
             p_i2s_obj[i2s_num]->rx = i2s_create_dma_queue(i2s_num, p_i2s_obj[i2s_num]->dma_buf_count, p_i2s_obj[i2s_num]->dma_buf_len);
             if (p_i2s_obj[i2s_num]->rx == NULL){
                 ESP_LOGE(I2S_TAG, "Failed to create rx dma buffer");
@@ -275,7 +281,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
             }
 
         }
-        
+
     }
 
     clkmInteger = clkmdiv;
@@ -683,7 +689,7 @@ static esp_err_t i2s_param_config(i2s_port_t i2s_num, const i2s_config_t *i2s_co
         I2S[i2s_num]->conf.rx_right_first = 0;
         I2S[i2s_num]->conf.rx_slave_mod = 0; // Master
         I2S[i2s_num]->fifo_conf.rx_fifo_mod_force_en = 1;//?
-        
+
         if (i2s_config->mode & I2S_MODE_SLAVE) {
             I2S[i2s_num]->conf.rx_slave_mod = 1;//RX Slave
         }

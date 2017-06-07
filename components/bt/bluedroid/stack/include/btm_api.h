@@ -129,6 +129,14 @@ enum {
 
 typedef UINT8 tBTM_DEV_STATUS;
 
+typedef struct {
+    UINT16              min_conn_int;
+    UINT16              max_conn_int;
+    UINT16              conn_int;
+    UINT16              slave_latency;
+    UINT16              supervision_tout;
+}tBTM_LE_UPDATE_CONN_PRAMS;
+
 
 typedef void (tBTM_DEV_STATUS_CB) (tBTM_DEV_STATUS status);
 
@@ -155,6 +163,9 @@ typedef void (tBTM_VSC_CMPL_CB) (tBTM_VSC_CMPL *p1);
 ** If the app returns none zero, the connection or inquiry result will be dropped.
 */
 typedef UINT8 (tBTM_FILTER_CB) (BD_ADDR bd_addr, DEV_CLASS dc);
+
+typedef void (tBTM_UPDATE_CONN_PARAM_CBACK) (UINT8 status, BD_ADDR bd_addr, tBTM_LE_UPDATE_CONN_PRAMS *update_conn_params);
+
 
 /*****************************************************************************
 **  DEVICE DISCOVERY - Inquiry, Remote Name, Discovery, Class of Device
@@ -1350,6 +1361,7 @@ enum {
 };
 typedef UINT8 tBTM_SP_EVT;
 
+/* relate to ESP_IO_CAP_xxx in esp_gap_ble_api.h */
 #define BTM_IO_CAP_OUT      0   /* DisplayOnly */
 #define BTM_IO_CAP_IO       1   /* DisplayYesNo */
 #define BTM_IO_CAP_IN       2   /* KeyboardOnly */
@@ -1531,6 +1543,7 @@ typedef void (tBTM_BOND_CANCEL_CMPL_CALLBACK) (tBTM_STATUS result);
 
 /* LE related event and data structure
 */
+/* relate to ESP_LE_KEY_xxx in esp_gap_ble_api.h */
 #if (SMP_INCLUDED == TRUE)
 #define BTM_LE_IO_REQ_EVT       SMP_IO_CAP_REQ_EVT     /* received IO_CAPABILITY_REQUEST event */
 #define BTM_LE_SEC_REQUEST_EVT  SMP_SEC_REQUEST_EVT    /* security request event */
@@ -1562,6 +1575,8 @@ typedef UINT8 tBTM_LE_EVT;
 #define BTM_LE_KEY_LCSRK     (SMP_SEC_KEY_TYPE_CSRK << 4) /* local CSRK has been deliver to peer */
 #endif  ///BLE_INCLUDED == TRUE && SMP_INCLUDED == TRUE
 typedef UINT8 tBTM_LE_KEY_TYPE;
+
+/* relate to ESP_LE_AUTH_xxx in esp_gap_ble_api.h */
 #if (SMP_INCLUDED == TRUE)
 #define BTM_LE_AUTH_REQ_NO_BOND SMP_AUTH_NO_BOND   /* 0 */
 #define BTM_LE_AUTH_REQ_BOND    SMP_AUTH_GEN_BOND  /* 1 << 0 */

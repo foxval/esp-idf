@@ -205,19 +205,23 @@ void vPortCPUAcquireMutex(portMUX_TYPE *mux, const char *function, int line);
 portBASE_TYPE vPortCPUReleaseMutex(portMUX_TYPE *mux, const char *function, int line);
 void vTaskEnterCritical( portMUX_TYPE *mux, const char *function, int line );
 void vTaskExitCritical( portMUX_TYPE *mux, const char *function, int line );
+void vTaskEnterCritical_ISR( portMUX_TYPE *mux, const char *function, int line );
+void vTaskExitCritical_ISR( portMUX_TYPE *mux, const char *function, int line );
 #define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
 #define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux, __FUNCTION__, __LINE__)
-#define portENTER_CRITICAL_ISR(mux)    vPortCPUAcquireMutex(mux, __FUNCTION__, __LINE__)
-#define portEXIT_CRITICAL_ISR(mux)    vPortCPUReleaseMutex(mux, __FUNCTION__, __LINE__)
+#define portENTER_CRITICAL_ISR(mux)    vTaskEnterCritical_ISR(mux, __FUNCTION__, __LINE__)
+#define portEXIT_CRITICAL_ISR(mux)     vTaskExitCritical_ISR(mux, __FUNCTION__, __LINE__)
 #else
 void vTaskExitCritical( portMUX_TYPE *mux );
 void vTaskEnterCritical( portMUX_TYPE *mux );
+void vTaskExitCritical_ISR( portMUX_TYPE *mux );
+void vTaskEnterCritical_ISR( portMUX_TYPE *mux );
 void vPortCPUAcquireMutex(portMUX_TYPE *mux);
 portBASE_TYPE vPortCPUReleaseMutex(portMUX_TYPE *mux);
 #define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux)
 #define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux)
-#define portENTER_CRITICAL_ISR(mux)    vPortCPUAcquireMutex(mux)
-#define portEXIT_CRITICAL_ISR(mux)    vPortCPUReleaseMutex(mux)
+#define portENTER_CRITICAL_ISR(mux)    vTaskEnterCritical_ISR(mux)
+#define portEXIT_CRITICAL_ISR(mux)     vTaskExitCritical_ISR(mux)
 #endif
 
 // Cleaner and preferred solution allows nested interrupts disabling and restoring via local registers or stack.

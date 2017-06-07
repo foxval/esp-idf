@@ -105,6 +105,33 @@ static void btc_cleanup_adv_data(tBTA_BLE_ADV_DATA *bta_adv_data)
 }
 
 
+static esp_bt_status_t btc_hci_to_esp_status(uint8_t hci_status)
+{
+    esp_bt_status_t esp_status = ESP_BT_STATUS_FAIL;
+    switch(hci_status) {
+        case HCI_SUCCESS:
+            esp_status = ESP_BT_STATUS_SUCCESS;
+            break;
+        case HCI_ERR_HOST_TIMEOUT:
+            esp_status = ESP_BT_STATUS_TIMEOUT;
+            break;
+        case HCI_ERR_ILLEGAL_COMMAND:
+            esp_status = ESP_BT_STATUS_PENDING;
+            break;
+        case HCI_ERR_UNACCEPT_CONN_INTERVAL:
+            esp_status = ESP_BT_STATUS_UNACCEPT_CONN_INTERVAL;
+            break;
+        case HCI_ERR_PARAM_OUT_OF_RANGE:
+            esp_status = ESP_BT_STATUS_PARAM_OUT_OF_RANGE;
+            break;
+        default:
+            esp_status = ESP_BT_STATUS_FAIL;
+            break;
+    }
+
+    return esp_status;
+}
+
 static void btc_to_bta_adv_data(esp_ble_adv_data_t *p_adv_data, tBTA_BLE_ADV_DATA *bta_adv_data, uint32_t *data_mask)
 {
     uint32_t mask;
@@ -570,6 +597,31 @@ static void btc_stop_scan_callback(tBTA_STATUS status)
     }
 }
 
+void btc_update_conn_param_callback (UINT8 status, BD_ADDR bd_addr, 
+                                                       tBTM_LE_UPDATE_CONN_PRAMS *update_conn_params)
+{
+    esp_ble_gap_cb_param_t param;
+    bt_status_t ret;
+    btc_msg_t msg;
+    msg.sig = BTC_SIG_API_CB;
+    msg.pid = BTC_PID_GAP_BLE;
+    msg.act = ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT;
+    param.update_conn_params.status = btc_hci_to_esp_status(status);
+    param.update_conn_params.min_int = update_conn_params->min_conn_int;
+    param.update_conn_params.max_int = update_conn_params->max_conn_int;
+    param.update_conn_params.conn_int = update_conn_params->conn_int;
+    param.update_conn_params.latency = update_conn_params->slave_latency;
+    param.update_conn_params.timeout = update_conn_params->supervision_tout;
+    memcpy(param.update_conn_params.bda, bd_addr, sizeof(esp_bd_addr_t));
+    ret = btc_transfer_context(&msg, &param,
+                               sizeof(esp_ble_gap_cb_param_t), NULL);
+
+    if (ret != BT_STATUS_SUCCESS) {
+        LOG_ERROR("%s btc_transfer_context failed\n", __func__);
+    }
+}
+
+
 #if (SMP_INCLUDED == TRUE)
 static void btc_set_encryption_callback(BD_ADDR bd_addr, tBTA_TRANSPORT transport, tBTA_STATUS enc_status)
 {
@@ -580,7 +632,7 @@ static void btc_set_encryption_callback(BD_ADDR bd_addr, tBTA_TRANSPORT transpor
 }
 #endif  ///SMP_INCLUDED == TRUE
 
-static void btc_ble_start_scanning(uint8_t duration,
+static void btc_ble_start_scanning(uint32_t duration,
                                    tBTA_DM_SEARCH_CBACK *results_cb,
                                    tBTA_START_STOP_SCAN_CMPL_CBACK *start_scan_cb)
 {
@@ -607,7 +659,8 @@ static void btc_ble_stop_advertising(tBTA_START_STOP_ADV_CMPL_CBACK *stop_adv_cb
 }
 
 static void btc_ble_update_conn_params(BD_ADDR bd_addr, uint16_t min_int,
-                                       uint16_t max_int, uint16_t latency, uint16_t timeout)
+                                       uint16_t max_int, uint16_t latency, uint16_t timeout,
+                                       tBTA_UPDATE_CONN_PARAM_CBACK *update_conn_param_cb)
 {
     if (min_int > max_int) {
         min_int = max_int;
@@ -618,7 +671,7 @@ static void btc_ble_update_conn_params(BD_ADDR bd_addr, uint16_t min_int,
     }
 
     BTA_DmBleUpdateConnectionParams(bd_addr, min_int, max_int,
-                                    latency, timeout);
+                                    latency, timeout, update_conn_param_cb);
 }
 
 static void btc_ble_set_pkt_data_len(BD_ADDR remote_device, uint16_t tx_data_length)
@@ -634,10 +687,32 @@ static void btc_ble_set_pkt_data_len(BD_ADDR remote_device, uint16_t tx_data_len
 
 static void btc_ble_set_rand_addr (BD_ADDR rand_addr)
 {
+    esp_ble_gap_cb_param_t param;
+    bt_status_t ret;
+    btc_msg_t msg;
+    param.set_rand_addr_cmpl.status = ESP_BT_STATUS_SUCCESS;
+
     if (rand_addr != NULL) {
-        BTA_DmSetRandAddress(rand_addr);
+        if((rand_addr[BD_ADDR_LEN - 1] & BT_STATIC_RAND_ADDR_MASK)
+            == BT_STATIC_RAND_ADDR_MASK) {
+            BTA_DmSetRandAddress(rand_addr);
+        } else {
+            param.set_rand_addr_cmpl.status = ESP_BT_STATUS_INVALID_STATIC_RAND_ADDR;
+            LOG_ERROR("Invalid randrom address, the high bit should be 0x11xx");
+        }
     } else {
-        LOG_ERROR("Invalid randrom address.\n");
+        param.set_rand_addr_cmpl.status = ESP_BT_STATUS_INVALID_STATIC_RAND_ADDR;
+        LOG_ERROR("Invalid randrom addressm, the address value is NULL");
+    }
+
+    msg.sig = BTC_SIG_API_CB;
+    msg.pid = BTC_PID_GAP_BLE;
+    msg.act = ESP_GAP_BLE_SET_STATIC_RAND_ADDR_EVT;
+    ret = btc_transfer_context(&msg, &param,
+                               sizeof(esp_ble_gap_cb_param_t), NULL);
+
+    if (ret != BT_STATUS_SUCCESS) {
+        LOG_ERROR("%s btc_transfer_context failed\n", __func__);
     }
 }
 
@@ -708,6 +783,12 @@ void btc_gap_ble_cb_handler(btc_msg_t *msg)
         break;
     case ESP_GAP_BLE_SCAN_STOP_COMPLETE_EVT:
         btc_gap_ble_cb_to_app(ESP_GAP_BLE_SCAN_STOP_COMPLETE_EVT, param);
+        break;
+    case ESP_GAP_BLE_SET_STATIC_RAND_ADDR_EVT:
+        btc_gap_ble_cb_to_app(ESP_GAP_BLE_SET_STATIC_RAND_ADDR_EVT, param);
+        break;
+    case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
+        btc_gap_ble_cb_to_app(ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT, param);
         break;
     default:
         break;
@@ -859,7 +940,8 @@ void btc_gap_ble_call_handler(btc_msg_t *msg)
                                    arg->conn_update_params.conn_params.min_int,
                                    arg->conn_update_params.conn_params.max_int,
                                    arg->conn_update_params.conn_params.latency,
-                                   arg->conn_update_params.conn_params.timeout);
+                                   arg->conn_update_params.conn_params.timeout,
+                                   btc_update_conn_param_callback);
         break;
     case BTC_GAP_BLE_ACT_SET_PKT_DATA_LEN:
         btc_ble_set_pkt_data_len(arg->set_pkt_data_len.remote_device, arg->set_pkt_data_len.tx_data_length);
@@ -883,16 +965,14 @@ void btc_gap_ble_call_handler(btc_msg_t *msg)
                                       arg->cfg_scan_rsp_data_raw.raw_scan_rsp_len,
                                       btc_scan_rsp_data_raw_callback);
         break;
-    case BTC_GAP_BLE_SET_ENCRYPTION_EVT: {
 #if (SMP_INCLUDED == TRUE)
+    case BTC_GAP_BLE_SET_ENCRYPTION_EVT: {
         BD_ADDR bd_addr;
         memcpy(bd_addr, arg->set_encryption.bd_addr, sizeof(BD_ADDR));
         BTA_DmSetEncryption(bd_addr, BT_TRANSPORT_LE, btc_set_encryption_callback,
                                           (tBTA_DM_BLE_SEC_ACT)arg->set_encryption.sec_act);
-#endif  ///SMP_INCLUDED == TRUE
         break;
     }
-
     case BTC_GAP_BLE_SET_SECURITY_PARAM_EVT: {
         switch(arg->set_security_param.param_type) {
             case ESP_BLE_SM_PASSKEY:
@@ -933,14 +1013,25 @@ void btc_gap_ble_call_handler(btc_msg_t *msg)
         break;
     }        
     case BTC_GAP_BLE_SECURITY_RSP_EVT: {
-#if (SMP_INCLUDED == TRUE)
         BD_ADDR bd_addr;
         tBTA_DM_BLE_SEC_GRANT res = arg->sec_rsp.accept ? BTA_DM_SEC_GRANTED : BTA_DM_SEC_PAIR_NOT_SPT;
         memcpy(bd_addr, arg->sec_rsp.bd_addr, sizeof(BD_ADDR));
         BTA_DmBleSecurityGrant(bd_addr, res);
         break;
-#endif  ///SMP_INCLUDED == TRUE
     }
+    case BTC_GAP_BLE_PASSKEY_REPLY_EVT: {
+        BD_ADDR bd_addr;
+        memcpy(bd_addr, arg->enc_passkey_replay.bd_addr, sizeof(BD_ADDR));
+        BTA_DmBlePasskeyReply(bd_addr, arg->enc_passkey_replay.accept, arg->enc_passkey_replay.passkey);
+        break;
+    }
+    case BTC_GAP_BLE_CONFIRM_REPLY_EVT: {
+        BD_ADDR bd_addr;
+        memcpy(bd_addr, arg->enc_comfirm_replay.bd_addr, sizeof(BD_ADDR));
+        BTA_DmBleConfirmReply(bd_addr, arg->enc_comfirm_replay.accept);
+        break;
+    }
+#endif  ///SMP_INCLUDED == TRUE
     default:
         break;
     }

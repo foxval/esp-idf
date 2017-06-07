@@ -4121,6 +4121,29 @@ is not running.  Re-enabling the scheduler will re-enable the interrupts instead
 		}
 	}
 
+static BaseType_t uxCriticalNesting[portNUM_PROCESSORS];
+static BaseType_t uxOldInterruptState[portNUM_PROCESSORS];
+
+#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
+	void vTaskEnterCritical_ISR( portMUX_TYPE *mux, const char *function, int line )
+#else
+	void vTaskEnterCritical_ISR( portMUX_TYPE *mux )
+#endif
+	{
+		BaseType_t oldInterruptLevel=0;
+		oldInterruptLevel=portENTER_CRITICAL_NESTED();
+#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
+		vPortCPUAcquireMutex( mux, function, line );
+#else
+		vPortCPUAcquireMutex( mux );
+#endif
+
+                uxCriticalNesting[xPortGetCoreID()]++;
+		if(uxCriticalNesting[xPortGetCoreID()] == 1)
+			uxOldInterruptState[xPortGetCoreID()] = oldInterruptLevel;
+	}
+
+
 #endif /* portCRITICAL_NESTING_IN_TCB */
 /*-----------------------------------------------------------*/
 
@@ -4162,6 +4185,30 @@ is not running.  Re-enabling the scheduler will re-enable the interrupts instead
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
+
+#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
+        void vTaskExitCritical_ISR( portMUX_TYPE *mux, const char *function, int line )
+#else
+        void vTaskExitCritical_ISR( portMUX_TYPE *mux )
+#endif
+        {
+#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
+		vPortCPUReleaseMutex( mux, function, line );
+#else
+		vPortCPUReleaseMutex( mux );
+#endif
+		if(uxCriticalNesting[xPortGetCoreID()] > 0U ) {
+			uxCriticalNesting[xPortGetCoreID()]--;
+			if(uxCriticalNesting[xPortGetCoreID()] == 0U ) {
+				portEXIT_CRITICAL_NESTED(uxOldInterruptState[xPortGetCoreID()]);
+			} else { 
+				mtCOVERAGE_TEST_MARKER();
+			}
+                } else {
+			mtCOVERAGE_TEST_MARKER();
+                }
+        }
+
 	
 #endif /* portCRITICAL_NESTING_IN_TCB */
 /*-----------------------------------------------------------*/
