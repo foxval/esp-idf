@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,52 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mesh.h"
-#include "mesh_wifi.h"
-#include "mesh_config.h"
-#include "mesh_common.h"
+#include "tcpip_adapter.h"
+
+/*******************************************************
+ *                Variable Definitions
+ *******************************************************/
+static bool is_dhcp_stopped = false;
 
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void esp_mesh_event_set_cb(system_event_cb_t event_cb)
+
+void esp_mesh_enable_dhcp(void)
 {
-    esp_event_loop_set_cb(event_cb, NULL);
+    if (is_dhcp_stopped) {
+        tcpip_adapter_dhcpc_start(TCPIP_ADAPTER_IF_STA);
+        is_dhcp_stopped = false;
+    }
 }
 
-esp_err_t esp_mesh_wifi_init(uint8_t channel, uint8_t max_connections)
+void esp_mesh_disable_dhcp(void)
 {
-    static bool init = false;
-    if (init) {
-        return ESP_OK;
+    if (!is_dhcp_stopped) {
+        tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
+        tcpip_adapter_dhcpc_stop(TCPIP_ADAPTER_IF_STA);
+        is_dhcp_stopped = true;
     }
-    init = true;
-    ESP_ERROR_CHECK(nvs_flash_init());
-    system_init();
-    tcpip_adapter_init();
-    ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
-    ;
-    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
-    ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
-    esp_wifi_set_mode(WIFI_MODE_APSTA);
-    {
-        /* Change softAP settings */
-        uint8_t mac[6];
-        char ssid[32] = { 0, };
-        wifi_config_t config;
-        memset(&config, 0, sizeof(config));
-        esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
-        sprintf(ssid, "ESP_%02X%02X%02X", mac[3], mac[4], mac[5]);
-        memcpy(config.ap.ssid, ssid, strlen(ssid));
-        config.ap.ssid_len = strlen(ssid);
-        config.ap.authmode = WIFI_AUTH_OPEN;
-        config.ap.channel = channel;
-        config.ap.max_connection = max_connections;
-        esp_wifi_set_config(ESP_IF_WIFI_AP, &config);
-    }
-
-    esp_mesh_wifi_start();
-
-    return ESP_OK;
 }

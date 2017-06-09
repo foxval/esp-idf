@@ -12,19 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _MESH_TCPIP_H_
-#define _MESH_TCPIP_H_
+#ifndef _MESH_LIGHT_H_
+#define _MESH_LIGHT_H_
 
 #include "esp_err.h"
 
 /*******************************************************
+ *                Constants
+ *******************************************************/
+#define RGB_LIGHT_RED       (0xff)
+#define RGB_LIGHT_GREEN     (0xfe)
+#define RGB_LIGHT_BLUE      (0xfd)
+#define RGB_LIGHT_YELLOW    (0xfc)
+#define RGB_LIGHT_PINK      (0xfb)
+#define RGB_LIGHT_INIT      (0xfa)
+#define RGB_LIGHT_WARNING   (0xf9)
+
+/*******************************************************
  *                Function Definitions
  *******************************************************/
+esp_err_t mesh_gpio_set(int value);
+esp_err_t mesh_gpio_get(int* value);
+esp_err_t mesh_light_init(void);
+esp_err_t mesh_light_set(int brightness);
+esp_err_t mesh_light_get(int* brightness);
 
-esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
-        int port);
-esp_err_t esp_mesh_tcp_client_stop(void);
-
-esp_err_t esp_mesh_send_to_server(void* message, uint32_t timeout_ms);
-
-#endif /* _MESH_TCPIP_H_ */
+#endif /* _MESH_LIGHT_H_ */

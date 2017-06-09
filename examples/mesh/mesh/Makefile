@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := mesh-demo
+PROJECT_NAME := mesh
 
 include $(IDF_PATH)/make/project.mk
 

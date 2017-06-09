@@ -686,6 +686,10 @@ static void tcpip_adapter_dhcpc_cb(struct netif *netif)
             memcpy(&evt.event_info.got_ip.ip_info, ip_info, sizeof(tcpip_adapter_ip_info_t));
 
             esp_event_send(&evt);
+#if 1//def ESP_MESH_SUPPORT
+            extern esp_err_t esp_mesh_wifi_event_send(system_event_t *event);
+            esp_mesh_wifi_event_send(&evt);
+#endif /* ESP_MESH_SUPPORT */
         } else {
             ESP_LOGD(TAG, "ip unchanged");
         }

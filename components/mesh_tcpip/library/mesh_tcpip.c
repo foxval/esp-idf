@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,57 @@
 
 #include "mesh.h"
 #include "mesh_config.h"
-#include "mesh_common.h"
 #include "mesh_log.h"
 #include "lwip/inet.h"
 #include "lwip/netdb.h"
+
+/**
+ * Application Instructions
+ *   1. Setup a TCP server listening on port MESH_SERVER_PORT.
+ *   (see mesh configuration details from ../../examples/mesh/mesh/main/include/mesh_config.h)
+ *
+ *   2. Data format:
+ *   _____________________________________________________________________________
+ *   | 0           | 1             6|     ...     |          6(n+1)|      ...     |
+ *   |----------------------------------------------------------------------------|
+ *   |   control   |target address 0|     ...     |target address n|    control   |
+ *   |target number|                |             |                |    commands  |
+ *   |-----------------------------------------------------------------------------
+ *
+ *   3. Examples with BFC control protocol
+ *      (data from server to turn off the lights)
+ *      (1)unicast control:
+ *      01 aa bb cc 11 22 33 2 00 bf c0 06 00
+ *
+ *      (2)multicast control:
+ *      02 aa bb cc 11 22 33 aa bb cc 44 55 66 2 00 bf c0 06 00
+ *
+ *      (3)broadcast control:
+ *      01 ff ff ff ff ff ff 2 00 bf c0 06 00
+ */
 
 /*******************************************************
  *                Constants
  *******************************************************/
 static const char *TAG = "mesh_tcpip";
 
-#define MESH_CNX_STATE_IDLE          (1)
-#define MESH_CNX_STATE_CONNECTING    (2)
-#define MESH_CNX_STATE_CONNECTED     (3)
+#define MESH_CNX_STATE_IDLE                (1)
+#define MESH_CNX_STATE_CONNECTING          (2)
+#define MESH_CNX_STATE_CONNECTED           (3)
 
-#define SERVER_CONNECTED             (1)
-#define SERVER_DISCONNECTED          (0)
+#define SERVER_CONNECTED                   (1)
+#define SERVER_DISCONNECTED                (0)
+
+/* tcp task */
+#define MESH_DEFAULT_TASK_PRI              (5)
+
+#define MESH_TCPIP_RX_TASK_NAME            "MTRX"
+#define MESH_TCPIP_RX_TASK_STACK           (1024*3)
+#define MESH_TCPIP_RX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
+
+#define MESH_TCPIP_TX_TASK_NAME            "MTTX"
+#define MESH_TCPIP_TX_TASK_STACK           (1024*2)
+#define MESH_TCPIP_TX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
 
 /*******************************************************
  *                Variable Definitions
@@ -41,14 +76,14 @@ static int server_port = -1;
 static char server_hostname[128] = { 0, };
 static volatile uint8_t mesh_cnx_state = MESH_CNX_STATE_IDLE;
 static volatile bool is_running = true;
-static bool is_dhcp_stopped = false;
 static bool is_inited = false;
+static QueueHandle_t mesh_tcpip_queue = NULL;
 
 /*******************************************************
  *                Function Declarations
  *******************************************************/
-static void mesh_tcpip_tx_task_main(void *pvPara);
-static void mesh_tcpip_rx_task_main(void *pvPara);
+static void mesh_tcpip_tx_main(void *arg);
+static void mesh_tcpip_rx_main(void *arg);
 static esp_err_t mesh_tcpip_task_init(void);
 static esp_err_t mesh_tcpip_connect_server(void);
 static esp_err_t mesh_tcpip_disconnect_server(void);
@@ -56,23 +91,22 @@ static esp_err_t mesh_tcpip_disconnect_server(void);
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void esp_mesh_tcpip_enable_dhcp(void)
+esp_err_t esp_mesh_send_to_server(void* message, uint32_t timeout_ms)
 {
-    MESH_LOGI("%s\n", __func__);
-    if (is_dhcp_stopped) {
-        tcpip_adapter_dhcpc_start(TCPIP_ADAPTER_IF_STA);
-        is_dhcp_stopped = false;
+    if (!message || !mesh_tcpip_queue) {
+        return ESP_FAIL;
     }
-}
-
-void esp_mesh_tcpip_disable_dhcp(void)
-{
-    MESH_LOGI("%s\n", __func__);
-    if (!is_dhcp_stopped) {
-        tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
-        tcpip_adapter_dhcpc_stop(TCPIP_ADAPTER_IF_STA);
-        is_dhcp_stopped = true;
+    ets_printf("tcpip q, waiting[%d]\n",
+            uxQueueMessagesWaiting(mesh_tcpip_queue));
+    if (mesh_tcpip_queue
+            && xQueueSendToBack(mesh_tcpip_queue, message, timeout_ms) == pdTRUE) {
+        return ESP_OK;
     }
+    if (uxQueueMessagesWaiting(mesh_tcpip_queue) > 30) {
+        ets_printf("tcpip q full, waiting[%d]\n",
+                uxQueueMessagesWaiting(mesh_tcpip_queue));
+    }
+    return ESP_FAIL;
 }
 
 esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
@@ -98,17 +132,32 @@ esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
 
 esp_err_t esp_mesh_tcp_client_stop(void)
 {
-    MESH_LOGE("ERROR:task stop");
     is_running = false;
     is_inited = false;
     return ESP_OK;
+}
+
+static void mesh_tcpip_task_deinit(void)
+{
+    if (mesh_tcpip_tx_task) {
+        vTaskDelete(mesh_tcpip_tx_task);
+        mesh_tcpip_tx_task = NULL;
+    }
+    if (mesh_tcpip_rx_task) {
+        vTaskDelete(mesh_tcpip_rx_task);
+        mesh_tcpip_rx_task = NULL;
+    }
+    if (mesh_tcpip_queue) {
+        vQueueDelete(mesh_tcpip_queue);
+        mesh_tcpip_queue = NULL;
+    }
 }
 
 static esp_err_t mesh_tcpip_task_init(void)
 {
     bool is_failed = false;
     if (!mesh_tcpip_tx_task) {
-        xTaskCreate(mesh_tcpip_tx_task_main, MESH_TCPIP_TX_TASK_NAME,
+        xTaskCreate(mesh_tcpip_tx_main, MESH_TCPIP_TX_TASK_NAME,
                 MESH_TCPIP_TX_TASK_STACK, NULL, MESH_TCPIP_TX_TASK_PRI,
                 &mesh_tcpip_tx_task);
         if (!mesh_tcpip_tx_task) {
@@ -116,22 +165,21 @@ static esp_err_t mesh_tcpip_task_init(void)
         }
     }
     if (!mesh_tcpip_rx_task) {
-        xTaskCreate(mesh_tcpip_rx_task_main, MESH_TCPIP_RX_TASK_NAME,
+        xTaskCreate(mesh_tcpip_rx_main, MESH_TCPIP_RX_TASK_NAME,
                 MESH_TCPIP_RX_TASK_STACK, NULL, MESH_TCPIP_RX_TASK_PRI,
                 &mesh_tcpip_rx_task);
         if (!mesh_tcpip_rx_task) {
             is_failed = true;
         }
     }
+    if (!mesh_tcpip_queue) {
+        mesh_tcpip_queue = xQueueCreate(30, sizeof(void*));
+        if (!mesh_tcpip_queue) {
+            is_failed = true;
+        }
+    }
     if (is_failed) {
-        if (mesh_tcpip_tx_task) {
-            vTaskDelete(mesh_tcpip_tx_task);
-            mesh_tcpip_tx_task = NULL;
-        }
-        if (mesh_tcpip_rx_task) {
-            vTaskDelete(mesh_tcpip_rx_task);
-            mesh_tcpip_rx_task = NULL;
-        }
+        mesh_tcpip_task_deinit();
         return ESP_FAIL;
     }
     return ESP_OK;
@@ -179,7 +227,7 @@ esp_err_t esp_mesh_hostname_lookup(const char* hostname, uint32_t* address)
 
 static esp_err_t _tcpip_connect_fail(void)
 {
-    MESH_LOGI("Connect server failed\n");
+    MESH_LOGI("connect server failed\n");
     mesh_cnx_state = MESH_CNX_STATE_IDLE;
     if (tcp_cli_sock != -1) {
         close(tcp_cli_sock);
@@ -246,9 +294,8 @@ static esp_err_t mesh_tcpip_connect_server(void)
     memset(&sock_addr, 0, sizeof(sock_addr));
     sock_addr.sin_family = AF_INET;
 #if 1
-    sock_addr.sin_port = htons(g_mesh_server_info.port);
-    memcpy(&sock_addr.sin_addr, g_mesh_server_info.ip,
-            sizeof(sock_addr.sin_addr));
+    sock_addr.sin_port = htons(MESH_SERVER_PORT);
+    memcpy(&sock_addr.sin_addr, MESH_SERVER_IP, sizeof(sock_addr.sin_addr));
 #else
     sock_addr.sin_port = server_port;
     if (!server_ip) {
@@ -257,22 +304,18 @@ static esp_err_t mesh_tcpip_connect_server(void)
     sock_addr.sin_addr.s_addr = server_ip;
 #endif
 
-    MESH_LOGI("Connect server ip:%d.%d.%d.%d:%d, socket:%d",
-            g_mesh_server_info.ip[0], g_mesh_server_info.ip[1],
-            g_mesh_server_info.ip[2], g_mesh_server_info.ip[3],
-            g_mesh_server_info.port, tcp_cli_sock);
+    MESH_LOGI("connect server ip:%d.%d.%d.%d:%d, socket:%d", MESH_SERVER_IP[0],
+            MESH_SERVER_IP[1], MESH_SERVER_IP[2], MESH_SERVER_IP[3],
+            MESH_SERVER_PORT, tcp_cli_sock);
     if (connect(tcp_cli_sock, (struct sockaddr * )&sock_addr,
             sizeof(sock_addr)) != ESP_OK) {
-        MESH_LOGE("Failed, ip:%d.%d.%d.%d, port:%d, errno:%d",
-                g_mesh_server_info.ip[0], g_mesh_server_info.ip[1],
-                g_mesh_server_info.ip[2], g_mesh_server_info.ip[3],
-                g_mesh_server_info.port, errno);
-        esp_mesh_update_event(ESP_MESH_TCP_DISCONNECTED);
+        MESH_LOGE("failed, ip:%d.%d.%d.%d, port:%d, errno:%d",
+                MESH_SERVER_IP[0], MESH_SERVER_IP[1], MESH_SERVER_IP[2],
+                MESH_SERVER_IP[3], MESH_SERVER_PORT, errno);
         return _tcpip_connect_fail();
     } else {
-        MESH_LOGI("Connect server successfully\n");
+        MESH_LOGI("connect server successfully\n");
         mesh_cnx_state = MESH_CNX_STATE_CONNECTED;
-        esp_mesh_update_event(ESP_MESH_TCP_CONNECTED);
     }
 
     return ESP_OK;
@@ -297,19 +340,21 @@ int is_server_connected(void)
     }
 }
 
-static void mesh_tcpip_tx_task_main(void *pvPara)
+static void mesh_tcpip_tx_main(void *arg)
 {
+    struct timeval cur_time;
+    time_t old_time = 0;
     fd_set wrset, exset;
-    mesh_ctx_t *ctx = NULL;
-    mesh_hdr_t *head = NULL;
-    int cur_time, old_time = 0;
+    mesh_data_t* data;
+    mesh_data_t tcp_data;
+    int recv_size = 0;
 
     is_running = true;
     while (is_running) {
 
         if (!esp_mesh_is_root()) {
             /* non-root */
-            MESH_LOGE("ERROR:not root");
+            MESH_LOGE("err: not root");
             break;
         }
         if (is_server_connected() == SERVER_DISCONNECTED) {
@@ -323,7 +368,6 @@ static void mesh_tcpip_tx_task_main(void *pvPara)
         FD_SET(tcp_cli_sock, &exset);
 
         if (select(tcp_cli_sock + 1, NULL, &wrset, &exset, NULL) > 0) {
-            ctx = NULL;
             if (FD_ISSET(tcp_cli_sock, &exset)) {
                 /*
                  * process the socket exception
@@ -334,78 +378,100 @@ static void mesh_tcpip_tx_task_main(void *pvPara)
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
                 MESH_DEBUG("tx exception\n");
-                if (!esp_mesh_is_enabled()) {
-                    MESH_DEBUG("mesh not enabled\n");
-                    break;
-                } else {
-                    esp_mesh_update_event(ESP_MESH_TCP_DISCONNECTED);
-                }
             }
+
             if (FD_ISSET(tcp_cli_sock, &wrset)) {
-
-                /*
-                 * check write set
-                 * if there is packet waiting in queue, we get packet from queue,
-                 * and send packet out
-                 */
-                if (esp_mesh_pop_from_tcpip_queue((mesh_ctx_t*) &ctx,
-                portMAX_DELAY) == ESP_OK) {
-                    if (ctx && ctx->buf) {
-                        cur_time = system_get_time();
-                        head = (mesh_hdr_t *) ctx->buf;
-
-                        if (is_server_connected() == SERVER_CONNECTED) {
-                            MESH_LOGE(
-                                    "[%d]ms, Send to server len:%d, SRC:"MACSTR", socketID:%d",
-                                    (cur_time - old_time) / 1000, head->len,
-                                    MAC2STR(head->src_addr), tcp_cli_sock);
-                            send(tcp_cli_sock, head, head->len, MSG_DONTWAIT);
-                        } else {
-                            ets_printf(
-                                    "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
-                                    __func__, __LINE__, tcp_cli_sock,
-                                    mesh_cnx_state);
-                        }
-                        old_time = cur_time;
+                memset(&tcp_data, 0, sizeof(mesh_data_t));
+                data = NULL;
+                if (xQueueReceive(mesh_tcpip_queue, &data, portMAX_DELAY)
+                        == pdTRUE && data && data->data && data->size) {
+                    recv_size = data->size;
+                    tcp_data.size = recv_size;
+                    tcp_data.data = (uint8_t*) malloc(recv_size);
+                    if (!tcp_data.data) {
+                        free(data->data);
+                        free(data);
+                        continue;
                     }
-                    esp_mesh_free_packet_contxt(ctx);
-                    ctx = NULL;
+                    memcpy(tcp_data.data, data->data, recv_size);
+                    free(data->data);
+                    free(data);
+                    gettimeofday(&cur_time, NULL);
+                    if (is_server_connected() == SERVER_CONNECTED) {
+#ifdef MESH_DUMP
+                        {
+                            int i = 0;
+                            ets_printf("[ROOT]Send to server[%d]: ",
+                                    tcp_data.size);
+                            for (i = 0; i < tcp_data.size; i++) {
+                                ets_printf("%x ", tcp_data.data[i]);
+                            }
+                            ets_printf("\n");
+
+                        }
+#endif /* MESH_DUMP */
+                        send(tcp_cli_sock, tcp_data.data, tcp_data.size,
+                                MSG_DONTWAIT);
+                        MESH_LOGI("[%u]s send to server len:%d, socketID:%d",
+                                (int )(cur_time.tv_sec - old_time), recv_size,
+                                tcp_cli_sock);
+
+                    } else {
+                        ets_printf(
+                                "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
+                                __func__, __LINE__, tcp_cli_sock,
+                                mesh_cnx_state);
+                    }
+                    free(tcp_data.data);
+                    old_time = cur_time.tv_sec;
                 }
             }
         }
         if (is_running == false) {
-            MESH_LOGE("ERROR:is_running false");
+            MESH_LOGE("err: is_running false");
         }
     }
 
-    /*
-     * release the packet context pending in tcpip queue.
-     */
-    MESH_LOGE("ERROR:task stop");
-    while (esp_mesh_pop_from_tcpip_queue((mesh_ctx_t*) &ctx, 0) == ESP_OK) {
-        esp_mesh_free_packet_contxt(ctx);
-        ctx = NULL;
-    }
-
+    MESH_LOGE("err: task stop");
     mesh_tcpip_disconnect_server();
     mesh_tcpip_tx_task = NULL;
     vTaskDelete(NULL);
 }
 
-static void mesh_tcpip_rx_task_main(void *pvPara)
+static void mesh_tcpip_rx_main(void *arg)
 {
-    int size = 0;
+#define TCP_RECV_SIZE (1024)
+#define MIN_RECV_SIZE (13)
+    typedef struct
+    {
+        uint8_t count;
+        mesh_addr_t* addr;
+    } mesh_ctl_t;
+    mesh_ctl_t mesh_ctl;
+
+    struct timeval cur_time;
+    time_t old_time = 0;
+    uint8_t mcast_addr[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00, 0x00 };
     fd_set rdset, exset;
-    int cur_time, old_time = 0;
-    mesh_ctx_t *ctx = NULL;
-    mesh_hdr_t* header = NULL;
-    uint8_t* buf = NULL;
-    uint8_t mac[6] = { 0, };
+    esp_err_t err;
+    mesh_addr_t to;
+    mesh_opt_t* opt;
+    int opt_len;
+    mesh_data_t data;
+    mesh_data_t ctl_data;
+    int ctl_data_offset = 0;
+    int recv_size = 0;
+    data.size = TCP_RECV_SIZE;
+    data.data = (uint8_t*) malloc(TCP_RECV_SIZE);
+    if (!data.data) {
+        ets_printf("tcpip rx fails\n");
+        vTaskDelete(NULL);
+        return;
+    }
 
     is_running = true;
-    esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
     while (is_running) {
-        if (esp_mesh_get_hop() != 1) {
+        if (esp_mesh_get_layer() != 1) {
             /* non-root */
             break;
         }
@@ -421,7 +487,6 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
         FD_ZERO(&exset);
         FD_SET(tcp_cli_sock, &exset);
         if (select(tcp_cli_sock + 1, &rdset, NULL, &exset, NULL) > 0) {
-            ctx = NULL;
             if (FD_ISSET(tcp_cli_sock, &exset)) {
                 /* process the socket exception */
                 if (tcp_cli_sock != -1) {
@@ -430,82 +495,105 @@ static void mesh_tcpip_rx_task_main(void *pvPara)
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
                 MESH_DEBUG("rx exception\n");
-                if (!esp_mesh_is_enabled()) {
-                    MESH_DEBUG("mesh not enabled\n");
-                    break;
-                } else {
-                    esp_mesh_update_event(ESP_MESH_TCP_DISCONNECTED);
-                }
             }
             if (FD_ISSET(tcp_cli_sock, &rdset)) {
-//                MESH_LOGE("heap:%d", esp_get_free_heap_size());
-                ctx = (mesh_ctx_t *) malloc(sizeof(*ctx));
-                memset(ctx, 0, sizeof(*ctx));
-//                MESH_LOGE("ctx:%p, heap:%d", ctx, esp_get_free_heap_size());
-                if (ctx) {
-                    ctx->buf = malloc(ESP_MESH_PKT_LEN_MAX);
-                    buf = (uint8_t*) ctx->buf;
-                    if (ctx->buf) {
-                        memset(ctx->buf, 0, ESP_MESH_PKT_LEN_MAX);
-                        ctx->ifidx = WIFI_IF_STA;
-                        memcpy(ctx->src, mac, sizeof(mac));
-                        cur_time = system_get_time();
-                        if (is_server_connected() == SERVER_CONNECTED) {
-                            size = recv(tcp_cli_sock, ctx->buf,
-                                    ESP_MESH_PKT_LEN_MAX, 0);
-                        } else {
-                            ets_printf(
-                                    "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
-                                    __func__, __LINE__, tcp_cli_sock,
-                                    mesh_cnx_state);
-                        }
-                        ctx->buf_len = size;
-                        header = (mesh_hdr_t*) ctx->buf;
-                        if (size > 0) {
-                            MESH_LOGW(
-                                    "[%d]ms, Receive from server len:%d, mlen:%d, DST:%02x:%02x:%02x:%02x:%02x:%02x, socketID:%d",
-                                    (cur_time - old_time) / 1000, size,
-                                    header->len, buf[4], buf[5], buf[6], buf[7],
-                                    buf[8], buf[9], tcp_cli_sock);
-                        } else {
-                            MESH_LOGE("size:%d", size);
-                        }
-                        old_time = cur_time;
-                        if (size != header->len) {
-                            MESH_LOGE("!!! Be careful size:%d, mlen:%d\n", size,
-                                    header->len);
-#if 0
-                            if (size > 0) {
-                                int i, j = 0;
-                                for (i = 0; i < size; i++) {
-                                    ets_printf("%x ", buf[i]);
-                                    j++;
-                                    if (j >= header->len) {
-                                        ets_printf("\n");
-                                        j = 0;
-                                    }
-                                }
-                                ets_printf("\n");
-                            }
-#endif
-                        }
 
-                        if ((size > 0)
-                                && esp_mesh_push_to_recv_queue((void*) &ctx, 0)
-                                        == ESP_OK) {
-                            continue;
-                        }
+                gettimeofday(&cur_time, NULL);
+                if (is_server_connected() == SERVER_CONNECTED) {
+                    ctl_data_offset = 0;
+                    memset(data.data, 0, TCP_RECV_SIZE);
+                    recv_size = recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0);
+                    if (recv_size <= 0) {
+                        MESH_LOGE("[ROOT]err:%d, size:%d", errno, data.size);
+                        continue;
                     }
+                    MESH_LOGE("recv:%d", recv_size);
+                    data.size = recv_size;
+#ifdef MESH_DUMP
+                    {
+                        int i = 0;
+                        ets_printf(
+                                "[ROOT]receive from server[%d], address count[%d]\n",
+                                data.size, data.data[0]);
+                        for (i = 0; i < data.size; i++) {
+                            ets_printf("%x ", data.data[i]);
+                        }
+                        ets_printf("\n");
+                    }
+#endif /* MESH_DUMP */
+
+                } else {
+                    ets_printf(
+                            "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
+                            __func__, __LINE__, tcp_cli_sock, mesh_cnx_state);
+                    continue;
                 }
-                esp_mesh_free_packet_contxt(ctx);
-                ctx = NULL;
+
+                /* address format: len(1byte) + address
+                 * ex: 1 30 ae a4 03 69 a8
+                 */
+                mesh_ctl.count = data.data[0];
+                mesh_ctl.addr = (mesh_addr_t*) &data.data[1];
+                ctl_data_offset = (1 + mesh_ctl.count * sizeof(mesh_addr_t));
+
+                if (mesh_ctl.count == 1) {
+                    memcpy(&to, mesh_ctl.addr, sizeof(mesh_addr_t));
+                    memset(&ctl_data, 0, sizeof(mesh_data_t));
+                    ctl_data.size = data.size - ctl_data_offset;
+                    ctl_data.data = (uint8_t*) malloc(ctl_data.size);
+                    if (!ctl_data.data) {
+                        continue;
+                    }
+                    memcpy(ctl_data.data, data.data + ctl_data_offset,
+                            ctl_data.size);
+                    err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, NULL,
+                            0);
+                    free(ctl_data.data);
+                } else {
+                    /* option */
+                    opt = NULL;
+                    opt_len = mesh_ctl.count * sizeof(mesh_addr_t) + 2;
+                    opt = (mesh_opt_t*) malloc(opt_len);
+                    if (!opt) {
+                        continue;
+                    }
+                    opt->type = MESH_OPT_MCAST_GROUP;
+                    opt->len = opt_len - 2;
+                    memcpy((uint8_t*) opt + 2, (uint8_t*) mesh_ctl.addr,
+                            opt->len);
+                    memcpy((uint8_t*) &to, mcast_addr, sizeof(mcast_addr));
+
+                    /* payload */
+                    memset(&ctl_data, 0, sizeof(mesh_data_t));
+                    ctl_data.size = data.size - ctl_data_offset;
+                    ctl_data.data = (uint8_t*) malloc(ctl_data.size);
+                    if (!ctl_data.data) {
+                        continue;
+                    }
+                    memcpy(ctl_data.data, data.data + ctl_data_offset,
+                            ctl_data.size);
+                    /* send */
+                    err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS,
+                            (mesh_opt_t**) &opt, 1);
+                    free(ctl_data.data);
+                    free(opt);
+                }
+                MESH_LOGW(
+                        "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",
+                        (int )(cur_time.tv_sec - old_time), data.size,
+                        MAC2STR(to.addr), tcp_cli_sock, err);
+
+                old_time = cur_time.tv_sec;
             }
         }
         if (is_running == false) {
-            MESH_LOGE("ERROR:is_running false");
+            MESH_LOGE("err: is_running false");
         }
     }
 
+    if (data.data) {
+        free(data.data);
+    }
     mesh_tcpip_disconnect_server();
     mesh_tcpip_rx_task = NULL;
     vTaskDelete(NULL);
