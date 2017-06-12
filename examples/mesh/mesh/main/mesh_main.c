@@ -157,11 +157,70 @@ void esp_mesh_event_cb(mesh_event_t event)
     }
 }
 
+#ifdef MESH_PRE_SCAN
+bool is_router_found = false;
+esp_err_t esp_mesh_scan_done_handler(void)
+{
+    char ssid[33];
+    uint16_t num = 0;
+    uint8_t i;
+    wifi_ap_record_t *record;
+    wifi_ap_record_t *ap;
+
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&num));
+    record = (wifi_ap_record_t*) malloc(num * sizeof(wifi_ap_record_t));
+    if (num && !record) {
+        return ESP_FAIL;
+    }
+
+    if (esp_wifi_scan_get_ap_records(&num,
+            (wifi_ap_record_t *) record) == ESP_OK) {
+        for (i = 0; i < num; i++) {
+            ap = &(record[i]);
+            ssid[32] = '\0';
+            memcpy(ssid, ap->ssid, sizeof(ssid) - 1);
+            if (!memcmp(MESH_ROUTER_SSID, ap->ssid, strlen(ssid))) {
+                is_router_found = true;
+            }
+            printf("[%d]%s,"MACSTR",%u,%u,%d,%d,%u\n", i, ssid,
+                    MAC2STR(ap->bssid), ap->authmode, ap->primary, ap->rssi, 0,
+                    ap->second);
+        }
+    }
+
+    free(record);
+    if (!is_router_found) {
+        ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, 0));
+    }
+    return ESP_OK;
+}
+
+static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
+{
+    uint16_t num;
+    MESH_LOGE("esp_event_handler:%d", event->event_id);
+
+    switch ((int) event->event_id) {
+        case SYSTEM_EVENT_STA_START:
+            ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, 0));
+            break;
+
+        case SYSTEM_EVENT_SCAN_DONE:
+            if (event->event_info.scan_done.status == ESP_OK) {
+                ESP_ERROR_CHECK(esp_mesh_scan_done_handler());
+            }
+            break;
+    }
+
+    return ESP_OK;
+}
+#else /* MESH_PRE_SCAN */
 static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 {
     MESH_LOGE("esp_event_handler:%d", event->event_id);
     return ESP_OK;
 }
+#endif /* MESH_PRE_SCAN */
 
 void app_main(void)
 {
@@ -180,11 +239,15 @@ void app_main(void)
     tcpip_adapter_init();
     ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
     ESP_ERROR_CHECK(esp_event_loop_init(esp_event_handler, NULL));
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
-    ;
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
+    esp_wifi_start();
+
+#ifdef MESH_PRE_SCAN
+    while (!is_router_found);
+#endif /* MESH_PRE_SCAN */
 
     esp_mesh_init();
     config = (mesh_cfg_t*) malloc(sizeof(mesh_cfg_t));
@@ -205,7 +268,6 @@ void app_main(void)
                 strlen(MESH_MAP_PASSWORD));
 
         esp_mesh_set_config(config);
-        esp_wifi_start();
         esp_mesh_start();
         free(config);
     } else {
@@ -253,6 +315,7 @@ void esp_mesh_p2p_rx_main(void* arg)
     int i, j = 0, k = -1;
     esp_err_t err;
     mesh_addr_t from;
+    mesh_addr_t parent;
     int send_count = 0;
     mesh_data_t data;
     struct timeval cur_time;
@@ -316,8 +379,10 @@ void esp_mesh_p2p_rx_main(void* arg)
                     if (mforward[i].send_count < mforward[i].recv_count) {
                         mforward[i].recv_count = 0;
                     }
+                    esp_mesh_get_parent_bssid(&parent);
                     MESH_LOGI(
-                            "[%u]s receive from [#%d]"MACSTR", size:%d, heap:%d, recv/send/lost:[%d/%d%d], flag:%d[%d]",
+                            "[L:%d]parent:"MACSTR", [%u]s receive from [#%d]"MACSTR", size:%d, heap:%d, recv/send/lost:[%d/%d/%d], flag:%d[%d]",
+                            esp_mesh_get_layer(), MAC2STR(parent.addr),
                             (int )(cur_time.tv_sec - mforward[i].recv_time), i,
                             MAC2STR(from.addr), data.size,
                             esp_get_free_heap_size(), mforward[i].recv_count,
