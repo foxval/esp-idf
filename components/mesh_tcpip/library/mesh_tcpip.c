@@ -15,6 +15,7 @@
 #include "mesh.h"
 #include "mesh_config.h"
 #include "mesh_log.h"
+#include "mesh_tcpip.h"
 #include "lwip/inet.h"
 #include "lwip/netdb.h"
 
@@ -52,11 +53,8 @@ static const char *TAG = "mesh_tcpip";
 #define MESH_CNX_STATE_CONNECTING          (2)
 #define MESH_CNX_STATE_CONNECTED           (3)
 
-#define SERVER_CONNECTED                   (1)
-#define SERVER_DISCONNECTED                (0)
-
 /* tcp task */
-#define MESH_DEFAULT_TASK_PRI              (5)
+#define MESH_DEFAULT_TASK_PRI              (7)
 
 #define MESH_TCPIP_RX_TASK_NAME            "MTRX"
 #define MESH_TCPIP_RX_TASK_STACK           (1024*3)
@@ -331,12 +329,12 @@ static esp_err_t mesh_tcpip_disconnect_server(void)
     return ESP_OK;
 }
 
-int is_server_connected(void)
+int esp_mesh_is_server_connected(void)
 {
     if (tcp_cli_sock < 0 || mesh_cnx_state != MESH_CNX_STATE_CONNECTED) {
-        return SERVER_DISCONNECTED;
+        return MESH_SERVER_DISCONNECTED;
     } else {
-        return SERVER_CONNECTED;
+        return MESH_SERVER_CONNECTED;
     }
 }
 
@@ -357,7 +355,7 @@ static void mesh_tcpip_tx_main(void *arg)
             MESH_LOGE("err: not root");
             break;
         }
-        if (is_server_connected() == SERVER_DISCONNECTED) {
+        if (esp_mesh_is_server_connected() == MESH_SERVER_DISCONNECTED) {
             vTaskDelay(3000 / portTICK_PERIOD_MS);
             continue;
         }
@@ -397,7 +395,7 @@ static void mesh_tcpip_tx_main(void *arg)
                     free(data->data);
                     free(data);
                     gettimeofday(&cur_time, NULL);
-                    if (is_server_connected() == SERVER_CONNECTED) {
+                    if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
 #ifdef MESH_DUMP
                         {
                             int i = 0;
@@ -475,7 +473,7 @@ static void mesh_tcpip_rx_main(void *arg)
             /* non-root */
             break;
         }
-        if (is_server_connected() == SERVER_DISCONNECTED) {
+        if (esp_mesh_is_server_connected() == MESH_SERVER_DISCONNECTED) {
             if (mesh_tcpip_connect_server() != ESP_OK) {
                 vTaskDelay(3000 / portTICK_PERIOD_MS);
                 continue;
@@ -499,7 +497,7 @@ static void mesh_tcpip_rx_main(void *arg)
             if (FD_ISSET(tcp_cli_sock, &rdset)) {
 
                 gettimeofday(&cur_time, NULL);
-                if (is_server_connected() == SERVER_CONNECTED) {
+                if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
                     ctl_data_offset = 0;
                     memset(data.data, 0, TCP_RECV_SIZE);
                     recv_size = recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0);

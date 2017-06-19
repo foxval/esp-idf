@@ -30,6 +30,7 @@
  *******************************************************/
 static const char *TAG = "mesh_main";
 static bool is_running = true;
+static bool is_mesh_connected = false;
 
 /*******************************************************
  *                Function Declarations
@@ -94,6 +95,7 @@ void esp_mesh_event_cb(mesh_event_t event)
             /* wifi connected */
             MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer())
             ;
+            is_mesh_connected = true;
             if (esp_mesh_is_root()) {
                 esp_mesh_enable_dhcp();
             } else {
@@ -112,6 +114,7 @@ void esp_mesh_event_cb(mesh_event_t event)
             /* wifi disconnected */
             MESH_LOGI("MESH_EVENT_DISCONNECTED")
             ;
+            is_mesh_connected = false;
             esp_mesh_disconnected();
 #ifndef MESH_P2P_FORWARD_TEST
             if (esp_mesh_is_root()) {
@@ -281,13 +284,13 @@ void esp_mesh_p2p_tx_main(void* arg)
     esp_err_t ret;
     mesh_addr_t to;
     mesh_addr_t parent;
-    int send_count = 0;
+    uint32_t send_count = 0;
     uint8_t test[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     mesh_data_t data;
     data.data = test;
     data.size = sizeof(test);
     data.proto = 0;
-    data.tos = 0;
+    data.tos |= MESH_TOS_P2P;
     memcpy((uint8_t*) &to.addr, MESH_P2P_FORWARD_ADDR, sizeof(mesh_addr_t));
 
     is_running = true;
@@ -408,7 +411,11 @@ void esp_mesh_comm_tx_main(void* arg)
     esp_err_t ret;
     mesh_addr_t to;
     mesh_addr_t parent;
+    struct timeval time_start;
+    struct timeval time_stop;
+    int taken_ms = 0;
     int send_count = 0;
+    int fail_count = 0;
     mesh_data_t data;
     memset(&data, 0, sizeof(mesh_data_t));
 #define PING_SIZE (26)
@@ -440,11 +447,26 @@ void esp_mesh_comm_tx_main(void* arg)
 
     data.size = PING_SIZE;
     data.proto = 0;
-    data.tos = 0;
+    data.tos |= MESH_TOS_P2P;
+
+    uint8_t self[6];
+    esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
 
     is_running = true;
     while (is_running) {
-
+#if 0
+        if (!is_mesh_connected
+                || (esp_mesh_is_root()
+                        && esp_mesh_is_server_connected()
+                        != MESH_SERVER_CONNECTED)) {
+//            MESH_LOGE("[%s] %s, %s", esp_mesh_is_root() ? "ROOT" : "NORMAL",
+//                    is_mesh_connected ? "Connected" : "Disconnected",
+//                    esp_mesh_is_server_connected() ?
+//                            "Server connected" : "Server disconnected");
+            vTaskDelay(100 / portTICK_RATE_MS);
+            continue;
+        }
+#endif
         send_count++;
         data.data[25] = (send_count >> 24) & 0xff;
         data.data[24] = (send_count >> 16) & 0xff;
@@ -460,11 +482,21 @@ void esp_mesh_comm_tx_main(void* arg)
             ets_printf("\n");
         }
 #endif /* MESH_DUMP */
+
+        gettimeofday(&time_start, NULL);
         ret = esp_mesh_send(&to, &data, MESH_DATA_TODS, NULL, 0);
+        gettimeofday(&time_stop, NULL);
+        taken_ms = (time_stop.tv_sec - time_start.tv_sec) * 1000
+                + (time_stop.tv_usec - time_start.tv_usec) / 1000;
         esp_mesh_get_parent_bssid(&parent);
-        MESH_LOGW("[L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[%d]",
-                esp_mesh_get_layer(), MAC2STR(parent.addr), MAC2STR(to.addr),
-                send_count, esp_get_free_heap_size(), ret);
+        if (ret) {
+            fail_count++;
+        }
+        MESH_LOGW(
+                "[L:%d]"MACSTR", parent:"MACSTR" to "MACSTR"[send:%d], heap:%d, [%d]ms, [fail:%d][%d]",
+                esp_mesh_get_layer(), MAC2STR(self), MAC2STR(parent.addr),
+                MAC2STR(to.addr), send_count, esp_get_free_heap_size(),
+                taken_ms, fail_count, ret);
 
         vTaskDelay(10000 / portTICK_RATE_MS);
     }
@@ -490,6 +522,10 @@ void esp_mesh_comm_rx_main(void* arg)
 
     is_running = true;
     while (is_running) {
+        if (esp_mesh_is_root() && esp_mesh_is_server_connected() != MESH_SERVER_CONNECTED) {
+            vTaskDelay(100 / portTICK_RATE_MS);
+            continue;
+        }
         tcp_data = NULL;
         memset(data.data, 0, DATA_SIZE);
         data.size = DATA_SIZE;
@@ -573,7 +609,7 @@ esp_err_t esp_mesh_comm_server_start(void)
         return ESP_OK;
     }
 
-    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 2048, NULL, 5, NULL);
+    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 5, NULL);
     xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 2048, NULL, 5, NULL);
 
     is_started = true;
