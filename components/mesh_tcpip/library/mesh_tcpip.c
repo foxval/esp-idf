@@ -453,8 +453,7 @@ static void mesh_tcpip_rx_main(void *arg)
     fd_set rdset, exset;
     esp_err_t err;
     mesh_addr_t to;
-    mesh_opt_t* opt;
-    int opt_len;
+    mesh_opt_t opt;
     mesh_data_t data;
     mesh_data_t ctl_data;
     int ctl_data_offset = 0;
@@ -549,16 +548,14 @@ static void mesh_tcpip_rx_main(void *arg)
                     free(ctl_data.data);
                 } else {
                     /* option */
-                    opt = NULL;
-                    opt_len = mesh_ctl.count * sizeof(mesh_addr_t) + 2;
-                    opt = (mesh_opt_t*) malloc(opt_len);
-                    if (!opt) {
+                    opt.type = MESH_OPT_MCAST_GROUP;
+                    opt.len = mesh_ctl.count * sizeof(mesh_addr_t);
+                    opt.val = (uint8_t*) malloc(opt.len);
+                    if (!opt.val) {
                         continue;
                     }
-                    opt->type = MESH_OPT_MCAST_GROUP;
-                    opt->len = opt_len - 2;
-                    memcpy((uint8_t*) opt + 2, (uint8_t*) mesh_ctl.addr,
-                            opt->len);
+                    memcpy((uint8_t*) opt.val, (uint8_t*) mesh_ctl.addr,
+                            opt.len);
                     memcpy((uint8_t*) &to, mcast_addr, sizeof(mcast_addr));
 
                     /* payload */
@@ -571,10 +568,10 @@ static void mesh_tcpip_rx_main(void *arg)
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
                             ctl_data.size);
                     /* send */
-                    err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS,
-                            (mesh_opt_t**) &opt, 1);
+                    err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, &opt,
+                            1);
                     free(ctl_data.data);
-                    free(opt);
+                    free(opt.val);
                 }
                 MESH_LOGW(
                         "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",

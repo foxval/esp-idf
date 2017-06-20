@@ -288,7 +288,7 @@ esp_err_t esp_mesh_stop(void);
  *
  */
 esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
-        int flag, mesh_opt_t* option[], int opt_count);
+        int flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a mesh packet
