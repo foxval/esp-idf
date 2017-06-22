@@ -147,10 +147,11 @@ esp_err_t tcpip_adapter_start(tcpip_adapter_if_t tcpip_if, uint8_t *mac, tcpip_a
         }
         memcpy(esp_netif[tcpip_if]->hwaddr, mac, NETIF_MAX_HWADDR_LEN);
 
-        netif_init = tcpip_if_to_netif_init_fn(tcpip_if);
-        assert(netif_init != NULL);
-        netif_add(esp_netif[tcpip_if], &ip_info->ip, &ip_info->netmask, &ip_info->gw, NULL, netif_init, tcpip_input);
     }
+
+    netif_init = tcpip_if_to_netif_init_fn(tcpip_if);
+    assert(netif_init != NULL);
+    netif_add(esp_netif[tcpip_if], &ip_info->ip, &ip_info->netmask, &ip_info->gw, NULL, netif_init, tcpip_input);
 
     if (tcpip_if == TCPIP_ADAPTER_IF_AP) {
         netif_set_up(esp_netif[tcpip_if]);
@@ -212,9 +213,6 @@ esp_err_t tcpip_adapter_stop(tcpip_adapter_if_t tcpip_if)
     }
 
     netif_remove(esp_netif[tcpip_if]);
-
-    free(esp_netif[tcpip_if]);
-    esp_netif[tcpip_if] = NULL;
 
     /* in ap + sta mode, if stop ap, choose sta as default if */
     if (esp_netif[TCPIP_ADAPTER_IF_STA] && tcpip_if == TCPIP_ADAPTER_IF_AP) {
@@ -905,6 +903,21 @@ esp_err_t tcpip_adapter_get_hostname(tcpip_adapter_if_t tcpip_if, const char **h
 #else
     return ESP_ERR_TCPIP_ADAPTER_IF_NOT_READY;
 #endif
+}
+
+esp_err_t tcpip_adapter_get_netif(tcpip_adapter_if_t tcpip_if, struct netif ** netif)
+{
+    if (tcpip_if >= TCPIP_ADAPTER_IF_MAX) {
+        return ESP_ERR_TCPIP_ADAPTER_INVALID_PARAMS;
+    }
+
+    *netif = esp_netif[tcpip_if];
+
+    if (*netif == NULL) {
+        return ESP_ERR_TCPIP_ADAPTER_IF_NOT_READY;
+    }
+
+    return ESP_OK;
 }
 
 #endif /* CONFIG_TCPIP_LWIP */

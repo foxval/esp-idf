@@ -20,12 +20,10 @@ extern "C" {
 
 #ifndef MDNS_TEST_MODE
 #include <tcpip_adapter.h>
+#include "esp_event.h"
 #else
 #include "esp32_compat.h"
 #endif
-
-struct mdns_server_s;
-typedef struct mdns_server_s mdns_server_t;
 
 /**
  * @brief mDNS query result structure
@@ -46,9 +44,6 @@ typedef struct mdns_result_s {
 /**
  * @brief  Initialize mDNS on given interface
  *
- * @param  tcpip_if     Interface that the server will listen on
- * @param  server       Server pointer to populate on success
- *
  * @return
  *     - ESP_OK on success
  *     - ESP_ERR_INVALID_ARG when bad tcpip_if is given
@@ -56,20 +51,17 @@ typedef struct mdns_result_s {
  *     - ESP_ERR_NO_MEM on memory error
  *     - ESP_ERR_WIFI_NOT_INIT when WiFi is not initialized by eps_wifi_init
  */
-esp_err_t mdns_init(tcpip_adapter_if_t tcpip_if, mdns_server_t ** server);
+esp_err_t mdns_init();
 
 /**
  * @brief  Stop and free mDNS server
  *
- * @param  server       mDNS Server to free
- *
  */
-void mdns_free(mdns_server_t * server);
+void mdns_free();
 
 /**
  * @brief  Set the hostname for mDNS server
  *
- * @param  server       mDNS Server
  * @param  hostname     Hostname to set
  *
  * @return
@@ -77,12 +69,11 @@ void mdns_free(mdns_server_t * server);
  *     - ESP_ERR_INVALID_ARG Parameter error
  *     - ESP_ERR_NO_MEM memory error
  */
-esp_err_t mdns_set_hostname(mdns_server_t * server, const char * hostname);
+esp_err_t mdns_set_hostname(const char * hostname);
 
 /**
  * @brief  Set the default instance name for mDNS server
  *
- * @param  server       mDNS Server
  * @param  instance     Instance name to set
  *
  * @return
@@ -90,27 +81,28 @@ esp_err_t mdns_set_hostname(mdns_server_t * server, const char * hostname);
  *     - ESP_ERR_INVALID_ARG Parameter error
  *     - ESP_ERR_NO_MEM memory error
  */
-esp_err_t mdns_set_instance(mdns_server_t * server, const char * instance);
+esp_err_t mdns_set_instance(const char * instance);
 
 /**
  * @brief  Add service to mDNS server
  *
- * @param  server       mDNS Server
  * @param  service      service type (_http, _ftp, etc)
  * @param  proto        service protocol (_tcp, _udp)
  * @param  port         service port
+ * @param  instance     instance name to set
+ * @param  num_items    number of items in TXT data
+ * @param  txt          string array of TXT data (eg. {"var=val","other=2"})
  *
  * @return
  *     - ESP_OK success
  *     - ESP_ERR_INVALID_ARG Parameter error
  *     - ESP_ERR_NO_MEM memory error
  */
-esp_err_t mdns_service_add(mdns_server_t * server, const char * service, const char * proto, uint16_t port);
+esp_err_t mdns_service_add(const char * service, const char * proto, uint16_t port, const char * instance, uint8_t num_items, const char ** txt);
 
 /**
  * @brief  Remove service from mDNS server
  *
- * @param  server       mDNS Server
  * @param  service      service type (_http, _ftp, etc)
  * @param  proto        service protocol (_tcp, _udp)
  *
@@ -120,12 +112,11 @@ esp_err_t mdns_service_add(mdns_server_t * server, const char * service, const c
  *     - ESP_ERR_NOT_FOUND Service not found
  *     - ESP_FAIL unknown error
  */
-esp_err_t mdns_service_remove(mdns_server_t * server, const char * service, const char * proto);
+esp_err_t mdns_service_remove(const char * service, const char * proto);
 
 /**
  * @brief  Set instance name for service
  *
- * @param  server       mDNS Server
  * @param  service      service type (_http, _ftp, etc)
  * @param  proto        service protocol (_tcp, _udp)
  * @param  instance     instance name to set
@@ -136,12 +127,11 @@ esp_err_t mdns_service_remove(mdns_server_t * server, const char * service, cons
  *     - ESP_ERR_NOT_FOUND Service not found
  *     - ESP_ERR_NO_MEM memory error
  */
-esp_err_t mdns_service_instance_set(mdns_server_t * server, const char * service, const char * proto, const char * instance);
+esp_err_t mdns_service_instance_set(const char * service, const char * proto, const char * instance);
 
 /**
  * @brief  Set TXT data for service
  *
- * @param  server       mDNS Server
  * @param  service      service type (_http, _ftp, etc)
  * @param  proto        service protocol (_tcp, _udp)
  * @param  num_items    number of items in TXT data
@@ -153,12 +143,11 @@ esp_err_t mdns_service_instance_set(mdns_server_t * server, const char * service
  *     - ESP_ERR_NOT_FOUND Service not found
  *     - ESP_ERR_NO_MEM memory error
  */
-esp_err_t mdns_service_txt_set(mdns_server_t * server, const char * service, const char * proto, uint8_t num_items, const char ** txt);
+esp_err_t mdns_service_txt_set(const char * service, const char * proto, uint8_t num_items, const char ** txt);
 
 /**
  * @brief  Set service port
  *
- * @param  server       mDNS Server
  * @param  service      service type (_http, _ftp, etc)
  * @param  proto        service protocol (_tcp, _udp)
  * @param  port         service port
@@ -168,69 +157,61 @@ esp_err_t mdns_service_txt_set(mdns_server_t * server, const char * service, con
  *     - ESP_ERR_INVALID_ARG Parameter error
  *     - ESP_ERR_NOT_FOUND Service not found
  */
-esp_err_t mdns_service_port_set(mdns_server_t * server, const char * service, const char * proto, uint16_t port);
+esp_err_t mdns_service_port_set(const char * service, const char * proto, uint16_t port);
 
 /**
  * @brief  Remove and free all services from mDNS server
- *
- * @param  server       mDNS Server
  *
  * @return
  *     - ESP_OK success
  *     - ESP_ERR_INVALID_ARG Parameter error
  */
-esp_err_t mdns_service_remove_all(mdns_server_t * server);
+esp_err_t mdns_service_remove_all();
 
 /**
  * @brief  Query mDNS for host or service
  *
- * @param  server       mDNS Server
  * @param  service      service type or host name
  * @param  proto        service protocol or NULL if searching for host
  * @param  timeout      time to wait for answers. If 0, mdns_query_end MUST be called to end the search
  *
  * @return the number of results found
  */
-size_t mdns_query(mdns_server_t * server, const char * service, const char * proto, uint32_t timeout);
+size_t mdns_query(const char * service, const char * proto, uint32_t timeout);
 
 /**
  * @brief  Stop mDNS Query started with timeout = 0
  *
- * @param  server       mDNS Server
- *
  * @return the number of results found
  */
-size_t mdns_query_end(mdns_server_t * server);
+size_t mdns_query_end();
 
 /**
  * @brief  get the number of results currently in memoty
  *
- * @param  server       mDNS Server
- *
  * @return the number of results
  */
-size_t mdns_result_get_count(mdns_server_t * server);
+size_t mdns_result_get_count();
 
 /**
  * @brief  Get mDNS Search result with given index
  *
- * @param  server       mDNS Server
  * @param  num          the index of the result
  *
  * @return the result or NULL if error
  */
-const mdns_result_t * mdns_result_get(mdns_server_t * server, size_t num);
+const mdns_result_t * mdns_result_get(size_t num);
 
 /**
  * @brief  Remove and free all search results from mDNS server
- *
- * @param  server       mDNS Server
  *
  * @return
  *     - ESP_OK success
  *     - ESP_ERR_INVALID_ARG Parameter error
  */
-esp_err_t mdns_result_free(mdns_server_t * server);
+esp_err_t mdns_result_free();
+
+void mdns_handle_system_event(system_event_id_t event);
 
 #ifdef __cplusplus
 }
