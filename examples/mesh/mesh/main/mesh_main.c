@@ -79,22 +79,19 @@ void esp_mesh_event_cb(mesh_event_t event)
     switch (event) {
 
         case MESH_EVENT_SUCCESS:
-            MESH_LOGI("MESH_EVENT_SUCCESS")
-            ;
+            MESH_LOGI("MESH_EVENT_SUCCESS");
             break;
 
         case MESH_EVENT_NO_AP_FOUND:
             /* no AP found */
             MESH_LOGE("err: no AP found after scan %d times\n",
-                    MESH_SCAN_RETRIES)
-            ;
+                    MESH_SCAN_RETRIES);
             /* TODO handler for the failure */
             break;
 
         case MESH_EVENT_CONNECTED:
             /* wifi connected */
-            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer())
-            ;
+            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer());
             is_mesh_connected = true;
             if (esp_mesh_is_root()) {
                 esp_mesh_enable_dhcp();
@@ -112,8 +109,7 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_DISCONNECTED:
             /* wifi disconnected */
-            MESH_LOGI("MESH_EVENT_DISCONNECTED")
-            ;
+            MESH_LOGI("MESH_EVENT_DISCONNECTED");
             is_mesh_connected = false;
             esp_mesh_disconnected();
 #ifndef MESH_P2P_FORWARD_TEST
@@ -125,8 +121,7 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_LAYER_CHANGE:
             /* mesh device layer changes */
-            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d", esp_mesh_get_layer())
-            ;
+            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d", esp_mesh_get_layer());
             esp_mesh_connected();
 #ifndef MESH_P2P_FORWARD_TEST
             if (!esp_mesh_is_root()) {
@@ -138,8 +133,7 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_ROOT_GOT_IP:
             /* root starts to connect to server */
-            MESH_LOGI("MESH_EVENT_ROOT_GOT_IP")
-            ;
+            MESH_LOGI("MESH_EVENT_ROOT_GOT_IP");
 #ifndef MESH_P2P_FORWARD_TEST
             if (esp_mesh_is_root()) {
                 esp_mesh_tcp_client_start(MESH_SERVER_HOSTNAME,
@@ -149,13 +143,11 @@ void esp_mesh_event_cb(mesh_event_t event)
             break;
 
         case MESH_EVENT_FAIL:
-            MESH_LOGI("MESH_EVENT_FAIL")
-            ;
+            MESH_LOGI("MESH_EVENT_FAIL");
             break;
 
         default:
-            MESH_LOGI("unknown mesh event")
-            ;
+            MESH_LOGI("unknown mesh event");
             break;
     }
 }
@@ -200,7 +192,6 @@ esp_err_t esp_mesh_scan_done_handler(void)
 
 static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 {
-    uint16_t num;
     MESH_LOGE("esp_event_handler:%d", event->event_id);
 
     switch ((int) event->event_id) {
@@ -265,6 +256,8 @@ void app_main(void)
         config->router.ssid_len = strlen(MESH_ROUTER_SSID);
         memcpy((uint8_t*) &config->router.ssid, MESH_ROUTER_SSID,
                 config->router.ssid_len);
+        memcpy((uint8_t*) &config->router.password, MESH_ROUTER_PASSWD,
+                strlen(MESH_ROUTER_PASSWD));
         /* map */
         config->map.max_connection = MESH_MAP_CONNECTIONS;
         memcpy((uint8_t*) &config->map.password, MESH_MAP_PASSWORD,
@@ -499,10 +492,10 @@ void esp_mesh_comm_tx_main(void* arg)
         }
         esp_mesh_get_parent_bssid(&parent);
         MESH_LOGW(
-                "[L:%d]"MACSTR", parent:"MACSTR" to "MACSTR"[send:%d], heap:%d, [%d]ms, [fail:%d][%d]",
+                "[L:%d]"MACSTR", parent:"MACSTR" to "MACSTR"[send:%d], heap:%d, [%d]ms, [fail:%d][err:%d], [%d,%d]",
                 esp_mesh_get_layer(), MAC2STR(self), MAC2STR(parent.addr),
                 MAC2STR(to.addr), send_count, esp_get_free_heap_size(),
-                taken_ms, fail_count, ret);
+                taken_ms, fail_count, ret, data.proto, data.tos);
 
         vTaskDelay(10000 / portTICK_RATE_MS);
     }
@@ -576,9 +569,11 @@ void esp_mesh_comm_rx_main(void* arg)
         } else if (flag & MESH_DATA_FROMDS) {
             mesh_process_received_data(data.data, data.size);
         }
-        MESH_LOGI("[%u]s receive from "MACSTR", len:%d, flag:%d, heap:%d[%d]",
+        MESH_LOGI(
+                "[%u]s receive from "MACSTR", len:%d, flag:%d, heap:%d[err:%d], [%d,%d]",
                 (int )(cur_time.tv_sec - old_time), MAC2STR(from.addr),
-                data.size, flag, esp_get_free_heap_size(), err);
+                data.size, flag, esp_get_free_heap_size(), err, data.proto,
+                data.tos);
         old_time = cur_time.tv_sec;
     }
 

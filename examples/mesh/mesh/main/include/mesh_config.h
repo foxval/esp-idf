@@ -29,10 +29,10 @@
  *                Constants
  *******************************************************/
 #define MESH_ROUTER_CHANNEL        (9)               /**< channel */
-#define MESH_ROUTER_SSID           "udp2"            /**< ssid */
-#define MESH_ROUTER_PASSWD         "12345678"        /**< password */
+#define MESH_ROUTER_SSID           "ROUTER_SSID"     /**< ssid */
+#define MESH_ROUTER_PASSWD         "ROUTER_PASSWD"   /**< password */
 
-#define MESH_MAP_PASSWORD          "12345678"        /**< map password */
+#define MESH_MAP_PASSWORD          "MAP_PASSWORD"    /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
 
 /*******************************************************
