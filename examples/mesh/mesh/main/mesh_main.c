@@ -289,13 +289,12 @@ void esp_mesh_p2p_tx_main(void* arg)
     mesh_data_t data;
     data.data = test;
     data.size = sizeof(test);
-    data.proto = 0;
-    data.tos |= MESH_TOS_P2P;
+    data.proto = MESH_PROTO_BIN;
+    data.tos = MESH_TOS_P2P;
     memcpy((uint8_t*) &to.addr, MESH_P2P_FORWARD_ADDR, sizeof(mesh_addr_t));
 
     is_running = true;
     while (is_running) {
-
         send_count++;
         test[3] = (send_count >> 24) & 0xff;
         test[2] = (send_count >> 16) & 0xff;
@@ -303,9 +302,10 @@ void esp_mesh_p2p_tx_main(void* arg)
         test[0] = (send_count) & 0xff;
         ret = esp_mesh_send(&to, &data, MESH_DATA_P2P, NULL, 0);
         esp_mesh_get_parent_bssid(&parent);
-        MESH_LOGW("[L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[%d]",
+        MESH_LOGW(
+                "[L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d]",
                 esp_mesh_get_layer(), MAC2STR(parent.addr), MAC2STR(to.addr),
-                send_count, esp_get_free_heap_size(), ret);
+                send_count, esp_get_free_heap_size(), ret, data.proto, data.tos);
 
         vTaskDelay(3000 / portTICK_RATE_MS);
     }
@@ -347,6 +347,8 @@ void esp_mesh_p2p_rx_main(void* arg)
 
         memset(data.data, 0, DATA_SIZE);
         data.size = DATA_SIZE;
+        data.proto = MESH_PROTO_BIN;
+        data.tos = MESH_TOS_P2P;
         err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL);
         gettimeofday(&cur_time, NULL);
 
@@ -384,14 +386,14 @@ void esp_mesh_p2p_rx_main(void* arg)
                     }
                     esp_mesh_get_parent_bssid(&parent);
                     MESH_LOGI(
-                            "[L:%d]parent:"MACSTR", [%u]s receive from [#%d]"MACSTR", size:%d, heap:%d, recv/send/lost:[%d/%d/%d], flag:%d[%d]",
+                            "[L:%d]parent:"MACSTR", [%u]s receive from [#%d]"MACSTR", size:%d, heap:%d, recv/send/lost:[%d/%d/%d], flag:%d[err:%d], [%d,%d]",
                             esp_mesh_get_layer(), MAC2STR(parent.addr),
                             (int )(cur_time.tv_sec - mforward[i].recv_time), i,
                             MAC2STR(from.addr), data.size,
                             esp_get_free_heap_size(), mforward[i].recv_count,
                             mforward[i].send_count,
                             mforward[i].send_count - mforward[i].recv_count,
-                            flag, err);
+                            flag, err, data.proto, data.tos);
 
                     mforward[i].recv_time = cur_time.tv_sec;
                     break;
@@ -446,8 +448,8 @@ void esp_mesh_comm_tx_main(void* arg)
     data.data[21] = 0 - data.data[21];
 
     data.size = PING_SIZE;
-    data.proto = 0;
-    data.tos |= MESH_TOS_P2P;
+    data.proto = MESH_PROTO_BIN;
+    data.tos = MESH_TOS_P2P;
 
     uint8_t self[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
@@ -484,14 +486,18 @@ void esp_mesh_comm_tx_main(void* arg)
 #endif /* MESH_DUMP */
 
         gettimeofday(&time_start, NULL);
-        ret = esp_mesh_send(&to, &data, MESH_DATA_TODS, NULL, 0);
+        REXMIT: ret = esp_mesh_send(&to, &data, MESH_DATA_TODS, NULL, 0);
         gettimeofday(&time_stop, NULL);
         taken_ms = (time_stop.tv_sec - time_start.tv_sec) * 1000
                 + (time_stop.tv_usec - time_start.tv_usec) / 1000;
-        esp_mesh_get_parent_bssid(&parent);
+        if (ret == MESH_ERR_QUEUE) {
+            vTaskDelay(100 / portTICK_RATE_MS);
+            goto REXMIT;
+        }
         if (ret) {
             fail_count++;
         }
+        esp_mesh_get_parent_bssid(&parent);
         MESH_LOGW(
                 "[L:%d]"MACSTR", parent:"MACSTR" to "MACSTR"[send:%d], heap:%d, [%d]ms, [fail:%d][%d]",
                 esp_mesh_get_layer(), MAC2STR(self), MAC2STR(parent.addr),
@@ -539,9 +545,9 @@ void esp_mesh_comm_rx_main(void* arg)
 #ifdef MESH_DUMP
         {
             int i = 0;
-            ets_printf("%s%s server[%d]: ",
+            ets_printf("%s%s server[%d], proto:%d, tos:%d\n",
                     (flag & MESH_DATA_TODS) ? "[TO]" : "",
-                    (flag & MESH_DATA_FROMDS) ? "[FROM]" : "", data.size);
+                    (flag & MESH_DATA_FROMDS) ? "[FROM]" : "", data.size, data.proto, data.tos);
             for (i = 0; i < data.size; i++) {
                 ets_printf("%x ", data.data[i]);
             }

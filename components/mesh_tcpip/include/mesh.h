@@ -178,7 +178,7 @@ typedef struct
     mesh_addr_t src; /**< source address */
     uint32_t frag :4; /**< fragment number */
     uint32_t seq :28; /**< sequence number */
-    uint32_t ack :32; /**< acknowledgment number */
+    uint32_t ack; /**< acknowledgment number */
     mesh_opt_t option[0]; /**< mesh options */
 } mesh_hdr_t;
 
@@ -197,8 +197,8 @@ typedef struct
 {
     uint8_t* data; /**< data */
     uint16_t size; /**< data size */
-    uint8_t proto; /**< data protocol */
-    uint8_t tos; /**< data type of service */
+    mesh_proto_t proto; /**< data protocol */
+    mesh_tos_t tos; /**< data type of service */
 } mesh_data_t;
 
 typedef struct
@@ -398,7 +398,7 @@ mesh_type_t esp_mesh_get_type(void);
 /**
  * @brief     set max layer value
  *
- * @param     type  max layer value
+ * @param     max_layer  max layer value
  *
  * @return
  *    - ESP_OK: succeed
@@ -407,7 +407,7 @@ mesh_type_t esp_mesh_get_type(void);
 esp_err_t esp_mesh_set_max_layer(int max_layer);
 
 /**
- * @brief     get mesh type
+ * @brief     get max layer value
  *
  * @param     void
  *

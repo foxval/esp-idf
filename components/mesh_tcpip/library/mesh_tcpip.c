@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "mesh.h"
-#include "mesh_config.h"
 #include "mesh_log.h"
 #include "mesh_tcpip.h"
 #include "lwip/inet.h"
@@ -47,6 +46,7 @@
 /*******************************************************
  *                Constants
  *******************************************************/
+//#define MESH_TCPIP_DUMP
 static const char *TAG = "mesh_tcpip";
 
 #define MESH_CNX_STATE_IDLE                (1)
@@ -94,8 +94,10 @@ esp_err_t esp_mesh_send_to_server(void* message, uint32_t timeout_ms)
     if (!message || !mesh_tcpip_queue) {
         return ESP_FAIL;
     }
+#if 0
     ets_printf("tcpip q, waiting[%d]\n",
             uxQueueMessagesWaiting(mesh_tcpip_queue));
+#endif
     if (mesh_tcpip_queue
             && xQueueSendToBack(mesh_tcpip_queue, message, timeout_ms) == pdTRUE) {
         return ESP_OK;
@@ -117,12 +119,9 @@ esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
         return ESP_OK;
     }
 
-    if (strlen(server_hostname)) {
-        memcpy(server_hostname, hostname, hostname_len);
-    }
-    if (server_port != -1) {
-        server_port = port;
-    }
+    memset(server_hostname, 0, sizeof(server_hostname));
+    memcpy(server_hostname, hostname, hostname_len);
+    server_port = port;
     mesh_tcpip_task_init();
     is_inited = true;
     return ESP_OK;
@@ -185,12 +184,12 @@ static esp_err_t mesh_tcpip_task_init(void)
 
 static uint32_t str_to_ipv4(const char* arg)
 {
-    uint32_t addr = 0;
+    uint32_t address = 0;
     uint8_t num = 0;
     arg--;
     do {
-        addr = addr << 8;
-        addr += (uint32_t) atoi(++arg);
+        address = address << 8;
+        address += (uint32_t) atoi(++arg);
         while ((*arg != '\x00') && (*arg != '.')) {
             arg++;
         }
@@ -199,7 +198,8 @@ static uint32_t str_to_ipv4(const char* arg)
     if (num < 4) {
         return 0;
     }
-    return addr;
+
+    return address;
 }
 
 esp_err_t esp_mesh_hostname_lookup(const char* hostname, uint32_t* address)
@@ -220,6 +220,7 @@ esp_err_t esp_mesh_hostname_lookup(const char* hostname, uint32_t* address)
                     ipaddr_str);
         }
     }
+
     return ESP_OK;
 }
 
@@ -291,25 +292,16 @@ static esp_err_t mesh_tcpip_connect_server(void)
     }
     memset(&sock_addr, 0, sizeof(sock_addr));
     sock_addr.sin_family = AF_INET;
-#if 1
-    sock_addr.sin_port = htons(MESH_SERVER_PORT);
-    memcpy(&sock_addr.sin_addr, MESH_SERVER_IP, sizeof(sock_addr.sin_addr));
-#else
-    sock_addr.sin_port = server_port;
-    if (!server_ip) {
-        esp_mesh_hostname_lookup(server_hostname, &server_ip);
-    }
-    sock_addr.sin_addr.s_addr = server_ip;
-#endif
+    sock_addr.sin_port = htons(server_port);
+    esp_mesh_hostname_lookup(server_hostname, &server_ip);
+    sock_addr.sin_addr.s_addr = htonl(server_ip);
 
-    MESH_LOGI("connect server ip:%d.%d.%d.%d:%d, socket:%d", MESH_SERVER_IP[0],
-            MESH_SERVER_IP[1], MESH_SERVER_IP[2], MESH_SERVER_IP[3],
-            MESH_SERVER_PORT, tcp_cli_sock);
+    MESH_LOGI("connect server %s, port:%d, socket:%d", server_hostname,
+            server_port, tcp_cli_sock);
     if (connect(tcp_cli_sock, (struct sockaddr * )&sock_addr,
             sizeof(sock_addr)) != ESP_OK) {
-        MESH_LOGE("failed, ip:%d.%d.%d.%d, port:%d, errno:%d",
-                MESH_SERVER_IP[0], MESH_SERVER_IP[1], MESH_SERVER_IP[2],
-                MESH_SERVER_IP[3], MESH_SERVER_PORT, errno);
+        MESH_LOGE("failed, server %s, port:%d, errno:%d", server_hostname,
+                server_port, errno);
         return _tcpip_connect_fail();
     } else {
         MESH_LOGI("connect server successfully\n");
@@ -396,7 +388,7 @@ static void mesh_tcpip_tx_main(void *arg)
                     free(data);
                     gettimeofday(&cur_time, NULL);
                     if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
-#ifdef MESH_DUMP
+#ifdef MESH_TCPIP_DUMP
                         {
                             int i = 0;
                             ets_printf("[ROOT]Send to server[%d]: ",
@@ -407,7 +399,7 @@ static void mesh_tcpip_tx_main(void *arg)
                             ets_printf("\n");
 
                         }
-#endif /* MESH_DUMP */
+#endif /* MESH_TCPIP_DUMP */
                         send(tcp_cli_sock, tcp_data.data, tcp_data.size,
                                 MSG_DONTWAIT);
                         MESH_LOGI("[%u]s send to server len:%d, socketID:%d",
@@ -506,7 +498,7 @@ static void mesh_tcpip_rx_main(void *arg)
                     }
                     MESH_LOGE("recv:%d", recv_size);
                     data.size = recv_size;
-#ifdef MESH_DUMP
+#ifdef MESH_TCPIP_DUMP
                     {
                         int i = 0;
                         ets_printf(
@@ -517,7 +509,7 @@ static void mesh_tcpip_rx_main(void *arg)
                         }
                         ets_printf("\n");
                     }
-#endif /* MESH_DUMP */
+#endif /* MESH_TCPIP_DUMP */
 
                 } else {
                     ets_printf(
@@ -543,6 +535,9 @@ static void mesh_tcpip_rx_main(void *arg)
                     }
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
                             ctl_data.size);
+                    ctl_data.proto = MESH_PROTO_BIN;
+                    ctl_data.tos = MESH_TOS_P2P;
+                    /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, NULL,
                             0);
                     free(ctl_data.data);
@@ -565,9 +560,13 @@ static void mesh_tcpip_rx_main(void *arg)
                     if (!ctl_data.data) {
                         continue;
                     }
+                    ctl_data.proto = MESH_PROTO_BIN;
+                    ctl_data.tos = MESH_TOS_P2P;
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
                             ctl_data.size);
-                    /* send */
+                    ctl_data.proto = MESH_PROTO_BIN;
+                    ctl_data.tos = MESH_TOS_P2P;
+                    /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, &opt,
                             1);
                     free(ctl_data.data);
