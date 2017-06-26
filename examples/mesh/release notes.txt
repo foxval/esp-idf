@@ -1,8 +1,65 @@
-version 0.6
+
+version 0.7.5(2017/06/23)
+New Features:
+=============
+1. Add p2p level reliable transmission.
+2. Add software flow control.
+
+version 0.7.2(2017/06/26)
 ------------------------
 New Features:
 =============
+1. Add a mechanism to avoid cyclic by checking an incoming mesh packet if ttl=0.
+2. Add leaf sends null announcement to root periodlic to maintain the routing table.
 
+BugFixes:
+=========
+1. Fix a bug in connecting a secured router.
+2. Fix a bug in multicast forwarding.
+3. Fix a bug in esp_mesh_recv() without returning data protocol and data tos.
+
+API Changes:
+============
+1. New API esp_mesh_recv_toDS().
+2. New APIs esp_mesh_set_map_authmode()/esp_mesh_get_map_authmode().
+
+version 0.7.1(2017/06/20)
+------------------------
+API Changes:
+============
+1. Redeined esp_mesh_send().
+
+version 0.7.0(2017/06/09)
+------------------------
+New Features:
+=============
+1. Implement the new mesh protocol.
+2. Modify to receive all AP beacons in connected state to minitor router rssi.
+3. Decrement layer capability filed by one.
+4. Add a flag item to mesh ie.
+5. Update routing table by the peer transmitter address and orginal source address in header over softAp interface.
+
+API Changes:
+============
+1. New APIs esp_mesh_send()/esp_mesh_recv().
+2. New APIs esp_mesh_init()/esp_mesh_deinit().
+3. New APIs esp_mesh_start()/esp_mesh_stop().
+4. New APIs esp_mesh_set_config()/esp_mesh_get_config().
+5. New APIs esp_mesh_set_router()/esp_mesh_get_router().
+6. New APIs esp_mesh_set_id()/esp_mesh_get_id().
+7. New APIs esp_mesh_set_type()/esp_mesh_get_type().
+8. New APIs esp_mesh_set_max_layer()/esp_mesh_get_max_layer().
+9. New API esp_mesh_set_map_password().
+10. New APIs esp_mesh_set_map_conenctions/esp_mesh_get_map_conenctions().
+10. New APIs esp_mesh_set_beacon_interval()/esp_mesh_get_beacon_interval().
+11. New API esp_mesh_get_layer().
+12. New API esp_mesh_get_parent_bssid().
+12. New API esp_mesh_is_root().
+
+version 0.6.0(2017/05/05)
+------------------------
+New Features:
+=============
 1. Add timer to print the routing table which holds the total children directory.
 2. Add routing table manipulation(add/del).
 3. Modify scan time from (300~500)ms to (120~300)ms.
@@ -12,16 +69,10 @@ BugFixes:
 1. Fix bugs in unicast forwarding due to wrong routine.
 2. Fix bugs in handling cyclic network.
 
-
-API Changes:
-============
-None
-
-version 0.5
+version 0.5.0(2017/04/21)
 ------------------------
 New Features:
 =============
-
 1. Separate mesh packets from receiving stream on TCP session.
 2. Add root conflict mechanism after POR.
 3. Modify mesh framework and provide two APIs for data interaction between the TCP session and mesh engine.
@@ -41,7 +92,6 @@ BugFixes:
 1. Fix bugs in rejoin to mesh network.
 2. Fix layer value incorrect issue.
 
-
 API Changes:
 ============
 1. Callback for mesh events.
@@ -50,11 +100,9 @@ API Changes:
 3. New API esp_mesh_wifi_start() to start wifi.
 4. Add channel parameter for esp_mesh_set_router().
 
-version 0.1.1
-
+version 0.1.1(2017/03/06)
 New Features:
 =============
-
 1. Sync with IDF from v0.9 to v2.0 and bugfix depands on the changes on IDF.
 2. Rename the API prefix from "esp32_mesh_" to "esp_mesh_".
 
