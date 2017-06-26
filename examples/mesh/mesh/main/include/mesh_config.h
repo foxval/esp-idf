@@ -34,13 +34,16 @@
 
 #define MESH_MAP_PASSWORD          "MAP_PASSWORD"    /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
+#define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
+
+#define MESH_MAX_LAYER             (6)               /**< max layer */
 
 /*******************************************************
  *                Variable Definitions
  *******************************************************/
 static const uint16_t MESH_SERVER_PORT = 7000; /**< server port */
-static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 128 }; /**< server ip */
-static const char MESH_SERVER_HOSTNAME[] = "192.168.1.100"; /**< server hostname */
+static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 1 }; /**< server ip */
+static const char MESH_SERVER_HOSTNAME[] = "192.168.1.1"; /**< server hostname */
 
 static const uint8_t MESH_ID[6] = { 0x18, 0xfe, 0x34, 0x32, 0x00, 0xbb }; /**< mesh id */
 static const uint8_t MESH_P2P_FORWARD_ADDR[6] = { 0x30, 0xae, 0xa4, 2, 0x32,

@@ -22,8 +22,6 @@
  *******************************************************/
 
 #define MESH_VERSION                  (4)
-#define MESH_MAX_CONNECTIONS          (6)
-#define MESH_MAX_LAYER                (5)
 #define MESH_ROOT_LAYER               (1)
 #define MESH_CIDX_INVALID             (-1)
 #define MESH_CIDX_VALID(cidx)         ((cidx) >=0 && (cidx) < MESH_MAX_CONNECTIONS)
@@ -427,6 +425,28 @@ int esp_mesh_get_max_layer(void);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_set_map_password(const uint8_t* pwd, int len);
+
+/**
+ * @brief     set mesh AP authentication mode value
+ *
+ * @param     mode  authentication mode
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_map_authmode(wifi_auth_mode_t authmode);
+
+/**
+ * @brief     get mesh AP authentication mode value
+ *
+ * @param     void
+ *
+ * @return    max connections value
+ *
+ */
+
+wifi_auth_mode_t esp_mesh_get_map_authmode(void);
 
 /**
  * @brief     set mesh AP max connections value

@@ -244,6 +244,8 @@ void app_main(void)
 #endif /* MESH_PRE_SCAN */
 
     esp_mesh_init();
+    esp_mesh_set_max_layer(MESH_MAX_LAYER);
+    esp_mesh_set_map_authmode(MESH_MAP_AUTHMODE);
     config = (mesh_cfg_t*) malloc(sizeof(mesh_cfg_t));
     if (config) {
         memset(config, 0, sizeof(mesh_cfg_t));
@@ -631,6 +633,7 @@ esp_err_t esp_mesh_api_test(void)
                     ((esp_mesh_get_type() == MESH_LEAF) ? "leaf" : "node"));
     MESH_LOGI("mesh max layer:%d", esp_mesh_get_max_layer());
     MESH_LOGI("mesh max connections:%d", esp_mesh_get_map_connections());
+    MESH_LOGI("mesh max authmode:%d", esp_mesh_get_map_authmode());
     MESH_LOGI("mesh beacon interval:%d", esp_mesh_get_beacon_interval());
 
     return ESP_OK;
