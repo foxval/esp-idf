@@ -294,8 +294,7 @@ esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
  * @param     from  the address of the original source of the packet
  * @param     data  pointer to the receiving mesh packet
  * @param     timeout_ms  wait time
- * @param     flag  currently, support MESH_DATA_ENC,  MESH_DATA_P2P,
- *                  MESH_DATA_FROMDS, MESH_DATA_TODS
+ * @param     flag  currently, support MESH_DATA_ENC,  MESH_DATA_P2P
  * @param     mcnx  reserved
  *
  * @return
@@ -304,7 +303,25 @@ esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
  *
  */
 esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
-        int *flag, void* mcnx);
+        int* flag, void* mcnx);
+
+/**
+ * @brief     receive a mesh packet destined to DS
+ *
+ * @param     from  the address of the original source of the packet
+ * @param     to  the address of the final destination of the packet
+ * @param     data  pointer to the receiving mesh packet
+ * @param     timeout_ms  wait time
+ * @param     flag  currently, support MESH_DATA_ENC,  MESH_DATA_P2P
+ * @param     mcnx  reserved
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ *
+ */
+esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to, mesh_data_t* data, int timeout_ms,
+        int* flag, void* mcnx);
 
 /**
  * @brief     set mesh configuration

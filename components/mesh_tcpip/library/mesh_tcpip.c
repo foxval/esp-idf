@@ -75,7 +75,6 @@ static char server_hostname[128] = { 0, };
 static volatile uint8_t mesh_cnx_state = MESH_CNX_STATE_IDLE;
 static volatile bool is_running = true;
 static bool is_inited = false;
-static QueueHandle_t mesh_tcpip_queue = NULL;
 
 /*******************************************************
  *                Function Declarations
@@ -89,26 +88,6 @@ static esp_err_t mesh_tcpip_disconnect_server(void);
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-esp_err_t esp_mesh_send_to_server(void* message, uint32_t timeout_ms)
-{
-    if (!message || !mesh_tcpip_queue) {
-        return ESP_FAIL;
-    }
-#if 0
-    ets_printf("tcpip q, waiting[%d]\n",
-            uxQueueMessagesWaiting(mesh_tcpip_queue));
-#endif
-    if (mesh_tcpip_queue
-            && xQueueSendToBack(mesh_tcpip_queue, message, timeout_ms) == pdTRUE) {
-        return ESP_OK;
-    }
-    if (uxQueueMessagesWaiting(mesh_tcpip_queue) > 30) {
-        ets_printf("tcpip q full, waiting[%d]\n",
-                uxQueueMessagesWaiting(mesh_tcpip_queue));
-    }
-    return ESP_FAIL;
-}
-
 esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
         int port)
 {
@@ -144,10 +123,6 @@ static void mesh_tcpip_task_deinit(void)
         vTaskDelete(mesh_tcpip_rx_task);
         mesh_tcpip_rx_task = NULL;
     }
-    if (mesh_tcpip_queue) {
-        vQueueDelete(mesh_tcpip_queue);
-        mesh_tcpip_queue = NULL;
-    }
 }
 
 static esp_err_t mesh_tcpip_task_init(void)
@@ -166,12 +141,6 @@ static esp_err_t mesh_tcpip_task_init(void)
                 MESH_TCPIP_RX_TASK_STACK, NULL, MESH_TCPIP_RX_TASK_PRI,
                 &mesh_tcpip_rx_task);
         if (!mesh_tcpip_rx_task) {
-            is_failed = true;
-        }
-    }
-    if (!mesh_tcpip_queue) {
-        mesh_tcpip_queue = xQueueCreate(30, sizeof(void*));
-        if (!mesh_tcpip_queue) {
             is_failed = true;
         }
     }
@@ -332,12 +301,19 @@ int esp_mesh_is_server_connected(void)
 
 static void mesh_tcpip_tx_main(void *arg)
 {
+#define TODS_DATA_SIZE (1024)
+
     struct timeval cur_time;
     time_t old_time = 0;
     fd_set wrset, exset;
-    mesh_data_t* data;
-    mesh_data_t tcp_data;
-    int recv_size = 0;
+    mesh_data_t data;
+    mesh_addr_t from, to;
+    int flag = 0;
+    data.size = TODS_DATA_SIZE;
+    data.data = (uint8_t*) malloc(TODS_DATA_SIZE);
+    if (!data.data) {
+        ets_printf("tcpip tx fails\n");
+    }
 
     is_running = true;
     while (is_running) {
@@ -371,48 +347,42 @@ static void mesh_tcpip_tx_main(void *arg)
             }
 
             if (FD_ISSET(tcp_cli_sock, &wrset)) {
-                memset(&tcp_data, 0, sizeof(mesh_data_t));
-                data = NULL;
-                if (xQueueReceive(mesh_tcpip_queue, &data, portMAX_DELAY)
-                        == pdTRUE && data && data->data && data->size) {
-                    recv_size = data->size;
-                    tcp_data.size = recv_size;
-                    tcp_data.data = (uint8_t*) malloc(recv_size);
-                    if (!tcp_data.data) {
-                        free(data->data);
-                        free(data);
-                        continue;
-                    }
-                    memcpy(tcp_data.data, data->data, recv_size);
-                    free(data->data);
-                    free(data);
+                /* initialize variables */
+                data.size = TODS_DATA_SIZE;
+                memset(data.data, 0, TODS_DATA_SIZE);
+                flag = 0;
+                if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
+                NULL) == ESP_OK && data.size) {
                     gettimeofday(&cur_time, NULL);
                     if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
 #ifdef MESH_TCPIP_DUMP
                         {
                             int i = 0;
-                            ets_printf("[ROOT]Send to server[%d]: ",
-                                    tcp_data.size);
-                            for (i = 0; i < tcp_data.size; i++) {
-                                ets_printf("%x ", tcp_data.data[i]);
+                            ets_printf(
+                                    "%s,%d receive from "MACSTR" to "MACSTR"[%d]:", __func__, __LINE__,
+                                    MAC2STR(from.addr), MAC2STR(to.addr),
+                                    data.size);
+                            for (i = 0; i < data.size; i++) {
+                                ets_printf("%x ", data.data[i]);
                             }
                             ets_printf("\n");
 
                         }
 #endif /* MESH_TCPIP_DUMP */
-                        send(tcp_cli_sock, tcp_data.data, tcp_data.size,
-                                MSG_DONTWAIT);
-                        MESH_LOGI("[%u]s send to server len:%d, socketID:%d",
-                                (int )(cur_time.tv_sec - old_time), recv_size,
-                                tcp_cli_sock);
-
+                        send(tcp_cli_sock, data.data, data.size, MSG_DONTWAIT);
+                        MESH_LOGI(
+                                "[%u]s send to server len:%d, socketID:%d, flag:%s%s, [%d,%d]",
+                                (int )(cur_time.tv_sec - old_time), data.size,
+                                tcp_cli_sock,
+                                (flag & MESH_DATA_TODS) ? "toDS" : "",
+                                (flag & MESH_DATA_FROMDS) ? "fromDS" : "",
+                                data.proto, data.tos);
                     } else {
                         ets_printf(
                                 "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
                                 __func__, __LINE__, tcp_cli_sock,
                                 mesh_cnx_state);
                     }
-                    free(tcp_data.data);
                     old_time = cur_time.tv_sec;
                 }
             }
@@ -422,6 +392,9 @@ static void mesh_tcpip_tx_main(void *arg)
         }
     }
 
+    if (data.data) {
+        free(data.data);
+    }
     MESH_LOGE("err: task stop");
     mesh_tcpip_disconnect_server();
     mesh_tcpip_tx_task = NULL;

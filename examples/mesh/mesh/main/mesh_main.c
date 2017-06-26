@@ -510,11 +510,9 @@ void esp_mesh_comm_rx_main(void* arg)
     esp_err_t err;
     mesh_addr_t from;
     mesh_data_t data;
-    mesh_data_t* tcp_data;
     struct timeval cur_time;
     time_t old_time = 0;
     int flag = 0;
-    int recv_size = 0;
     data.size = DATA_SIZE;
     data.data = (uint8_t*) malloc(DATA_SIZE);
     if (!data.data) {
@@ -527,7 +525,7 @@ void esp_mesh_comm_rx_main(void* arg)
             vTaskDelay(100 / portTICK_RATE_MS);
             continue;
         }
-        tcp_data = NULL;
+        /* initialize variables */
         memset(data.data, 0, DATA_SIZE);
         data.size = DATA_SIZE;
         flag = 0;
@@ -540,42 +538,26 @@ void esp_mesh_comm_rx_main(void* arg)
 #ifdef MESH_DUMP
         {
             int i = 0;
-            ets_printf("%s%s server[%d], proto:%d, tos:%d\n",
-                    (flag & MESH_DATA_TODS) ? "[TO]" : "",
-                    (flag & MESH_DATA_FROMDS) ? "[FROM]" : "", data.size, data.proto, data.tos);
+            ets_printf("%s,%d receive from "MACSTR"[%d]:", __func__, __LINE__, MAC2STR(from.addr),
+                    data.size);
             for (i = 0; i < data.size; i++) {
                 ets_printf("%x ", data.data[i]);
             }
             ets_printf("\n");
+
         }
 #endif /* MESH_DUMP */
-        recv_size = data.size;
         if (flag & MESH_DATA_TODS) {
 
-            tcp_data = (mesh_data_t*) malloc(sizeof(mesh_data_t));
-            if (!tcp_data) {
-                continue;
-            }
-            memset(tcp_data, 0, sizeof(mesh_data_t));
-            tcp_data->size = recv_size;
-            tcp_data->data = (uint8_t*) malloc(recv_size);
-            if (!tcp_data->data) {
-                free(tcp_data);
-                continue;
-            }
-            memcpy(tcp_data->data, data.data, recv_size);
-            if (esp_mesh_send_to_server(&tcp_data, 0) != ESP_OK) {
-                free(tcp_data->data);
-                free(tcp_data);
-            }
         } else if (flag & MESH_DATA_FROMDS) {
             mesh_process_received_data(data.data, data.size);
         }
         MESH_LOGI(
-                "[%u]s receive from "MACSTR", len:%d, flag:%d, heap:%d[err:%d], [%d,%d]",
+                "[%u]s receive from "MACSTR", len:%d, flag:%s%s, heap:%d[err:%d], [%d,%d]",
                 (int )(cur_time.tv_sec - old_time), MAC2STR(from.addr),
-                data.size, flag, esp_get_free_heap_size(), err, data.proto,
-                data.tos);
+                data.size, (flag & MESH_DATA_TODS) ? "toDS" : "",
+                (flag & MESH_DATA_FROMDS) ? "fromDS" : "",
+                esp_get_free_heap_size(), err, data.proto, data.tos);
         old_time = cur_time.tv_sec;
     }
 
@@ -632,9 +614,9 @@ esp_err_t esp_mesh_api_test(void)
                     "root" :
                     ((esp_mesh_get_type() == MESH_LEAF) ? "leaf" : "node"));
     MESH_LOGI("mesh max layer:%d", esp_mesh_get_max_layer());
-    MESH_LOGI("mesh max connections:%d", esp_mesh_get_map_connections());
-    MESH_LOGI("mesh max authmode:%d", esp_mesh_get_map_authmode());
-    MESH_LOGI("mesh beacon interval:%d", esp_mesh_get_beacon_interval());
+    MESH_LOGI("mesh map max connections:%d", esp_mesh_get_map_connections());
+    MESH_LOGI("mesh map authmode:%d", esp_mesh_get_map_authmode());
+    MESH_LOGI("mesh map beacon interval:%d", esp_mesh_get_beacon_interval());
 
     return ESP_OK;
 }
