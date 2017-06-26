@@ -25,6 +25,8 @@
 #define MESH_P2P_FORWARD_TEST
 #define MESH_P2P_FORWARD_MAX_NUM   (20)
 #define MESH_PRE_SCAN
+//#define MESH_TOS_P2P_ON
+
 /*******************************************************
  *                Constants
  *******************************************************/

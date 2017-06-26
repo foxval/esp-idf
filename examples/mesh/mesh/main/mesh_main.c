@@ -285,7 +285,9 @@ void esp_mesh_p2p_tx_main(void* arg)
     data.data = test;
     data.size = sizeof(test);
     data.proto = MESH_PROTO_BIN;
+#ifdef MESH_TOS_P2P_ON
     data.tos = MESH_TOS_P2P;
+#endif /* MESH_TOS_P2P_ON */
     memcpy((uint8_t*) &to.addr, MESH_P2P_FORWARD_ADDR, sizeof(mesh_addr_t));
 
     is_running = true;
@@ -343,7 +345,9 @@ void esp_mesh_p2p_rx_main(void* arg)
         memset(data.data, 0, DATA_SIZE);
         data.size = DATA_SIZE;
         data.proto = MESH_PROTO_BIN;
+#ifdef MESH_TOS_P2P_ON
         data.tos = MESH_TOS_P2P;
+#endif /* MESH_TOS_P2P_ON */
         err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL);
         gettimeofday(&cur_time, NULL);
 
@@ -444,8 +448,9 @@ void esp_mesh_comm_tx_main(void* arg)
 
     data.size = PING_SIZE;
     data.proto = MESH_PROTO_BIN;
+#ifdef MESH_TOS_P2P_ON
     data.tos = MESH_TOS_P2P;
-
+#endif /* MESH_TOS_P2P_ON */
     uint8_t self[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
 

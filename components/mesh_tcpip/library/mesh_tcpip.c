@@ -47,6 +47,8 @@
  *                Constants
  *******************************************************/
 //#define MESH_TCPIP_DUMP
+//#define TCPIP_TOS_P2P_ON
+
 static const char *TAG = "mesh_tcpip";
 
 #define MESH_CNX_STATE_IDLE                (1)
@@ -509,7 +511,9 @@ static void mesh_tcpip_rx_main(void *arg)
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
                             ctl_data.size);
                     ctl_data.proto = MESH_PROTO_BIN;
+#ifdef TCPIP_TOS_P2P_ON
                     ctl_data.tos = MESH_TOS_P2P;
+#endif /* TCPIP_TOS_P2P_ON */
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, NULL,
                             0);
@@ -534,11 +538,11 @@ static void mesh_tcpip_rx_main(void *arg)
                         continue;
                     }
                     ctl_data.proto = MESH_PROTO_BIN;
+#ifdef TCPIP_TOS_P2P_ON
                     ctl_data.tos = MESH_TOS_P2P;
+#endif /* TCPIP_TOS_P2P_ON */
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
                             ctl_data.size);
-                    ctl_data.proto = MESH_PROTO_BIN;
-                    ctl_data.tos = MESH_TOS_P2P;
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, &opt,
                             1);
