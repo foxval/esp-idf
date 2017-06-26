@@ -1820,7 +1820,9 @@ static void _mdns_announce_pcb(tcpip_adapter_if_t tcpip_if, mdns_pcb_type_t pcb_
                     if(!_mdns_alloc_answer(&p->answers, MDNS_TYPE_SDPTR, services[i], false, false)
                         || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_PTR, services[i], false, false)
                         || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_SRV, services[i], true, false)
-                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_TXT, services[i], true, false)){
+                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_TXT, services[i], true, false)
+                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_A, services[i], false, false)
+                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_AAAA, services[i], false, false)){
                         break;
                     }
                 }
