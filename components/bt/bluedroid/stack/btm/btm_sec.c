@@ -280,7 +280,7 @@ BOOLEAN BTM_SecRegisterLinkKeyNotificationCallback (tBTM_LINK_KEY_CALLBACK *p_ca
 ** Returns          TRUE if registered OK, else FALSE
 **
 *******************************************************************************/
-#if (SMP_INCLUDED == TRUE)
+#if (SMP_INCLUDED == TRUE) || (CLASSIC_BT_INCLUDED == TRUE)
 BOOLEAN  BTM_SecAddRmtNameNotifyCallback (tBTM_RMT_NAME_CALLBACK *p_callback)
 {
     int i;
@@ -306,7 +306,7 @@ BOOLEAN  BTM_SecAddRmtNameNotifyCallback (tBTM_RMT_NAME_CALLBACK *p_callback)
 ** Returns          TRUE if OK, else FALSE
 **
 *******************************************************************************/
-#if (SMP_INCLUDED == TRUE)
+#if (SMP_INCLUDED == TRUE) || (CLASSIC_BT_INCLUDED == TRUE)
 BOOLEAN  BTM_SecDeleteRmtNameNotifyCallback (tBTM_RMT_NAME_CALLBACK *p_callback)
 {
     int i;
@@ -4549,7 +4549,6 @@ void btm_sec_disconnected (UINT16 handle, UINT8 reason)
     p_dev_rec->rs_disc_pending = BTM_SEC_RS_NOT_PENDING;     /* reset flag */
 
 #if BTM_DISC_DURING_RS == TRUE
-    LOG_INFO("%s clearing pending flag handle:%d reason:%d\n", __func__, handle, reason);
     p_dev_rec->rs_disc_pending = BTM_SEC_RS_NOT_PENDING;     /* reset flag */
 #endif
 

@@ -33,6 +33,8 @@
 
 #if CONFIG_BT_ENABLED
 
+#define BTDM_INIT_PERIOD                    (5000)    /* ms */
+
 /* Bluetooth system and controller config */
 #define BTDM_CFG_BT_EM_RELEASE              (1<<0)
 #define BTDM_CFG_BT_DATA_RELEASE            (1<<1)
@@ -75,6 +77,7 @@ struct osi_funcs_t {
     void (*_interrupt_disable)(void);
     void (*_interrupt_restore)(void);
     void (*_task_yield)(void);
+    void (*_task_yield_from_isr)(void);
     void *(*_semphr_create)(uint32_t max, uint32_t init);
     int32_t (*_semphr_give_from_isr)(void *semphr, void *hptw);
     int32_t (*_semphr_take)(void *semphr, uint32_t block_time_ms);
@@ -88,6 +91,7 @@ struct osi_funcs_t {
 
 /* Static variable declare */
 static bool btdm_bb_init_flag = false;
+static xSemaphoreHandle btdm_init_sem;
 static esp_bt_controller_status_t btdm_controller_status = ESP_BT_CONTROLLER_STATUS_IDLE;
 static esp_bt_controller_config_t btdm_cfg_opts;
 static xTaskHandle btControllerTaskHandle;
@@ -102,6 +106,11 @@ static void IRAM_ATTR interrupt_disable(void)
 static void IRAM_ATTR interrupt_restore(void)
 {
     portEXIT_CRITICAL(&global_int_mux);
+}
+
+static void IRAM_ATTR task_yield_from_isr(void)
+{
+    portYIELD_FROM_ISR();
 }
 
 static void *IRAM_ATTR semphr_create_wrapper(uint32_t max, uint32_t init)
@@ -155,6 +164,7 @@ static struct osi_funcs_t osi_funcs = {
     ._interrupt_disable = interrupt_disable,
     ._interrupt_restore = interrupt_restore,
     ._task_yield = vPortYield,
+    ._task_yield_from_isr = task_yield_from_isr,
     ._semphr_create = semphr_create_wrapper,
     ._semphr_give_from_isr = semphr_give_from_isr_wrapper,
     ._semphr_take = semphr_take_wrapper,
@@ -208,8 +218,13 @@ static void bt_controller_task(void *pvParam)
     btdm_controller_init(btdm_cfg_mask, &btdm_cfg_opts);
 
     btdm_controller_status = ESP_BT_CONTROLLER_STATUS_INITED;
+
+    xSemaphoreGive(btdm_init_sem);
+
     /* Loop */
     btdm_controller_schedule();
+
+    /* never run here */
 }
 
 esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
@@ -224,6 +239,11 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
         return ESP_ERR_INVALID_ARG;
     }
 
+    btdm_init_sem = xSemaphoreCreateBinary();
+    if (btdm_init_sem == NULL) {
+        return ESP_ERR_NO_MEM;
+    }
+
     memcpy(&btdm_cfg_opts, cfg, sizeof(esp_bt_controller_config_t));
 
     ret = xTaskCreatePinnedToCore(bt_controller_task, "btController",
@@ -232,8 +252,12 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
 
     if (ret != pdPASS) {
         memset(&btdm_cfg_opts, 0x0, sizeof(esp_bt_controller_config_t));
+        vSemaphoreDelete(btdm_init_sem);
         return ESP_ERR_NO_MEM;
     }
+
+    xSemaphoreTake(btdm_init_sem, BTDM_INIT_PERIOD/portTICK_PERIOD_MS);
+    vSemaphoreDelete(btdm_init_sem);
 
     return ESP_OK;
 }
