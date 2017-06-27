@@ -33,21 +33,17 @@
 
 /* mesh error code */
 #define MESH_ERR_NOT_CFG              (-1)
-#define MESH_ERR_NO_DATA              (-2)
-#define MESH_ERR_NO_MEM               (-3)
-#define MESH_ERR_TIMEOUT              (-4)
-#define MESH_ERR_QUEUE                (-5)
-#define MESH_ERR_NO_IF                (-6)
-#define MESH_ERR_NO_CTX               (-7)
-#define MESH_ERR_NOT_SUPPORT          (-8)
-#define MESH_ERR_NO_PATH              (-9)
-#define MESH_ERR_BUF_LIMIT            (-10)
-#define MESH_ERR_NO_OP                (-11)
-#define MESH_MCAST_NO_TYPE            (-12)
-#define MESH_MCAST_NO_ELEM            (-13)
-#define MESH_NO_CHILD                 (-14)
-#define MESH_DISCARD                  (-15)
-#define MESH_ERR_DISCONENCTED         (-16)
+#define MESH_ERR_MEM                  (-2)
+#define MESH_ERR_TIMEOUT              (-3)
+#define MESH_ERR_QUEUE_FULL           (-4)
+#define MESH_ERR_IF                   (-5)
+#define MESH_ERR_ROUTE                (-6)
+#define MESH_ERR_BUF_LIMIT            (-7)
+#define MESH_ERR_OPT_NONE             (-8)
+#define MESH_ERR_OPT_UNKNOWN          (-9)
+#define MESH_ERR_CHILD_NOT_FOUND      (-10)
+#define MESH_ERR_DISCARD              (-11)
+#define MESH_ERR_DISCONENCTED         (-12)
 
 /*******************************************************
  *                Enumerations
@@ -97,6 +93,7 @@ typedef enum
 enum
 {
     MESH_OPT_MCAST_GROUP = 7, /**< multicast group */
+    MESH_OPT_RECV_DS_ADDR = 8, /**< request DS address */
 };
 
 /*******************************************************
@@ -303,7 +300,7 @@ esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
  *
  */
 esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
-        int* flag, void* mcnx);
+        int* flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a mesh packet destined to DS
@@ -320,8 +317,9 @@ esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
  *    - ESP_FAIL: failed
  *
  */
-esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to, mesh_data_t* data, int timeout_ms,
-        int* flag, void* mcnx);
+esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to,
+        mesh_data_t* data, int timeout_ms, int* flag, mesh_opt_t opt[],
+        int opt_count);
 
 /**
  * @brief     set mesh configuration

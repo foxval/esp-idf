@@ -79,19 +79,22 @@ void esp_mesh_event_cb(mesh_event_t event)
     switch (event) {
 
         case MESH_EVENT_SUCCESS:
-            MESH_LOGI("MESH_EVENT_SUCCESS");
+            MESH_LOGI("MESH_EVENT_SUCCESS")
+            ;
             break;
 
         case MESH_EVENT_NO_AP_FOUND:
             /* no AP found */
             MESH_LOGE("err: no AP found after scan %d times\n",
-                    MESH_SCAN_RETRIES);
+                    MESH_SCAN_RETRIES)
+            ;
             /* TODO handler for the failure */
             break;
 
         case MESH_EVENT_CONNECTED:
             /* wifi connected */
-            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer());
+            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer())
+            ;
             is_mesh_connected = true;
             if (esp_mesh_is_root()) {
                 esp_mesh_enable_dhcp();
@@ -109,19 +112,19 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_DISCONNECTED:
             /* wifi disconnected */
-            MESH_LOGI("MESH_EVENT_DISCONNECTED");
+            MESH_LOGI("MESH_EVENT_DISCONNECTED")
+            ;
             is_mesh_connected = false;
             esp_mesh_disconnected();
 #ifndef MESH_P2P_FORWARD_TEST
-            if (esp_mesh_is_root()) {
-                esp_mesh_tcp_client_stop();
-            }
+            esp_mesh_tcp_client_stop();
 #endif /* MESH_P2P_FORWARD_TEST */
             break;
 
         case MESH_EVENT_LAYER_CHANGE:
             /* mesh device layer changes */
-            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d", esp_mesh_get_layer());
+            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d", esp_mesh_get_layer())
+            ;
             esp_mesh_connected();
 #ifndef MESH_P2P_FORWARD_TEST
             if (!esp_mesh_is_root()) {
@@ -133,7 +136,8 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_ROOT_GOT_IP:
             /* root starts to connect to server */
-            MESH_LOGI("MESH_EVENT_ROOT_GOT_IP");
+            MESH_LOGI("MESH_EVENT_ROOT_GOT_IP")
+            ;
 #ifndef MESH_P2P_FORWARD_TEST
             if (esp_mesh_is_root()) {
                 esp_mesh_tcp_client_start(MESH_SERVER_HOSTNAME,
@@ -143,11 +147,13 @@ void esp_mesh_event_cb(mesh_event_t event)
             break;
 
         case MESH_EVENT_FAIL:
-            MESH_LOGI("MESH_EVENT_FAIL");
+            MESH_LOGI("MESH_EVENT_FAIL")
+            ;
             break;
 
         default:
-            MESH_LOGI("unknown mesh event");
+            MESH_LOGI("unknown mesh event")
+            ;
             break;
     }
 }
@@ -196,7 +202,8 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 
     switch ((int) event->event_id) {
         case SYSTEM_EVENT_STA_START:
-            ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, 0));
+            ESP_ERROR_CHECK(esp_wifi_scan_start(NULL, 0))
+            ;
             break;
 
         case SYSTEM_EVENT_SCAN_DONE:
@@ -233,14 +240,16 @@ void app_main(void)
     tcpip_adapter_init();
     ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
     ESP_ERROR_CHECK(esp_event_loop_init(esp_event_handler, NULL));
-    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT()
+    ;
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     esp_wifi_start();
 
 #ifdef MESH_PRE_SCAN
-    while (!is_router_found);
+    while (!is_router_found)
+        ;
 #endif /* MESH_PRE_SCAN */
 
     esp_mesh_init();
@@ -348,14 +357,13 @@ void esp_mesh_p2p_rx_main(void* arg)
 #ifdef MESH_TOS_P2P_ON
         data.tos = MESH_TOS_P2P;
 #endif /* MESH_TOS_P2P_ON */
-        err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL);
+        err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL, 0);
         gettimeofday(&cur_time, NULL);
 
         if (data.size > sizeof(send_count)) {
             send_count = (data.data[3] << 24) | (data.data[2] << 16)
                     | (data.data[1] << 8) | data.data[0];
         }
-
         for (i = k + 1; i < MESH_P2P_FORWARD_MAX_NUM; i++) {
             if (!mforward[i].set) {
 
@@ -490,7 +498,7 @@ void esp_mesh_comm_tx_main(void* arg)
         gettimeofday(&time_stop, NULL);
         taken_ms = (time_stop.tv_sec - time_start.tv_sec) * 1000
                 + (time_stop.tv_usec - time_start.tv_usec) / 1000;
-        if (ret == MESH_ERR_QUEUE) {
+        if (ret == MESH_ERR_QUEUE_FULL) {
             vTaskDelay(100 / portTICK_RATE_MS);
             goto REXMIT;
         }
@@ -523,6 +531,13 @@ void esp_mesh_comm_rx_main(void* arg)
     if (!data.data) {
         ets_printf("rx start fails\n");
     }
+#ifdef MESH_OPT_RECV_DS
+    uint8_t ds_addr[6] = {0,};
+    mesh_opt_t optDS;
+    optDS.type = MESH_OPT_RECV_DS_ADDR;
+    optDS.len = sizeof(mesh_addr_t);
+    optDS.val = ds_addr;
+#endif /* MESH_OPT_RECV_DS */
 
     is_running = true;
     while (is_running) {
@@ -534,7 +549,19 @@ void esp_mesh_comm_rx_main(void* arg)
         memset(data.data, 0, DATA_SIZE);
         data.size = DATA_SIZE;
         flag = 0;
-        err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL);
+#ifdef MESH_OPT_RECV_DS
+        err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, &optDS, 1);
+        {
+            int i;
+            printf("%s,%d received server address:\n", __func__, __LINE__);
+            for (i = 0; i < optDS.len; i++) {
+                printf("%x ", optDS.val[i]);
+            }
+            printf("\n");
+        }
+#else /* MESH_OPT_RECV_DS */
+        err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL, 0);
+#endif /* MESH_OPT_RECV_DS */
         gettimeofday(&cur_time, NULL);
         if (err != ESP_OK || !data.size) {
             MESH_LOGE("err:%d, size:%d", err, data.size);
@@ -543,8 +570,8 @@ void esp_mesh_comm_rx_main(void* arg)
 #ifdef MESH_DUMP
         {
             int i = 0;
-            ets_printf("%s,%d receive from "MACSTR"[%d]:", __func__, __LINE__, MAC2STR(from.addr),
-                    data.size);
+            ets_printf("%s,%d receive from "MACSTR"[%d]:", __func__, __LINE__,
+                    MAC2STR(from.addr), data.size);
             for (i = 0; i < data.size; i++) {
                 ets_printf("%x ", data.data[i]);
             }
@@ -598,8 +625,9 @@ esp_err_t esp_mesh_comm_server_start(void)
     if (is_started) {
         return ESP_OK;
     }
-
+#ifndef MESH_OPT_RECV_DS
     xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 5, NULL);
+#endif /* MESH_OPT_RECV_DS */
     xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 2048, NULL, 5, NULL);
 
     is_started = true;
