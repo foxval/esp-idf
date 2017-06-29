@@ -1454,12 +1454,9 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
                 }
                 if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_PTR, service, false, false)
                     || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_SRV, service, true, false)
-                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, true, false)){
-                    _mdns_free_tx_packet(packet);
-                    return;
-                }
-                if(q->type == MDNS_TYPE_PTR && (!_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, true, false)
-                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, true, false))){
+                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, true, false)
+                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, true, false)
+                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, true, false)){
                     _mdns_free_tx_packet(packet);
                     return;
                 }
@@ -1820,12 +1817,18 @@ static void _mdns_announce_pcb(tcpip_adapter_if_t tcpip_if, mdns_pcb_type_t pcb_
                     if(!_mdns_alloc_answer(&p->answers, MDNS_TYPE_SDPTR, services[i], false, false)
                         || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_PTR, services[i], false, false)
                         || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_SRV, services[i], true, false)
-                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_TXT, services[i], true, false)
-                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_A, services[i], false, false)
-                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_AAAA, services[i], false, false)){
+                        || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_TXT, services[i], true, false)){
                         break;
                     }
                 }
+
+                if (include_ip) {
+                    if (!_mdns_alloc_answer(&p->answers, MDNS_TYPE_A, NULL, true, false)
+                         || !_mdns_alloc_answer(&p->answers, MDNS_TYPE_AAAA, NULL, true, false)) {
+                        _mdns_free_tx_packet(p);
+                    }
+                }
+
                 _pcb->state = PCB_ANNOUNCE_1;
             }
         } else if(_pcb->state == PCB_RUNNING){
@@ -3264,21 +3267,21 @@ static void _mdns_execute_action(mdns_action_t * action)
         case ACTION_SERVICE_ADD:
             action->data.srv_add.service->next = _mdns_server->services;
             _mdns_server->services = action->data.srv_add.service;
-            _mdns_probe_all_pcbs(&action->data.srv_add.service, 1, false, false);
+            _mdns_probe_all_pcbs(&action->data.srv_add.service, 1, true, true);
 
             break;
         case ACTION_SERVICE_INSTANCE_SET:
             if(action->data.srv_port.service->service->instance){
-                _mdns_send_bye(&action->data.srv_instance.service, 1, false);
+                _mdns_send_bye(&action->data.srv_instance.service, 1, true);
                 free((char*)action->data.srv_instance.service->service->instance);
             }
             action->data.srv_instance.service->service->instance = action->data.srv_instance.instance;
-            _mdns_probe_all_pcbs(&action->data.srv_instance.service, 1, false, false);
+            _mdns_probe_all_pcbs(&action->data.srv_instance.service, 1, true, true);
 
             break;
         case ACTION_SERVICE_PORT_SET:
             action->data.srv_port.service->service->port = action->data.srv_port.port;
-            _mdns_announce_all_pcbs(&action->data.srv_port.service, 1, false);
+            _mdns_announce_all_pcbs(&action->data.srv_port.service, 1, true);
 
             break;
         case ACTION_SERVICE_TXT_SET:
@@ -3291,14 +3294,14 @@ static void _mdns_execute_action(mdns_action_t * action)
             free(action->data.srv_txt.service->service->txt);
             action->data.srv_txt.service->service->txt = (const char **)action->data.srv_txt.items;
             action->data.srv_txt.service->service->txt_num_items = action->data.srv_txt.len;
-            _mdns_announce_all_pcbs(&action->data.srv_txt.service, 1, false);
+            _mdns_announce_all_pcbs(&action->data.srv_txt.service, 1, true);
 
             break;
         case ACTION_SERVICE_DEL:
             a = _mdns_server->services;
             if (_mdns_server->services == action->data.srv_del.service) {
                 _mdns_server->services = a->next;
-                _mdns_send_bye(&a, 1, false);
+                _mdns_send_bye(&a, 1, true);
                 _mdns_free_service(a->service);
                 free(a);
             } else {
@@ -3308,7 +3311,7 @@ static void _mdns_execute_action(mdns_action_t * action)
                 if (a->next == action->data.srv_del.service) {
                     mdns_srv_item_t * b = a;
                     a->next = a->next->next;
-                    _mdns_send_bye(&b, 1, false);
+                    _mdns_send_bye(&b, 1, true);
                     _mdns_free_service(b->service);
                     free(b);
                 }
@@ -3316,7 +3319,7 @@ static void _mdns_execute_action(mdns_action_t * action)
 
             break;
         case ACTION_SERVICES_CLEAR:
-            _mdns_send_final_bye(false);
+            _mdns_send_final_bye(true);
             a = _mdns_server->services;
             _mdns_server->services = NULL;
             while(a) {
