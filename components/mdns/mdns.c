@@ -216,6 +216,7 @@ typedef struct {
         mdns_pcb_type_t pcb_type;
         //struct udp_pcb *pcb;
         ip_addr_t src;
+        uint16_t src_port;
         uint8_t multicast;
         uint8_t authoritative;
         uint8_t probe;
@@ -1419,6 +1420,7 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
     }
     bool unicast = false;
     bool shared = false;
+    bool flush = true;
     mdns_tx_packet_t * packet = (mdns_tx_packet_t*)malloc(sizeof(mdns_tx_packet_t));
     if(!packet){
         //mem error
@@ -1433,7 +1435,7 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
     packet->tcpip_if = parsed_packet->tcpip_if;
     packet->pcb_type = parsed_packet->pcb_type;
     packet->flags = MDNS_FLAGS_AUTHORITATIVE;
-    packet->port = MDNS_SERVICE_PORT;
+    packet->port = parsed_packet->src_port;
 
     mdns_parsed_question_t * q = parsed_packet->questions;
     while(q){
@@ -1446,6 +1448,9 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
         }
         if(q->unicast){
             unicast = true;
+            flush = false;
+        }else{
+            flush = true;
         }
         if(service){
             if (q->type == MDNS_TYPE_PTR || q->type == MDNS_TYPE_ANY){
@@ -1453,22 +1458,22 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
                     shared = true;
                 }
                 if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_PTR, service, false, false)
-                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_SRV, service, true, false)
-                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, true, false)
-                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, true, false)
-                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, true, false)){
+                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_SRV, service, flush, false)
+                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, flush, false)
+                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, flush, false)
+                    || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, flush, false)){
                     _mdns_free_tx_packet(packet);
                     return;
                 }
             } else if (q->type == MDNS_TYPE_SRV){
-                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_SRV, service, true, false)
-                || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, true, false)
-                || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, true, false)){
+                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_SRV, service, flush, false)
+                || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_A, NULL, flush, false)
+                || !_mdns_alloc_answer(&packet->additional, MDNS_TYPE_AAAA, NULL, flush, false)){
                     _mdns_free_tx_packet(packet);
                     return;
                 }
             } else if (q->type == MDNS_TYPE_TXT){
-                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, true, false)){
+                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_TXT, service, flush, false)){
                     _mdns_free_tx_packet(packet);
                     return;
                 }
@@ -1481,12 +1486,12 @@ static void _mdns_create_answer_from_parsed_packet(mdns_parsed_packet_t * parsed
             }
         } else {
             if (q->type == MDNS_TYPE_ANY || q->type == MDNS_TYPE_A || q->type == MDNS_TYPE_AAAA){
-                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_A, NULL, true, false)
-                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_AAAA, NULL, true, false)){
+                if(!_mdns_alloc_answer(&packet->answers, MDNS_TYPE_A, NULL, flush, false)
+                    || !_mdns_alloc_answer(&packet->answers, MDNS_TYPE_AAAA, NULL, flush, false)){
                     _mdns_free_tx_packet(packet);
                     return;
                 }
-            } else if(!_mdns_alloc_answer(&packet->answers, q->type, NULL, true, false)){
+            } else if(!_mdns_alloc_answer(&packet->answers, q->type, NULL, flush, false)){
                 _mdns_free_tx_packet(packet);
                 return;
             }
@@ -2644,6 +2649,7 @@ void mdns_parse_packet(mdns_rx_packet_t * packet)
     parsed_packet->authoritative = header.flags.value == MDNS_FLAGS_AUTHORITATIVE;
     parsed_packet->distributed = header.flags.value == MDNS_FLAGS_DISTRIBUTED;
     ip_addr_copy(parsed_packet->src, packet->src);
+    parsed_packet->src_port = packet->src_port;
 
     if (header.questions) {
         uint8_t qs = header.questions;
@@ -2669,6 +2675,9 @@ void mdns_parse_packet(mdns_rx_packet_t * packet)
             if(clas != 0x0001) {//bad class
                 continue;
             }
+
+            if (packet->src_port != MDNS_SERVICE_PORT)
+                unicast = true;
 
             if (_mdns_name_is_discovery(name, type)) {
                 //service discovery
