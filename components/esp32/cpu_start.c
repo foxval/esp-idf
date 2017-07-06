@@ -185,11 +185,16 @@ void IRAM_ATTR call_start_cpu0()
     Cache_Read_Enable(1);
 
     esp_cpu_unstall(1);
-    //Enable clock gating and reset the app cpu.
-    DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
-    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_C_REG, DPORT_APPCPU_RUNSTALL);
-    DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
-    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
+    // Enable clock and reset APP CPU. Note that OpenOCD may have already
+    // enabled clock and taken APP CPU out of reset. In this case don't reset
+    // APP CPU again, as that will clear the breakpoints which may have already
+    // been set.
+    if (!DPORT_GET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN)) {
+        DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
+        DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_C_REG, DPORT_APPCPU_RUNSTALL);
+        DPORT_SET_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
+        DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_A_REG, DPORT_APPCPU_RESETTING);
+    }
     ets_set_appcpu_boot_addr((uint32_t)call_start_cpu1);
 
 
@@ -245,6 +250,17 @@ void IRAM_ATTR call_start_cpu1()
 }
 #endif //!CONFIG_FREERTOS_UNICORE
 
+static void intr_matrix_clear(void)
+{
+    //Clear all the interrupt matrix register
+    for (int i = ETS_WIFI_MAC_INTR_SOURCE; i <= ETS_CACHE_IA_INTR_SOURCE; i++) {
+        intr_matrix_set(0, i, ETS_INVALID_INUM);
+#if !CONFIG_FREERTOS_UNICORE
+        intr_matrix_set(1, i, ETS_INVALID_INUM);
+#endif
+    }
+}
+
 void start_cpu0_default(void)
 {
     esp_setup_syscall_table();
@@ -258,6 +274,7 @@ void start_cpu0_default(void)
     trax_start_trace(TRAX_DOWNCOUNT_WORDS);
 #endif
     esp_clk_init();
+    intr_matrix_clear();
 #ifndef CONFIG_CONSOLE_UART_NONE
     uart_div_modify(CONFIG_CONSOLE_UART_NUM, (rtc_clk_apb_freq_get() << 4) / CONFIG_CONSOLE_UART_BAUDRATE);
 #endif

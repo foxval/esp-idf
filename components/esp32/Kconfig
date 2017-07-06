@@ -28,8 +28,8 @@ config MEMMAP_SMP
         to save some memory. (ToDo: Make this automatically depend on unicore support)
 
 config MEMMAP_TRACEMEM
-    bool
-    default "n"
+	bool
+	default "n"
 
 config MEMMAP_TRACEMEM_TWOBANKS
     bool
@@ -69,8 +69,8 @@ choice ESP32_COREDUMP_TO_FLASH_OR_UART
     help
         Select place to store core dump: flash, uart or none (to disable core dumps generation).
 
-        If core dump is configured to be stored in flash and custom partition table is used add
-        corresponding entry to your CSV. For examples, please see predefined partition table CSV descriptions
+        If core dump is configured to be stored in flash and custom partition table is used add 
+        corresponding entry to your CSV. For examples, please see predefined partition table CSV descriptions 
         in the components/partition_table directory.
 
 config ESP32_ENABLE_COREDUMP_TO_FLASH
@@ -303,18 +303,18 @@ choice NUMBER_OF_UNIVERSAL_MAC_ADDRESS
     default FOUR_UNIVERSAL_MAC_ADDRESS
     help
         Configure the number of universally administered (by IEEE) MAC addresses.
-        During initialisation, MAC addresses for each network interface are generated or derived from a
+        During initialisation, MAC addresses for each network interface are generated or derived from a 
         single base MAC address.
-        If the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap,
-        Bluetooth and Ethernet) receive a universally administered MAC address. These are generated
+        If the number of universal MAC addresses is four, all four interfaces (WiFi station, WiFi softap, 
+        Bluetooth and Ethernet) receive a universally administered MAC address. These are generated 
         sequentially by adding 0, 1, 2 and 3 (respectively) to the final octet of the base MAC address.
-        If the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth)
-        receive a universally administered MAC address. These are generated sequentially by adding 0
-        and 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet)
-        receive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC
+        If the number of universal MAC addresses is two, only two interfaces (WiFi station and Bluetooth) 
+        receive a universally administered MAC address. These are generated sequentially by adding 0 
+        and 1 (respectively) to the base MAC address. The remaining two interfaces (WiFi softap and Ethernet) 
+        receive local MAC addresses. These are derived from the universal WiFi station and Bluetooth MAC 
         addresses, respectively.
-        When using the default (Espressif-assigned) base MAC address, either setting can be used. When using
-        a custom universal MAC address range, the correct setting will depend on the allocation of MAC
+        When using the default (Espressif-assigned) base MAC address, either setting can be used. When using 
+        a custom universal MAC address range, the correct setting will depend on the allocation of MAC 
         addresses in this range (either 2 or 4 per device.)
 
 config TWO_UNIVERSAL_MAC_ADDRESS
@@ -324,7 +324,7 @@ config FOUR_UNIVERSAL_MAC_ADDRESS
 endchoice
 
 config NUMBER_OF_UNIVERSAL_MAC_ADDRESS
-    int
+    int 
     default 2 if TWO_UNIVERSAL_MAC_ADDRESS
     default 4 if FOUR_UNIVERSAL_MAC_ADDRESS
 
@@ -356,10 +356,10 @@ config NEWLIB_STDOUT_ADDCR
         cursor one line down, not also move it to the beginning of the line. This
         is usually done by an added CR character. Enabling this will make the
         standard output code automatically add a CR character before a LF.
-
-        With this option enabled, C standard library functions which read from UART
+        
+        With this option enabled, C standard library functions which read from UART 
         (like scanf) will convert "\r\n" character sequences back to "\n".
-
+        
         This option doesn't affect behavior of the UART driver (drivers/uart.h).
 
 config NEWLIB_NANO_FORMAT
