@@ -81,7 +81,7 @@ esp_err_t mesh_parse_protocol(uint8_t *buf, uint16_t start_index,
                         mesh_gpio_set(0);
                     } else {
 #if 1
-                        if (esp_mesh_get_layer() == 1) {
+                        if (esp_mesh_is_root()) {
                             /* layer one: pink */
                             mesh_gpio_set(RGB_LIGHT_PINK);
                         } else if (esp_mesh_get_layer() == 2) {

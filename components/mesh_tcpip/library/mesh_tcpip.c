@@ -49,7 +49,6 @@
 //#define MESH_TCPIP_DUMP
 //#define MESH_TCPIP_TOS_P2P
 //#define MESH_TCPIP_OPT_RECV_DS
-
 static const char *TAG = "mesh_tcpip";
 
 #define MESH_CNX_STATE_IDLE                (1)
@@ -78,6 +77,7 @@ static uint16_t server_port = 0;
 static char server_hostname[128] = { 0, };
 static volatile uint8_t mesh_cnx_state = MESH_CNX_STATE_IDLE;
 static volatile bool is_running = true;
+static volatile bool is_rx_stopped = false;
 static bool is_inited = false;
 
 /*******************************************************
@@ -287,7 +287,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
 static esp_err_t mesh_tcpip_disconnect_server(void)
 {
     mesh_cnx_state = MESH_CNX_STATE_IDLE;
-    if (tcp_cli_sock != -1) {
+    if (is_rx_stopped && tcp_cli_sock != -1) {
         close(tcp_cli_sock);
         tcp_cli_sock = -1;
     }
@@ -435,9 +435,10 @@ static void mesh_tcpip_rx_main(void *arg)
         return;
     }
 
+    is_rx_stopped = false;
     is_running = true;
     while (is_running) {
-        if (esp_mesh_get_layer() != 1) {
+        if (!esp_mesh_is_root()) {
             /* non-root */
             break;
         }
@@ -586,6 +587,8 @@ static void mesh_tcpip_rx_main(void *arg)
         }
         if (is_running == false) {
             MESH_LOGE("err: is_running false");
+            while(recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0));
+            is_rx_stopped = true;
         }
     }
 

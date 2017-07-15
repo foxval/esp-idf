@@ -164,7 +164,7 @@ typedef struct {
     uint8_t type;
     uint8_t version;
     uint8_t mesh_type;
-    uint8_t mesh_group[6];
+    uint8_t mesh_id[6];
     uint8_t layer_cap;
     uint8_t layer_lvl;
     uint8_t dev_cap;
@@ -175,8 +175,13 @@ typedef struct {
     uint16_t total_assoc;
     uint16_t leaf_left;
     uint16_t scan_ap_num;
-    uint8_t ap_rssi;
-    uint8_t router_rssi;
+    int8_t ap_rssi;
+    int8_t router_rssi;
+    uint8_t flag;
+    uint8_t rc_addr[6];
+    int8_t rc_rssi;
+    uint8_t vote_addr[6];
+    int8_t vote_rssi;
 }wifi_vnd_mesh_assoc_t;
 
 /**

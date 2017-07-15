@@ -43,7 +43,8 @@
 #define MESH_ERR_OPT_UNKNOWN          (-9)
 #define MESH_ERR_CHILD_NOT_FOUND      (-10)
 #define MESH_ERR_DISCARD              (-11)
-#define MESH_ERR_DISCONENCTED         (-12)
+#define MESH_ERR_DISCONNECTED         (-12)
+#define MESH_ERR_WIFI_MODE            (-13)
 
 /*******************************************************
  *                Enumerations
@@ -57,6 +58,10 @@ typedef enum
     MESH_EVENT_DISCONNECTED = 3,
     MESH_EVENT_LAYER_CHANGE = 4,
     MESH_EVENT_ROOT_GOT_IP = 5,
+    MESH_EVENT_VOTE_START = 6,
+    MESH_EVENT_VOTE_DONE = 7,
+    MESH_EVENT_ROOT_SWITCH_REQ = 8,
+    MESH_EVENT_ROOT_SWITCH_ACK = 9,
     MESH_EVENT_FAIL,
 } mesh_event_t;
 
@@ -215,6 +220,13 @@ typedef struct
         uint8_t max_connection; /**< max number of stations allowed to connect in, default 4, max 10 */
     } map;
 } mesh_cfg_t;
+
+typedef struct
+{
+    uint8_t attempts;
+    mesh_addr_t rc_addr;
+    uint8_t reason;
+} mesh_vote_t;
 
 /*******************************************************
  *                Function Definitions
@@ -535,5 +547,72 @@ esp_err_t esp_mesh_get_parent_bssid(mesh_addr_t* bssid);
  *
  */
 bool esp_mesh_is_root(void);
+
+/**
+ * @brief     set if enable/disable mesh self-organized
+ *
+ * @param     enable
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+
+esp_err_t esp_mesh_set_self_organized(bool enable);
+
+/**
+ * @brief     get if enable/disable mesh self-organized
+ *
+ * @param     void
+ *
+ * @return    true/false
+ *
+ */
+bool esp_mesh_get_self_organized(void);
+
+/**
+ * @brief     set a specified parent
+ *
+ * @param     config  parent configuration
+ * @param     mesh_ie  parent mesh ie
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_parent(wifi_config_t* config,
+        wifi_vnd_mesh_assoc_t* mesh_ie);
+
+/**
+ * @brief     root waive itself
+ *
+ * @param     vote  vote configuration
+ * @param     reason  (not support now)
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_waive_root(mesh_vote_t* vote, int reason);
+
+/**
+ * @brief     set vote percentage threshold for approval of the root
+ *
+ * @param     percentage  vote percentage threshold
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_vote_percentage(float percentage);
+
+/**
+ * @brief     get vote percentage threshold for approval of the root
+ *
+ * @param     void
+ *
+ * @return    percentage threshold
+ */
+float esp_mesh_get_vote_percentage(void);
 
 #endif /* __MESH_H__ */

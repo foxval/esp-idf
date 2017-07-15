@@ -31,11 +31,14 @@
 static const char *TAG = "mesh_main";
 static bool is_running = true;
 static bool is_mesh_connected = false;
+static bool is_voting = false;
 
 /*******************************************************
  *                Function Declarations
  *******************************************************/
+#ifdef MESH_P2P_FORWARD_TEST
 esp_err_t esp_mesh_comm_p2p_start(void);
+#endif /* MESH_P2P_FORWARD_TEST */
 esp_err_t esp_mesh_comm_server_start(void);
 esp_err_t esp_mesh_api_test(void);
 
@@ -43,13 +46,15 @@ esp_err_t esp_mesh_api_test(void);
  *                Function Definitions
  *******************************************************/
 
-void esp_mesh_connected(void)
+void esp_mesh_connected(int layer)
 {
-    int layer = esp_mesh_get_layer();
-    if (layer == 1) {
+    if (esp_mesh_is_root()) {
         /* layer one: pink */
         mesh_gpio_set(RGB_LIGHT_PINK);
-    } else if (layer == 2) {
+        return;
+    }
+
+    if (layer == 2) {
         /* layer two: yellow */
         mesh_gpio_set(RGB_LIGHT_YELLOW);
     } else if (layer == 3) {
@@ -76,6 +81,9 @@ void esp_mesh_disconnected(void)
 
 void esp_mesh_event_cb(mesh_event_t event)
 {
+    int layer = 0;
+    static int last_layer = 0;
+
     switch (event) {
 
         case MESH_EVENT_SUCCESS:
@@ -93,15 +101,17 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_CONNECTED:
             /* wifi connected */
-            MESH_LOGI("MESH_EVENT_CONNECTED layer:%d", esp_mesh_get_layer())
+            layer = esp_mesh_get_layer();
+            MESH_LOGI("MESH_EVENT_CONNECTED, layer:%d-->%d", last_layer, layer)
             ;
+            last_layer = layer;
+            esp_mesh_connected(layer);
             is_mesh_connected = true;
             if (esp_mesh_is_root()) {
                 esp_mesh_enable_dhcp();
             } else {
                 esp_mesh_disable_dhcp();
             }
-            esp_mesh_connected();
             esp_mesh_api_test();
 #ifdef MESH_P2P_FORWARD_TEST
             esp_mesh_comm_p2p_start();
@@ -123,9 +133,12 @@ void esp_mesh_event_cb(mesh_event_t event)
 
         case MESH_EVENT_LAYER_CHANGE:
             /* mesh device layer changes */
-            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d", esp_mesh_get_layer())
+            layer = esp_mesh_get_layer();
+            MESH_LOGI("MESH_EVENT_LAYER_CHANGE, layer:%d-->%d", last_layer,
+                    layer)
             ;
-            esp_mesh_connected();
+            last_layer = layer;
+            esp_mesh_connected(layer);
 #ifndef MESH_P2P_FORWARD_TEST
             if (!esp_mesh_is_root()) {
                 /* non-root */
@@ -144,6 +157,29 @@ void esp_mesh_event_cb(mesh_event_t event)
                         strlen(MESH_SERVER_HOSTNAME), MESH_SERVER_PORT);
             }
 #endif /* MESH_P2P_FORWARD_TEST */
+            break;
+
+        case MESH_EVENT_VOTE_START:
+            MESH_LOGI("MESH_EVENT_VOTE_START")
+            ;
+            is_voting = true;
+            break;
+
+        case MESH_EVENT_VOTE_DONE:
+            MESH_LOGI("MESH_EVENT_VOTE_DONE")
+            ;
+            is_voting = false;
+            break;
+
+        case MESH_EVENT_ROOT_SWITCH_REQ:
+            MESH_LOGI("MESH_EVENT_ROOT_SWITCH_REQ")
+            ;
+            is_voting = true;
+            break;
+
+        case MESH_EVENT_ROOT_SWITCH_ACK:
+            MESH_LOGI("MESH_EVENT_ROOT_SWITCH_ACK")
+            ;
             break;
 
         case MESH_EVENT_FAIL:
@@ -226,7 +262,6 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 void app_main(void)
 {
     mesh_cfg_t* config;
-
     mesh_light_init();
     ESP_ERROR_CHECK(nvs_flash_init());
 
@@ -245,16 +280,41 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
-    esp_wifi_start();
+    ESP_ERROR_CHECK(esp_wifi_start());
 
 #ifdef MESH_PRE_SCAN
     while (!is_router_found)
         ;
 #endif /* MESH_PRE_SCAN */
 
-    esp_mesh_init();
-    esp_mesh_set_max_layer(MESH_MAX_LAYER);
-    esp_mesh_set_map_authmode(MESH_MAP_AUTHMODE);
+    ESP_ERROR_CHECK(esp_mesh_init());
+    ESP_ERROR_CHECK(esp_mesh_set_max_layer(MESH_MAX_LAYER));
+    ESP_ERROR_CHECK(esp_mesh_set_map_authmode(MESH_MAP_AUTHMODE));
+
+#ifdef MESH_DISABLE_SELF_ORGANIZED
+#if 1
+
+    ESP_ERROR_CHECK(esp_mesh_set_self_organized(true));
+    wifi_config_t parent = {
+        .sta = {
+            .ssid = MESH_PARENT_SSID,
+            .password = MESH_PARENT_PASSWD,
+            .channel = MESH_PARENT_CHANNEL,
+        },
+    };
+    ESP_ERROR_CHECK(esp_mesh_set_parent(&parent, NULL));
+#else
+    wifi_config_t router = {
+        .sta = {
+            .ssid = MESH_ROUTER_SSID,
+            .password = MESH_ROUTER_PASSWD,
+            .channel = MESH_ROUTER_CHANNEL,
+        },
+    };
+    ESP_ERROR_CHECK(esp_mesh_set_parent(&router, NULL));
+#endif
+#endif /* MESH_DISABLE_SELF_ORGANIZED */
+
     config = (mesh_cfg_t*) malloc(sizeof(mesh_cfg_t));
     if (config) {
         memset(config, 0, sizeof(mesh_cfg_t));
@@ -271,11 +331,11 @@ void app_main(void)
                 strlen(MESH_ROUTER_PASSWD));
         /* map */
         config->map.max_connection = MESH_MAP_CONNECTIONS;
-        memcpy((uint8_t*) &config->map.password, MESH_MAP_PASSWORD,
-                strlen(MESH_MAP_PASSWORD));
+        memcpy((uint8_t*) &config->map.password, MESH_MAP_PASSWD,
+                strlen(MESH_MAP_PASSWD));
 
-        esp_mesh_set_config(config);
-        esp_mesh_start();
+        ESP_ERROR_CHECK(esp_mesh_set_config(config));
+        ESP_ERROR_CHECK(esp_mesh_start());
         free(config);
     } else {
         MESH_LOGE("mesh fails\n");
@@ -283,6 +343,7 @@ void app_main(void)
 
 }
 
+#ifdef MESH_P2P_FORWARD_TEST
 void esp_mesh_p2p_tx_main(void* arg)
 {
     esp_err_t ret;
@@ -414,6 +475,7 @@ void esp_mesh_p2p_rx_main(void* arg)
     }
     vTaskDelete(NULL);
 }
+#endif /* MESH_P2P_FORWARD_TEST */
 
 void esp_mesh_comm_tx_main(void* arg)
 {
@@ -513,8 +575,20 @@ void esp_mesh_comm_tx_main(void* arg)
                 taken_ms, fail_count, ret, data.proto, data.tos);
 
         vTaskDelay(10000 / portTICK_RATE_MS);
-    }
 
+#ifdef MESH_ROOT_WAIVE_ITSELF
+        if (esp_mesh_is_root() && !is_voting && send_count
+                && !(send_count % 3)) {
+            MESH_LOGW("root waives itself");
+            is_voting = true;
+            mesh_vote_t vote = {
+                .attempts = 10,
+            };
+            ESP_ERROR_CHECK(esp_mesh_waive_root(&vote, 0));
+        }
+#endif /* MESH_ROOT_WAIVE_ITSELF */
+
+    }
     vTaskDelete(NULL);
 }
 
@@ -599,9 +673,11 @@ void esp_mesh_comm_rx_main(void* arg)
     vTaskDelete(NULL);
 }
 
+#ifdef MESH_P2P_FORWARD_TEST
 esp_err_t esp_mesh_comm_p2p_start(void)
 {
     uint8_t sta_mac[6];
+    uint8_t map_mac[6];
 
     static bool is_p2p_started = false;
     if (is_p2p_started) {
@@ -609,7 +685,9 @@ esp_err_t esp_mesh_comm_p2p_start(void)
     }
 
     esp_wifi_get_mac(ESP_IF_WIFI_STA, sta_mac);
-    if (memcmp(MESH_P2P_FORWARD_ADDR, sta_mac, sizeof(sta_mac))) {
+    esp_wifi_get_mac(ESP_IF_WIFI_AP, map_mac);
+    if (memcmp(MESH_P2P_FORWARD_ADDR, sta_mac, sizeof(sta_mac))
+            && memcmp(MESH_P2P_FORWARD_ADDR, map_mac, sizeof(map_mac))) {
         xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048, NULL, 5, NULL);
     } else {
         xTaskCreate(esp_mesh_p2p_rx_main, "MPRX", 3072, NULL, 5, NULL);
@@ -618,6 +696,7 @@ esp_err_t esp_mesh_comm_p2p_start(void)
     is_p2p_started = true;
     return ESP_OK;
 }
+#endif /*MESH_P2P_FORWARD_TEST */
 
 esp_err_t esp_mesh_comm_server_start(void)
 {

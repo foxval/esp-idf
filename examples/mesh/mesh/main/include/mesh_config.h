@@ -21,13 +21,14 @@
  *                Macros
  *******************************************************/
 
-#define MESH_DUMP
-#define MESH_P2P_FORWARD_TEST
-#define MESH_P2P_FORWARD_MAX_NUM   (20)
+//#define MESH_DUMP
+//#define MESH_P2P_FORWARD_TEST
+//#define MESH_P2P_FORWARD_MAX_NUM   (20)
 //#define MESH_PRE_SCAN
 //#define MESH_TOS_P2P_ON
 //#define MESH_OPT_RECV_DS
-
+//#define MESH_DISABLE_SELF_ORGANIZED
+//#define MESH_ROOT_WAIVE_ITSELF
 /*******************************************************
  *                Constants
  *******************************************************/
@@ -35,9 +36,13 @@
 #define MESH_ROUTER_SSID           "ROUTER_SSID"     /**< ssid */
 #define MESH_ROUTER_PASSWD         "ROUTER_PASSWD"   /**< password */
 
-#define MESH_MAP_PASSWORD          "MAP_PASSWORD"    /**< map password */
+#define MESH_MAP_PASSWD            "MAP_PASSWORD"    /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
 #define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
+
+#define MESH_PARENT_CHANNEL        MESH_ROUTER_CHANNEL
+#define MESH_PARENT_SSID           "ESP_XXXXXX"
+#define MESH_PARENT_PASSWD         ""
 
 #define MESH_MAX_LAYER             (6)               /**< max layer */
 
