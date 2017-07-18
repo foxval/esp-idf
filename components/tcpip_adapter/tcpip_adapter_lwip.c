@@ -55,6 +55,7 @@ static esp_err_t tcpip_adapter_dhcpc_start_api(tcpip_adapter_api_msg_t * msg);
 static esp_err_t tcpip_adapter_dhcpc_stop_api(tcpip_adapter_api_msg_t * msg);
 static esp_err_t tcpip_adapter_set_hostname_api(tcpip_adapter_api_msg_t * msg);
 static sys_sem_t api_sync_sem = NULL;
+static sys_sem_t api_lock_sem = NULL;
 extern sys_thread_t g_lwip_task;
 
 #define TAG "tcpip_adapter"
@@ -92,6 +93,11 @@ void tcpip_adapter_init(void)
         if (ERR_OK != ret) {
             ESP_LOGD(TAG, "tcpip adatper api sync sem init fail");
         }
+
+        ret = sys_sem_new(&api_lock_sem, 1);
+        if (ERR_OK != ret) {
+            ESP_LOGD(TAG, "tcpip adatper api lock sem init fail");
+        }
     }
 }
 
@@ -122,7 +128,10 @@ static int tcpip_adapter_ipc_check(tcpip_adapter_api_msg_t *msg)
         return TCPIP_ADAPTER_IPC_LOCAL;
     }
 
+
+    sys_sem_wait(&api_lock_sem);
     tcpip_send_api_msg((tcpip_callback_fn)tcpip_adapter_api_cb, msg, &api_sync_sem);
+    sys_sem_signal(&api_lock_sem);
 
     return TCPIP_ADAPTER_IPC_REMOTE;
 #else
