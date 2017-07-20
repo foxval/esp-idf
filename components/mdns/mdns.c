@@ -88,6 +88,8 @@
 #define MDNS_SRV_PORT_OFFSET        4
 #define MDNS_SRV_FQDN_OFFSET        6
 
+#define MDNS_SERVICE_TASK_PRIORITY  5
+
 typedef enum {
     PCB_OFF, PCB_DUP, PCB_INIT,
     PCB_PROBE_1, PCB_PROBE_2, PCB_PROBE_3,
@@ -3528,7 +3530,7 @@ static esp_err_t _mdns_service_task_start()
     }
     MDNS_SERVICE_LOCK();
     if (!_mdns_service_task_handle) {
-        xTaskCreatePinnedToCore(_mdns_service_task, "mdns", MDNS_SERVICE_STACK_DEPTH, NULL, 1, &_mdns_service_task_handle, 0);
+        xTaskCreatePinnedToCore(_mdns_service_task, "mdns", MDNS_SERVICE_STACK_DEPTH, NULL, MDNS_SERVICE_TASK_PRIORITY, &_mdns_service_task_handle, 0);
         if (!_mdns_service_task_handle) {
             MDNS_SERVICE_UNLOCK();
             return ESP_FAIL;
