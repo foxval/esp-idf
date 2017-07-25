@@ -926,6 +926,11 @@ void l2cu_send_peer_disc_rsp (tL2C_LCB *p_lcb, UINT8 remote_id, UINT16 local_cid
     BT_HDR  *p_buf;
     UINT8   *p;
 
+    if (!p_lcb) {
+        L2CAP_TRACE_WARNING("lcb already released\n");
+        return;
+    }
+    
     if ((p_buf = l2cu_build_header(p_lcb, L2CAP_DISC_RSP_LEN, L2CAP_CMD_DISC_RSP, remote_id)) == NULL) {
         L2CAP_TRACE_WARNING ("L2CAP - no buffer for disc_rsp");
         return;
@@ -1606,7 +1611,9 @@ void l2cu_release_ccb (tL2C_CCB *p_ccb)
         p_ccb->should_free_rcb = false;
     }
 
-    btm_sec_clr_temp_auth_service (p_lcb->remote_bd_addr);
+    if (p_lcb) {
+        btm_sec_clr_temp_auth_service (p_lcb->remote_bd_addr);
+    }
 
     /* Stop the timer */
     btu_stop_timer (&p_ccb->timer_entry);
@@ -2635,7 +2642,16 @@ void l2cu_no_dynamic_ccbs (tL2C_LCB *p_lcb)
             /* probably no buffer to send disconnect */
             timeout = BT_1SEC_TIMEOUT;
         }
+#else
+        if (btsnd_hcic_disconnect (p_lcb->handle, HCI_ERR_PEER_USER)) {
+            l2cu_process_fixed_disc_cback(p_lcb);
+            p_lcb->link_state = LST_DISCONNECTING;
+            timeout = L2CAP_LINK_DISCONNECT_TOUT;
+        } else {
+            timeout = BT_1SEC_TIMEOUT;
+        }
 #endif  ///SMP_INCLUDED == TRUE
+
     }
 
     if (timeout != 0xFFFF) {

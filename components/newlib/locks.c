@@ -41,8 +41,11 @@
 
 static portMUX_TYPE lock_init_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
-/* Initialise the given lock by allocating a new mutex semaphore
+/* Initialize the given lock by allocating a new mutex semaphore
    as the _lock_t value.
+
+   Called by _lock_init*, also called by _lock_acquire* to lazily initialize locks that might have
+   been initialised (to zero only) before the RTOS scheduler started.
 */
 static void IRAM_ATTR lock_init_generic(_lock_t *lock, uint8_t mutex_type) {
     portENTER_CRITICAL(&lock_init_spinlock);
@@ -83,12 +86,12 @@ static void IRAM_ATTR lock_init_generic(_lock_t *lock, uint8_t mutex_type) {
 }
 
 void IRAM_ATTR _lock_init(_lock_t *lock) {
-    *lock = 0; // In case lock is an auto variable
+    *lock = 0; // In case lock's memory is uninitialized
     lock_init_generic(lock, queueQUEUE_TYPE_MUTEX);
 }
 
 void IRAM_ATTR _lock_init_recursive(_lock_t *lock) {
-    *lock = 0; // In case lock is an auto variable
+    *lock = 0; // In case lock's memory is uninitialized
     lock_init_generic(lock, queueQUEUE_TYPE_RECURSIVE_MUTEX);
 }
 

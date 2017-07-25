@@ -112,9 +112,9 @@ functions but without including stdio.h here. */
 #endif /* configUSE_TICKLESS_IDLE */
 
 /*
- * Defines the size, in words, of the stack allocated to the idle task.
+ * Defines the size, in bytes, of the stack allocated to the idle task.
  */
-#define tskIDLE_STACK_SIZE	configMINIMAL_STACK_SIZE
+#define tskIDLE_STACK_SIZE	configIDLE_TASK_STACK_SIZE
 
 #if( configUSE_PREEMPTION == 0 )
 	/* If the cooperative scheduler is being used then a yield should not be
@@ -4132,29 +4132,6 @@ For ESP32 FreeRTOS, vTaskEnterCritical implements both portENTER_CRITICAL and po
 		}
 	}
 
-static BaseType_t uxCriticalNesting[portNUM_PROCESSORS];
-static BaseType_t uxOldInterruptState[portNUM_PROCESSORS];
-
-#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-	void vTaskEnterCritical_ISR( portMUX_TYPE *mux, const char *function, int line )
-#else
-	void vTaskEnterCritical_ISR( portMUX_TYPE *mux )
-#endif
-	{
-		BaseType_t oldInterruptLevel=0;
-		oldInterruptLevel=portENTER_CRITICAL_NESTED();
-#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-		vPortCPUAcquireMutex( mux, function, line );
-#else
-		vPortCPUAcquireMutex( mux );
-#endif
-
-                uxCriticalNesting[xPortGetCoreID()]++;
-		if(uxCriticalNesting[xPortGetCoreID()] == 1)
-			uxOldInterruptState[xPortGetCoreID()] = oldInterruptLevel;
-	}
-
-
 #endif /* portCRITICAL_NESTING_IN_TCB */
 /*-----------------------------------------------------------*/
 
@@ -4200,30 +4177,6 @@ For ESP32 FreeRTOS, vTaskExitCritical implements both portEXIT_CRITICAL and port
 			mtCOVERAGE_TEST_MARKER();
 		}
 	}
-
-#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-        void vTaskExitCritical_ISR( portMUX_TYPE *mux, const char *function, int line )
-#else
-        void vTaskExitCritical_ISR( portMUX_TYPE *mux )
-#endif
-        {
-#ifdef CONFIG_FREERTOS_PORTMUX_DEBUG
-		vPortCPUReleaseMutex( mux, function, line );
-#else
-		vPortCPUReleaseMutex( mux );
-#endif
-		if(uxCriticalNesting[xPortGetCoreID()] > 0U ) {
-			uxCriticalNesting[xPortGetCoreID()]--;
-			if(uxCriticalNesting[xPortGetCoreID()] == 0U ) {
-				portEXIT_CRITICAL_NESTED(uxOldInterruptState[xPortGetCoreID()]);
-			} else { 
-				mtCOVERAGE_TEST_MARKER();
-			}
-                } else {
-			mtCOVERAGE_TEST_MARKER();
-                }
-        }
-
 	
 #endif /* portCRITICAL_NESTING_IN_TCB */
 /*-----------------------------------------------------------*/

@@ -15,4 +15,4 @@ API Guides
    ULP Coprocessor <ulp>
    External RAM <external-ram>
    Unit Testing <unit-tests>
-
+   Driver <wifi>

@@ -209,8 +209,6 @@ void vPortCPUAcquireMutex(portMUX_TYPE *mux, const char *function, int line);
 portBASE_TYPE vPortCPUReleaseMutex(portMUX_TYPE *mux, const char *function, int line);
 void vTaskEnterCritical( portMUX_TYPE *mux, const char *function, int line );
 void vTaskExitCritical( portMUX_TYPE *mux, const char *function, int line );
-void vTaskEnterCritical_ISR( portMUX_TYPE *mux, const char *function, int line );
-void vTaskExitCritical_ISR( portMUX_TYPE *mux, const char *function, int line );
 #define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
 #define portEXIT_CRITICAL(mux)         vTaskExitCritical(mux, __FUNCTION__, __LINE__)
 #define portENTER_CRITICAL_ISR(mux)    vTaskEnterCritical(mux, __FUNCTION__, __LINE__)
@@ -218,8 +216,6 @@ void vTaskExitCritical_ISR( portMUX_TYPE *mux, const char *function, int line );
 #else
 void vTaskExitCritical( portMUX_TYPE *mux );
 void vTaskEnterCritical( portMUX_TYPE *mux );
-void vTaskExitCritical_ISR( portMUX_TYPE *mux );
-void vTaskEnterCritical_ISR( portMUX_TYPE *mux );
 void vPortCPUAcquireMutex(portMUX_TYPE *mux);
 portBASE_TYPE vPortCPUReleaseMutex(portMUX_TYPE *mux);
 #define portENTER_CRITICAL(mux)        vTaskEnterCritical(mux)

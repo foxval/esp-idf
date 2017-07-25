@@ -215,11 +215,6 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         I2S[i2s_num]->conf_chan.rx_chan_mod = (ch == 2) ? 0 : 1;
     }
 
-   // I2S[i2s_num]->conf_chan.rx_chan_mod = (ch == 2) ? 0 : 1;
-    // I2S[i2s_num]->fifo_conf.rx_fifo_mod =  (ch == 2) ? 0 : 1;
-    // I2S[i2s_num]->conf.rx_mono = 0;
-
-
     if (bits != p_i2s_obj[i2s_num]->bits_per_sample) {
 
         //change fifo mode

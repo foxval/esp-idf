@@ -74,6 +74,8 @@ void IRAM_ATTR spi_flash_op_block_func(void* arg)
     // Restore interrupts that aren't located in IRAM
     esp_intr_noniram_disable();
     uint32_t cpuid = (uint32_t) arg;
+    // Disable cache so that flash operation can start
+    spi_flash_disable_cache(cpuid, &s_flash_op_cache_state[cpuid]);
     // s_flash_op_complete flag is cleared on *this* CPU, otherwise the other
     // CPU may reset the flag back to false before IPC task has a chance to check it
     // (if it is preempted by an ISR taking non-trivial amount of time)
@@ -106,6 +108,7 @@ void IRAM_ATTR spi_flash_disable_interrupts_caches_and_other_cpu()
         // PRO CPU. APP CPU is either in reset or spinning inside user_start_cpu1,
         // which is in IRAM. So it is safe to disable cache for the other_cpuid here.
         assert(other_cpuid == 1);
+        spi_flash_disable_cache(other_cpuid, &s_flash_op_cache_state[other_cpuid]);
     } else {
         // Signal to the spi_flash_op_block_task on the other CPU that we need it to
         // disable cache there and block other tasks from executing.
@@ -148,6 +151,7 @@ void IRAM_ATTR spi_flash_enable_interrupts_caches_and_other_cpu()
         // other_cpuid is APP CPU, and it is either in reset or is spinning in
         // user_start_cpu1, which is in IRAM. So we can simply reenable cache.
         assert(other_cpuid == 1);
+        spi_flash_restore_cache(other_cpuid, s_flash_op_cache_state[other_cpuid]);
     } else {
         // Signal to spi_flash_op_block_task that flash operation is complete
         s_flash_op_complete = true;
