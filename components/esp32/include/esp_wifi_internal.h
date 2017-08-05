@@ -182,6 +182,8 @@ typedef struct {
     int8_t rc_rssi;
     uint8_t vote_addr[6];
     int8_t vote_rssi;
+    uint8_t vote_ttl;
+    uint8_t child[6];
 }wifi_vnd_mesh_assoc_t;
 
 /**

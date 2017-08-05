@@ -8,17 +8,9 @@ echo "IDF_PATH"
 echo $IDF_PATH
 echo "---------------------"
 
-touch $IDF_PATH/components/esp32/lib/libmesh.a
-touch $IDF_PATH/components/esp32/lib/libnet80211.a
-touch $IDF_PATH/components/esp32/lib/libpp.a
-
-#make clean
-make -j8 
-
 echo "pkill minicom"
 pkill minicom
 sleep 3
-
 dw_res_array=()
 dev_no=$1
 if [ "$dev_no" == "" ];then
@@ -32,13 +24,14 @@ for i in $(seq 1 2 $loop_end )
 do  
 {
    { 
-   python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i erase_flash 
-   python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 1152000 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh.bin 0x8000 $(pwd)/build/partitions_singleapp.bin 
-	
+    python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 1152000 --before default_reset --after hard_reset read_mac
 	}>/dev/null
 }   &
 done
 wait
+#echo "============================="
+#echo "            Done"
+#echo "============================="
 
 rm -rf  log/*.md
 for i in $(seq 1 2 $loop_end )
@@ -55,4 +48,3 @@ do
 	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C log/[$i]--${c}.md
 } &
 done
-

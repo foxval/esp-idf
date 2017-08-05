@@ -32,19 +32,23 @@
 #define MESH_MPS                      (MESH_MTU-MESH_HLEN)  /**> maximum payload size (in bytes) */
 
 /* mesh error code */
-#define MESH_ERR_NOT_CFG              (-1)
-#define MESH_ERR_MEM                  (-2)
-#define MESH_ERR_TIMEOUT              (-3)
-#define MESH_ERR_QUEUE_FULL           (-4)
-#define MESH_ERR_IF                   (-5)
-#define MESH_ERR_ROUTE                (-6)
-#define MESH_ERR_BUF_LIMIT            (-7)
-#define MESH_ERR_OPT_NONE             (-8)
-#define MESH_ERR_OPT_UNKNOWN          (-9)
-#define MESH_ERR_CHILD_NOT_FOUND      (-10)
-#define MESH_ERR_DISCARD              (-11)
-#define MESH_ERR_DISCONNECTED         (-12)
-#define MESH_ERR_WIFI_MODE            (-13)
+#define MESH_ERR_NOT_INIT             (-2)
+#define MESH_ERR_NOT_CFG              (-3)
+#define MESH_ERR_NOT_START            (-4)
+#define MESH_ERR_MEM                  (-5)
+#define MESH_ERR_TIMEOUT              (-6)
+#define MESH_ERR_QUEUE_FULL           (-7)
+#define MESH_ERR_IF                   (-8)
+#define MESH_ERR_ROUTE                (-9)
+#define MESH_ERR_BUF_LIMIT            (-10)
+#define MESH_ERR_OPT_NONE             (-11)
+#define MESH_ERR_OPT_UNKNOWN          (-12)
+#define MESH_ERR_DISCARD              (-13)
+#define MESH_ERR_DISCONNECTED         (-14)
+#define MESH_ERR_WIFI_MODE            (-15)
+#define MESH_ERR_ARG                  (-16)
+#define MESH_ERR_QUEUE_FAIL           (-17)
+
 
 /*******************************************************
  *                Enumerations
@@ -614,5 +618,45 @@ esp_err_t esp_mesh_set_vote_percentage(float percentage);
  * @return    percentage threshold
  */
 float esp_mesh_get_vote_percentage(void);
+
+/**
+ * @brief     set minimum trying times before to be a root
+ *
+ * @param     times
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_vote_times(int times);
+
+/**
+ * @brief     get minimum trying times before to be a root
+ *
+ * @param     void
+ *
+ * @return    times
+ */
+int esp_mesh_get_vote_times(void);
+
+/**
+ * @brief     set map associate expire time
+ *
+ * @param     seconds
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_map_assoc_expire(int seconds);
+
+/**
+ * @brief     get map associate expire time
+ *
+ * @param     void
+ *
+ * @return    seconds
+ */
+int esp_mesh_get_map_assoc_expire(void);
 
 #endif /* __MESH_H__ */
