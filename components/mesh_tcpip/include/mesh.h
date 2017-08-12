@@ -49,7 +49,6 @@
 #define MESH_ERR_ARG                  (-16)
 #define MESH_ERR_QUEUE_FAIL           (-17)
 
-
 /*******************************************************
  *                Enumerations
  *******************************************************/
@@ -619,25 +618,17 @@ esp_err_t esp_mesh_set_vote_percentage(float percentage);
  */
 float esp_mesh_get_vote_percentage(void);
 
-/**
- * @brief     set minimum trying times before to be a root
- *
- * @param     times
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_vote_times(int times);
+typedef struct
+{
+    int scan;
+    int vote;
+    int fail;
+    int monitor_ie;
+} mesh_attempts_t;
 
-/**
- * @brief     get minimum trying times before to be a root
- *
- * @param     void
- *
- * @return    times
- */
-int esp_mesh_get_vote_times(void);
+esp_err_t esp_mesh_set_attempts(mesh_attempts_t* attempts);
+
+esp_err_t esp_mesh_get_attempts(mesh_attempts_t* attempts);
 
 /**
  * @brief     set map associate expire time

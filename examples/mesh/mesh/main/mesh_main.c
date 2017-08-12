@@ -39,7 +39,7 @@
  *                Constants
  *******************************************************/
 #define RX_SIZE (1500)
-#define TX_SIZE (1300)
+#define TX_SIZE (1350)
 
 /*******************************************************
  *                Variable Definitions
@@ -60,6 +60,14 @@ int send_count_tag = 0;
 esp_err_t esp_mesh_comm_p2p_start(void);
 esp_err_t esp_mesh_comm_server_start(void);
 esp_err_t esp_mesh_api_test(void);
+
+#ifdef MESH_MONITOR_TX_DONE
+extern void dbg_cnt_lmac_rxtx_show(void);
+extern void dbg_cnt_lmac_int_show(void);
+extern void dbg_esp_mesh_ebuf_dump(bool dump);
+extern void mesh_tx_cb_dbg(void);
+extern int esp_mesh_get_children_num(void);
+#endif /* MESH_MONITOR_TX_DONE */
 
 /*******************************************************
  *                Function Definitions
@@ -126,11 +134,6 @@ void esp_mesh_event_cb(mesh_event_t event)
             last_layer = layer;
             esp_mesh_connected(layer);
             is_mesh_connected = true;
-            if (esp_mesh_is_root()) {
-                esp_mesh_enable_dhcp();
-            } else {
-                esp_mesh_disable_dhcp();
-            }
             esp_mesh_api_test();
 
 #ifdef MESH_P2P_FORWARD_TEST
@@ -282,16 +285,8 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 void app_main(void)
 {
     mesh_cfg_t* config;
-    mesh_light_init();
+
     ESP_ERROR_CHECK(nvs_flash_init());
-
-#if 0
-    nvs_handle handle;
-    nvs_open("MESH", NVS_READWRITE, &handle);
-    nvs_erase_all(handle);
-    nvs_close(handle);
-#endif
-
     tcpip_adapter_init();
     ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
     ESP_ERROR_CHECK(esp_event_loop_init(esp_event_handler, NULL));
@@ -306,17 +301,25 @@ void app_main(void)
     while (!is_router_found)
     ;
 #endif /* MESH_PRE_SCAN */
-
+    ESP_ERROR_CHECK(mesh_light_init());
+#if 0
+    nvs_handle handle;
+    nvs_open("MESH", NVS_READWRITE, &handle);
+    nvs_erase_all(handle);
+    nvs_close(handle);
+#endif
     ESP_ERROR_CHECK(esp_mesh_init());
     ESP_ERROR_CHECK(esp_mesh_set_max_layer(MESH_MAX_LAYER));
     ESP_ERROR_CHECK(esp_mesh_set_map_authmode(MESH_MAP_AUTHMODE));
     ESP_ERROR_CHECK(esp_mesh_set_vote_percentage(0.6));
-    ESP_ERROR_CHECK(esp_mesh_set_vote_times(10));
-    ESP_ERROR_CHECK(esp_mesh_set_map_assoc_expire(120));
+    ESP_ERROR_CHECK(esp_mesh_set_map_assoc_expire(10));
+    mesh_attempts_t attempts = { .scan = 10, .vote = 12, .fail = 20,
+            .monitor_ie = 3 };
+    ESP_ERROR_CHECK(esp_mesh_set_attempts(&attempts));
 #ifdef MESH_DISABLE_SELF_ORGANIZED
 #if 1
 
-    ESP_ERROR_CHECK(esp_mesh_set_self_organized(true));
+    ESP_ERROR_CHECK(esp_mesh_set_self_organized(false));
     wifi_config_t parent = {
         .sta = {
             .ssid = MESH_PARENT_SSID,
@@ -382,23 +385,21 @@ void print_sta_list(const char* func)
 
 void esp_mesh_p2p_tx_main(void* arg)
 {
+//    dbg_esp_mesh_ebuf_dump(1);
     esp_err_t err;
     mesh_opt_t* opt = NULL;
     mesh_addr_t to;
     mesh_addr_t parent;
     uint32_t send_count = 0;
-
     static uint8_t tx_buf[TX_SIZE] = { 0, };
-    memcpy(&tx_buf[sizeof(send_count)], MESH_BCF_LIGHT_OFF,
-            sizeof(MESH_BCF_LIGHT_OFF));
 
     mesh_data_t data;
     data.data = tx_buf;
     data.size = sizeof(tx_buf);
     data.proto = MESH_PROTO_BIN;
-#ifdef MESH_TOS_P2P_ON
+#ifdef MESH_P2P_TOS_ON
     data.tos = MESH_TOS_P2P;
-#endif /* MESH_TOS_P2P_ON */
+#endif /* MESH_P2P_TOS_ON */
 
     /*
      * unicast
@@ -419,43 +420,60 @@ void esp_mesh_p2p_tx_main(void* arg)
     memcpy((uint8_t*) &to.addr, MESH_P2P_FORWARD_MADDR, sizeof(mesh_addr_t));
 #endif
 
+    esp_mesh_get_parent_bssid(&parent);
     MESH_LOGW("%s", __func__);
     is_running = true;
     while (is_running) {
 
 #ifdef MESH_OTA_TEST
-
         extern int esp_mesh_get_children_num(void);
-        while (esp_mesh_get_children_num()
+
+        while (esp_mesh_is_root()
+                && esp_mesh_get_children_num()
                 != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6 - 1) {
             MESH_LOGW("children number:%d", esp_mesh_get_children_num());
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
 
-        err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
-        if (err) {
-            ets_printf("err:%d ", err);
-            vTaskDelay(10 / portTICK_RATE_MS);
+        while (esp_mesh_is_root()) {
+            err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
+            if (err) {
+                ets_printf("err:%d ", err);
+                vTaskDelay(10 / portTICK_RATE_MS);
+            }
+            continue;
         }
-        continue;
 
 #elif defined (MESH_SELF_HEALING_TEST) || defined (MESH_P2P_FORWARD_UCAST_12M)
-#ifdef MESH_SELF_HEALING_TEST
+
+        while (esp_mesh_is_root()
+                && esp_mesh_get_children_num()
+                        != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6 - 1) {
+            MESH_LOGW("children number:%d", esp_mesh_get_children_num());
+            vTaskDelay(1000 / portTICK_RATE_MS);
+        }
+
         if (!esp_mesh_is_root()) {
             vTaskDelay(5000 / portTICK_RATE_MS);
             continue;
         }
-#endif /* MESH_SELF_HEALING_TEST */
-
-        print_sta_list(__func__);
+//        print_sta_list(__func__);
 
         send_count++;
         tx_buf[3] = (send_count >> 24) & 0xff;
         tx_buf[2] = (send_count >> 16) & 0xff;
         tx_buf[1] = (send_count >> 8) & 0xff;
         tx_buf[0] = (send_count) & 0xff;
-        gettimeofday(&send_start_time, NULL);
 
+        if (send_count % 2) {
+            memcpy(&tx_buf[sizeof(send_count)], MESH_BCF_LIGHT_ON,
+                    sizeof(MESH_BCF_LIGHT_ON));
+        } else {
+            memcpy(&tx_buf[sizeof(send_count)], MESH_BCF_LIGHT_OFF,
+                    sizeof(MESH_BCF_LIGHT_OFF));
+        }
+
+//        gettimeofday(&send_start_time, NULL);
         int i;
         for (i = 0;
                 i < sizeof(MESH_P2P_FORWARD_MADDR_NODE) / sizeof(mesh_addr_t);
@@ -465,24 +483,26 @@ void esp_mesh_p2p_tx_main(void* arg)
 
             err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
 
-            esp_mesh_get_parent_bssid(&parent);
             if (err) {
                 MESH_LOGE(
                         "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d]",
                         send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
                         MAC2STR(to.addr), send_count, esp_get_free_heap_size(),
                         err, data.proto, data.tos);
-            } else {
+            }
+#if 1
+            else {
                 MESH_LOGW(
                         "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d]",
                         send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
                         MAC2STR(to.addr), send_count, esp_get_free_heap_size(),
                         err, data.proto, data.tos);
             }
-            vTaskDelay(10 / portTICK_RATE_MS);
+#endif
+//            vTaskDelay(10 / portTICK_RATE_MS);
         }
-
         vTaskDelay(1000 / portTICK_RATE_MS);
+
 #else /* MESH_OTA_TEST */
         err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
         send_count_tag = send_count;
@@ -499,7 +519,7 @@ void esp_mesh_p2p_tx_main(void* arg)
 
 #ifdef MESH_ROOT_WAIVE_ITSELF
         if (esp_mesh_is_root() && !is_voting && send_count
-                && !(send_count % 3)) {
+                && !(send_count % 10)) {
             MESH_LOGW("root waives itself");
             is_voting = true;
             mesh_vote_t vote = {.attempts = 10,};
@@ -550,34 +570,72 @@ void esp_mesh_p2p_rx_main(void* arg)
 
 #ifdef MESH_OTA_TEST
         err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL, 0);
-        if (!esp_mesh_is_root()) {
-            ets_printf("heap:%d\n", esp_get_free_heap_size());
-        }
+//        if (!esp_mesh_is_root()) {
+//            ets_printf("heap:%d\n", esp_get_free_heap_size());
+//        }
         continue;
 #endif /* MESH_OTA_TEST */
 
-        print_sta_list(__func__);
+//        print_sta_list(__func__);
 
         memset(data.data, 0, RX_SIZE);
         data.size = RX_SIZE;
         data.proto = MESH_PROTO_BIN;
-#ifdef MESH_TOS_P2P_ON
-        data.tos = MESH_TOS_P2P;
-#endif /* MESH_TOS_P2P_ON */
 
         gettimeofday(&send_start_time, NULL);
         err = esp_mesh_recv(&from, &data, portMAX_DELAY, &flag, NULL, 0);
-
         gettimeofday(&recv_stop_time, NULL);
+        if (err != ESP_OK || !data.size) {
+            MESH_LOGE("err:%d, size:%d", err, data.size);
+            continue;
+        }
+
+        /* compute time taken */
         timersub(&recv_stop_time, &send_start_time, &time_taken);
-
-        /* bfc control */
-        mesh_process_received_data(&data.data[sizeof(send_count)], data.size);
-
+        /* extract send count */
         if (data.size > sizeof(send_count)) {
             send_count = (data.data[3] << 24) | (data.data[2] << 16)
                     | (data.data[1] << 8) | data.data[0];
         }
+        /* process bfc control */
+        mesh_process_received_data(&data.data[sizeof(send_count)], data.size);
+
+#ifdef MESH_MONITOR_TX_DONE
+        if (esp_mesh_get_children_num() && !(send_count % 10)) {
+            mesh_tx_cb_dbg();
+//            dbg_cnt_lmac_rxtx_show();
+        }
+
+        static int old_rx_send_count = 0;
+        static int loss_count = 0;
+
+        if (old_rx_send_count + 1 != send_count) {
+            loss_count += (send_count - old_rx_send_count + 1);
+            MESH_LOGW(
+                    "[#RX:o/n:%d/%d, loss:%d][L:%d][%u]ms, self:"MACSTR", receive from "MACSTR", size:%d, heap:%d, [err:%d]\n",
+                    old_rx_send_count, send_count, loss_count,
+                    esp_mesh_get_layer(),
+                    (uint32_t ) (time_taken.tv_sec * 1000
+                            + time_taken.tv_usec / 1000), MAC2STR(sta_mac),
+                    MAC2STR(from.addr), data.size, esp_get_free_heap_size(),
+                    err);
+        }
+#if 0
+        else {
+            MESH_LOGI(
+                    "[#RX:o/n:%d/%d, loss:%d][L:%d][%u]ms, self:"MACSTR", receive from "MACSTR", size:%d, heap:%d, [err:%d]\n",
+                    old_rx_send_count, send_count, loss_count,
+                    esp_mesh_get_layer(),
+                    (uint32_t ) (time_taken.tv_sec * 1000
+                            + time_taken.tv_usec / 1000), MAC2STR(sta_mac),
+                    MAC2STR(from.addr), data.size, esp_get_free_heap_size(),
+                    err);
+        }
+#endif
+        old_rx_send_count = send_count;
+        continue;
+
+#endif /* MESH_MONITOR_TX_DONE */
 
 #ifdef MESH_SELF_HEALING_TEST
         MESH_LOGI(
@@ -718,9 +776,9 @@ void esp_mesh_comm_tx_main(void* arg)
 
     data.size = PING_SIZE;
     data.proto = MESH_PROTO_BIN;
-#ifdef MESH_TOS_P2P_ON
+#ifdef MESH_P2P_TOS_ON
     data.tos = MESH_TOS_P2P;
-#endif /* MESH_TOS_P2P_ON */
+#endif /* MESH_P2P_TOS_ON */
     uint8_t self[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
 
@@ -906,8 +964,7 @@ esp_err_t esp_mesh_comm_p2p_start(void)
 #elif defined (MESH_OTA_TEST)
 
         if (esp_mesh_is_root()) {
-            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5,
-                    NULL);
+            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5, NULL);
         }
 #else /* MESH_P2P_FORWARD_UCAST */
 
@@ -957,8 +1014,11 @@ esp_err_t esp_mesh_api_test(void)
     MESH_LOGI("mesh map authmode:%d", esp_mesh_get_map_authmode());
     MESH_LOGI("mesh map beacon interval:%d", esp_mesh_get_beacon_interval());
     MESH_LOGI("mesh map vote percentage:%.2f", esp_mesh_get_vote_percentage());
-    MESH_LOGI("mesh map vote min-times:%d", esp_mesh_get_vote_times());
-    MESH_LOGI("mesh map associate expire(s):%d",
+    mesh_attempts_t attempts;
+    ESP_ERROR_CHECK(esp_mesh_get_attempts(&attempts));
+    MESH_LOGI("mesh map attempts scan/vote/fail/monitorIE:%d/%d/%d/%d",
+            attempts.scan, attempts.vote, attempts.fail, attempts.monitor_ie);
+    MESH_LOGI("mesh map associate expire(seconds):%d",
             esp_mesh_get_map_assoc_expire());
 
     return ESP_OK;

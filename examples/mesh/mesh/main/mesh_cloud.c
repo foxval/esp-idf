@@ -157,7 +157,7 @@ void mesh_process_received_data(uint8_t* buf, uint16_t len)
             break;
 
         case BFC_CMD_RPC:
-            printf("Receive BFC_RPC\r\n");
+//            printf("Receive BFC_RPC\r\n");
             mesh_parse_protocol(buf, 4, len, BFC_CMD_RPC);
             break;
 
