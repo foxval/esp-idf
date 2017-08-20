@@ -44,6 +44,21 @@
  */
 
 /*******************************************************
+ *                Macros
+ *******************************************************/
+#ifndef timersub
+#define timersub(a, b, result)                       \
+  do {                                               \
+    (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;    \
+    (result)->tv_usec = (a)->tv_usec - (b)->tv_usec; \
+    if ((result)->tv_usec < 0) {                     \
+      --(result)->tv_sec;                            \
+      (result)->tv_usec += 1000000;                  \
+    }                                                \
+  } while (0)
+#endif
+
+/*******************************************************
  *                Constants
  *******************************************************/
 //#define MESH_TCPIP_DUMP
@@ -63,8 +78,12 @@ static const char *TAG = "mesh_tcpip";
 #define MESH_TCPIP_RX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
 
 #define MESH_TCPIP_TX_TASK_NAME            "MTTX"
-#define MESH_TCPIP_TX_TASK_STACK           (1024*2)
+#define MESH_TCPIP_TX_TASK_STACK           (2048+512)
 #define MESH_TCPIP_TX_TASK_PRI             (MESH_DEFAULT_TASK_PRI)
+
+#define TODS_DATA_SIZE (1500)
+#define TCP_RECV_SIZE (1024)
+#define MIN_RECV_SIZE (13)
 
 /*******************************************************
  *                Variable Definitions
@@ -275,10 +294,12 @@ static esp_err_t mesh_tcpip_connect_server(void)
             sizeof(sock_addr)) != ESP_OK) {
         MESH_LOGE("failed, server %s, port:%d, errno:%d", server_hostname,
                 server_port, errno);
+        ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
         return _tcpip_connect_fail();
     } else {
         MESH_LOGI("connect server successfully\n");
         mesh_cnx_state = MESH_CNX_STATE_CONNECTED;
+        ESP_ERROR_CHECK(esp_mesh_post_toDS_state(1));
     }
 
     return ESP_OK;
@@ -305,23 +326,50 @@ int esp_mesh_is_server_connected(void)
 
 static void mesh_tcpip_tx_main(void *arg)
 {
-#define TODS_DATA_SIZE (1024)
-
-    struct timeval cur_time;
-    time_t old_time = 0;
+    typedef struct
+    {
+        struct timeval start;
+        struct timeval stop;
+        struct timeval taken;
+        uint32_t ms;
+    } mesh_timeval_t;
+    mesh_timeval_t toDS_recv;
+    mesh_timeval_t sock_send;
+    mesh_timeval_t round;
     fd_set wrset, exset;
     mesh_data_t data;
     mesh_addr_t from, to;
     int flag = 0;
+    int send_size = 0;
+    uint32_t seqno;
     data.size = TODS_DATA_SIZE;
     data.data = (uint8_t*) malloc(TODS_DATA_SIZE);
     if (!data.data) {
         ets_printf("tcpip tx fails\n");
     }
+    extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr);
 
     is_running = true;
     while (is_running) {
 
+#if 0
+        data.size = TODS_DATA_SIZE;
+        gettimeofday(&time_start, NULL);
+        if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
+                        NULL, 0) == ESP_OK && data.size) {
+            gettimeofday(&time_stop, NULL);
+            /* compute time taken */
+            timersub(&time_stop, &time_start, &time_taken);
+
+            MESH_LOGW("[%u]ms from "MACSTR" to "MACSTR", len:%d, Q[%d]",
+                    (uint32_t ) (time_taken.tv_sec * 1000
+                            + time_taken.tv_usec / 1000), MAC2STR(from.addr),
+                    MAC2STR(to.addr), data.size,
+                    esp_mesh_available_txupQ_num(&from));
+
+        }
+        continue;
+#endif
         if (!esp_mesh_is_root()) {
             /* non-root */
             MESH_LOGE("err: not root");
@@ -337,6 +385,7 @@ static void mesh_tcpip_tx_main(void *arg)
         FD_ZERO(&exset);
         FD_SET(tcp_cli_sock, &exset);
 
+        gettimeofday(&round.start, NULL);
         if (select(tcp_cli_sock + 1, NULL, &wrset, &exset, NULL) > 0) {
             if (FD_ISSET(tcp_cli_sock, &exset)) {
                 /*
@@ -347,17 +396,29 @@ static void mesh_tcpip_tx_main(void *arg)
                     tcp_cli_sock = -1;
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
+                ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
                 MESH_DEBUG("tx exception\n");
-            }
-
-            if (FD_ISSET(tcp_cli_sock, &wrset)) {
+            } else if (FD_ISSET(tcp_cli_sock, &wrset)) {
                 /* initialize variables */
                 data.size = TODS_DATA_SIZE;
-                memset(data.data, 0, TODS_DATA_SIZE);
                 flag = 0;
+                gettimeofday(&toDS_recv.start, NULL);
                 if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
                 NULL, 0) == ESP_OK && data.size) {
-                    gettimeofday(&cur_time, NULL);
+                    gettimeofday(&toDS_recv.stop, NULL);
+
+#if 0
+                    /* compute time taken */
+                    timersub(&time_stop, &time_start, &time_taken);
+                    timersub(&send_time_stop, &time_start, &send_time_taken);
+                    MESH_LOGW("[%u/%u]ms from "MACSTR" to "MACSTR", len:%d, Q[%d]",
+                            (uint32_t ) (time_taken.tv_sec * 1000
+                                    + time_taken.tv_usec / 1000),
+                            (uint32_t ) (send_time_taken.tv_sec * 1000
+                                    + send_time_taken.tv_usec / 1000),
+                            MAC2STR(from.addr), MAC2STR(to.addr), data.size,
+                            esp_mesh_available_txupQ_num(&from));
+#endif
                     if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
 #ifdef MESH_TCPIP_DUMP
                         {
@@ -373,21 +434,47 @@ static void mesh_tcpip_tx_main(void *arg)
 
                         }
 #endif /* MESH_TCPIP_DUMP */
-                        send(tcp_cli_sock, data.data, data.size, MSG_DONTWAIT);
+                        gettimeofday(&sock_send.start, NULL);
+                        send_size = send(tcp_cli_sock, data.data, data.size, 0);
+                        gettimeofday(&sock_send.stop, NULL);
+                        if (send_size != data.size) {
+                            MESH_LOGW("socekt send:%d, size:%d", send_size,
+                                    data.size);
+                        }
+                        timersub(&toDS_recv.stop, &toDS_recv.start,
+                                &toDS_recv.taken);
+                        timersub(&sock_send.stop, &sock_send.start,
+                                &sock_send.taken);
+                        timersub(&sock_send.stop, &round.start, &round.taken);
+                        toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec * 1000
+                                + toDS_recv.taken.tv_usec / 1000);
+                        sock_send.ms = (uint32_t) (sock_send.taken.tv_sec * 1000
+                                + sock_send.taken.tv_usec / 1000);
+                        round.ms = (uint32_t) (round.taken.tv_sec * 1000
+                                + round.taken.tv_usec / 1000);
+                        seqno = (data.data[25] << 24) | (data.data[23] << 16)
+                                | (data.data[23] << 8) | data.data[22];
+                        MESH_LOGW(
+                                "[%u/%u/%u]ms from "MACSTR"[%d]  len:%d, Q[%d],heap:%d",
+                                toDS_recv.ms, sock_send.ms, round.ms,
+                                MAC2STR(from.addr), seqno, data.size,
+                                esp_mesh_available_txupQ_num(&from),
+                                esp_get_free_heap_size());
+
+#if 0
                         MESH_LOGI(
-                                "[%u]s send to server len:%d, socketID:%d, flag:%s%s, [%d,%d]",
-                                (int )(cur_time.tv_sec - old_time), data.size,
-                                tcp_cli_sock,
+                                "send to server len:%d, socketID:%d, flag:%s%s, [%d,%d]",
+                                data.size, tcp_cli_sock,
                                 (flag & MESH_DATA_TODS) ? "toDS" : "",
                                 (flag & MESH_DATA_FROMDS) ? "fromDS" : "",
                                 data.proto, data.tos);
+#endif
                     } else {
                         ets_printf(
                                 "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
                                 __func__, __LINE__, tcp_cli_sock,
                                 mesh_cnx_state);
                     }
-                    old_time = cur_time.tv_sec;
                 }
             }
         }
@@ -407,8 +494,6 @@ static void mesh_tcpip_tx_main(void *arg)
 
 static void mesh_tcpip_rx_main(void *arg)
 {
-#define TCP_RECV_SIZE (1024)
-#define MIN_RECV_SIZE (13)
     typedef struct
     {
         uint8_t count;
@@ -461,6 +546,7 @@ static void mesh_tcpip_rx_main(void *arg)
                     tcp_cli_sock = -1;
                     mesh_cnx_state = MESH_CNX_STATE_IDLE;
                 }
+                ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
                 MESH_DEBUG("rx exception\n");
             }
             if (FD_ISSET(tcp_cli_sock, &rdset)) {
@@ -472,6 +558,13 @@ static void mesh_tcpip_rx_main(void *arg)
                     recv_size = recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0);
                     if (recv_size <= 0) {
                         MESH_LOGE("[ROOT]err:%d, size:%d", errno, data.size);
+                        if (errno == ENOTCONN) {
+                            /* Socket is not connected */
+                            close(tcp_cli_sock);
+                            tcp_cli_sock = -1;
+                            mesh_cnx_state = MESH_CNX_STATE_IDLE;
+                            ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
+                        }
                         continue;
                     }
                     MESH_LOGE("recv:%d", recv_size);
@@ -587,7 +680,8 @@ static void mesh_tcpip_rx_main(void *arg)
         }
         if (is_running == false) {
             MESH_LOGE("err: is_running false");
-            while(recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0));
+            while (recv(tcp_cli_sock, data.data, TCP_RECV_SIZE, 0))
+                ;
             is_rx_stopped = true;
         }
     }

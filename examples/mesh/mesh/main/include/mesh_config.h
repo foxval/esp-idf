@@ -25,17 +25,23 @@
 //#define MESH_DUMP
 //#define MESH_P2P_FORWARD_TEST
 //#define MESH_PRE_SCAN
-#define MESH_P2P_TOS_ON
+//#define MESH_P2P_TOS_ON
 //#define MESH_OPT_RECV_DS
 //#define MESH_DISABLE_SELF_ORGANIZED
 //#define MESH_ROOT_WAIVE_ITSELF
 //#define MESH_P2P_FORWARD_UCAST
 //#define MESH_P2P_FORWARD_BCAST
 //#define MESH_P2P_FORWARD_MCAST
-#define MESH_SELF_HEALING_TEST
+//#define MESH_SELF_HEALING_TEST
 //#define MESH_OTA_TEST
 //#define MESH_P2P_FORWARD_UCAST_12M
-#define MESH_MONITOR_TX_DONE
+//#define MESH_MONITOR_TX_DONE
+#define MESH_XON
+//#define MESH_PRINT_ROUTING_TABLE
+
+#ifdef MESH_XON
+#undef MESH_P2P_FORWARD_TEST
+#endif /* MESH_XON */
 
 #if defined (MESH_SELF_HEALING_TEST) || defined(MESH_P2P_FORWARD_UCAST_12M) || defined(MESH_OTA_TEST) || defined(MESH_ROOT_WAIVE_ITSELF)
 #define MESH_P2P_FORWARD_TEST
@@ -49,18 +55,18 @@
  *                Constants
  *******************************************************/
 #define MESH_ROUTER_CHANNEL        (9)               /**< channel */
-#define MESH_ROUTER_SSID           "udp2"     /**< ssid */
-#define MESH_ROUTER_PASSWD         ""   /**< password */
+#define MESH_ROUTER_SSID           "ROUTER_SSID"     /**< ssid */
+#define MESH_ROUTER_PASSWD         "ROUTER_PASSWD"   /**< password */
 
 #define MESH_MAP_PASSWD            "MAP_PASSWORD"    /**< map password */
-#define MESH_MAP_CONNECTIONS       (1)               /**< max connections */
+#define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
 #define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
 
 #define MESH_PARENT_CHANNEL        MESH_ROUTER_CHANNEL
-#define MESH_PARENT_SSID           "ESP_036A98"
+#define MESH_PARENT_SSID           "ESP_XXXXXX"
 #define MESH_PARENT_PASSWD         ""
 
-#define MESH_MAX_LAYER             (6)               /**< max layer */
+#define MESH_MAX_LAYER             (5)               /**< max layer */
 
 /*******************************************************
  *                Variable Definitions
@@ -76,14 +82,14 @@ static const uint8_t MESH_P2P_FORWARD_BADDR[6] = { 0xff, 0xff, 0xff, 0xff, 0xff,
         0xff };
 static const uint8_t MESH_P2P_FORWARD_MADDR[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00,
         0x00 };
-static const uint8_t MESH_BCF_LIGHT_ON[6] = { 0x02, 0x00, 0xbf, 0xc0, 0x06,
-        0x01 };
+static const uint8_t MESH_BCF_LIGHT_ON[6] =
+        { 0x02, 0x00, 0xbf, 0xc0, 0x06, 0x01 };
 static const uint8_t MESH_BCF_LIGHT_OFF[6] = { 0x02, 0x00, 0xbf, 0xc0, 0x06,
         0x00 };
 
-#if 0
-static const uint8_t MESH_P2P_FORWARD_MADDR_NODE[30 * 6] = {
-        0x30, 0xae, 0xa4, 0x03, 0x6a, 0x98, //1
+#if 1
+static const uint8_t MESH_P2P_FORWARD_MADDR_NODE[30 * 6] = { 0x30, 0xae, 0xa4,
+        0x03, 0x6a, 0x98, //1
         0x30, 0xae, 0xa4, 0x02, 0xa8, 0x18, //2
         0x30, 0xae, 0xa4, 0x02, 0x32, 0xe8, //3
         0x30, 0xae, 0xa4, 0x03, 0x78, 0x2c, //4
@@ -114,14 +120,15 @@ static const uint8_t MESH_P2P_FORWARD_MADDR_NODE[30 * 6] = {
         0x30, 0xae, 0xa4, 0x03, 0x6b, 0x5c, //29
         0x24, 0x0a, 0xc4, 0x0c, 0x62, 0x6c, //30
         };
-#endif
+#else
 static const uint8_t MESH_P2P_FORWARD_MADDR_NODE[6 * 6] = {
-        0x30, 0xae, 0xa4, 0x01, 0x7f, 0x9c, //8
-        0x30, 0xae, 0xa4, 0x03, 0x6a, 0x98, //1
-        0x30, 0xae, 0xa4, 0x03, 0x71, 0x2c, //12
-        0x30, 0xae, 0xa4, 0x02, 0x32, 0xe8, //3
-        0x30, 0xae, 0xa4, 0x03, 0x69, 0xdc, //5
-        0x30, 0xae, 0xa4, 0x03, 0x78, 0x2c, //4
-        };
+    0x30, 0xae, 0xa4, 0x01, 0x7f, 0x9c, //8
+    0x30, 0xae, 0xa4, 0x03, 0x6a, 0x98,//1
+    0x30, 0xae, 0xa4, 0x03, 0x71, 0x2c,//12
+    0x30, 0xae, 0xa4, 0x02, 0x32, 0xe8,//3
+    0x30, 0xae, 0xa4, 0x03, 0x69, 0xdc,//5
+    0x30, 0xae, 0xa4, 0x03, 0x78, 0x2c,//4
+};
+#endif
 
 #endif /* _MESH_CONFIG_H_ */

@@ -174,7 +174,7 @@ esp_err_t system_event_ap_start_handle_default(system_event_t *event)
     tcpip_adapter_ip_info_t ap_ip;
     uint8_t ap_mac[6];
 
-#ifdef ESP_MESH_SUPPORT
+#if 1//def ESP_MESH_SUPPORT
     return ESP_OK;
 #endif /* ESP_MESH_SUPPORT */
 
@@ -219,8 +219,8 @@ esp_err_t system_event_sta_connected_handle_default(system_event_t *event)
 {
     tcpip_adapter_dhcp_status_t status;
 
-#ifdef ESP_MESH_SUPPORT
-    extern esp_mesh_is_root(void);
+#if 1//def ESP_MESH_SUPPORT
+    extern bool esp_mesh_is_root(void);
     if(!esp_mesh_is_root()){
         return ESP_OK;
     }
@@ -395,6 +395,10 @@ static esp_err_t esp_system_event_debug(system_event_t *event)
     }
     case SYSTEM_EVENT_MESH_AUTO_VOTE: {
         ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_AUTO_VOTE");
+        break;
+    }
+    case SYSTEM_EVENT_MESH_TODS_STATE: {
+        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_TODS_STATE");
         break;
     }
 

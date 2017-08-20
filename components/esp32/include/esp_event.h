@@ -52,6 +52,7 @@ typedef enum {
     SYSTEM_EVENT_ETH_GOT_IP,               /**< ESP32 ethernet got IP from connected AP */
     SYSTEM_EVENT_MESH_IE_CHANGE = 50,
     SYSTEM_EVENT_MESH_AUTO_VOTE = 51,
+    SYSTEM_EVENT_MESH_TODS_STATE = 52,
     SYSTEM_EVENT_MAX
 } system_event_id_t;
 

@@ -24,14 +24,14 @@ for i in $(seq 1 2 $loop_end )
 do  
 {
    { 
-    python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 1152000 --before default_reset --after hard_reset read_mac
+    python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 115200 --before default_reset --after hard_reset read_mac
 	}>/dev/null
 }   &
 done
 wait
-#echo "============================="
-#echo "            Done"
-#echo "============================="
+echo "========================"
+echo "    open serial port    "
+echo "========================"
 
 rm -rf  log/*.md
 for i in $(seq 1 2 $loop_end )

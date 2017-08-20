@@ -30,6 +30,7 @@
 #define MESH_HLEN                     (sizeof(mesh_hdr_t))  /**> fix header size (in bytes) */
 #define MESH_MTU                      (1500)                /**> maximum transfer unit (in bytes) */
 #define MESH_MPS                      (MESH_MTU-MESH_HLEN)  /**> maximum payload size (in bytes) */
+#define MESH_PACKET_LIFETIME          (5000)                /**> packet expire time(in seconds) */
 
 /* mesh error code */
 #define MESH_ERR_NOT_INIT             (-2)
@@ -65,6 +66,8 @@ typedef enum
     MESH_EVENT_VOTE_DONE = 7,
     MESH_EVENT_ROOT_SWITCH_REQ = 8,
     MESH_EVENT_ROOT_SWITCH_ACK = 9,
+    MESH_EVENT_TODS_REACHABLE = 10,
+    MESH_EVENT_TODS_UNREACHABLE = 11, /**<  DS is unreachable */
     MESH_EVENT_FAIL,
 } mesh_event_t;
 
@@ -123,78 +126,6 @@ typedef struct
     uint8_t len; /**< option length */
     uint8_t *val; /**< option value */
 } mesh_opt_t;
-
-/* mesh header format:
- * _________________________________________________________________________
- |byte\bit|0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7|
- |------------------------------------------------------------------------|
- |   4    | ver  | flags | header length |         total length           |   
- |--------|---------------------------------------------------------------|   
- |   8    | flow |  TTL  |TOS| protocol  |         reserved               |
- |--------|---------------------------------------------------------------|
- |   12   |                  destination address                          |
- |--------|                              |--------------------------------|
- |   16   |                              |                                |
- |--------|------------------------------|                                |
- |   20   |                     source address                            |
- |--------|---------------------------------------------------------------|
- |   24   | frag |               sequence                                 |
- |--------|---------------------------------------------------------------|
- |   28   |                        ack                                    |
- |--------|---------------------------------------------------------------|
- |        |                       options(variable)                       |
- |--------|---------------------------------------------------------------|
- 
- format of flags:
- ____________________
- | 0  | 1  | 2  | 3  |
- |-------------------|
- |frDs|toDs|ENC | MF |
- |-------------------|
- 
- format of flow:
- ____________________
- | 0  | 1    2    3  |
- |-------------------|
- |xreq|    xrsp      |
- |-------------------|
- 
- *
- */
-
-typedef struct
-{
-    uint8_t ver :4; /**< version */
-    uint8_t frDS :1; /**< from DS */
-    uint8_t toDS :1; /**< to DS */
-    uint8_t ENC :1; /**< encrypt */
-    uint8_t MF :1; /**< more fragment */
-    uint8_t hlen; /**< header length */
-    uint16_t tolen; /**< total length */
-    uint8_t xreq :1; /**< flow control request */
-    uint8_t xrsp :3; /**< flow control response */
-    uint8_t ttl :4; /**< time to live */
-    uint8_t tos :2; /**< type of service */
-    uint8_t proto :6; /**< data protocol */
-    uint16_t reserved; /**< reserved */
-    mesh_addr_t dst; /**< destination address, final recipient */
-    mesh_addr_t src; /**< source address */
-    uint32_t frag :4; /**< fragment number */
-    uint32_t seq :28; /**< sequence number */
-    uint32_t ack; /**< acknowledgment number */
-    mesh_opt_t option[0]; /**< mesh options */
-} mesh_hdr_t;
-
-typedef struct
-{
-    uint8_t* buf;
-    uint16_t len;
-    mesh_addr_t ra;
-    mesh_addr_t ta;
-    uint8_t ifidx;
-    uint32_t lifetime;
-    uint32_t wait;
-} mesh_ctx_t;
 
 typedef struct
 {
@@ -649,5 +580,47 @@ esp_err_t esp_mesh_set_map_assoc_expire(int seconds);
  * @return    seconds
  */
 int esp_mesh_get_map_assoc_expire(void);
+
+/**
+ * @brief     get the number of total nodes over the mesh network(including root)
+ *
+ * @param     void
+ *
+ * @return    the number of total nodes(including root)
+ */
+int esp_mesh_get_total_node_num(void);
+
+/**
+ * @brief     get the number of nodes in routing table(including itself)
+ *
+ * @param     void
+ *
+ * @return    the number of nodes in routing table(including itself)
+ */
+int esp_mesh_get_routing_table_size(void);
+
+/**
+ * @brief     get routing table(including itself)
+ *
+ * @param     mac  pointer to mac address
+ * @param     len  mac length
+ * @param     num  pointer to the number of nodes in routing table(including itself)
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_get_routing_table(mesh_addr_t* mac, int len, int* size);
+
+/**
+ * @brief     post toDS state to mesh(only apply to root)
+ *
+ * @param     reachable  if DS is reachable
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_post_toDS_state(bool reachable);
 
 #endif /* __MESH_H__ */
