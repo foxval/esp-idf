@@ -96,8 +96,7 @@ config FREERTOS_WATCHPOINT_END_OF_STACK
 
 config FREERTOS_THREAD_LOCAL_STORAGE_POINTERS
     int "Number of thread local storage pointers"
-    range 0 256 if !(WIFI_ENABLED || ETHERNET)
-    range 1 256 if WIFI_ENABLED || ETHERNET
+    range 1 256
     default 1
     help
         FreeRTOS has the ability to store per-thread pointers in the task
@@ -138,7 +137,7 @@ endchoice
 config FREERTOS_BREAK_ON_SCHEDULER_START_JTAG
     bool "Stop program on scheduler start when JTAG/OCD is detected"
     depends on ESP32_DEBUG_OCDAWARE
-    default y
+    default n
     help
         If JTAG/OCD is connected, stop execution when the scheduler is started and the first
         task is executed.
@@ -148,6 +147,15 @@ menuconfig ENABLE_MEMORY_DEBUG
     default n
     help
         Enable this option to show malloc heap block and memory crash detect
+
+config FREERTOS_IDLE_TASK_STACKSIZE
+    int "Idle Task stack size"
+    range 768 32768
+    default 1024
+    help
+        The idle task has its own stack, sized in bytes. The default size is enough for most uses. Size can be reduced
+        to 768 bytes if no (or simple) FreeRTOS idle hooks are used. The stack size may need to be increased above the
+        default if the app installs idle hooks that use a lot of stack memory.
 
 config FREERTOS_ISR_STACKSIZE
     int "ISR stack size"
@@ -232,7 +240,7 @@ config ENABLE_STATIC_TASK_CLEAN_UP_HOOK
     help
         Enable this option to make FreeRTOS call the static task clean up hook when a task is deleted.
 
-        Bear in mind that if this option is enabled you will need to implement the following function:
+        Bear in mind that if this option is enabled you will need to implement the following function::
 
             void vPortCleanUpTCB ( void *pxTCB ) {
                 // place clean up code here

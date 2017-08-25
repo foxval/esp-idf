@@ -29,7 +29,7 @@
 #include "bta_gatt_api.h"
 #include "bta_gattc_ci.h"
 #include "bta_gattc_co.h"
-#include "gki.h"
+#include "fixed_queue.h"
 
 /*****************************************************************************
 **  Constants and data types
@@ -81,7 +81,11 @@ typedef UINT16 tBTA_GATTC_INT_EVT;
 
 /* max known devices GATTC can support */
 #ifndef     BTA_GATTC_KNOWN_SR_MAX
-#define     BTA_GATTC_KNOWN_SR_MAX    3 // 10
+#if (GATT_MAX_PHY_CHANNEL > 3)
+    #define     BTA_GATTC_KNOWN_SR_MAX    GATT_MAX_PHY_CHANNEL
+#else
+    #define     BTA_GATTC_KNOWN_SR_MAX    3 // The origin value is 10
+#endif
 #endif
 
 #define BTA_GATTC_CONN_MAX      GATT_MAX_PHY_CHANNEL
@@ -298,7 +302,7 @@ typedef struct {
 
     tBTA_GATTC_CACHE    *p_srvc_cache;
     tBTA_GATTC_CACHE    *p_cur_srvc;
-    BUFFER_Q            cache_buffer;   /* buffer queue used for storing the cache data */
+    fixed_queue_t       *cache_buffer;   /* buffer queue used for storing the cache data */
     UINT8               *p_free;        /* starting point to next available byte */
     UINT16              free_byte;      /* number of available bytes in server cache buffer */
     UINT8               update_count;   /* indication received */

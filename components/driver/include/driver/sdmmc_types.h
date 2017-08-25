@@ -61,6 +61,13 @@ typedef struct {
 typedef uint32_t sdmmc_response_t[4];
 
 /**
+ * SD SWITCH_FUNC response buffer
+ */
+typedef struct {
+    uint32_t data[512 / 8 / sizeof(uint32_t)];  /*!< response data */
+} sdmmc_switch_func_rsp_t;
+
+/**
  * SD/MMC command information
  */
 typedef struct {
@@ -113,7 +120,7 @@ typedef struct {
     int max_freq_khz;           /*!< max frequency supported by the host */
 #define SDMMC_FREQ_DEFAULT      20000       /*!< SD/MMC Default speed (limited by clock divider) */
 #define SDMMC_FREQ_HIGHSPEED    40000       /*!< SD High speed (limited by clock divider) */
-#define SDMMC_FREQ_PROBING      4000        /*!< SD/MMC probing speed */
+#define SDMMC_FREQ_PROBING      400         /*!< SD/MMC probing speed */
     float io_voltage;           /*!< I/O voltage used by the controller (voltage switching is not supported) */
     esp_err_t (*init)(void);    /*!< Host function to initialize the driver */
     esp_err_t (*set_bus_width)(int slot, size_t width);    /*!< host function to set bus width */

@@ -27,7 +27,6 @@
 
 #include "bt_defs.h"
 #include "btm_api.h"
-#include "gki.h"
 #include "bt_common_types.h"
 
 #define CHANNEL_MAP_LEN    5
@@ -1596,7 +1595,7 @@ tBTM_STATUS BTM_BleBroadcast(BOOLEAN start);
 **
 *******************************************************************************/
 //extern
-BOOLEAN BTM_BleConfigPrivacy(BOOLEAN enable);
+BOOLEAN BTM_BleConfigPrivacy(BOOLEAN enable, tBTM_SET_LOCAL_PRIVACY_CBACK *set_local_privacy_cabck);
 
 /*******************************************************************************
 **
