@@ -8,8 +8,8 @@ What You Need
 -------------
 
 * 1 × ESP32-DevKitC board
-* 1 × USB A / mini USB B cable 
-* 1 × PC loaded with Windows, Linux or Mac O/S
+* 1 × USB A / micro USB B cable 
+* 1 × PC loaded with Windows, Linux or Mac OS
 
 
 Overview
@@ -24,7 +24,7 @@ Functional Description
 The following list and figure below describe key components, interfaces and controls of ESP32-DevKitC board.
 
 ESP-WROOM-32
-    Standard `ESP-WROOM-32 <http://www.espressif.com/sites/default/files/documentation/esp_wroom_32_datasheet_en.pdf>`_ module soldered to the ESP32-DevKitC board.
+    Standard `ESP-WROOM-32 <http://www.espressif.com/sites/default/files/documentation/esp-wroom-32_datasheet_en.pdf>`_ module soldered to the ESP32-DevKitC board.
 EN
     Reset button: pressing this button resets the system.
 Boot
@@ -60,4 +60,4 @@ Related Documents
 
 * `ESP32-DevKitC schematic <http://dl.espressif.com/dl/schematics/ESP32-Core-Board-V2_sch.pdf>`_ (PDF)
 * `ESP32 Datasheet <http://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf>`_ (PDF)
-* `ESP-WROOM-32 Datasheet <http://www.espressif.com/sites/default/files/documentation/esp_wroom_32_datasheet_en.pdf>`_ (PDF)
+* `ESP-WROOM-32 Datasheet <http://espressif.com/sites/default/files/documentation/esp-wroom-32_datasheet_en.pdf>`_ (PDF)

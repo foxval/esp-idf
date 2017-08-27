@@ -2,17 +2,9 @@
 # Component Makefile
 #
 
-#ifdef IS_BOOTLOADER_BUILD
-CFLAGS += -DBOOTLOADER_BUILD
-#endif
-
 COMPONENT_SRCDIRS := . hwcrypto
-LIBS := core rtc
-ifdef CONFIG_PHY_ENABLED # BT || WIFI
-LIBS += phy coexist
-endif
-ifdef CONFIG_WIFI_ENABLED
-LIBS += net80211 pp wpa smartconfig coexist wps wpa2 mesh
+ifndef CONFIG_NO_BLOBS
+LIBS := core rtc net80211 pp wpa smartconfig coexist wps wpa2 phy mesh
 endif
 
 LINKER_SCRIPTS += esp32.common.ld esp32.rom.ld esp32.peripherals.ld
@@ -25,12 +17,15 @@ ifndef CONFIG_SPI_FLASH_ROM_DRIVER_PATCH
 LINKER_SCRIPTS += esp32.rom.spiflash.ld
 endif
 
-COMPONENT_ADD_LDFLAGS := -lesp32 \
-                         $(COMPONENT_PATH)/libhal.a \
+#ld_include_panic_highint_hdl is added as an undefined symbol because otherwise the 
+#linker will ignore panic_highint_hdl.S as it has no other files depending on any
+#symbols in it.
+COMPONENT_ADD_LDFLAGS += $(COMPONENT_PATH)/libhal.a \
                          -L$(COMPONENT_PATH)/lib \
                          $(addprefix -l,$(LIBS)) \
                          -L $(COMPONENT_PATH)/ld \
                          -T esp32_out.ld \
+                         -u ld_include_panic_highint_hdl \
                          $(addprefix -T ,$(LINKER_SCRIPTS))
 
 ALL_LIB_FILES := $(patsubst %,$(COMPONENT_PATH)/lib/lib%.a,$(LIBS))

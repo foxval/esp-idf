@@ -39,7 +39,16 @@
 #include "esp_spi_flash.h"
 #include "esp_cache_err_int.h"
 #include "esp_app_trace.h"
+#include "esp_system.h"
+#if CONFIG_SYSVIEW_ENABLE
+#include "SEGGER_RTT.h"
+#endif
 
+#if CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO == -1
+#define APPTRACE_ONPANIC_HOST_FLUSH_TMO   ESP_APPTRACE_TMO_INFINITE
+#else
+#define APPTRACE_ONPANIC_HOST_FLUSH_TMO   (1000*CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO)
+#endif
 /*
   Panic handlers; these get called when an unhandled exception occurs or the assembly-level
   task switching / interrupt code runs into an unrecoverable error. The default task stack
@@ -116,7 +125,12 @@ static __attribute__((noreturn)) inline void invoke_abort()
 {
     abort_called = true;
 #if CONFIG_ESP32_APPTRACE_ENABLE
-    esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, ESP_APPTRACE_TRAX_BLOCK_SIZE*CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TRAX_THRESH/100, CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#if CONFIG_SYSVIEW_ENABLE
+    SEGGER_RTT_ESP32_FlushNoLock(CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH, APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#else
+    esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH,
+                            APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#endif
 #endif
     while(1) {
         if (esp_cpu_in_ocd_debug_mode()) {
@@ -234,7 +248,12 @@ void panicHandler(XtExcFrame *frame)
 
     if (esp_cpu_in_ocd_debug_mode()) {
 #if CONFIG_ESP32_APPTRACE_ENABLE
-        esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, ESP_APPTRACE_TRAX_BLOCK_SIZE*CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TRAX_THRESH/100, CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#if CONFIG_SYSVIEW_ENABLE
+        SEGGER_RTT_ESP32_FlushNoLock(CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH, APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#else
+        esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH,
+                                APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#endif
 #endif
         setFirstBreakpoint(frame->pc);
         return;
@@ -261,7 +280,12 @@ void xt_unhandled_exception(XtExcFrame *frame)
             panicPutHex(frame->pc);
             panicPutStr(". Setting bp and returning..\r\n");
 #if CONFIG_ESP32_APPTRACE_ENABLE
-            esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, ESP_APPTRACE_TRAX_BLOCK_SIZE*CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TRAX_THRESH/100, CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#if CONFIG_SYSVIEW_ENABLE
+            SEGGER_RTT_ESP32_FlushNoLock(CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH, APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#else
+            esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH,
+                                    APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#endif
 #endif
             //Stick a hardware breakpoint on the address the handler returns to. This way, the OCD debugger
             //will kick in exactly at the context the error happened.
@@ -386,8 +410,6 @@ static void doBacktrace(XtExcFrame *frame)
     panicPutStr("\r\n\r\n");
 }
 
-void esp_restart_noos() __attribute__ ((noreturn));
-
 /*
   We arrive here after a panic or unhandled exception, when no OCD is detected. Dump the registers to the
   serial port and either jump to the gdb stub, halt the CPU or reboot.
@@ -432,7 +454,12 @@ static __attribute__((noreturn)) void commonErrorHandler(XtExcFrame *frame)
 
 #if CONFIG_ESP32_APPTRACE_ENABLE
     disableAllWdts();
-    esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, ESP_APPTRACE_TRAX_BLOCK_SIZE*CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TRAX_THRESH/100, CONFIG_ESP32_APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#if CONFIG_SYSVIEW_ENABLE
+    SEGGER_RTT_ESP32_FlushNoLock(CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH, APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#else
+    esp_apptrace_flush_nolock(ESP_APPTRACE_DEST_TRAX, CONFIG_ESP32_APPTRACE_POSTMORTEM_FLUSH_TRAX_THRESH,
+                            APPTRACE_ONPANIC_HOST_FLUSH_TMO);
+#endif
     reconfigureAllWdts();
 #endif
 
@@ -451,7 +478,7 @@ static __attribute__((noreturn)) void commonErrorHandler(XtExcFrame *frame)
     esp_core_dump_to_uart(frame);
 #endif
     reconfigureAllWdts();
-#endif
+#endif /* CONFIG_ESP32_ENABLE_COREDUMP */
     esp_panic_wdt_stop();
 #if CONFIG_ESP32_PANIC_PRINT_REBOOT || CONFIG_ESP32_PANIC_SILENT_REBOOT
     panicPutStr("Rebooting...\r\n");
@@ -465,8 +492,8 @@ static __attribute__((noreturn)) void commonErrorHandler(XtExcFrame *frame)
     disableAllWdts();
     panicPutStr("CPU halted.\r\n");
     while (1);
-#endif
-#endif
+#endif /* CONFIG_ESP32_PANIC_PRINT_REBOOT || CONFIG_ESP32_PANIC_SILENT_REBOOT */
+#endif /* CONFIG_ESP32_PANIC_GDBSTUB */
 }
 
 
