@@ -39,7 +39,8 @@
  *                Constants
  *******************************************************/
 #define RX_SIZE (1500)
-#define TX_SIZE (1350)
+#define TX_SIZE (1400)
+#define TX_MCAST_SIZE (1200)
 
 /*******************************************************
  *                Variable Definitions
@@ -68,8 +69,10 @@ extern void dbg_cnt_lmac_rxtx_show(void);
 extern void dbg_cnt_lmac_int_show(void);
 extern void dbg_esp_mesh_ebuf_dump(bool dump);
 extern void mesh_tx_cb_dbg(void);
-extern int esp_mesh_get_children_num(void);
 #endif /* MESH_MONITOR_TX_DONE */
+
+extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr, uint32_t* xseqno_in);
+extern mesh_addr_t g_mesh_self_sta_addr;
 
 /*******************************************************
  *                Function Definitions
@@ -442,7 +445,11 @@ void esp_mesh_p2p_tx_main(void* arg)
     mesh_addr_t to;
     mesh_addr_t parent;
     uint32_t send_count = 0;
+#ifdef MESH_P2P_FORWARD_MCAST
+    static uint8_t tx_buf[TX_MCAST_SIZE] = {0,};
+#else /* MESH_P2P_FORWARD_MCAST */
     static uint8_t tx_buf[TX_SIZE] = { 0, };
+#endif /* MESH_P2P_FORWARD_MCAST */
 
     mesh_data_t data;
     data.data = tx_buf;
@@ -477,12 +484,14 @@ void esp_mesh_p2p_tx_main(void* arg)
     while (is_running) {
 
 #ifdef MESH_OTA_TEST
-        extern int esp_mesh_get_children_num(void);
+        extern int esp_mesh_get_total_node_num(void);
+        extern int esp_mesh_get_total_children_num(void);
 
         while (esp_mesh_is_root()
-                && esp_mesh_get_children_num()
-                != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6 - 1) {
-            MESH_LOGW("children number:%d", esp_mesh_get_children_num());
+                && esp_mesh_get_total_node_num()
+                != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6) {
+            MESH_LOGW("children number:%d/%d", esp_mesh_get_total_node_num(),
+                    esp_mesh_get_total_children_num());
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
 
@@ -498,9 +507,9 @@ void esp_mesh_p2p_tx_main(void* arg)
 #elif defined (MESH_SELF_HEALING_TEST) || defined (MESH_P2P_FORWARD_UCAST_12M)
 
         while (esp_mesh_is_root()
-                && esp_mesh_get_children_num()
-                != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6 - 1) {
-            MESH_LOGW("children number:%d", esp_mesh_get_children_num());
+                && esp_mesh_get_total_node_num()
+                != sizeof(MESH_P2P_FORWARD_MADDR_NODE) / 6 ) {
+            MESH_LOGW("children number:%d", esp_mesh_get_total_node_num());
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
 
@@ -552,17 +561,29 @@ void esp_mesh_p2p_tx_main(void* arg)
 #endif
 //            vTaskDelay(10 / portTICK_RATE_MS);
         }
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(10 / portTICK_RATE_MS);
 
 #else /* MESH_OTA_TEST */
         err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
         send_count_tag = send_count;
         esp_mesh_get_parent_bssid(&parent);
-        MESH_LOGW(
-                "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d]",
-                send_count_tag, esp_mesh_get_layer(), MAC2STR(parent.addr),
-                MAC2STR(to.addr), send_count, esp_get_free_heap_size(), err,
-                data.proto, data.tos);
+        if (err) {
+            MESH_LOGE(
+                    "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d], Q[self:%d, to:%d]",
+                    send_count_tag, esp_mesh_get_layer(), MAC2STR(parent.addr),
+                    MAC2STR(to.addr), send_count, esp_get_free_heap_size(), err,
+                    data.proto, data.tos,
+                    esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL),
+                    esp_mesh_available_txupQ_num(&to, NULL));
+        } else {
+            MESH_LOGW(
+                    "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d], Q[self:%d, to:%d]",
+                    send_count_tag, esp_mesh_get_layer(), MAC2STR(parent.addr),
+                    MAC2STR(to.addr), send_count, esp_get_free_heap_size(), err,
+                    data.proto, data.tos,
+                    esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL),
+                    esp_mesh_available_txupQ_num(&to, NULL));
+        }
 
         vTaskDelay(10000 / portTICK_RATE_MS);
 
@@ -652,7 +673,7 @@ void esp_mesh_p2p_rx_main(void* arg)
         mesh_process_received_data(&data.data[sizeof(send_count)], data.size);
 
 #ifdef MESH_MONITOR_TX_DONE
-        if (esp_mesh_get_children_num() && !(send_count % 10)) {
+        if (esp_mesh_get_total_node_num() && !(send_count % 10)) {
             mesh_tx_cb_dbg();
 //            dbg_cnt_lmac_rxtx_show();
         }
@@ -726,9 +747,24 @@ void esp_mesh_p2p_rx_main(void* arg)
         if (!memcmp(MESH_P2P_FORWARD_UADDR, sta_mac, sizeof(sta_mac))
                 || !memcmp(MESH_P2P_FORWARD_UADDR, map_mac, sizeof(map_mac))) {
             err = esp_mesh_send(&from, &data, MESH_DATA_P2P, NULL, 0);
-            MESH_LOGW("[#TX:%d][L:%d]to "MACSTR", heap:%d, [err:%d], [%d,%d]",
-                    send_count, esp_mesh_get_layer(), MAC2STR(from.addr),
-                    esp_get_free_heap_size(), err, data.proto, data.tos);
+            if (err) {
+                MESH_LOGE(
+                        "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d], Q[self:%d, to:%d]",
+                        send_count_tag, esp_mesh_get_layer(),
+                        MAC2STR(parent.addr), MAC2STR(from.addr), send_count,
+                        esp_get_free_heap_size(), err, data.proto, data.tos,
+                        esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL),
+                        esp_mesh_available_txupQ_num(&from, NULL));
+            } else {
+
+                MESH_LOGW(
+                        "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR"[send:%d], heap:%d[err:%d], [%d,%d], Q[self:%d, to:%d]",
+                        send_count_tag, esp_mesh_get_layer(),
+                        MAC2STR(parent.addr), MAC2STR(from.addr), send_count,
+                        esp_get_free_heap_size(), err, data.proto, data.tos,
+                        esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL),
+                        esp_mesh_available_txupQ_num(&from, NULL));
+            }
         } else {
             continue;
         }
@@ -833,8 +869,6 @@ void esp_mesh_comm_tx_main(void* arg)
     uint8_t self[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
     esp_mesh_get_parent_bssid(&parent);
-    extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr);
-    extern mesh_addr_t g_mesh_self_sta_addr;
 
     MESH_LOGW("%s", __func__);
 
@@ -881,32 +915,29 @@ void esp_mesh_comm_tx_main(void* arg)
         }
 #endif /* MESH_DUMP */
 
-        gettimeofday(&time_start, NULL);
         REXMIT:
 
+        gettimeofday(&time_start, NULL);
         err = esp_mesh_send(&to, &data, MESH_DATA_TODS, NULL, 0);
         gettimeofday(&time_stop, NULL);
         /* compute time taken */
         timersub(&time_stop, &time_start, &time_taken);
 #if 1
         if (err) {
-
+            fail_count++;
             MESH_LOGE(
-                    "[L:%d][send:%d]"MACSTR", parent:"MACSTR" to "MACSTR", heap:%d, [%u]ms, [fail:%d][err:%d], [%d,%d][Q:%d]",
+                    "[L:%d][send:%d]"MACSTR",  heap:%d, [%u]ms, [fail:%d][err:%d], [%d,%d][Q:%d]",
                     esp_mesh_get_layer(), send_count, MAC2STR(self),
-                    MAC2STR(parent.addr), MAC2STR(to.addr),
                     esp_get_free_heap_size(),
                     (uint32_t ) (time_taken.tv_sec * 1000
                             + time_taken.tv_usec / 1000), fail_count, err,
                     data.proto, data.tos,
-                    esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr));
+                    esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL));
             vTaskDelay(1000 / portTICK_RATE_MS);
             goto REXMIT;
         }
 #endif
-        if (err) {
-            fail_count++;
-        }
+
 #if 0
         MESH_LOGI(
                 "[L:%d][send:%d]"MACSTR", parent:"MACSTR" to "MACSTR", heap:%d, [%u]ms, [fail:%d][err:%d], [%d,%d][Q:%d]",
@@ -916,9 +947,9 @@ void esp_mesh_comm_tx_main(void* arg)
                 (uint32_t ) (time_taken.tv_sec * 1000
                         + time_taken.tv_usec / 1000), fail_count, err,
                 data.proto, data.tos,
-                esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr));
+                esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL));
 #endif
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(30 / portTICK_RATE_MS);
 
 #ifdef MESH_ROOT_WAIVE_ITSELF
         if (esp_mesh_is_root() && !is_voting && send_count
@@ -1049,11 +1080,12 @@ esp_err_t esp_mesh_comm_p2p_start(void)
 #elif defined (MESH_OTA_TEST)
 
         if (esp_mesh_is_root()) {
-            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5, NULL);
+            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5,
+                    NULL);
         }
 #else /* MESH_P2P_FORWARD_UCAST */
 
-        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048, NULL, 5, NULL);
+//        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048, NULL, 5, NULL);
 
 #endif /* MESH_P2P_FORWARD_UCAST */
     }
@@ -1074,7 +1106,7 @@ esp_err_t esp_mesh_comm_server_start(void)
     }
 
 #ifndef MESH_OPT_RECV_DS
-    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 10, NULL);
+    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 2, NULL);
 #endif /* MESH_OPT_RECV_DS */
     xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 2048, NULL, 5, NULL);
 
