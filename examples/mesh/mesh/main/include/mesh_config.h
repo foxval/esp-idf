@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 //#define MESH_DUMP
 //#define MESH_P2P_FORWARD_TEST
 //#define MESH_PRE_SCAN
-//#define MESH_P2P_TOS_ON
+#define MESH_P2P_TOS_ON
 //#define MESH_OPT_RECV_DS
 //#define MESH_DISABLE_SELF_ORGANIZED
 //#define MESH_ROOT_WAIVE_ITSELF

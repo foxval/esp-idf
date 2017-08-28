@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,5 @@
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void esp_mesh_enable_dhcp(void);
-void esp_mesh_disable_dhcp(void);
 
 #endif /* __MESH_COMMON_H__ */

@@ -33,7 +33,8 @@ echo "========================"
 echo "    open serial port    "
 echo "========================"
 
-rm -rf  log/*.md
+rm -rf  $(pwd)/log
+mkdir $(pwd)/log
 for i in $(seq 1 2 $loop_end )
 do 
 	#echo "open ttyUSB$i"

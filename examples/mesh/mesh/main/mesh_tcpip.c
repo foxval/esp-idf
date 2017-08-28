@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mesh.h"
+#include "esp_mesh.h"
 #include "mesh_log.h"
 #include "mesh_tcpip.h"
+#include "mesh_common.h"
 #include "lwip/inet.h"
 #include "lwip/netdb.h"
 
@@ -335,7 +336,6 @@ static void mesh_tcpip_tx_main(void *arg)
     } mesh_timeval_t;
     mesh_timeval_t toDS_recv;
     mesh_timeval_t sock_send;
-    mesh_timeval_t round;
     fd_set wrset, exset;
     mesh_data_t data;
     mesh_addr_t from, to;
@@ -347,29 +347,30 @@ static void mesh_tcpip_tx_main(void *arg)
     if (!data.data) {
         ets_printf("tcpip tx fails\n");
     }
-    extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr);
-
+    extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr,
+            uint32_t* xseqno_in);
     is_running = true;
+
     while (is_running) {
 
 #if 0
         data.size = TODS_DATA_SIZE;
-        gettimeofday(&time_start, NULL);
+        gettimeofday(&toDS_recv.start, NULL);
         if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
                         NULL, 0) == ESP_OK && data.size) {
-            gettimeofday(&time_stop, NULL);
+            gettimeofday(&toDS_recv.stop, NULL);
             /* compute time taken */
-            timersub(&time_stop, &time_start, &time_taken);
+            timersub(&toDS_recv.stop, &toDS_recv.start, &toDS_recv.taken);
+            toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec * 1000
+                    + toDS_recv.taken.tv_usec / 1000);
 
-            MESH_LOGW("[%u]ms from "MACSTR" to "MACSTR", len:%d, Q[%d]",
-                    (uint32_t ) (time_taken.tv_sec * 1000
-                            + time_taken.tv_usec / 1000), MAC2STR(from.addr),
-                    MAC2STR(to.addr), data.size,
-                    esp_mesh_available_txupQ_num(&from));
+            MESH_LOGW("[%u]ms from "MACSTR" len:%d, heap:%d", toDS_recv.ms,
+                    MAC2STR(from.addr), data.size, esp_get_free_heap_size());
 
         }
         continue;
 #endif
+
         if (!esp_mesh_is_root()) {
             /* non-root */
             MESH_LOGE("err: not root");
@@ -385,7 +386,6 @@ static void mesh_tcpip_tx_main(void *arg)
         FD_ZERO(&exset);
         FD_SET(tcp_cli_sock, &exset);
 
-        gettimeofday(&round.start, NULL);
         if (select(tcp_cli_sock + 1, NULL, &wrset, &exset, NULL) > 0) {
             if (FD_ISSET(tcp_cli_sock, &exset)) {
                 /*
@@ -399,6 +399,8 @@ static void mesh_tcpip_tx_main(void *arg)
                 ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
                 MESH_DEBUG("tx exception\n");
             } else if (FD_ISSET(tcp_cli_sock, &wrset)) {
+
+                SOCK_SEND:
                 /* initialize variables */
                 data.size = TODS_DATA_SIZE;
                 flag = 0;
@@ -407,18 +409,6 @@ static void mesh_tcpip_tx_main(void *arg)
                 NULL, 0) == ESP_OK && data.size) {
                     gettimeofday(&toDS_recv.stop, NULL);
 
-#if 0
-                    /* compute time taken */
-                    timersub(&time_stop, &time_start, &time_taken);
-                    timersub(&send_time_stop, &time_start, &send_time_taken);
-                    MESH_LOGW("[%u/%u]ms from "MACSTR" to "MACSTR", len:%d, Q[%d]",
-                            (uint32_t ) (time_taken.tv_sec * 1000
-                                    + time_taken.tv_usec / 1000),
-                            (uint32_t ) (send_time_taken.tv_sec * 1000
-                                    + send_time_taken.tv_usec / 1000),
-                            MAC2STR(from.addr), MAC2STR(to.addr), data.size,
-                            esp_mesh_available_txupQ_num(&from));
-#endif
                     if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
 #ifdef MESH_TCPIP_DUMP
                         {
@@ -437,38 +427,33 @@ static void mesh_tcpip_tx_main(void *arg)
                         gettimeofday(&sock_send.start, NULL);
                         send_size = send(tcp_cli_sock, data.data, data.size, 0);
                         gettimeofday(&sock_send.stop, NULL);
+
                         if (send_size != data.size) {
                             MESH_LOGW("socekt send:%d, size:%d", send_size,
                                     data.size);
-                        }
-                        timersub(&toDS_recv.stop, &toDS_recv.start,
-                                &toDS_recv.taken);
-                        timersub(&sock_send.stop, &sock_send.start,
-                                &sock_send.taken);
-                        timersub(&sock_send.stop, &round.start, &round.taken);
-                        toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec * 1000
-                                + toDS_recv.taken.tv_usec / 1000);
-                        sock_send.ms = (uint32_t) (sock_send.taken.tv_sec * 1000
-                                + sock_send.taken.tv_usec / 1000);
-                        round.ms = (uint32_t) (round.taken.tv_sec * 1000
-                                + round.taken.tv_usec / 1000);
-                        seqno = (data.data[25] << 24) | (data.data[23] << 16)
-                                | (data.data[23] << 8) | data.data[22];
-                        MESH_LOGW(
-                                "[%u/%u/%u]ms from "MACSTR"[%d]  len:%d, Q[%d],heap:%d",
-                                toDS_recv.ms, sock_send.ms, round.ms,
-                                MAC2STR(from.addr), seqno, data.size,
-                                esp_mesh_available_txupQ_num(&from),
-                                esp_get_free_heap_size());
-
-#if 0
-                        MESH_LOGI(
-                                "send to server len:%d, socketID:%d, flag:%s%s, [%d,%d]",
-                                data.size, tcp_cli_sock,
-                                (flag & MESH_DATA_TODS) ? "toDS" : "",
-                                (flag & MESH_DATA_FROMDS) ? "fromDS" : "",
-                                data.proto, data.tos);
+                        } else {
+                            timersub(&toDS_recv.stop, &toDS_recv.start,
+                                    &toDS_recv.taken);
+                            timersub(&sock_send.stop, &sock_send.start,
+                                    &sock_send.taken);
+                            toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec
+                                    * 1000 + toDS_recv.taken.tv_usec / 1000);
+                            sock_send.ms = (uint32_t) (sock_send.taken.tv_sec
+                                    * 1000 + sock_send.taken.tv_usec / 1000);
+                            seqno = (data.data[25] << 24)
+                                    | (data.data[24] << 16)
+                                    | (data.data[23] << 8) | data.data[22];
+#if 1
+                            MESH_LOGW(
+                                    "[%u/%u]ms from "MACSTR", seq:%d, len:%d, Q[%d],heap:%d",
+                                    toDS_recv.ms, sock_send.ms,
+                                    MAC2STR(from.addr), seqno, data.size,
+                                    esp_mesh_available_txupQ_num(&from, NULL),
+                                    esp_get_free_heap_size());
 #endif
+                            goto SOCK_SEND;
+                        }
+
                     } else {
                         ets_printf(
                                 "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",

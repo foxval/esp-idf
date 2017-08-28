@@ -12,6 +12,8 @@ touch $IDF_PATH/components/esp32/lib/libmesh.a
 touch $IDF_PATH/components/esp32/lib/libnet80211.a
 touch $IDF_PATH/components/esp32/lib/libpp.a
 
+rm -rf  $(pwd)/log
+
 #make clean
 make -j8 
 
@@ -22,7 +24,7 @@ sleep 3
 dw_res_array=()
 dev_no=$1
 if [ "$dev_no" == "" ];then
-	dev_no=12
+	dev_no=1
 fi
 loop_end=$[ $dev_no*2-1]
 echo "========================"
@@ -33,7 +35,7 @@ do
 {
    { 
    python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i erase_flash 
-   python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 115200 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh.bin 0x8000 $(pwd)/build/partitions_singleapp.bin 
+   python $IDF_PATH/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$i --baud 1152000 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh.bin 0x8000 $(pwd)/build/partitions_singleapp.bin 
 	
 	}>/dev/null
 }   &
@@ -44,7 +46,7 @@ echo "========================"
 echo "    open serial port    "
 echo "========================"
 
-rm -rf  log/*.md
+mkdir $(pwd)/log
 for i in $(seq 1 2 $loop_end )
 do 
 	#echo "open ttyUSB$i"

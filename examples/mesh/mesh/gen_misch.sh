@@ -31,6 +31,7 @@ fi
 
 
 #idf 2.0
+python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$index erase_flash
 python $(pwd)/../../../../esp-idf/components/esptool_py/esptool/esptool.py --chip esp32 --port /dev/ttyUSB$index --baud 1152000 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size detect 0x1000 $(pwd)/build/bootloader/bootloader.bin 0x10000 $(pwd)/build/mesh.bin 0x8000 $(pwd)/build/partitions_singleapp.bin
 
 
