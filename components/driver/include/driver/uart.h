@@ -375,7 +375,7 @@ esp_err_t uart_enable_tx_intr(uart_port_t uart_num, int enable, int thresh);
  * @param fn  Interrupt handler function.
  * @param arg parameter for handler function
  * @param  intr_alloc_flags Flags used to allocate the interrupt. One or multiple (ORred)
- *            ESP_INTR_FLAG_* values. See esp_intr_alloc.h for more info. 
+ *            ESP_INTR_FLAG_* values. See esp_intr_alloc.h for more info.
  * @param handle Pointer to return handle. If non-NULL, a handle for the interrupt will
  *        be returned here.
  *
@@ -515,7 +515,7 @@ esp_err_t uart_wait_tx_done(uart_port_t uart_num, TickType_t ticks_to_wait);
 
 /**
  * @brief Send data to the UART port from a given buffer and length.
- * 
+ *
  * This function will not wait for the space in TX FIFO, just fill the TX FIFO and return when the FIFO is full.
  * @note This function should only be used when UART TX buffer is not enabled.
  *

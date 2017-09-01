@@ -61,4 +61,12 @@ esp_err_t psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vaddrmode);
 void esp_psram_writeback_cache();
 
 
+/**
+ * @brief Undo psram initialization enough for a sw reboot not to get stuck in the ROM
+ *
+ * Software reset does not function correct if psram is left enabled. This routine disables it in such a way that a software
+ * reset succeeds. Called by the system reset routine, no need to call this manually.
+ */
+void esp_psram_disable_for_reset();
+
 #endif

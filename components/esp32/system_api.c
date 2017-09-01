@@ -19,6 +19,7 @@
 #include "esp_wifi.h"
 #include "esp_wifi_internal.h"
 #include "esp_log.h"
+#include "esp_psram.h"
 #include "sdkconfig.h"
 #include "rom/efuse.h"
 #include "rom/cache.h"
@@ -291,6 +292,10 @@ void IRAM_ATTR esp_restart_noos()
     uart_tx_wait_idle(0);
     uart_tx_wait_idle(1);
     uart_tx_wait_idle(2);
+
+#if CONFIG_MEMMAP_SPIRAM_ENABLE
+    esp_psram_disable_for_reset();
+#endif
 
     // Reset wifi/bluetooth/ethernet/sdio (bb/mac)
     DPORT_SET_PERI_REG_MASK(DPORT_CORE_RST_EN_REG, 
