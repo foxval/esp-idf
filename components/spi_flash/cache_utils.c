@@ -74,8 +74,8 @@ void IRAM_ATTR spi_flash_op_block_func(void* arg)
     // Restore interrupts that aren't located in IRAM
     esp_intr_noniram_disable();
     uint32_t cpuid = (uint32_t) arg;
-    // Disable cache so that flash operation can start
-    spi_flash_disable_cache(cpuid, &s_flash_op_cache_state[cpuid]);
+    //Do not Disable cache for PSRAM support, since the other core will disable Cache for both CPUs.
+    //spi_flash_disable_cache(cpuid, &s_flash_op_cache_state[cpuid]);
     // s_flash_op_complete flag is cleared on *this* CPU, otherwise the other
     // CPU may reset the flag back to false before IPC task has a chance to check it
     // (if it is preempted by an ISR taking non-trivial amount of time)
