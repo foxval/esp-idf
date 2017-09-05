@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <string.h>
+#include <math.h>
 #include <esp_types.h>
 
 #include "freertos/FreeRTOS.h"
@@ -22,6 +23,7 @@
 #include "soc/rtc_cntl_reg.h"
 #include "soc/rtc_io_reg.h"
 #include "soc/sens_reg.h"
+#include "soc/rtc.h"
 #include "rom/lldesc.h"
 
 #include "driver/gpio.h"
@@ -32,6 +34,7 @@
 #include "esp_intr.h"
 #include "esp_err.h"
 #include "esp_log.h"
+#include "esp_task_wdt.h"
 
 static const char* I2S_TAG = "I2S";
 #define I2S_CHECK(a, str, ret) if (!(a)) {                                              \
@@ -77,11 +80,26 @@ typedef struct {
     int bytes_per_sample;        /*!< Bytes per sample*/
     int bits_per_sample;        /*!< Bits per sample*/
     i2s_mode_t mode;            /*!< I2S Working mode*/
+    int use_apll;                /*!< I2S use APLL clock */
 } i2s_obj_t;
 
 static i2s_obj_t *p_i2s_obj[I2S_NUM_MAX] = {0};
 static i2s_dev_t* I2S[I2S_NUM_MAX] = {&I2S0, &I2S1};
 static portMUX_TYPE i2s_spinlock[I2S_NUM_MAX] = {portMUX_INITIALIZER_UNLOCKED, portMUX_INITIALIZER_UNLOCKED};
+
+/**
+ * @brief Pre define APLL parameters, save compute time
+ */
+static const int apll_predefine[][5] = {
+    {11025, 38,  80,  5, 31},
+    {16000, 147, 107, 5, 21},
+    {22050, 130, 152, 5, 15},
+    {32000, 129, 212, 5, 10},
+    {44100, 15,  8,   5, 6},
+    {48000, 136, 212, 5, 6},
+    {96000, 143, 212, 5, 2},
+    {0,     0,   0,   0, 0}
+};
 
 static i2s_dma_t *i2s_create_dma_queue(i2s_port_t i2s_num, int dma_buf_count, int dma_buf_len);
 static esp_err_t i2s_destroy_dma_queue(i2s_port_t i2s_num, i2s_dma_t *dma);
@@ -97,16 +115,16 @@ static esp_err_t i2s_reset_fifo(i2s_port_t i2s_num)
     return ESP_OK;
 }
 
-inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv) 
+inline static void gpio_matrix_out_check(uint32_t gpio, uint32_t signal_idx, bool out_inv, bool oen_inv)
 {
     //if pin = -1, do not need to configure
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
         gpio_set_direction(gpio, GPIO_MODE_DEF_OUTPUT);
         gpio_matrix_out(gpio, signal_idx, out_inv, oen_inv);
-    } 
-} 
-inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv) 
+    }
+}
+inline static void gpio_matrix_in_check(uint32_t gpio, uint32_t signal_idx, bool inv)
 {
     if (gpio != -1) {
         PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
@@ -164,6 +182,82 @@ esp_err_t i2s_enable_tx_intr(i2s_port_t i2s_num)
 static esp_err_t i2s_isr_register(i2s_port_t i2s_num, uint8_t intr_alloc_flags, void (*fn)(void*), void * arg, i2s_isr_handle_t *handle)
 {
     return esp_intr_alloc(ETS_I2S0_INTR_SOURCE + i2s_num, intr_alloc_flags, fn, arg, handle);
+}
+
+
+static float i2s_get_apll_real_rate(int sdm0, int sdm1, int sdm2, int odir)
+{
+    int f_xtal = (int)rtc_clk_xtal_freq_get() * 1000000;
+    float fout = f_xtal * (sdm2 + sdm1 / 256.0 + sdm0 / 65536.0 + 4);
+    if(fout < 350000000 || fout > 500000000)
+        return 9999999;
+    float fpll = fout / (2 * (odir+2));
+    return fpll/(64*8);
+}
+
+static esp_err_t i2s_apll_calculate(int rate, int *sdm0, int *sdm1, int *sdm2, int *odir)
+{
+    int _odir, _sdm0, _sdm1, _sdm2, i;
+    float avg;
+    float min_rate, max_rate, min_diff;
+    //check pre-define apll parameters
+    i = 0;
+    while(apll_predefine[i][0]) {
+        if(apll_predefine[i][0] == rate) {
+            *sdm0 = apll_predefine[i][1];
+            *sdm1 = apll_predefine[i][2];
+            *sdm2 = apll_predefine[i][3];
+            *odir = apll_predefine[i][4];
+            return ESP_OK;
+        }
+        i++;
+    }
+    *sdm0 = 0;
+    *sdm1 = 0;
+    *sdm2 = 0;
+    *odir = 0;
+    min_diff = 99999;
+    for(_sdm2 = 4; _sdm2 < 9; _sdm2 ++) {
+        max_rate = i2s_get_apll_real_rate(255, 255, _sdm2, 0);
+        min_rate = i2s_get_apll_real_rate(0, 0, _sdm2, 31);
+        avg = (max_rate + min_rate)/2;
+        if(abs(avg - rate) < min_diff) {
+            min_diff = abs(avg - rate);
+            *sdm2 = _sdm2;
+        }
+    }
+    min_diff = 99999;
+    for(_odir = 0; _odir < 32; _odir ++) {
+        max_rate = i2s_get_apll_real_rate(255, 255, *sdm2, _odir);
+        min_rate = i2s_get_apll_real_rate(0, 0, *sdm2, _odir);
+        avg = (max_rate + min_rate)/2;
+        if(abs(avg - rate) < min_diff) {
+            min_diff = abs(avg - rate);
+            *odir = _odir;
+        }
+    }
+
+    min_diff = 99999;
+    for(_sdm1 = 0; _sdm1 < 256; _sdm1 ++) {
+        max_rate = i2s_get_apll_real_rate(255, _sdm1, *sdm2, *odir);
+        min_rate = i2s_get_apll_real_rate(0, _sdm1, *sdm2, *odir);
+        avg = (max_rate + min_rate)/2;
+        if(abs(avg - rate) < min_diff) {
+            min_diff = abs(avg - rate);
+            *sdm1 = _sdm1;
+        }
+    }
+
+    min_diff = 99999;
+    for(_sdm0 = 0; _sdm0 < 256; _sdm0 ++) {
+        avg = i2s_get_apll_real_rate(_sdm0, *sdm1, *sdm2, *odir);
+        if(abs(avg - rate) < min_diff) {
+            min_diff = abs(avg - rate);
+            *sdm0 = _sdm0;
+        }
+    }
+
+    return ESP_OK;
 }
 
 esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t bits, i2s_channel_t ch)
@@ -259,7 +353,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         if (p_i2s_obj[i2s_num]->mode & I2S_MODE_RX) {
 
             save_rx = p_i2s_obj[i2s_num]->rx;
-            
+
             p_i2s_obj[i2s_num]->rx = i2s_create_dma_queue(i2s_num, p_i2s_obj[i2s_num]->dma_buf_count, p_i2s_obj[i2s_num]->dma_buf_len);
             if (p_i2s_obj[i2s_num]->rx == NULL){
                 ESP_LOGE(I2S_TAG, "Failed to create rx dma buffer");
@@ -274,7 +368,7 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
                 i2s_destroy_dma_queue(i2s_num, save_rx);
             }
         }
-        
+
     }
 
     double mclk;
@@ -310,18 +404,32 @@ esp_err_t i2s_set_clk(i2s_port_t i2s_num, uint32_t rate, i2s_bits_per_sample_t b
         mclk = clkmInteger + denom * clkmDecimals;
         bck = factor/(bits * channel);
     }
+    int sdm0, sdm1, sdm2, odir;
+    if(p_i2s_obj[i2s_num]->use_apll && i2s_apll_calculate(rate, &sdm0, &sdm1, &sdm2, &odir) == ESP_OK) {
+        rtc_clk_apll_enable(1, sdm0, sdm1, sdm2, odir);
+        I2S[i2s_num]->clkm_conf.clkm_div_num = 1;
+        I2S[i2s_num]->clkm_conf.clkm_div_b = 0;
+        I2S[i2s_num]->clkm_conf.clkm_div_a = 1;
+        I2S[i2s_num]->sample_rate_conf.tx_bck_div_num = 8;
+        I2S[i2s_num]->sample_rate_conf.rx_bck_div_num = 8;
+        I2S[i2s_num]->clkm_conf.clka_en = 1;
+        double real_rate = i2s_get_apll_real_rate(sdm0, sdm1, sdm2, odir);
+        ESP_LOGI(I2S_TAG, "APLL: Req RATE: %d, real rate: %0.3f, BITS: %u, CLKM: %u, BCK: %u, MCLK: %0.3f, SCLK: %f, diva: %d, divb: %d",
+            rate, real_rate, bits, 1, 8, (double)I2S_BASE_CLK / mclk, real_rate*bits*channel, 1, 0);
+    } else {
+        I2S[i2s_num]->clkm_conf.clka_en = 0;
+        I2S[i2s_num]->clkm_conf.clkm_div_a = 63;
+        I2S[i2s_num]->clkm_conf.clkm_div_b = clkmDecimals;
+        I2S[i2s_num]->clkm_conf.clkm_div_num = clkmInteger;
+        I2S[i2s_num]->sample_rate_conf.tx_bck_div_num = bck;
+        I2S[i2s_num]->sample_rate_conf.rx_bck_div_num = bck;
+        double real_rate = (double) (I2S_BASE_CLK / (bck * bits * clkmInteger) / 2);
+        ESP_LOGI(I2S_TAG, "PLL_D2: Req RATE: %d, real rate: %0.3f, BITS: %u, CLKM: %u, BCK: %u, MCLK: %0.3f, SCLK: %f, diva: %d, divb: %d",
+            rate, real_rate, bits, clkmInteger, bck, (double)I2S_BASE_CLK / mclk, real_rate*bits*channel, 64, clkmDecimals);
+    }
 
-    I2S[i2s_num]->clkm_conf.clka_en = 0;
-    I2S[i2s_num]->clkm_conf.clkm_div_a = 63;
-    I2S[i2s_num]->clkm_conf.clkm_div_b = clkmDecimals;
-    I2S[i2s_num]->clkm_conf.clkm_div_num = clkmInteger;
-    I2S[i2s_num]->sample_rate_conf.tx_bck_div_num = bck;
-    I2S[i2s_num]->sample_rate_conf.rx_bck_div_num = bck;
     I2S[i2s_num]->sample_rate_conf.tx_bits_mod = bits;
     I2S[i2s_num]->sample_rate_conf.rx_bits_mod = bits;
-    double real_rate = (double) (I2S_BASE_CLK / (bck * bits * clkmInteger) / 2);
-    ESP_LOGI(I2S_TAG, "Req RATE: %d, real rate: %0.3f, BITS: %u, CLKM: %u, BCK: %u, MCLK: %0.3f, SCLK: %f, diva: %d, divb: %d",
-        rate, real_rate, bits, clkmInteger, bck, (double)I2S_BASE_CLK / mclk, real_rate*bits*channel, 64, clkmDecimals);
 
     // wait all writing on-going finish
     if ((p_i2s_obj[i2s_num]->mode & I2S_MODE_TX) && p_i2s_obj[i2s_num]->tx) {
@@ -745,7 +853,7 @@ static esp_err_t i2s_param_config(i2s_port_t i2s_num, const i2s_config_t *i2s_co
         I2S[i2s_num]->conf.rx_right_first = 0;
         I2S[i2s_num]->conf.rx_slave_mod = 0; // Master
         I2S[i2s_num]->fifo_conf.rx_fifo_mod_force_en = 1;
-        
+
         if (i2s_config->mode & I2S_MODE_SLAVE) {
             I2S[i2s_num]->conf.rx_slave_mod = 1;//RX Slave
         }
@@ -813,6 +921,8 @@ static esp_err_t i2s_param_config(i2s_port_t i2s_num, const i2s_config_t *i2s_co
             I2S[i2s_num]->conf.rx_slave_mod = 1;    //RX Slave
         }
     }
+
+    p_i2s_obj[i2s_num]->use_apll = i2s_config->use_apll;
     return ESP_OK;
 }
 
@@ -868,8 +978,9 @@ esp_err_t i2s_driver_install(i2s_port_t i2s_num, const i2s_config_t *i2s_config,
         err = i2s_isr_register(i2s_num, i2s_config->intr_alloc_flags, i2s_intr_handler_default, p_i2s_obj[i2s_num], &p_i2s_obj[i2s_num]->i2s_isr_handle);
         if (err != ESP_OK) {
             free(p_i2s_obj[i2s_num]);
+            p_i2s_obj[i2s_num] = NULL;
             ESP_LOGE(I2S_TAG, "Register I2S Interrupt error");
-            return ESP_FAIL;
+            return err;
         }
         i2s_stop(i2s_num);
         i2s_param_config(i2s_num, i2s_config);
@@ -911,6 +1022,10 @@ esp_err_t i2s_driver_uninstall(i2s_port_t i2s_num)
     if (p_i2s_obj[i2s_num]->i2s_queue) {
         vQueueDelete(p_i2s_obj[i2s_num]->i2s_queue);
         p_i2s_obj[i2s_num]->i2s_queue = NULL;
+    }
+
+    if(p_i2s_obj[i2s_num]->use_apll) {
+        rtc_clk_apll_enable(0, 0, 0, 0, 0);
     }
 
     free(p_i2s_obj[i2s_num]);
@@ -1037,3 +1152,4 @@ int i2s_pop_sample(i2s_port_t i2s_num, char *sample, TickType_t ticks_to_wait)
     p_i2s_obj[i2s_num]->rx->rw_pos += p_i2s_obj[i2s_num]->bytes_per_sample * p_i2s_obj[i2s_num]->channel_num;
     return bytes_to_pop;
 }
+
