@@ -55,51 +55,57 @@
  *                Enumerations
  *******************************************************/
 
-typedef enum {
-	MESH_EVENT_SUCCESS = 0,
-	MESH_EVENT_NO_AP_FOUND = 1,
-	MESH_EVENT_CONNECTED = 2,
-	MESH_EVENT_DISCONNECTED = 3,
-	MESH_EVENT_LAYER_CHANGE = 4,
-	MESH_EVENT_ROOT_GOT_IP = 5,
-	MESH_EVENT_VOTE_START = 6,
-	MESH_EVENT_VOTE_DONE = 7,
-	MESH_EVENT_ROOT_SWITCH_REQ = 8,
-	MESH_EVENT_ROOT_SWITCH_ACK = 9,
-	MESH_EVENT_TODS_REACHABLE = 10,
-	MESH_EVENT_TODS_UNREACHABLE = 11, /**<  DS is unreachable */
-	MESH_EVENT_FAIL,
+typedef enum
+{
+    MESH_EVENT_SUCCESS = 0,
+    MESH_EVENT_NO_AP_FOUND = 1,
+    MESH_EVENT_CONNECTED = 2,
+    MESH_EVENT_DISCONNECTED = 3,
+    MESH_EVENT_LAYER_CHANGE = 4,
+    MESH_EVENT_ROOT_GOT_IP = 5,
+    MESH_EVENT_VOTE_START = 6,
+    MESH_EVENT_VOTE_DONE = 7,
+    MESH_EVENT_ROOT_SWITCH_REQ = 8,
+    MESH_EVENT_ROOT_SWITCH_ACK = 9,
+    MESH_EVENT_TODS_REACHABLE = 10,
+    MESH_EVENT_TODS_UNREACHABLE = 11, /**<  DS is unreachable */
+    MESH_EVENT_FAIL,
 } mesh_event_t;
 
-typedef enum {
-	MESH_ROOT, MESH_NODE, MESH_LEAF,
+typedef enum
+{
+    MESH_ROOT, MESH_NODE, MESH_LEAF,
 } mesh_type_t;
 
 /* Flags used with send and receive */
-enum {
-	MESH_DATA_ENC = (1), /**< data encrypted */
-	MESH_DATA_P2P = (1 << 1), /**< P2P */
-	MESH_DATA_FROMDS = (1 << 2), /**< from DS */
-	MESH_DATA_TODS = (1 << 3), /**< to DS */
+enum
+{
+    MESH_DATA_ENC = (1), /**< data encrypted */
+    MESH_DATA_P2P = (1 << 1), /**< P2P */
+    MESH_DATA_FROMDS = (1 << 2), /**< from DS */
+    MESH_DATA_TODS = (1 << 3), /**< to DS */
 };
 
-typedef enum {
-	MESH_PROTO_BIN = 0, /**< binary data */
-	MESH_PROTO_HTTP = 1, /**< http protocol */
-	MESH_PROTO_JSON = 2, /**< json format */
-	MESH_PROTO_MQTT = 3, /**< mqtt protocol */
+typedef enum
+{
+    MESH_PROTO_BIN = 0, /**< binary data */
+    MESH_PROTO_HTTP = 1, /**< http protocol */
+    MESH_PROTO_JSON = 2, /**< json format */
+    MESH_PROTO_MQTT = 3, /**< mqtt protocol */
 } mesh_proto_t;
 
-typedef enum {
-	MESH_TOS_DEF = 0, /**< default */
-	MESH_TOS_P2P = 1, /**< Best effort for P2P(point 2 point) delivery */
-	MESH_TOS_E2E = 2, /**< Best effort for E2E(end 2 end) delivery */
+typedef enum
+{
+    MESH_TOS_DEF = 0, /**< default */
+    MESH_TOS_P2P = 1, /**< Best effort for P2P(point 2 point) delivery */
+    MESH_TOS_E2E = 2, /**< Best effort for E2E(end 2 end) delivery */
 } mesh_tos_t;
 
 /* option type */
-enum {
-	MESH_OPT_MCAST_GROUP = 7, /**< multicast group */
-	MESH_OPT_RECV_DS_ADDR = 8, /**< request DS address */
+enum
+{
+    MESH_OPT_MCAST_GROUP = 7, /**< multicast group */
+    MESH_OPT_RECV_DS_ADDR = 8, /**< request DS address */
 };
 
 /*******************************************************
@@ -110,44 +116,51 @@ typedef void (*mesh_event_cb_t)(mesh_event_t event);
 /*******************************************************
  *                Structures
  *******************************************************/
-typedef struct {
-	uint8_t addr[6];
+typedef struct
+{
+    uint8_t addr[6];
 } mesh_addr_t;
 
-typedef struct {
-	uint8_t type; /**< option type */
-	uint8_t len; /**< option length */
-	uint8_t *val; /**< option value */
+typedef struct
+{
+    uint8_t type; /**< option type */
+    uint8_t len; /**< option length */
+    uint8_t *val; /**< option value */
 } mesh_opt_t;
 
-typedef struct {
-	uint8_t* data; /**< data */
-	uint16_t size; /**< data size */
-	mesh_proto_t proto; /**< data protocol */
-	mesh_tos_t tos; /**< data type of service */
+typedef struct
+{
+    uint8_t* data; /**< data */
+    uint16_t size; /**< data size */
+    mesh_proto_t proto; /**< data protocol */
+    mesh_tos_t tos; /**< data type of service */
 } mesh_data_t;
 
-typedef struct {
-	uint8_t ssid[32]; /**< SSID */
-	uint8_t password[64]; /**< password */
-	uint8_t ssid_len; /**< length of SSID */
-	uint8_t channel; /**< channel of router*/
+typedef struct
+{
+    uint8_t ssid[32]; /**< SSID */
+    uint8_t password[64]; /**< password */
+    uint8_t ssid_len; /**< length of SSID */
+    uint8_t channel; /**< channel of router*/
 } mesh_router_t;
 
-typedef struct {
-	mesh_event_cb_t event_cb;
-	mesh_addr_t mesh_id;
-	mesh_router_t router;
-	struct {
-		uint8_t password[64]; /**< mesh AP password */
-		uint8_t max_connection; /**< max number of stations allowed to connect in, default 4, max 10 */
-	} map;
+typedef struct
+{
+    mesh_event_cb_t event_cb;
+    mesh_addr_t mesh_id;
+    mesh_router_t router;
+    struct
+    {
+        uint8_t password[64]; /**< mesh AP password */
+        uint8_t max_connection; /**< max number of stations allowed to connect in, default 4, max 10 */
+    } map;
 } mesh_cfg_t;
 
-typedef struct {
-	uint8_t attempts;
-	mesh_addr_t rc_addr;
-	uint8_t reason;
+typedef struct
+{
+    uint8_t attempts;
+    mesh_addr_t rc_addr;
+    uint8_t reason;
 } mesh_vote_t;
 
 /*******************************************************
@@ -217,7 +230,7 @@ esp_err_t esp_mesh_stop(void);
  *
  */
 esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
-		int flag, mesh_opt_t opt[], int opt_count);
+        int flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a mesh packet
@@ -234,7 +247,7 @@ esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
  *
  */
 esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
-		int* flag, mesh_opt_t opt[], int opt_count);
+        int* flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a mesh packet destined to DS
@@ -252,8 +265,8 @@ esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
  *
  */
 esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to,
-		mesh_data_t* data, int timeout_ms, int* flag, mesh_opt_t opt[],
-		int opt_count);
+        mesh_data_t* data, int timeout_ms, int* flag, mesh_opt_t opt[],
+        int opt_count);
 
 /**
  * @brief     set mesh configuration
@@ -503,7 +516,7 @@ bool esp_mesh_get_self_organized(void);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_set_parent(wifi_config_t* config,
-		wifi_vnd_mesh_assoc_t* mesh_ie);
+        wifi_vnd_mesh_assoc_t* mesh_ie);
 
 /**
  * @brief     root waive itself
@@ -537,11 +550,12 @@ esp_err_t esp_mesh_set_vote_percentage(float percentage);
  */
 float esp_mesh_get_vote_percentage(void);
 
-typedef struct {
-	int scan;
-	int vote;
-	int fail;
-	int monitor_ie;
+typedef struct
+{
+    int scan;
+    int vote;
+    int fail;
+    int monitor_ie;
 } mesh_attempts_t;
 
 esp_err_t esp_mesh_set_attempts(mesh_attempts_t* attempts);
@@ -609,5 +623,25 @@ esp_err_t esp_mesh_get_routing_table(mesh_addr_t* mac, int len, int* size);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_post_toDS_state(bool reachable);
+
+/**
+ * @brief     set rssi threshold to avoid nodes connecting root immediately
+ *
+ * @param     rssi  rssi threshold
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_rssi_threshold(int rssi);
+
+/**
+ * @brief     get rssi threshold
+ *
+ * @param     void
+ *
+ * @return    rssi threshold
+ */
+int esp_mesh_get_rssi_threshold(void);
 
 #endif /* __ESP_MESH_H__ */

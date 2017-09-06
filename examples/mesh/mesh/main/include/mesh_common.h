@@ -41,6 +41,13 @@
 /*******************************************************
  *                Type Definitions
  *******************************************************/
+typedef struct
+{
+    struct timeval start;
+    struct timeval stop;
+    struct timeval taken;
+    uint32_t ms;
+} mesh_timeval_t;
 
 /*******************************************************
  *                Structures

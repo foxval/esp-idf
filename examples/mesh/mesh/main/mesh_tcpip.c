@@ -327,13 +327,6 @@ int esp_mesh_is_server_connected(void)
 
 static void mesh_tcpip_tx_main(void *arg)
 {
-    typedef struct
-    {
-        struct timeval start;
-        struct timeval stop;
-        struct timeval taken;
-        uint32_t ms;
-    } mesh_timeval_t;
     mesh_timeval_t toDS_recv;
     mesh_timeval_t sock_send;
     fd_set wrset, exset;
