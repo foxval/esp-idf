@@ -50,7 +50,7 @@ static const char *TAG = "mesh_main";
 static bool is_running = true;
 static bool is_mesh_connected = false;
 static bool is_voting = false;
-
+static bool is_dhcp_stopped = false;
 static uint8_t mesh_toDS_reachable = 0;
 
 /*******************************************************
@@ -73,6 +73,23 @@ extern mesh_addr_t g_mesh_self_sta_addr;
 /*******************************************************
  *                Function Definitions
  *******************************************************/
+
+void esp_mesh_enable_dhcp(void)
+{
+    if (is_dhcp_stopped) {
+        tcpip_adapter_dhcpc_start(TCPIP_ADAPTER_IF_STA);
+        is_dhcp_stopped = false;
+    }
+}
+
+void esp_mesh_disable_dhcp(void)
+{
+    if (!is_dhcp_stopped) {
+        tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
+        tcpip_adapter_dhcpc_stop(TCPIP_ADAPTER_IF_STA);
+        is_dhcp_stopped = true;
+    }
+}
 
 bool esp_mesh_is_toDS_reachable(void)
 {
@@ -140,6 +157,11 @@ void esp_mesh_event_cb(mesh_event_t event)
             last_layer = layer;
             esp_mesh_connected(layer);
             is_mesh_connected = true;
+            if (esp_mesh_is_root()) {
+                esp_mesh_enable_dhcp();
+            } else {
+                esp_mesh_disable_dhcp();
+            }
             ESP_ERROR_CHECK(esp_mesh_set_map_assoc_expire(30))
             ;
             esp_mesh_api_test();
