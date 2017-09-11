@@ -262,8 +262,8 @@ static esp_partition_pos_t index_to_partition(const bootloader_state_t *bs, int 
         return bs->test;
     }
 
-    if (index >= 0 && index < MAX_OTA_SLOTS) {
-        return bs->ota[index % bs->app_count];
+    if (index >= 0 && index < MAX_OTA_SLOTS && index < bs->app_count) {
+        return bs->ota[index];
     }
 
     esp_partition_pos_t invalid = { 0 };
@@ -272,15 +272,16 @@ static esp_partition_pos_t index_to_partition(const bootloader_state_t *bs, int 
 
 static void log_invalid_app_partition(int index)
 {
+    const char *not_bootable = " is not bootable"; /* save a few string literal bytes */
     switch(index) {
     case FACTORY_INDEX:
-        ESP_LOGE(TAG, "Factory app partition is not bootable");
+        ESP_LOGE(TAG, "Factory app partition%s", not_bootable);
         break;
     case TEST_APP_INDEX:
-        ESP_LOGE(TAG, "Factory test app partition is not bootable");
+        ESP_LOGE(TAG, "Factory test app partition%s", not_bootable);
         break;
     default:
-        ESP_LOGE(TAG, "OTA app partition slot %d is not bootable", index);
+        ESP_LOGE(TAG, "OTA app partition slot %d%s", index, not_bootable);
         break;
     }
 }
@@ -288,7 +289,8 @@ static void log_invalid_app_partition(int index)
 
 /* Return the index of the selected boot partition.
 
-   This is the preferred boot partition, as determined by the partition table & OTA data.
+   This is the preferred boot partition, as determined by the partition table &
+   any OTA sequence number found in OTA data.
 
    This partition will only be booted if it contains a valid app image, otherwise load_boot_image() will search
    for a valid partition using this selection as the starting point.
@@ -326,15 +328,27 @@ static int get_selected_boot_partition(const bootloader_state_t *bs)
                 return 0;
             }
         } else  {
+            bool ota_valid = false;
+            const char *ota_msg;
+            int ota_seq; // Raw OTA sequence number. May be more than # of OTA slots
             if(ota_select_valid(&sa) && ota_select_valid(&sb)) {
-                ESP_LOGD(TAG, "Both OTA sequence valid, using OTA slot %d", MAX(sa.ota_seq, sb.ota_seq)-1);
-                return MAX(sa.ota_seq, sb.ota_seq) - 1;
+                ota_valid = true;
+                ota_msg = "Both OTA values";
+                ota_seq = MAX(sa.ota_seq, sb.ota_seq) - 1;
             } else if(ota_select_valid(&sa)) {
-                ESP_LOGD(TAG, "Only OTA sequence A is valid, using OTA slot %d", sa.ota_seq - 1);
-                return sa.ota_seq - 1;
+                ota_valid = true;
+                ota_msg = "Only OTA sequence A is";
+                ota_seq = sa.ota_seq - 1;
             } else if(ota_select_valid(&sb)) {
-                ESP_LOGD(TAG, "Only OTA sequence B is valid, using OTA slot %d", sb.ota_seq - 1);
-                return sb.ota_seq - 1;
+                ota_valid = true;
+                ota_msg = "Only OTA sequence B is";
+                ota_seq = sb.ota_seq - 1;
+            }
+
+            if (ota_valid) {
+                int ota_slot = ota_seq % bs->app_count; // Actual OTA partition selection
+                ESP_LOGD(TAG, "%s valid. Mapping seq %d -> OTA slot %d", ota_msg, ota_seq, ota_slot);
+                return ota_slot;
             } else if (bs->factory.offset != 0) {
                 ESP_LOGE(TAG, "ota data partition invalid, falling back to factory");
                 return FACTORY_INDEX;
@@ -367,6 +381,8 @@ static bool try_load_partition(const esp_partition_pos_t *partition, esp_image_m
     return false;
 }
 
+#define TRY_LOG_FORMAT "Trying partition index %d offs 0x%x size 0x%x"
+
 /* Load the app for booting. Start from partition 'start_index', if not bootable then work backwards to FACTORY_INDEX
  * (ie try any OTA slots in descending order and then the factory partition).
  *
@@ -382,29 +398,29 @@ static bool load_boot_image(const bootloader_state_t *bs, int start_index, esp_i
     esp_partition_pos_t part;
 
     /* work backwards from start_index, down to the factory app */
-    do {
-        ESP_LOGD(TAG, "Trying partition index %d...", index);
+    for(index = start_index; index >= FACTORY_INDEX; index--) {
         part = index_to_partition(bs, index);
-        ESP_LOGD(TAG, "part offs 0x%x size 0x%x", part.offset, part.size);
-        if (try_load_partition(&part, result)) {
-            return true;
+        if (part.size == 0) {
+            continue;
         }
-        if (part.size > 0) {
-            log_invalid_app_partition(index);
-        }
-        index--;
-    } while(index >= FACTORY_INDEX);
-
-    /* failing that work forwards from start_index, try valid OTA slots */
-    index = start_index + 1;
-    while (index < bs->app_count) {
-        ESP_LOGD(TAG, "Trying partition index %d...", index);
-        part = index_to_partition(bs, index);
+        ESP_LOGD(TAG, TRY_LOG_FORMAT, index, part.offset, part.size);
         if (try_load_partition(&part, result)) {
             return true;
         }
         log_invalid_app_partition(index);
-        index++;
+    }
+
+    /* failing that work forwards from start_index, try valid OTA slots */
+    for(index = start_index + 1; index < bs->app_count; index++) {
+        part = index_to_partition(bs, index);
+        if (part.size == 0) {
+            continue;
+        }
+        ESP_LOGD(TAG, TRY_LOG_FORMAT, index, part.offset, part.size);
+        if (try_load_partition(&part, result)) {
+            return true;
+        }
+        log_invalid_app_partition(index);
     }
 
     if (try_load_partition(&bs->test, result)) {

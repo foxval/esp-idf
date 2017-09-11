@@ -108,14 +108,23 @@ static void spi_intr(void *arg);
 
 esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus_config, int dma_chan)
 {
-    bool native, claimed;
+    bool native, spi_chan_claimed, dma_chan_claimed;
     /* ToDo: remove this when we have flash operations cooperating with this */
     SPI_CHECK(host!=SPI_HOST, "SPI1 is not supported", ESP_ERR_NOT_SUPPORTED);
 
     SPI_CHECK(host>=SPI_HOST && host<=VSPI_HOST, "invalid host", ESP_ERR_INVALID_ARG);
+    SPI_CHECK( dma_chan >= 0 && dma_chan <= 2, "invalid dma channel", ESP_ERR_INVALID_ARG );
 
-    claimed=spicommon_periph_claim(host);
-    SPI_CHECK(claimed, "host already in use", ESP_ERR_INVALID_STATE);
+    spi_chan_claimed=spicommon_periph_claim(host);
+    SPI_CHECK(spi_chan_claimed, "host already in use", ESP_ERR_INVALID_STATE);
+
+    if ( dma_chan != 0 ) {
+        dma_chan_claimed=spicommon_dma_chan_claim(dma_chan);
+        if ( !dma_chan_claimed ) {
+            spicommon_periph_free( host );
+            SPI_CHECK(dma_chan_claimed, "dma channel already in use", ESP_ERR_INVALID_STATE);
+        }
+    }
 
     spihost[host]=malloc(sizeof(spi_host_t));
     if (spihost[host]==NULL) goto nomem;
@@ -184,6 +193,10 @@ esp_err_t spi_bus_free(spi_host_device_t host)
     SPI_CHECK(spihost[host]!=NULL, "host not in use", ESP_ERR_INVALID_STATE);
     for (x=0; x<NO_CS; x++) {
         SPI_CHECK(spihost[host]->device[x]==NULL, "not all CSses freed", ESP_ERR_INVALID_STATE);
+    }
+
+    if ( spihost[host]->dma_chan > 0 ) {
+        spicommon_dma_chan_free ( spihost[host]->dma_chan );
     }
     spihost[host]->hw->slave.trans_inten=0;
     spihost[host]->hw->slave.trans_done=0;
@@ -550,10 +563,9 @@ static void IRAM_ATTR spi_intr(void *arg)
             host->hw->miso_dlen.usr_miso_dbitlen=trans->length-1;
         }
 
-        host->hw->user2.usr_command_value=trans->command;
-               
-        // NOTE: WE CHANGED THE WAY USING ADDRESS FIELD. Now address should be filled in, in the following format:
-        // Example: write 0x123400 and address_bits=24 to send address 0x12, 0x34, 0x00 (in previous version, you may have to write 0x12340000)
+        // output command will be sent from bit 7 to 0 of command_value, and then bit 15 to 8 of the same register field.
+        uint16_t command = trans->cmd << (16-dev->cfg.command_bits);    //shift to MSB
+        host->hw->user2.usr_command_value = (command>>8)|(command<<8);  //swap the first and second byte
         // shift the address to MSB of addr (and maybe slv_wr_status) register. 
         // output address will be sent from MSB to LSB of addr register, then comes the MSB to LSB of slv_wr_status register. 
         if (dev->cfg.address_bits>32) {
@@ -578,17 +590,21 @@ esp_err_t spi_device_queue_trans(spi_device_handle_t handle, spi_transaction_t *
 {
     BaseType_t r;
     SPI_CHECK(handle!=NULL, "invalid dev handle", ESP_ERR_INVALID_ARG);
+    //check transmission length 
     SPI_CHECK((trans_desc->flags & SPI_TRANS_USE_RXDATA)==0 ||trans_desc->rxlength <= 32, "rxdata transfer > 32 bits without configured DMA", ESP_ERR_INVALID_ARG);
     SPI_CHECK((trans_desc->flags & SPI_TRANS_USE_TXDATA)==0 ||trans_desc->length <= 32, "txdata transfer > 32 bits without configured DMA", ESP_ERR_INVALID_ARG);
-    SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (handle->cfg.flags & SPI_DEVICE_3WIRE)), "incompatible iface params", ESP_ERR_INVALID_ARG);
-    SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (!(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX))), "incompatible iface params", ESP_ERR_INVALID_ARG);
     SPI_CHECK(trans_desc->length <= handle->host->max_transfer_sz*8, "txdata transfer > host maximum", ESP_ERR_INVALID_ARG);
     SPI_CHECK(trans_desc->rxlength <= handle->host->max_transfer_sz*8, "rxdata transfer > host maximum", ESP_ERR_INVALID_ARG);
     SPI_CHECK((handle->cfg.flags & SPI_DEVICE_HALFDUPLEX) || trans_desc->rxlength <= trans_desc->length, "rx length > tx length in full duplex mode", ESP_ERR_INVALID_ARG);
+    //check working mode    
+    SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (handle->cfg.flags & SPI_DEVICE_3WIRE)), "incompatible iface params", ESP_ERR_INVALID_ARG);
+    SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (!(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX))), "incompatible iface params", ESP_ERR_INVALID_ARG);
+    SPI_CHECK( !(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX) || handle->host->dma_chan == 0 || !(trans_desc->flags & SPI_TRANS_USE_RXDATA || trans_desc->rx_buffer != NULL)
+        || !(trans_desc->flags & SPI_TRANS_USE_TXDATA || trans_desc->tx_buffer!=NULL), "SPI half duplex mode does not support using DMA with both MOSI and MISO phases.", ESP_ERR_INVALID_ARG );
 
-    //Default rxlength to be the same as length, if not filled in.
+    //In Full duplex mode, default rxlength to be the same as length, if not filled in.
     // set rxlength to length is ok, even when rx buffer=NULL
-    if (trans_desc->rxlength==0) {
+    if (trans_desc->rxlength==0 && !(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX)) {
         trans_desc->rxlength=trans_desc->length;
     }
 

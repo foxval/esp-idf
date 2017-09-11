@@ -1,7 +1,7 @@
 ESP-WROVER-KIT V2 Getting Started Guide
 =======================================
 
-This user guide shows how to get started with ESP-WROVER-KIT V2 development board including description of its functionality and configuration options. You can find out what version you have in section :doc:`../hw-reference/modules-and-boards`.
+This user guide shows how to get started with ESP-WROVER-KIT V2 development board including description of its functionality and configuration options. You can find out what version you have in section :ref:`esp-modules-and-boards-esp-wrover-kit`.
 
 If you like to start using this board right now, go directly to section :ref:`esp-wrover-kit-v2-start-development`.
 
@@ -17,7 +17,7 @@ What You Need
 Overview
 ^^^^^^^^
 
-The ESP-WROVER-KIT is a development board produced by `Espressif <http://espressif.com>`_ built around ESP32. This board is compatible with ESP32 modules, including the ESP-WROOM-32 and ESP32-WROVER. The ESP-WROVER-KIT features support for an LCD and MicroSD card. The I/O pins have been broken out from the ESP32 module for easy extension. The board carries an advanced multi-protocol USB bridge (the FTDI FT2232HL), enabling developers to use JTAG directly to debug the ESP32 through the USB interface. The development board makes secondary development easy and cost-effective.
+The ESP-WROVER-KIT is a development board produced by `Espressif <https://espressif.com>`_ built around ESP32. This board is compatible with ESP32 modules, including the ESP-WROOM-32 and ESP32-WROVER. The ESP-WROVER-KIT features support for an LCD and MicroSD card. The I/O pins have been broken out from the ESP32 module for easy extension. The board carries an advanced multi-protocol USB bridge (the FTDI FT2232HL), enabling developers to use JTAG directly to debug the ESP32 through the USB interface. The development board makes secondary development easy and cost-effective.
 
 .. note::
 
@@ -163,7 +163,7 @@ Now to Development
 
 To start development of applications for ESP32-DevKitC, proceed to section :doc:`index`, that will walk you through the following steps:
 
-* :ref:`get-started-setup-toochain` in your PC to develop applications for ESP32 in C language
+* :ref:`get-started-setup-toolchain` in your PC to develop applications for ESP32 in C language
 * :ref:`get-started-connect` the module to the PC and verify if it is accessible
 * :ref:`get-started-build-flash` an example application to the ESP32
 * :ref:`get-started-build-monitor` instantly what the application is doing
@@ -173,9 +173,9 @@ Related Documents
 -----------------
 
 * `ESP-WROVER-KIT V2 schematic`_ (PDF)
-* `ESP32 Datasheet <http://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf>`_ (PDF)
-* `ESP-WROOM-32 Datasheet <http://www.espressif.com/sites/default/files/documentation/esp_wroom_32_datasheet_en.pdf>`_ (PDF)
-* `ESP32-WROVER Datasheet <http://espressif.com/sites/default/files/documentation/esp32-wrover_datasheet_en.pdf>`_ (PDF)
+* `ESP32 Datasheet <https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf>`_ (PDF)
+* `ESP-WROOM-32 Datasheet <https://www.espressif.com/sites/default/files/documentation/esp-wroom-32_datasheet_en.pdf>`_ (PDF)
+* `ESP32-WROVER Datasheet <https://espressif.com/sites/default/files/documentation/esp32-wrover_datasheet_en.pdf>`_ (PDF)
 * :doc:`../api-guides/jtag-debugging/index`
 * :doc:`../hw-reference/modules-and-boards`
 
@@ -189,4 +189,4 @@ Related Documents
 .. |jp11-rx-tx| image:: ../_static/wrover-jp11-tx-rx.png
 .. |jp14| image:: ../_static/wrover-jp14.png
 
-.. _ESP-WROVER-KIT V2 schematic: http://dl.espressif.com/dl/schematics/ESP-WROVER-KIT_SCH-2.pdf
+.. _ESP-WROVER-KIT V2 schematic: https://dl.espressif.com/dl/schematics/ESP-WROVER-KIT_SCH-2.pdf
