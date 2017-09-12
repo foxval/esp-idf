@@ -12,7 +12,7 @@ touch $IDF_PATH/components/esp32/lib/libmesh.a
 touch $IDF_PATH/components/esp32/lib/libnet80211.a
 touch $IDF_PATH/components/esp32/lib/libpp.a
 
-rm -rf  $(pwd)/log
+rm -rf  $(pwd)/mlog
 
 #make clean
 make -j8 
@@ -46,7 +46,7 @@ echo "========================"
 echo "    open serial port    "
 echo "========================"
 
-mkdir $(pwd)/log
+mkdir $(pwd)/mlog
 for i in $(seq 1 2 $loop_end )
 do 
 	#echo "open ttyUSB$i"
@@ -57,8 +57,7 @@ do
 
 	x=$[ $[ $i%4-1 ] / 2 * 800]
 	y=$[10+$i/4*800]
-        #rm -rf  log/[$i]--${c}.md
-	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C log/[$i]--${c}.md
+	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C mlog/[$i]--${c}.md
 } &
 done
 

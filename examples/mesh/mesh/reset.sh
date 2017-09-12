@@ -33,8 +33,8 @@ echo "========================"
 echo "    open serial port    "
 echo "========================"
 
-rm -rf  $(pwd)/log
-mkdir $(pwd)/log
+rm -rf  $(pwd)/mlog
+mkdir $(pwd)/mlog
 for i in $(seq 1 2 $loop_end )
 do 
 	#echo "open ttyUSB$i"
@@ -45,7 +45,6 @@ do
 
 	x=$[ $[ $i%4-1 ] / 2 * 800]
 	y=$[10+$i/4*800]
-        #rm -rf  log/[$i]--${c}.md
-	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C log/[$i]--${c}.md
+	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C mlog/[$i]--${c}.md
 } &
 done
