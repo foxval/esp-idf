@@ -39,9 +39,9 @@
 /*******************************************************
  *                Constants
  *******************************************************/
-#define RX_SIZE (1500)
-#define TX_SIZE (1450)
-#define TX_MCAST_SIZE (1200)
+#define RX_SIZE          (1500)
+#define TX_SIZE          (1450)
+#define TX_MCAST_SIZE    (1200)
 
 /*******************************************************
  *                Variable Definitions
@@ -136,11 +136,6 @@ void esp_mesh_event_cb(mesh_event_t event)
 
     switch (event) {
 
-        case MESH_EVENT_SUCCESS:
-            MESH_LOGI("MESH_EVENT_SUCCESS")
-            ;
-            break;
-
         case MESH_EVENT_NO_AP_FOUND:
             /* no AP found */
             MESH_LOGE("err: no AP found after scan %d times\n",
@@ -162,9 +157,17 @@ void esp_mesh_event_cb(mesh_event_t event)
             } else {
                 esp_mesh_disable_dhcp();
             }
-            ESP_ERROR_CHECK(esp_mesh_set_map_assoc_expire(30))
-            ;
             esp_mesh_api_test();
+            {
+                wifi_vnd_mesh_assoc_t assoc;
+                esp_wifi_vnd_mesh_get(&assoc);
+                MESH_LOGI(
+                        "parent rssi:%d, router rssi:%d, layer[%d,%d], child[%d,%d], total[%d,%d], scan:%d\n",
+                        assoc.ap_rssi, assoc.router_rssi, assoc.layer_cap,
+                        assoc.layer_lvl, assoc.dev_cap, assoc.dev_assoc,
+                        assoc.total_cap, assoc.total_assoc, assoc.scan_ap_num);
+
+            }
 
 #ifdef MESH_P2P_FORWARD_TEST
             esp_mesh_comm_p2p_start();
@@ -320,6 +323,9 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 {
     MESH_LOGE("esp_event_handler:%d", event->event_id);
+    if (event->event_id == SYSTEM_EVENT_MESH_TODS_STATE) {
+        mesh_toDS_reachable = 1;
+    }
     return ESP_OK;
 }
 #endif /* MESH_PRE_SCAN */
@@ -466,9 +472,15 @@ void esp_mesh_p2p_tx_main(void* arg)
     uint32_t send_count = 0;
 #ifdef MESH_P2P_FORWARD_MCAST
     static uint8_t tx_buf[TX_MCAST_SIZE] = {0,};
+#elif defined(MESH_ROOT_ROUTE_MCAST)
+    static uint8_t tx_buf[TX_SIZE - MESH_ROUTE_TABLE_NUM * 6] = {0,};
 #else /* MESH_P2P_FORWARD_MCAST */
     static uint8_t tx_buf[TX_SIZE] = { 0, };
 #endif /* MESH_P2P_FORWARD_MCAST */
+#if defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
+    mesh_addr_t route_table[MESH_ROUTE_TABLE_NUM];
+    int route_table_size = 0;
+#endif /* MESH_ROOT_ROUTE_UCAST */
 
     mesh_data_t data;
     data.data = tx_buf;
@@ -580,15 +592,78 @@ void esp_mesh_p2p_tx_main(void* arg)
         }
         vTaskDelay(10 / portTICK_RATE_MS);
 
-#else /* MESH_OTA_TEST */
+#elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
         send_count++;
         tx_buf[25] = (send_count >> 24) & 0xff;
         tx_buf[24] = (send_count >> 16) & 0xff;
         tx_buf[23] = (send_count >> 8) & 0xff;
         tx_buf[22] = (send_count) & 0xff;
+        if (send_count % 2) {
+            memcpy(tx_buf, MESH_BCF_LIGHT_ON, sizeof(MESH_BCF_LIGHT_ON));
+        } else {
+            memcpy(tx_buf, MESH_BCF_LIGHT_OFF, sizeof(MESH_BCF_LIGHT_OFF));
+        }
+        esp_mesh_get_routing_table((mesh_addr_t*) &route_table,
+        MESH_ROUTE_TABLE_NUM * 6, &route_table_size);
+        if (!(send_count % 100)) {
+            ets_printf("size:%d/%d,send_count:%d\n", route_table_size,
+                    esp_mesh_get_routing_table_size(), send_count);
+        }
+
+#ifdef MESH_ROOT_ROUTE_MCAST
+        mesh_opt_t option;
+        /* option */
+        option.type = MESH_OPT_MCAST_GROUP;
+        option.len = route_table_size * 6;
+        option.val = (uint8_t*) route_table;
+        opt = &option;
+        memcpy((uint8_t*) &to.addr, MESH_P2P_FORWARD_MADDR,
+                sizeof(mesh_addr_t));
+        err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
+        if (err) {
+            MESH_LOGE(
+                    "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR", heap:%d[err:%d], [%d,%d]",
+                    send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
+                    MAC2STR(to.addr), esp_get_free_heap_size(), err, data.proto,
+                    data.tos);
+            if (err == MESH_ERR_MEM) {
+                vTaskDelay(1000 / portTICK_RATE_MS);
+            }
+        } else {
+            MESH_LOGW(
+                    "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR", heap:%d[err:%d], [%d,%d]",
+                    send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
+                    MAC2STR(to.addr), esp_get_free_heap_size(), err, data.proto,
+                    data.tos);
+        }
+
+        vTaskDelay(1000 / portTICK_RATE_MS);
+#else  /* MESH_ROOT_ROUTE_MCAST */
+
+        int i;
+        for (i = 0; i < route_table_size; i++) {
+            err = esp_mesh_send(&route_table[i], &data, MESH_DATA_P2P, opt,
+                    opt ? 1 : 0);
+            if (err) {
+                MESH_LOGE(
+                        "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR", heap:%d[err:%d], [%d,%d]",
+                        send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
+                        MAC2STR(route_table[i].addr), esp_get_free_heap_size(),
+                        err, data.proto, data.tos);
+            } else {
+//                MESH_LOGW(
+//                        "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR", heap:%d[err:%d], [%d,%d]",
+//                        send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
+//                        MAC2STR(route_table[i].addr), esp_get_free_heap_size(), err,
+//                        data.proto, data.tos);
+            }
+        }
+#endif /* MESH_ROOT_ROUTE_MCAST */
+
+#else /* MESH_OTA_TEST */
 
         err = esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
-#if 0
+#if 1
         esp_mesh_get_parent_bssid(&parent);
         if (err) {
             MESH_LOGE(
@@ -608,7 +683,7 @@ void esp_mesh_p2p_tx_main(void* arg)
                     esp_mesh_available_txupQ_num(&to, NULL));
         }
 #endif
-        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(1000 / portTICK_RATE_MS);
 
 #endif /* MESH_OTA_TEST */
 
@@ -629,6 +704,7 @@ void esp_mesh_p2p_tx_main(void* arg)
 void esp_mesh_p2p_rx_main(void* arg)
 {
     int i, j = 0, k = -1;
+    int recv_count = 0;
     esp_err_t err;
     mesh_addr_t from;
     mesh_addr_t parent;
@@ -685,7 +761,6 @@ void esp_mesh_p2p_rx_main(void* arg)
             MESH_LOGE("err:%d, size:%d", err, data.size);
             continue;
         }
-        continue;
         /* compute time taken */
         timersub(&mesh_recv.stop, &mesh_recv.start, &mesh_recv.taken);
         mesh_recv.ms = (uint32_t) (mesh_recv.taken.tv_sec * 1000
@@ -695,9 +770,19 @@ void esp_mesh_p2p_rx_main(void* arg)
             send_count = (data.data[25] << 24) | (data.data[24] << 16)
                     | (data.data[23] << 8) | data.data[22];
         }
+        recv_count++;
+        mesh_process_received_data(data.data, data.size);
+        if (!(recv_count % 100)) {
+            MESH_LOGI(
+                    "[#RX:%d][L:%d]self:"MACSTR", parent:"MACSTR", receive from "MACSTR", size:%d, heap:%d, flag:%d[err:%d], [%d,%d]\n",
+                    recv_count, esp_mesh_get_layer(), MAC2STR(sta_mac),
+                    MAC2STR(parent.addr), MAC2STR(from.addr), data.size,
+                    esp_get_free_heap_size(), flag, err, data.proto, data.tos);
+        }
+        continue;
+
         /* process bfc control */
         mesh_process_received_data(data.data, data.size);
-
 #ifdef MESH_MONITOR_TX_DONE
         if (esp_mesh_get_total_node_num() && !(send_count % 10)) {
             mesh_tx_cb_dbg();
@@ -883,7 +968,6 @@ void esp_mesh_comm_tx_main(void* arg)
 #endif /* MESH_P2P_TOS_ON */
     uint8_t self[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, self);
-    esp_mesh_get_parent_bssid(&parent);
 
     MESH_LOGW("%s", __func__);
 
@@ -915,6 +999,7 @@ void esp_mesh_comm_tx_main(void* arg)
             print_routing_table();
         }
 #endif /* MESH_PRINT_ROUTING_TABLE */
+        esp_mesh_get_parent_bssid(&parent);
         data.data[25] = (send_count >> 24) & 0xff;
         data.data[24] = (send_count >> 16) & 0xff;
         data.data[23] = (send_count >> 8) & 0xff;
@@ -964,7 +1049,8 @@ void esp_mesh_comm_tx_main(void* arg)
                 data.proto, data.tos,
                 esp_mesh_available_txupQ_num(&g_mesh_self_sta_addr, NULL));
 #endif
-//        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(300 / portTICK_RATE_MS);
+        goto REXMIT;
 
 #ifdef MESH_ROOT_WAIVE_ITSELF
         if (esp_mesh_is_root() && !is_voting && send_count
@@ -1099,9 +1185,14 @@ esp_err_t esp_mesh_comm_p2p_start(void)
             xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5,
                     NULL);
         }
+#elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
+
+        if (esp_mesh_is_root()) {
+            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
+        }
 #else /* MESH_P2P_FORWARD_UCAST */
 
-//        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048, NULL, 5, NULL);
+        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
 
 #endif /* MESH_P2P_FORWARD_UCAST */
     }
@@ -1122,7 +1213,7 @@ esp_err_t esp_mesh_comm_server_start(void)
     }
 
 #ifndef MESH_OPT_RECV_DS
-    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 2, NULL);
+    xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 5, NULL);
 #endif /* MESH_OPT_RECV_DS */
     xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 2048, NULL, 5, NULL);
 
@@ -1154,6 +1245,5 @@ esp_err_t esp_mesh_api_test(void)
     MESH_LOGI("mesh map associate expire(seconds):%d",
             esp_mesh_get_map_assoc_expire());
     MESH_LOGI("mesh map rssi threshold:%d", esp_mesh_get_rssi_threshold());
-
     return ESP_OK;
 }

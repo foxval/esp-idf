@@ -20,7 +20,8 @@
 /*******************************************************
  *                Macros
  *******************************************************/
-#define MESH_P2P_FORWARD_MAX_NUM   (25)
+#define MESH_P2P_FORWARD_MAX_NUM   (30)
+#define MESH_ROUTE_TABLE_NUM       (50)
 
 //#define MESH_DUMP
 //#define MESH_P2P_FORWARD_TEST
@@ -36,8 +37,10 @@
 //#define MESH_OTA_TEST
 //#define MESH_P2P_FORWARD_UCAST_12M
 //#define MESH_MONITOR_TX_DONE
-#define MESH_XON
+//#define MESH_XON
 //#define MESH_PRINT_ROUTING_TABLE
+#define MESH_ROOT_ROUTE_UCAST
+//#define MESH_ROOT_ROUTE_MCAST
 
 #ifdef MESH_XON
 #undef MESH_P2P_FORWARD_TEST
@@ -50,6 +53,10 @@
 #ifdef MESH_OTA_TEST
 #define MESH_P2P_FORWARD_MCAST
 #endif /* MESH_OTA_TEST */
+
+#if defined(MESH_ROOT_ROUTE_UCAST) || defined(MESH_ROOT_ROUTE_MCAST)
+#define MESH_P2P_FORWARD_TEST
+#endif /* MESH_ROOT_ROUTE_UCAST || MESH_ROOT_ROUTE_MCAST */
 
 /*******************************************************
  *                Constants
@@ -80,6 +87,8 @@ static const uint8_t MESH_P2P_FORWARD_UADDR[6] = { 0x30, 0xae, 0xa4, 0x03, 0x89,
         0xa8 };
 static const uint8_t MESH_P2P_FORWARD_BADDR[6] = { 0xff, 0xff, 0xff, 0xff, 0xff,
         0xff };
+static const uint8_t MESH_P2P_FORWARD_BADDR_TX[6] = { 0x30, 0xae, 0xa4, 0x03,
+        0x89, 0xa8 };
 static const uint8_t MESH_P2P_FORWARD_MADDR[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00,
         0x00 };
 static const uint8_t MESH_BCF_LIGHT_ON[6] =
