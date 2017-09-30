@@ -70,6 +70,7 @@ typedef enum
 /* node type over mesh network */
 typedef enum
 {
+    MESH_IDLE, /**< out of mesh network */
     MESH_ROOT, /**< the only sink of mesh network, has the ability to access to IP network */
     MESH_NODE, /**< intermediate node, has the ability to forward packets over mesh network */
     MESH_LEAF, /**< has no forward ability */

@@ -593,6 +593,17 @@ void esp_mesh_p2p_tx_main(void* arg)
         vTaskDelay(10 / portTICK_RATE_MS);
 
 #elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
+        esp_mesh_get_routing_table((mesh_addr_t*) &route_table,
+        MESH_ROUTE_TABLE_NUM * 6, &route_table_size);
+        if (!(send_count % 100)) {
+            ets_printf("size:%d/%d,send_count:%d\n", route_table_size,
+                    esp_mesh_get_routing_table_size(), send_count);
+        }
+        if (!esp_mesh_is_root()) {
+            vTaskDelay(5000 / portTICK_RATE_MS);
+            continue;
+        }
+
         send_count++;
         tx_buf[25] = (send_count >> 24) & 0xff;
         tx_buf[24] = (send_count >> 16) & 0xff;
@@ -602,12 +613,6 @@ void esp_mesh_p2p_tx_main(void* arg)
             memcpy(tx_buf, MESH_BCF_LIGHT_ON, sizeof(MESH_BCF_LIGHT_ON));
         } else {
             memcpy(tx_buf, MESH_BCF_LIGHT_OFF, sizeof(MESH_BCF_LIGHT_OFF));
-        }
-        esp_mesh_get_routing_table((mesh_addr_t*) &route_table,
-        MESH_ROUTE_TABLE_NUM * 6, &route_table_size);
-        if (!(send_count % 100)) {
-            ets_printf("size:%d/%d,send_count:%d\n", route_table_size,
-                    esp_mesh_get_routing_table_size(), send_count);
         }
 
 #ifdef MESH_ROOT_ROUTE_MCAST
@@ -1187,9 +1192,7 @@ esp_err_t esp_mesh_comm_p2p_start(void)
         }
 #elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
 
-        if (esp_mesh_is_root()) {
-            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
-        }
+        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
 #else /* MESH_P2P_FORWARD_UCAST */
 
         xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
