@@ -250,6 +250,7 @@ typedef enum {
 #define ESP_VND_MESH_ASSOC_DEV_CAP_MAX      (32)
 #define ESP_VND_MESH_ASSOC_LEAF_CAP_MAX     (32)
 
+/**
   * @brief     Allocate a chunk of memory for WiFi driver
   *
   * @attention This API is not used for DMA memory allocation.
