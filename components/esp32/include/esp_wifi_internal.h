@@ -58,7 +58,7 @@ extern "C" {
  *    - ESP_ERR_WIFI_NO_MEM: out of memory
  *    - others: refer to error code esp_err.h
  */
-esp_err_t esp_wifi_init_internal(wifi_init_config_t *config);
+esp_err_t esp_wifi_init_internal(const wifi_init_config_t *config);
 
 /**
   * @brief  get whether the wifi driver is allowed to transmit data or not
@@ -249,6 +249,40 @@ typedef enum {
 #define ESP_VND_MESH_ASSOC_LAYER_CAP_MAX    (128)
 #define ESP_VND_MESH_ASSOC_DEV_CAP_MAX      (32)
 #define ESP_VND_MESH_ASSOC_LEAF_CAP_MAX     (32)
+
+  * @brief     Allocate a chunk of memory for WiFi driver
+  *
+  * @attention This API is not used for DMA memory allocation.
+  *
+  * @param     size_t size : Size, in bytes, of the amount of memory to allocate
+  *
+  * @return    A pointer to the memory allocated on success, NULL on failure
+  */
+void *wifi_malloc( size_t size );
+
+/**
+  * @brief     Reallocate a chunk of memory for WiFi driver
+  *
+  * @attention This API is not used for DMA memory allocation.
+  *
+  * @param     void * ptr  : Pointer to previously allocated memory, or NULL for a new allocation.
+  * @param     size_t size : Size, in bytes, of the amount of memory to allocate
+  *
+  * @return    A pointer to the memory allocated on success, NULL on failure
+  */
+void *wifi_realloc( void *ptr, size_t size );
+
+/**
+  * @brief     Callocate memory for WiFi driver
+  *
+  * @attention This API is not used for DMA memory allocation.
+  *
+  * @param     size_t n    : Number of continuing chunks of memory to allocate
+  * @param     size_t size : Size, in bytes, of the amount of memory to allocate
+  *
+  * @return    A pointer to the memory allocated on success, NULL on failure
+  */
+void *wifi_calloc( size_t n, size_t size );
 
 #ifdef __cplusplus
 }
