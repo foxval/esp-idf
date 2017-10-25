@@ -325,6 +325,8 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
     MESH_LOGE("esp_event_handler:%d", event->event_id);
     if (event->event_id == SYSTEM_EVENT_MESH_TODS_STATE) {
         mesh_toDS_reachable = 1;
+    } else if (event->event_id == SYSTEM_EVENT_MESH_WEAK_RSSI) {
+        MESH_LOGE("SYSTEM_EVENT_MESH_WEAK_RSSI");
     }
     return ESP_OK;
 }
@@ -363,7 +365,7 @@ esp_err_t print_routing_table(void)
 void app_main(void)
 {
     mesh_cfg_t* config;
-
+    ESP_ERROR_CHECK(mesh_light_init());
     ESP_ERROR_CHECK(nvs_flash_init());
     tcpip_adapter_init();
     ESP_ERROR_CHECK(tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP));
@@ -379,7 +381,7 @@ void app_main(void)
     while (!is_router_found)
     ;
 #endif /* MESH_PRE_SCAN */
-    ESP_ERROR_CHECK(mesh_light_init());
+
 #if 0
     nvs_handle handle;
     nvs_open("MESH", NVS_READWRITE, &handle);
@@ -431,6 +433,7 @@ void app_main(void)
         config->router.ssid_len = strlen(MESH_ROUTER_SSID);
         memcpy((uint8_t*) &config->router.ssid, MESH_ROUTER_SSID,
                 config->router.ssid_len);
+        memcpy((uint8_t*) &config->router.bssid, MESH_ROUTER_BSSID, 6);
         memcpy((uint8_t*) &config->router.password, MESH_ROUTER_PASSWD,
                 strlen(MESH_ROUTER_PASSWD));
         /* map */
@@ -439,12 +442,33 @@ void app_main(void)
                 strlen(MESH_MAP_PASSWD));
 
         ESP_ERROR_CHECK(esp_mesh_set_config(config));
+        /* parent switch */
+        mesh_switch_parent_t paras;
+        ESP_ERROR_CHECK(esp_mesh_get_switch_parent_paras(&paras));
+        MESH_LOGI(
+                "duration:%dms, cnx_rssi:%d\n, select_rssi:%d, switch_rssi:%d\n, backoff_rssi:%d\n",
+
+                paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
+
+                paras.switch_rssi, paras.backoff_rssi);
+
+        paras.cnx_rssi = -65;
+        paras.switch_rssi = -65;
+        paras.select_rssi = -50;
+        ESP_ERROR_CHECK(esp_mesh_set_switch_parent_paras(&paras));
+        MESH_LOGI(
+                "duration:%dms, cnx_rssi:%d\n, select_rssi:%d, switch_rssi:%d\n, backoff_rssi:%d\n",
+
+                paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
+
+                paras.switch_rssi, paras.backoff_rssi);
         ESP_ERROR_CHECK(esp_mesh_start());
         free(config);
     } else {
         MESH_LOGE("mesh fails\n");
     }
-    MESH_LOGE("mesh success\n");
+    MESH_LOGI("mesh success\n");
+
 }
 
 void print_sta_list(const char* func)

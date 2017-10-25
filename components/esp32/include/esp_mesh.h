@@ -45,6 +45,8 @@
 #define MESH_ERR_WIFI_MODE            (-15)   /**< error mode */
 #define MESH_ERR_ARG                  (-16)   /**< error input argument */
 #define MESH_ERR_QUEUE_FAIL           (-17)   /**< queue fail */
+#define MESH_ERR_DISCARD_DUP          (-18)   /**< discard duplicate sequence number */
+#define MESH_ERR_NOT_ALLOWED          (-19)   /**< not allowed */
 
 /*******************************************************
  *                Enumerations
@@ -140,6 +142,7 @@ typedef struct
 typedef struct
 {
     uint8_t ssid[32]; /**< SSID */
+    uint8_t bssid[6]; /**< BSSID, if router is hidden, this value is mandatory */
     uint8_t password[64]; /**< password */
     uint8_t ssid_len; /**< length of SSID */
     uint8_t channel; /**< channel of router*/
@@ -669,5 +672,86 @@ esp_err_t esp_mesh_set_rssi_threshold(int rssi);
  * @return    rssi threshold
  */
 int esp_mesh_get_rssi_threshold(void);
+
+typedef struct
+{
+    int duration_ms; /* parent monitor duration */
+    int cnx_rssi; /* threshold for keeping a good connection */
+    int select_rssi; /* threshold for parent selection, should be a value greater than switch_rssi*/
+    int switch_rssi; /* threshold for action to reselect a better parent */
+    int backoff_rssi; /* threshold for connecting to the root */
+} mesh_switch_parent_t;
+
+/**
+ * @brief     set parameters for parent switch
+ *
+ * @param     paras
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t* paras);
+
+/**
+ * @brief     get parameters for parent switch
+ *
+ * @param     paras
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t* paras);
+
+typedef struct
+{
+    int recv; /** queue size for esp_mesh_recv(), default:36(max:60) */
+    int send; /** queue size for mesh send, default:72(max:100) */
+    int toDS; /** queue size for esp_mesh_recv_toDS(), default:72(max:100) */
+} mesh_cfg_qsize_t;
+
+/**
+ * @brief     set queue size(must be called before esp_mesh_start())
+ *
+ * @param     qsize
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t* qsize);
+
+/**
+ * @brief     get queue size
+ *
+ * @param     qsize
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_get_qsize(mesh_cfg_qsize_t* qsize);
+
+/**
+ * @brief     return the number of upQ for a specified address
+ *
+ * @param     addr
+ * @param     xseqno_in
+ *
+ * @return    the number of upQ for a specified address
+ */
+int esp_mesh_available_txupQ_num(mesh_addr_t* addr, uint32_t* xseqno_in);
+
+/**
+ * @brief     print the number of txQ waiting
+ *
+ * @param     void
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_print_txQ_waiting(void);
 
 #endif /* __ESP_MESH_H__ */
