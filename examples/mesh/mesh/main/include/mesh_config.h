@@ -61,11 +61,18 @@
 /*******************************************************
  *                Constants
  *******************************************************/
+#if 0
+/* NETGEAR46 */
+static const uint8_t MESH_ROUTER_BSSID[6] =
+{   0x10, 0xda, 0x43, 0x83, 0xf3, 0x8d};
+#else
+static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
+#endif
 #define MESH_ROUTER_CHANNEL        (9)               /**< channel */
 #define MESH_ROUTER_SSID           "ROUTER_SSID"     /**< ssid */
 #define MESH_ROUTER_PASSWD         "ROUTER_PASSWD"   /**< password */
 
-#define MESH_MAP_PASSWD            "MAP_PASSWORD"    /**< map password */
+#define MESH_MAP_PASSWD            "MAP_PASSWD"      /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
 #define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
 

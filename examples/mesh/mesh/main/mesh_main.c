@@ -67,7 +67,6 @@ extern void dbg_esp_mesh_ebuf_dump(bool dump);
 extern void mesh_tx_cb_dbg(void);
 #endif /* MESH_MONITOR_TX_DONE */
 
-extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr, uint32_t* xseqno_in);
 extern mesh_addr_t g_mesh_self_sta_addr;
 
 /*******************************************************
@@ -397,6 +396,37 @@ void app_main(void)
     mesh_attempts_t attempts = { .scan = 10, .vote = 12, .fail = 20,
             .monitor_ie = 3 };
     ESP_ERROR_CHECK(esp_mesh_set_attempts(&attempts));
+    /* parent switch */
+    mesh_switch_parent_t paras;
+    ESP_ERROR_CHECK(esp_mesh_get_switch_parent_paras(&paras));
+    MESH_LOGI(
+            "duration:%dms, cnx_rssi:%d, select_rssi:%d, switch_rssi:%d, backoff_rssi:%d\n",
+
+            paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
+
+            paras.switch_rssi, paras.backoff_rssi);
+
+    paras.cnx_rssi = -65;
+    paras.switch_rssi = -65;
+    paras.select_rssi = -50;
+    ESP_ERROR_CHECK(esp_mesh_set_switch_parent_paras(&paras));
+    MESH_LOGI(
+            "duration:%dms, cnx_rssi:%d, select_rssi:%d, switch_rssi:%d, backoff_rssi:%d\n",
+
+            paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
+
+            paras.switch_rssi, paras.backoff_rssi);
+    mesh_cfg_qsize_t qsize;
+    ESP_ERROR_CHECK(esp_mesh_get_qsize(&qsize));
+    MESH_LOGI("recvQ:%d, toDSQ:%d, sendQ:%d", qsize.recv, qsize.toDS,
+            qsize.send);
+    qsize.recv = 60;
+    qsize.send = 100;
+    ESP_ERROR_CHECK(esp_mesh_set_qsize(&qsize));
+    ESP_ERROR_CHECK(esp_mesh_get_qsize(&qsize));
+    MESH_LOGI("recvQ:%d, toDSQ:%d, sendQ:%d", qsize.recv, qsize.toDS,
+            qsize.send);
+
 #ifdef MESH_DISABLE_SELF_ORGANIZED
 #if 1
 
@@ -442,28 +472,8 @@ void app_main(void)
                 strlen(MESH_MAP_PASSWD));
 
         ESP_ERROR_CHECK(esp_mesh_set_config(config));
-        /* parent switch */
-        mesh_switch_parent_t paras;
-        ESP_ERROR_CHECK(esp_mesh_get_switch_parent_paras(&paras));
-        MESH_LOGI(
-                "duration:%dms, cnx_rssi:%d\n, select_rssi:%d, switch_rssi:%d\n, backoff_rssi:%d\n",
-
-                paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
-
-                paras.switch_rssi, paras.backoff_rssi);
-
-        paras.cnx_rssi = -65;
-        paras.switch_rssi = -65;
-        paras.select_rssi = -50;
-        ESP_ERROR_CHECK(esp_mesh_set_switch_parent_paras(&paras));
-        MESH_LOGI(
-                "duration:%dms, cnx_rssi:%d\n, select_rssi:%d, switch_rssi:%d\n, backoff_rssi:%d\n",
-
-                paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
-
-                paras.switch_rssi, paras.backoff_rssi);
-        ESP_ERROR_CHECK(esp_mesh_start());
         free(config);
+        ESP_ERROR_CHECK(esp_mesh_start());
     } else {
         MESH_LOGE("mesh fails\n");
     }
@@ -623,10 +633,6 @@ void esp_mesh_p2p_tx_main(void* arg)
             ets_printf("size:%d/%d,send_count:%d\n", route_table_size,
                     esp_mesh_get_routing_table_size(), send_count);
         }
-        if (!esp_mesh_is_root()) {
-            vTaskDelay(5000 / portTICK_RATE_MS);
-            continue;
-        }
 
         send_count++;
         tx_buf[25] = (send_count >> 24) & 0xff;
@@ -683,8 +689,8 @@ void esp_mesh_p2p_tx_main(void* arg)
 //                MESH_LOGW(
 //                        "[#TX:%d][L:%d]parent:"MACSTR" to "MACSTR", heap:%d[err:%d], [%d,%d]",
 //                        send_count, esp_mesh_get_layer(), MAC2STR(parent.addr),
-//                        MAC2STR(route_table[i].addr), esp_get_free_heap_size(), err,
-//                        data.proto, data.tos);
+//                        MAC2STR(route_table[i].addr), esp_get_free_heap_size(),
+//                        err, data.proto, data.tos);
             }
         }
 #endif /* MESH_ROOT_ROUTE_MCAST */
@@ -801,7 +807,7 @@ void esp_mesh_p2p_rx_main(void* arg)
         }
         recv_count++;
         mesh_process_received_data(data.data, data.size);
-        if (!(recv_count % 100)) {
+        if (!(recv_count % 10)) {
             MESH_LOGI(
                     "[#RX:%d][L:%d]self:"MACSTR", parent:"MACSTR", receive from "MACSTR", size:%d, heap:%d, flag:%d[err:%d], [%d,%d]\n",
                     recv_count, esp_mesh_get_layer(), MAC2STR(sta_mac),
@@ -1208,15 +1214,11 @@ esp_err_t esp_mesh_comm_p2p_start(void)
 
         xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048, NULL, 5, NULL);
 
-#elif defined (MESH_OTA_TEST)
+#elif defined (MESH_OTA_TEST) || defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
 
         if (esp_mesh_is_root()) {
-            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 2048 + 1024, NULL, 5,
-                    NULL);
+            xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
         }
-#elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
-
-        xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
 #else /* MESH_P2P_FORWARD_UCAST */
 
         xTaskCreate(esp_mesh_p2p_tx_main, "MPTX", 3072, NULL, 5, NULL);
