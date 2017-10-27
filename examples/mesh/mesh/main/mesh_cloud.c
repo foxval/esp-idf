@@ -32,11 +32,10 @@ esp_err_t mesh_get_sta_list(mesh_addr_t* from)
 {
     int j;
     esp_err_t err;
-    mesh_data_t data;
+    mesh_data_t data = { 0, };
     wifi_sta_list_t sta_list;
 
     esp_wifi_ap_get_sta_list(&sta_list);
-
     for (j = 0; j < sta_list.num; j++) {
 
         ets_printf("[%d][L:%d]"MACSTR"\n", j, esp_mesh_get_layer(),
@@ -46,7 +45,7 @@ esp_err_t mesh_get_sta_list(mesh_addr_t* from)
     data.size = sizeof(sta_list);
     data.data = (uint8_t*) &sta_list;
     data.tos = MESH_DATA_P2P;
-    err = esp_mesh_send(&from, &data, MESH_DATA_TODS, NULL, 0);
+    err = esp_mesh_send(from, &data, MESH_DATA_TODS, NULL, 0);
 
     MESH_LOGI("send station list to "MACSTR", size:%d, err:%d\n",
             MAC2STR(from->addr), data.size, err);
@@ -98,8 +97,8 @@ esp_err_t mesh_parse_protocol(mesh_addr_t* from, uint8_t *buf,
                 ;
                 break;
             default:
-                MESH_LOGE("Unserved type:%d", buf[start_index])
-                ;
+//                MESH_LOGE("Unserved type:%d", buf[start_index])
+//                ;
                 return ESP_FAIL;
         }
     }
