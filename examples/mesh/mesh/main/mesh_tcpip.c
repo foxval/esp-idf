@@ -16,6 +16,7 @@
 #include "mesh_log.h"
 #include "mesh_tcpip.h"
 #include "mesh_common.h"
+#include "mesh_config.h"
 #include "lwip/inet.h"
 #include "lwip/netdb.h"
 
@@ -34,6 +35,7 @@
  *
  *   3. Examples with BFC control protocol
  *      (data from server to turn off the lights)
+ *      RPC:
  *      (1)unicast control:
  *      01 aa bb cc 11 22 33 2 00 bf c0 06 00
  *
@@ -42,6 +44,9 @@
  *
  *      (3)broadcast control:
  *      01 ff ff ff ff ff ff 2 00 bf c0 06 00
+ *      GET:
+ *      (1)get topology
+ *      01 aa bb cc 11 22 33 7 00 bf c0 14
  */
 
 /*******************************************************
@@ -64,7 +69,6 @@
  *******************************************************/
 //#define MESH_TCPIP_DUMP
 //#define MESH_TCPIP_TOS_P2P
-//#define MESH_TCPIP_OPT_RECV_DS
 static const char *TAG = "mesh_tcpip";
 
 #define MESH_CNX_STATE_IDLE                (1)
@@ -544,7 +548,7 @@ static void mesh_tcpip_rx_main(void *arg)
                         }
                         continue;
                     }
-                    MESH_LOGE("recv:%d", recv_size);
+                    MESH_LOGW("recv:%d", recv_size);
                     data.size = recv_size;
 #ifdef MESH_TCPIP_DUMP
                     {
@@ -647,10 +651,12 @@ static void mesh_tcpip_rx_main(void *arg)
                     free(ctl_data.data);
                     free(opt.val);
                 }
+#if 0
                 MESH_LOGW(
                         "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",
                         (int )(cur_time.tv_sec - old_time), data.size,
                         MAC2STR(to.addr), tcp_cli_sock, err);
+#endif
 
                 old_time = cur_time.tv_sec;
             }

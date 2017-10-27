@@ -647,7 +647,7 @@ void esp_mesh_p2p_tx_main(void* arg)
 
 #elif defined (MESH_ROOT_ROUTE_UCAST) || defined (MESH_ROOT_ROUTE_MCAST)
         esp_mesh_get_routing_table((mesh_addr_t*) &route_table,
-                MESH_ROUTE_TABLE_NUM * 6, &route_table_size);
+        MESH_ROUTE_TABLE_NUM * 6, &route_table_size);
         if (!(send_count % 100)) {
             ets_printf("size:%d/%d,send_count:%d\n", route_table_size,
                     esp_mesh_get_routing_table_size(), send_count);
@@ -822,7 +822,8 @@ void esp_mesh_p2p_rx_main(void* arg)
                     | (data.data[23] << 8) | data.data[22];
         }
         recv_count++;
-        mesh_process_received_data(data.data, data.size);
+        /* process bfc control */
+        mesh_process_received_data(&from, data.data, data.size);
         MESH_LOGI(
                 "[#RX:%d][L:%d]self:"MACSTR", parent:"MACSTR", receive from "MACSTR", size:%d, heap:%d, flag:%d[err:%d], [%d,%d]\n",
                 recv_count, esp_mesh_get_layer(), MAC2STR(sta_mac),
@@ -831,8 +832,6 @@ void esp_mesh_p2p_rx_main(void* arg)
 
         continue;
 
-        /* process bfc control */
-        mesh_process_received_data(data.data, data.size);
 #ifdef MESH_MONITOR_TX_DONE
         if (esp_mesh_get_total_node_num() && !(send_count % 10)) {
             mesh_tx_cb_dbg();
@@ -1184,7 +1183,12 @@ void esp_mesh_comm_rx_main(void* arg)
         if (flag & MESH_DATA_TODS) {
 
         } else if (flag & MESH_DATA_FROMDS) {
-            mesh_process_received_data(data.data, data.size);
+#ifdef MESH_REPORT_TOPO
+            mesh_process_received_data((mesh_addr_t*) &ds_addr, data.data,
+                    data.size);
+#else /* MESH_REPORT_TOPO */
+            mesh_process_received_data(&from, data.data, data.size);
+#endif /* MESH_REPORT_TOPO */
         }
         if (!(recv_count % 10)) {
             print_sta_list(__func__);
@@ -1269,7 +1273,7 @@ esp_err_t esp_mesh_comm_server_start(void)
 
     xTaskCreate(esp_mesh_comm_tx_main, "MSTX", 3072, NULL, 5, NULL);
 #endif /* MESH_OPT_RECV_DS */
-    xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 2048, NULL, 5, NULL);
+    xTaskCreate(esp_mesh_comm_rx_main, "MSRX", 3072, NULL, 5, NULL);
 
     is_started = true;
     return ESP_OK;

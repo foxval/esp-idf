@@ -26,12 +26,12 @@ enum
 enum BFC_CMD
 {
     BFC_CMD_PING = 1,
-    BFC_CMD_RPC,
-    BFC_CMD_TRIGGER,
-    BFC_CMD_UPGRADE,
-    BFC_CMD_CONFIG,
-    BFC_CMD_SET,
-    BFC_CMD_GET,
+    BFC_CMD_RPC = 2,
+    BFC_CMD_TRIGGER = 3,
+    BFC_CMD_UPGRADE = 4,
+    BFC_CMD_CONFIG = 5,
+    BFC_CMD_SET = 6,
+    BFC_CMD_GET = 7,
 };
 
 enum OTA_ACTION
@@ -45,22 +45,24 @@ enum OTA_ACTION
 
 enum BFC_PROTO_VALUE
 {
-    BFC_VALUE_TOKEN,
-    BFC_VALUE_REBOOT_CNT,
-    BFC_VALUE_BSSID,
-    BFC_VALUE_VERSION,
-    BFC_VALUE_P_BSSID,
-    BFC_VALUE_RSSI,			    //5
-    BFC_VALUE_BRIGHTNESS,
-    BFC_VALUE_FIX_BRIGHTNESS,
-    BFC_VALUE_DELAY,			//0 means bright permanently
-    BFC_VALUE_OTA,
-    BFC_VALUE_OTA_ACTION,       // 10
-    BFC_VALUE_MODE = 12,
-    BFC_VALUE_PING_TIME = 14,   //unit second
-    BFC_VALUE_PUSH_TRIGGER,
+    BFC_VALUE_TOKEN = 0,
+    BFC_VALUE_REBOOT_CNT = 1,
+    BFC_VALUE_BSSID = 2,
+    BFC_VALUE_VERSION = 3,
+    BFC_VALUE_P_BSSID = 4,
+    BFC_VALUE_RSSI = 5,
+    BFC_VALUE_BRIGHTNESS = 6,
+    BFC_VALUE_FIX_BRIGHTNESS = 7,
+    BFC_VALUE_DELAY = 8, /*　0 means bright permanently */
+    BFC_VALUE_OTA = 9,
+    BFC_VALUE_OTA_ACTION = 10,
+    BFC_VALUE_MODE = 11,
+    BFC_VALUE_PING_TIME = 12, /* unit second */
+    BFC_VALUE_PUSH_TRIGGER = 13,
 
-    BFC_VALUE_PING_EN = 28,		//enable ping or not
+    BFC_VALUE_REQ_TOPO = 20,
+
+    BFC_VALUE_PING_EN = 28, /* enable ping or not */
     BFC_VALUE_WIFI,
     BFC_VALUE_GROUP_ID,
     BFC_VALUE_SSID,
@@ -72,8 +74,8 @@ enum BFC_PROTO_VALUE
     BFC_VALUE_IP,
     BFC_VALUE_WIFI_INFO,
     BFC_VALUE_EXCEPTION,
-    BFC_VALUE_OTA_STATUS,       // 40
-    BFC_VALUE_RESPONSE = 127
+    BFC_VALUE_OTA_STATUS = 40,
+    BFC_VALUE_RESPONSE = 127,
 };
 
 /*******************************************************
@@ -89,6 +91,6 @@ typedef struct
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void mesh_process_received_data(uint8_t* buf, uint16_t len);
+void mesh_process_received_data(mesh_addr_t* from, uint8_t* buf, uint16_t len);
 
 #endif /* _MESH_CLOUD_H_ */

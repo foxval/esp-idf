@@ -28,8 +28,34 @@ static const char *TAG = "mesh_cloud";
  *                Function Definitions
  *******************************************************/
 
-esp_err_t mesh_parse_protocol(uint8_t *buf, uint16_t start_index,
-        uint16_t total_length, enum BFC_CMD type)
+esp_err_t mesh_get_sta_list(mesh_addr_t* from)
+{
+    int j;
+    esp_err_t err;
+    mesh_data_t data;
+    wifi_sta_list_t sta_list;
+
+    esp_wifi_ap_get_sta_list(&sta_list);
+
+    for (j = 0; j < sta_list.num; j++) {
+
+        ets_printf("[%d][L:%d]"MACSTR"\n", j, esp_mesh_get_layer(),
+                MAC2STR(sta_list.sta[j].mac));
+
+    }
+    data.size = sizeof(sta_list);
+    data.data = (uint8_t*) &sta_list;
+    data.tos = MESH_DATA_P2P;
+    err = esp_mesh_send(&from, &data, MESH_DATA_TODS, NULL, 0);
+
+    MESH_LOGI("send station list to "MACSTR", size:%d, err:%d\n",
+            MAC2STR(from->addr), data.size, err);
+
+    return ESP_OK;
+}
+
+esp_err_t mesh_parse_protocol(mesh_addr_t* from, uint8_t *buf,
+        uint16_t start_index, uint16_t total_length, enum BFC_CMD type)
 {
     //Currently, only care about Brightness
     int brightness;
@@ -62,6 +88,14 @@ esp_err_t mesh_parse_protocol(uint8_t *buf, uint16_t start_index,
             case BFC_VALUE_NODE_INFO:
                 break;
             case BFC_VALUE_EXCEPTION:
+                break;
+            case BFC_VALUE_REQ_TOPO:
+                /*
+                 * request topology
+                 */
+                MESH_LOGI("request topology")
+                mesh_get_sta_list(from);
+                ;
                 break;
             default:
                 MESH_LOGE("Unserved type:%d", buf[start_index])
@@ -126,7 +160,7 @@ esp_err_t mesh_parse_protocol(uint8_t *buf, uint16_t start_index,
     return ESP_OK;
 }
 
-void mesh_process_received_data(uint8_t* buf, uint16_t len)
+void mesh_process_received_data(mesh_addr_t* from, uint8_t* buf, uint16_t len)
 {
 //ping ack
 //header: 0 10 14 0 24 a c4 3 b8 dc 0 0 0 0 0 0
@@ -157,13 +191,14 @@ void mesh_process_received_data(uint8_t* buf, uint16_t len)
             break;
 
         case BFC_CMD_RPC:
+        case BFC_CMD_GET:
 //            printf("Receive BFC_RPC\r\n");
-            mesh_parse_protocol(buf, 4, len, BFC_CMD_RPC);
+            mesh_parse_protocol(from, buf, 4, len, BFC_CMD_GET);
             break;
 
         case BFC_CMD_CONFIG:
             printf("Receive BFC_CONFIG\r\n");
-            mesh_parse_protocol(buf, 4, len, BFC_CMD_CONFIG);
+            mesh_parse_protocol(from, buf, 4, len, BFC_CMD_CONFIG);
             break;
     }
 }

@@ -49,6 +49,8 @@
 //#define MESH_PRINT_ROUTING_TABLE
 #define MESH_ROOT_ROUTE_UCAST
 //#define MESH_ROOT_ROUTE_MCAST
+//#define MESH_TCPIP_OPT_RECV_DS
+//#define MESH_REPORT_TOPO
 
 #ifdef MESH_XON
 #undef MESH_P2P_FORWARD_TEST
@@ -65,6 +67,12 @@
 #if defined(MESH_ROOT_ROUTE_UCAST) || defined(MESH_ROOT_ROUTE_MCAST)
 #define MESH_P2P_FORWARD_TEST
 #endif /* MESH_ROOT_ROUTE_UCAST || MESH_ROOT_ROUTE_MCAST */
+
+#ifdef MESH_REPORT_TOPO
+#define MESH_XON
+#define MESH_OPT_RECV_DS
+#define MESH_TCPIP_OPT_RECV_DS
+#endif /* MESH_REPORT_TOPO */
 
 /*******************************************************
  *                Constants
