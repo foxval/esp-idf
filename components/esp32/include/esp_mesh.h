@@ -754,4 +754,15 @@ int esp_mesh_available_txupQ_num(mesh_addr_t* addr, uint32_t* xseqno_in);
  */
 esp_err_t esp_mesh_print_txQ_waiting(void);
 
+/**
+ * @brief     print the number of rxQ waiting
+ *
+ * @param     void
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_print_rxQ_waiting(void);
+
 #endif /* __ESP_MESH_H__ */

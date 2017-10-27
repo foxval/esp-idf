@@ -340,8 +340,7 @@ static void mesh_tcpip_tx_main(void *arg)
     if (!data.data) {
         ets_printf("tcpip tx fails\n");
     }
-    extern int esp_mesh_available_txupQ_num(mesh_addr_t* addr,
-            uint32_t* xseqno_in);
+
     is_running = true;
 
     while (is_running) {
@@ -436,7 +435,7 @@ static void mesh_tcpip_tx_main(void *arg)
                             seqno = (data.data[25] << 24)
                                     | (data.data[24] << 16)
                                     | (data.data[23] << 8) | data.data[22];
-#if 1
+#if 0
                             MESH_LOGW(
                                     "[%u/%u]ms from "MACSTR", seq:%d, len:%d, Q[%d],heap:%d",
                                     toDS_recv.ms, sock_send.ms,

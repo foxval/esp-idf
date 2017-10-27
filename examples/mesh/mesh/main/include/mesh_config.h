@@ -23,7 +23,15 @@
 #define MESH_P2P_FORWARD_MAX_NUM   (30)
 #define MESH_ROUTE_TABLE_NUM       (50)
 
+/*
+ * debug
+ */
+#define MESH_XON_QSIZE_DBG
 //#define MESH_DUMP
+
+/*
+ * test cases
+ */
 //#define MESH_P2P_FORWARD_TEST
 //#define MESH_PRE_SCAN
 #define MESH_P2P_TOS_ON
@@ -86,8 +94,8 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
  *                Variable Definitions
  *******************************************************/
 static const uint16_t MESH_SERVER_PORT = 7000; /**< server port */
-static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 1 }; /**< server ip */
-static const char MESH_SERVER_HOSTNAME[] = "192.168.1.1"; /**< server hostname */
+static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 107 }; /**< server ip */
+static const char MESH_SERVER_HOSTNAME[] = "192.168.1.107"; /**< server hostname */
 
 static const uint8_t MESH_ID[6] = { 0x18, 0xfe, 0x34, 0x32, 0x12, 0xdd };
 static const uint8_t MESH_P2P_FORWARD_UADDR[6] = { 0x30, 0xae, 0xa4, 0x03, 0x89,
