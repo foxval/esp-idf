@@ -24,7 +24,7 @@
  *                Constants
  *******************************************************/
 
-#define MESH_VERSION                  (4)    /**< mesh version */
+#define MESH_VERSION                  (5)    /**< mesh version */
 #define MESH_ROOT_LAYER               (1)    /**< root layer */
 #define MESH_SCAN_RETRIES             (32)   /**< scan retries */
 
@@ -53,8 +53,7 @@
  *******************************************************/
 
 /* event represents mesh network state */
-typedef enum
-{
+typedef enum {
     MESH_EVENT_NO_AP_FOUND = 1, /**< no mesh AP found */
     MESH_EVENT_CONNECTED = 2, /**< joins the mesh network */
     MESH_EVENT_DISCONNECTED = 3, /**< leaves the mesh network */
@@ -70,8 +69,7 @@ typedef enum
 } mesh_event_t;
 
 /* node type over mesh network */
-typedef enum
-{
+typedef enum {
     MESH_IDLE, /**< out of mesh network */
     MESH_ROOT, /**< the only sink of mesh network, has the ability to access to IP network */
     MESH_NODE, /**< intermediate node, has the ability to forward packets over mesh network */
@@ -79,8 +77,7 @@ typedef enum
 } mesh_type_t;
 
 /* flags used with send and receive */
-enum
-{
+enum {
     MESH_DATA_ENC = (1), /**< data encrypted(not implemented yet) */
     MESH_DATA_P2P = (1 << 1), /**< point-to-point delivery over mesh network */
     MESH_DATA_FROMDS = (1 << 2), /**< receive from an IP remote address */
@@ -88,8 +85,7 @@ enum
 };
 
 /* protocol of transmission data */
-typedef enum
-{
+typedef enum {
     MESH_PROTO_BIN = 0, /**< binary */
     MESH_PROTO_HTTP = 1, /**< http protocol */
     MESH_PROTO_JSON = 2, /**< json format */
@@ -97,16 +93,14 @@ typedef enum
 } mesh_proto_t;
 
 /* for reliable transmission, mesh network provides three type of services */
-typedef enum
-{
+typedef enum {
     MESH_TOS_DEF = 0, /**< default */
     MESH_TOS_P2P = 1, /**< best effort for P2P(point-to-point) delivery */
     MESH_TOS_E2E = 2, /**< best effort for E2E(end-to-end) delivery(not implemented yet)*/
 } mesh_tos_t;
 
 /* option type for send and receive */
-enum
-{
+enum {
     MESH_OPT_MCAST_GROUP = 7, /**< group communication */
     MESH_OPT_RECV_DS_ADDR = 8, /**< request an IP remote address */
 };
@@ -119,28 +113,24 @@ typedef void (*mesh_event_cb_t)(mesh_event_t event);
 /*******************************************************
  *                Structures
  *******************************************************/
-typedef struct
-{
+typedef struct {
     uint8_t addr[6];
 } mesh_addr_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t type; /**< option type */
     uint16_t len; /**< option length */
     uint8_t *val; /**< option value */
-}__attribute__((packed)) mesh_opt_t;
+} __attribute__((packed)) mesh_opt_t;
 
-typedef struct
-{
-    uint8_t* data; /**< data */
+typedef struct {
+    uint8_t *data; /**< data */
     uint16_t size; /**< data size */
     mesh_proto_t proto; /**< data protocol */
     mesh_tos_t tos; /**< data type of service */
 } mesh_data_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t ssid[32]; /**< SSID */
     uint8_t bssid[6]; /**< BSSID, if router is hidden, this value is mandatory */
     uint8_t password[64]; /**< password */
@@ -148,20 +138,17 @@ typedef struct
     uint8_t channel; /**< channel of router*/
 } mesh_router_t;
 
-typedef struct
-{
+typedef struct {
     mesh_event_cb_t event_cb;
     mesh_addr_t mesh_id;
     mesh_router_t router;
-    struct
-    {
+    struct {
         uint8_t password[64]; /**< mesh AP password */
         uint8_t max_connection; /**< max number of stations allowed to connect in, max 6 */
     } map;
 } mesh_cfg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t attempts;
     mesh_addr_t rc_addr;
     uint8_t reason;
@@ -235,8 +222,8 @@ esp_err_t esp_mesh_stop(void);
  *    - ESP_FAIL: failed
  *
  */
-esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
-        int flag, mesh_opt_t opt[], int opt_count);
+esp_err_t esp_mesh_send(const mesh_addr_t *to, const mesh_data_t *data,
+                        int flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a packet target to self over mesh network
@@ -253,8 +240,8 @@ esp_err_t esp_mesh_send(const mesh_addr_t* to, const mesh_data_t* data,
  *    - ESP_FAIL: failed
  *
  */
-esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
-        int* flag, mesh_opt_t opt[], int opt_count);
+esp_err_t esp_mesh_recv(mesh_addr_t *from, mesh_data_t *data, int timeout_ms,
+                        int *flag, mesh_opt_t opt[], int opt_count);
 
 /**
  * @brief     receive a packet target to an IP remote address(only apply to root)
@@ -274,9 +261,9 @@ esp_err_t esp_mesh_recv(mesh_addr_t* from, mesh_data_t* data, int timeout_ms,
  *    - ESP_FAIL: failed
  *
  */
-esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to,
-        mesh_data_t* data, int timeout_ms, int* flag, mesh_opt_t opt[],
-        int opt_count);
+esp_err_t esp_mesh_recv_toDS(mesh_addr_t *from, mesh_addr_t *to,
+                             mesh_data_t *data, int timeout_ms, int *flag, mesh_opt_t opt[],
+                             int opt_count);
 
 /**
  * @brief     set mesh network configuration
@@ -287,7 +274,7 @@ esp_err_t esp_mesh_recv_toDS(mesh_addr_t* from, mesh_addr_t* to,
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_config(const mesh_cfg_t* config);
+esp_err_t esp_mesh_set_config(const mesh_cfg_t *config);
 
 /**
  * @brief     get mesh network configuration
@@ -298,7 +285,7 @@ esp_err_t esp_mesh_set_config(const mesh_cfg_t* config);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_config(mesh_cfg_t* config);
+esp_err_t esp_mesh_get_config(mesh_cfg_t *config);
 
 /**
  * @brief     set mesh network router
@@ -309,7 +296,7 @@ esp_err_t esp_mesh_get_config(mesh_cfg_t* config);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_router(const mesh_router_t* router);
+esp_err_t esp_mesh_set_router(const mesh_router_t *router);
 
 /**
  * @brief     get mesh network router
@@ -320,7 +307,7 @@ esp_err_t esp_mesh_set_router(const mesh_router_t* router);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_router(mesh_router_t* router);
+esp_err_t esp_mesh_get_router(mesh_router_t *router);
 
 /**
  * @brief     set mesh network ID
@@ -331,7 +318,7 @@ esp_err_t esp_mesh_get_router(mesh_router_t* router);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_id(mesh_addr_t* id);
+esp_err_t esp_mesh_set_id(mesh_addr_t *id);
 
 /**
  * @brief     get mesh network ID
@@ -342,7 +329,7 @@ esp_err_t esp_mesh_set_id(mesh_addr_t* id);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_id(mesh_addr_t* id);
+esp_err_t esp_mesh_get_id(mesh_addr_t *id);
 
 /**
  * @brief     set node type over mesh network(not implemented yet)
@@ -396,7 +383,7 @@ int esp_mesh_get_max_layer(void);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_map_password(const uint8_t* pwd, int len);
+esp_err_t esp_mesh_set_map_password(const uint8_t *pwd, int len);
 
 /**
  * @brief     set mesh AP authentication mode value
@@ -481,7 +468,7 @@ int esp_mesh_get_layer(void);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_parent_bssid(mesh_addr_t* bssid);
+esp_err_t esp_mesh_get_parent_bssid(mesh_addr_t *bssid);
 
 /**
  * @brief     return if the node is root
@@ -525,8 +512,8 @@ bool esp_mesh_get_self_organized(void);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_parent(wifi_config_t* config,
-        wifi_vnd_mesh_assoc_t* mesh_ie);
+esp_err_t esp_mesh_set_parent(wifi_config_t *config,
+                              wifi_vnd_mesh_assoc_t *mesh_ie);
 
 /**
  * @brief     root waive itself
@@ -538,7 +525,7 @@ esp_err_t esp_mesh_set_parent(wifi_config_t* config,
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_waive_root(mesh_vote_t* vote, int reason);
+esp_err_t esp_mesh_waive_root(mesh_vote_t *vote, int reason);
 
 /**
  * @brief     set vote percentage threshold for approval of being a root
@@ -560,8 +547,7 @@ esp_err_t esp_mesh_set_vote_percentage(float percentage);
  */
 float esp_mesh_get_vote_percentage(void);
 
-typedef struct
-{
+typedef struct {
     int scan;
     int vote;
     int fail;
@@ -577,7 +563,7 @@ typedef struct
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_attempts(mesh_attempts_t* attempts);
+esp_err_t esp_mesh_set_attempts(mesh_attempts_t *attempts);
 
 /**
  * @brief    get attempts for mesh self-organized networking
@@ -588,7 +574,7 @@ esp_err_t esp_mesh_set_attempts(mesh_attempts_t* attempts);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_attempts(mesh_attempts_t* attempts);
+esp_err_t esp_mesh_get_attempts(mesh_attempts_t *attempts);
 
 /**
  * @brief     set mesh AP associate expired time
@@ -639,7 +625,7 @@ int esp_mesh_get_routing_table_size(void);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_routing_table(mesh_addr_t* mac, int len, int* size);
+esp_err_t esp_mesh_get_routing_table(mesh_addr_t *mac, int len, int *size);
 
 /**
  * @brief     post the toDS state to mesh network(only apply to root)
@@ -673,8 +659,7 @@ esp_err_t esp_mesh_set_rssi_threshold(int rssi);
  */
 int esp_mesh_get_rssi_threshold(void);
 
-typedef struct
-{
+typedef struct {
     int duration_ms; /* parent monitor duration */
     int cnx_rssi; /* threshold for keeping a good connection */
     int select_rssi; /* threshold for parent selection, should be a value greater than switch_rssi*/
@@ -691,7 +676,7 @@ typedef struct
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t* paras);
+esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t *paras);
 
 /**
  * @brief     get parameters for parent switch
@@ -702,10 +687,9 @@ esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t* paras);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t* paras);
+esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t *paras);
 
-typedef struct
-{
+typedef struct {
     int recv; /** queue size for esp_mesh_recv(), default:36(max:60) */
     int send; /** queue size for mesh send, default:72(max:100) */
     int toDS; /** queue size for esp_mesh_recv_toDS(), default:72(max:100) */
@@ -720,7 +704,7 @@ typedef struct
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t* qsize);
+esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t *qsize);
 
 /**
  * @brief     get queue size
@@ -731,7 +715,7 @@ esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t* qsize);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_qsize(mesh_cfg_qsize_t* qsize);
+esp_err_t esp_mesh_get_qsize(mesh_cfg_qsize_t *qsize);
 
 /**
  * @brief     return the number of upQ for a specified address
@@ -741,7 +725,7 @@ esp_err_t esp_mesh_get_qsize(mesh_cfg_qsize_t* qsize);
  *
  * @return    the number of upQ for a specified address
  */
-int esp_mesh_available_txupQ_num(mesh_addr_t* addr, uint32_t* xseqno_in);
+int esp_mesh_available_txupQ_num(mesh_addr_t *addr, uint32_t *xseqno_in);
 
 /**
  * @brief     print the number of txQ waiting
