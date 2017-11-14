@@ -149,9 +149,8 @@ typedef struct {
 } mesh_cfg_t;
 
 typedef struct {
-    uint8_t attempts;
+    int attempts;
     mesh_addr_t rc_addr;
-    uint8_t reason;
 } mesh_vote_t;
 
 /*******************************************************
@@ -519,7 +518,7 @@ esp_err_t esp_mesh_set_parent(wifi_config_t *config,
  * @brief     root waive itself
  *
  * @param     vote  vote configuration
- * @param     reason (not fully implemented yet)
+ * @param     reason (not fully implemented yet, default:0 initialized by root)
  *
  * @return
  *    - ESP_OK: succeed
