@@ -23,7 +23,7 @@
 /**
  * Application Instructions
  *   1. Setup a TCP server listening on port MESH_SERVER_PORT.
- *   (see mesh configuration details from ../../examples/mesh/mesh/main/include/mesh_config.h)
+ *   (see mesh configuration details from ../../examples/mesh/main/include/mesh_config.h)
  *
  *   2. Data format:
  *   _____________________________________________________________________________
@@ -52,17 +52,6 @@
 /*******************************************************
  *                Macros
  *******************************************************/
-#ifndef timersub
-#define timersub(a, b, result)                       \
-  do {                                               \
-    (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;    \
-    (result)->tv_usec = (a)->tv_usec - (b)->tv_usec; \
-    if ((result)->tv_usec < 0) {                     \
-      --(result)->tv_sec;                            \
-      (result)->tv_usec += 1000000;                  \
-    }                                                \
-  } while (0)
-#endif
 
 /*******************************************************
  *                Constants
@@ -116,8 +105,8 @@ static esp_err_t mesh_tcpip_disconnect_server(void);
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
-        int port)
+esp_err_t esp_mesh_tcp_client_start(const char *hostname, int hostname_len,
+                                    int port)
 {
     if (!hostname || !hostname_len || port == -1) {
         return ESP_FAIL;
@@ -158,16 +147,16 @@ static esp_err_t mesh_tcpip_task_init(void)
     bool is_failed = false;
     if (!mesh_tcpip_tx_task) {
         xTaskCreate(mesh_tcpip_tx_main, MESH_TCPIP_TX_TASK_NAME,
-                MESH_TCPIP_TX_TASK_STACK, NULL, MESH_TCPIP_TX_TASK_PRI,
-                &mesh_tcpip_tx_task);
+                    MESH_TCPIP_TX_TASK_STACK, NULL, MESH_TCPIP_TX_TASK_PRI,
+                    &mesh_tcpip_tx_task);
         if (!mesh_tcpip_tx_task) {
             is_failed = true;
         }
     }
     if (!mesh_tcpip_rx_task) {
         xTaskCreate(mesh_tcpip_rx_main, MESH_TCPIP_RX_TASK_NAME,
-                MESH_TCPIP_RX_TASK_STACK, NULL, MESH_TCPIP_RX_TASK_PRI,
-                &mesh_tcpip_rx_task);
+                    MESH_TCPIP_RX_TASK_STACK, NULL, MESH_TCPIP_RX_TASK_PRI,
+                    &mesh_tcpip_rx_task);
         if (!mesh_tcpip_rx_task) {
             is_failed = true;
         }
@@ -179,7 +168,7 @@ static esp_err_t mesh_tcpip_task_init(void)
     return ESP_OK;
 }
 
-static uint32_t str_to_ipv4(const char* arg)
+static uint32_t str_to_ipv4(const char *arg)
 {
     uint32_t address = 0;
     uint8_t num = 0;
@@ -199,7 +188,7 @@ static uint32_t str_to_ipv4(const char* arg)
     return address;
 }
 
-esp_err_t esp_mesh_hostname_lookup(const char* hostname, uint32_t* address)
+esp_err_t esp_mesh_hostname_lookup(const char *hostname, uint32_t *address)
 {
     /* Check if address is a string representation of a IPv4 address i.e. xxx.xxx.xxx.xxx */
     if (!hostname || !address) {
@@ -207,14 +196,14 @@ esp_err_t esp_mesh_hostname_lookup(const char* hostname, uint32_t* address)
     }
     *address = str_to_ipv4(hostname);
     if (*address == 0) {
-        struct hostent* hp = gethostbyname(hostname);
+        struct hostent *hp = gethostbyname(hostname);
         if (hp) {
             struct ip4_addr *ip4_addr = (struct ip4_addr *) hp->h_addr;
             char ipaddr_str[16] = {0};
             sprintf(ipaddr_str, IPSTR, IP2STR(ip4_addr));
             *address = inet_addr(ipaddr_str);
             ets_printf("%s,%d hostname:%s, ip:%s\n", __func__, __LINE__, hostname,
-                    ipaddr_str);
+                       ipaddr_str);
         }
     }
 
@@ -235,7 +224,7 @@ static esp_err_t _tcpip_connect_fail(void)
 static esp_err_t mesh_tcpip_connect_server(void)
 {
     MESH_LOGW("server state:%s\n",
-            (mesh_cnx_state == MESH_CNX_STATE_IDLE) ? "idle" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTING) ? "connecting" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTED) ? "connected" : "wrong state");
+              (mesh_cnx_state == MESH_CNX_STATE_IDLE) ? "idle" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTING) ? "connecting" : (mesh_cnx_state == MESH_CNX_STATE_CONNECTED) ? "connected" : "wrong state");
     int opt = 1;
     int keep_idle = 60;
     int keep_cnt = 3;
@@ -258,7 +247,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
      * enable keep alive option
      */
     if (setsockopt(tcp_cli_sock, SOL_SOCKET, SO_KEEPALIVE,
-            (const char *)&opt, sizeof(opt)) != 0) {
+                   (const char *)&opt, sizeof(opt)) != 0) {
         MESH_DEBUG("set sock err, keepalive\n");
         return _tcpip_connect_fail();
     }
@@ -266,7 +255,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
      * set keep alive option, keep idle time
      */
     if (setsockopt(tcp_cli_sock, IPPROTO_TCP, TCP_KEEPIDLE,
-            (const char *)&keep_idle, sizeof(keep_idle)) != 0) {
+                   (const char *)&keep_idle, sizeof(keep_idle)) != 0) {
         MESH_DEBUG("set sock err, idle\n");
         return _tcpip_connect_fail();
     }
@@ -274,7 +263,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
      * set keep alive option, keep count
      */
     if (setsockopt(tcp_cli_sock, IPPROTO_TCP, TCP_KEEPCNT,
-            (const char *)&keep_cnt, sizeof(keep_cnt)) != 0) {
+                   (const char *)&keep_cnt, sizeof(keep_cnt)) != 0) {
         MESH_DEBUG("set sock err, cnt\n");
         return _tcpip_connect_fail();
     }
@@ -282,7 +271,7 @@ static esp_err_t mesh_tcpip_connect_server(void)
      * set keep alive option, keep interval time
      */
     if (setsockopt(tcp_cli_sock, IPPROTO_TCP, TCP_KEEPINTVL,
-            (const char *)&keep_interval, sizeof(keep_interval)) != 0) {
+                   (const char *)&keep_interval, sizeof(keep_interval)) != 0) {
         MESH_DEBUG("set sock err, interval\n");
         return _tcpip_connect_fail();
     }
@@ -294,11 +283,11 @@ static esp_err_t mesh_tcpip_connect_server(void)
     server_ip = htonl(server_ip);
 
     MESH_LOGI("connect server %s, port:%d, socket:%d", server_hostname,
-            server_port, tcp_cli_sock);
+              server_port, tcp_cli_sock);
     if (connect(tcp_cli_sock, (struct sockaddr * )&sock_addr,
-            sizeof(sock_addr)) != ESP_OK) {
+                sizeof(sock_addr)) != ESP_OK) {
         MESH_LOGE("failed, server %s, port:%d, errno:%d", server_hostname,
-                server_port, errno);
+                  server_port, errno);
         ESP_ERROR_CHECK(esp_mesh_post_toDS_state(0));
         return _tcpip_connect_fail();
     } else {
@@ -340,7 +329,7 @@ static void mesh_tcpip_tx_main(void *arg)
     int send_size = 0;
     uint32_t seqno;
     data.size = TODS_DATA_SIZE;
-    data.data = (uint8_t*) malloc(TODS_DATA_SIZE);
+    data.data = (uint8_t *) malloc(TODS_DATA_SIZE);
     if (!data.data) {
         ets_printf("tcpip tx fails\n");
     }
@@ -353,15 +342,15 @@ static void mesh_tcpip_tx_main(void *arg)
         data.size = TODS_DATA_SIZE;
         gettimeofday(&toDS_recv.start, NULL);
         if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
-                        NULL, 0) == ESP_OK && data.size) {
+                               NULL, 0) == ESP_OK && data.size) {
             gettimeofday(&toDS_recv.stop, NULL);
             /* compute time taken */
             timersub(&toDS_recv.stop, &toDS_recv.start, &toDS_recv.taken);
             toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec * 1000
-                    + toDS_recv.taken.tv_usec / 1000);
+                                       + toDS_recv.taken.tv_usec / 1000);
 
             MESH_LOGW("[%u]ms from "MACSTR" len:%d, heap:%d", toDS_recv.ms,
-                    MAC2STR(from.addr), data.size, esp_get_free_heap_size());
+                      MAC2STR(from.addr), data.size, esp_get_free_heap_size());
 
         }
         continue;
@@ -396,13 +385,13 @@ static void mesh_tcpip_tx_main(void *arg)
                 MESH_DEBUG("tx exception\n");
             } else if (FD_ISSET(tcp_cli_sock, &wrset)) {
 
-                SOCK_SEND:
+SOCK_SEND:
                 /* initialize variables */
                 data.size = TODS_DATA_SIZE;
                 flag = 0;
                 gettimeofday(&toDS_recv.start, NULL);
                 if (esp_mesh_recv_toDS(&from, &to, &data, portMAX_DELAY, &flag,
-                NULL, 0) == ESP_OK && data.size) {
+                                       NULL, 0) == ESP_OK && data.size) {
                     gettimeofday(&toDS_recv.stop, NULL);
 
                     if (esp_mesh_is_server_connected() == MESH_SERVER_CONNECTED) {
@@ -410,9 +399,9 @@ static void mesh_tcpip_tx_main(void *arg)
                         {
                             int i = 0;
                             ets_printf(
-                                    "%s,%d receive from "MACSTR" to "MACSTR"[%d]:", __func__, __LINE__,
-                                    MAC2STR(from.addr), MAC2STR(to.addr),
-                                    data.size);
+                                "%s,%d receive from "MACSTR" to "MACSTR"[%d]:", __func__, __LINE__,
+                                MAC2STR(from.addr), MAC2STR(to.addr),
+                                data.size);
                             for (i = 0; i < data.size; i++) {
                                 ets_printf("%x ", data.data[i]);
                             }
@@ -426,35 +415,35 @@ static void mesh_tcpip_tx_main(void *arg)
 
                         if (send_size != data.size) {
                             MESH_LOGW("socekt send:%d, size:%d", send_size,
-                                    data.size);
+                                      data.size);
                         } else {
                             timersub(&toDS_recv.stop, &toDS_recv.start,
-                                    &toDS_recv.taken);
+                                     &toDS_recv.taken);
                             timersub(&sock_send.stop, &sock_send.start,
-                                    &sock_send.taken);
+                                     &sock_send.taken);
                             toDS_recv.ms = (uint32_t) (toDS_recv.taken.tv_sec
-                                    * 1000 + toDS_recv.taken.tv_usec / 1000);
+                                                       * 1000 + toDS_recv.taken.tv_usec / 1000);
                             sock_send.ms = (uint32_t) (sock_send.taken.tv_sec
-                                    * 1000 + sock_send.taken.tv_usec / 1000);
+                                                       * 1000 + sock_send.taken.tv_usec / 1000);
                             seqno = (data.data[25] << 24)
                                     | (data.data[24] << 16)
                                     | (data.data[23] << 8) | data.data[22];
 #if 0
                             MESH_LOGW(
-                                    "[%u/%u]ms from "MACSTR", seq:%d, len:%d, Q[%d],heap:%d",
-                                    toDS_recv.ms, sock_send.ms,
-                                    MAC2STR(from.addr), seqno, data.size,
-                                    esp_mesh_available_txupQ_num(&from, NULL),
-                                    esp_get_free_heap_size());
+                                "[%u/%u]ms from "MACSTR", seq:%d, len:%d, Q[%d],heap:%d",
+                                toDS_recv.ms, sock_send.ms,
+                                MAC2STR(from.addr), seqno, data.size,
+                                esp_mesh_available_txupQ_num(&from, NULL),
+                                esp_get_free_heap_size());
 #endif
                             goto SOCK_SEND;
                         }
 
                     } else {
                         ets_printf(
-                                "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
-                                __func__, __LINE__, tcp_cli_sock,
-                                mesh_cnx_state);
+                            "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
+                            __func__, __LINE__, tcp_cli_sock,
+                            mesh_cnx_state);
                     }
                 }
             }
@@ -475,10 +464,9 @@ static void mesh_tcpip_tx_main(void *arg)
 
 static void mesh_tcpip_rx_main(void *arg)
 {
-    typedef struct
-    {
+    typedef struct {
         uint8_t count;
-        mesh_addr_t* addr;
+        mesh_addr_t *addr;
     } mesh_ctl_t;
     mesh_ctl_t mesh_ctl;
 
@@ -494,7 +482,7 @@ static void mesh_tcpip_rx_main(void *arg)
     int ctl_data_offset = 0;
     int recv_size = 0;
     data.size = TCP_RECV_SIZE;
-    data.data = (uint8_t*) malloc(TCP_RECV_SIZE);
+    data.data = (uint8_t *) malloc(TCP_RECV_SIZE);
     if (!data.data) {
         ets_printf("tcpip rx fails\n");
         vTaskDelete(NULL);
@@ -554,8 +542,8 @@ static void mesh_tcpip_rx_main(void *arg)
                     {
                         int i = 0;
                         ets_printf(
-                                "[ROOT]receive from server[%d], address count[%d]\n",
-                                data.size, data.data[0]);
+                            "[ROOT]receive from server[%d], address count[%d]\n",
+                            data.size, data.data[0]);
                         for (i = 0; i < data.size; i++) {
                             ets_printf("%x ", data.data[i]);
                         }
@@ -565,8 +553,8 @@ static void mesh_tcpip_rx_main(void *arg)
 
                 } else {
                     ets_printf(
-                            "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
-                            __func__, __LINE__, tcp_cli_sock, mesh_cnx_state);
+                        "%s,%d TCP disconnected, tcp_cli_sock:%d, mesh_cnx_state:%d\n",
+                        __func__, __LINE__, tcp_cli_sock, mesh_cnx_state);
                     continue;
                 }
 
@@ -583,19 +571,19 @@ static void mesh_tcpip_rx_main(void *arg)
                  * ex: 1 30 ae a4 03 69 a8
                  */
                 mesh_ctl.count = data.data[0];
-                mesh_ctl.addr = (mesh_addr_t*) &data.data[1];
+                mesh_ctl.addr = (mesh_addr_t *) &data.data[1];
                 ctl_data_offset = (1 + mesh_ctl.count * sizeof(mesh_addr_t));
 
                 if (mesh_ctl.count == 1) {
                     memcpy(&to, mesh_ctl.addr, sizeof(mesh_addr_t));
                     memset(&ctl_data, 0, sizeof(mesh_data_t));
                     ctl_data.size = data.size - ctl_data_offset;
-                    ctl_data.data = (uint8_t*) malloc(ctl_data.size);
+                    ctl_data.data = (uint8_t *) malloc(ctl_data.size);
                     if (!ctl_data.data) {
                         continue;
                     }
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
-                            ctl_data.size);
+                           ctl_data.size);
                     ctl_data.proto = MESH_PROTO_BIN;
 #ifdef MESH_TCPIP_TOS_P2P
                     ctl_data.tos = MESH_TOS_P2P;
@@ -603,29 +591,29 @@ static void mesh_tcpip_rx_main(void *arg)
 #ifdef MESH_TCPIP_OPT_RECV_DS
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS,
-                            &optDS, 1);
+                                        &optDS, 1);
 #else /* MESH_TCPIP_OPT_RECV_DS*/
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, NULL,
-                            0);
+                                        0);
 #endif /* MESH_TCPIP_OPT_RECV_DS */
                     free(ctl_data.data);
                 } else {
                     /* option */
                     opt.type = MESH_OPT_MCAST_GROUP;
                     opt.len = mesh_ctl.count * sizeof(mesh_addr_t);
-                    opt.val = (uint8_t*) malloc(opt.len);
+                    opt.val = (uint8_t *) malloc(opt.len);
                     if (!opt.val) {
                         continue;
                     }
-                    memcpy((uint8_t*) opt.val, (uint8_t*) mesh_ctl.addr,
-                            opt.len);
-                    memcpy((uint8_t*) &to, mcast_addr, sizeof(mcast_addr));
+                    memcpy((uint8_t *) opt.val, (uint8_t *) mesh_ctl.addr,
+                           opt.len);
+                    memcpy((uint8_t *) &to, mcast_addr, sizeof(mcast_addr));
 
                     /* payload */
                     memset(&ctl_data, 0, sizeof(mesh_data_t));
                     ctl_data.size = data.size - ctl_data_offset;
-                    ctl_data.data = (uint8_t*) malloc(ctl_data.size);
+                    ctl_data.data = (uint8_t *) malloc(ctl_data.size);
                     if (!ctl_data.data) {
                         continue;
                     }
@@ -634,7 +622,7 @@ static void mesh_tcpip_rx_main(void *arg)
                     ctl_data.tos = MESH_TOS_P2P;
 #endif /* MESH_TCPIP_TOS_P2P */
                     memcpy(ctl_data.data, data.data + ctl_data_offset,
-                            ctl_data.size);
+                           ctl_data.size);
 
 #ifdef MESH_TCPIP_OPT_RECV_DS
                     mesh_opt_t option[2];
@@ -642,20 +630,20 @@ static void mesh_tcpip_rx_main(void *arg)
                     memcpy(&option[1], &optDS, sizeof(mesh_opt_t));
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS,
-                            option, sizeof(option) / sizeof(mesh_opt_t));
+                                        option, sizeof(option) / sizeof(mesh_opt_t));
 #else /* MESH_TCPIP_OPT_RECV_DS*/
                     /* send to mesh */
                     err = esp_mesh_send(&to, &ctl_data, MESH_DATA_FROMDS, &opt,
-                            1);
+                                        1);
 #endif /* MESH_TCPIP_OPT_RECV_DS */
                     free(ctl_data.data);
                     free(opt.val);
                 }
 #if 0
                 MESH_LOGW(
-                        "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",
-                        (int )(cur_time.tv_sec - old_time), data.size,
-                        MAC2STR(to.addr), tcp_cli_sock, err);
+                    "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",
+                    (int )(cur_time.tv_sec - old_time), data.size,
+                    MAC2STR(to.addr), tcp_cli_sock, err);
 #endif
 
                 old_time = cur_time.tv_sec;

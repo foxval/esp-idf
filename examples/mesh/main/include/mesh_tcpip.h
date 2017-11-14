@@ -27,11 +27,11 @@
  *                Function Definitions
  *******************************************************/
 
-esp_err_t esp_mesh_tcp_client_start(const char* hostname, int hostname_len,
-        int port);
+esp_err_t esp_mesh_tcp_client_start(const char *hostname, int hostname_len,
+                                    int port);
 esp_err_t esp_mesh_tcp_client_stop(void);
 
-esp_err_t esp_mesh_send_to_server(void* message, uint32_t timeout_ms);
+esp_err_t esp_mesh_send_to_server(void *message, uint32_t timeout_ms);
 
 int esp_mesh_is_server_connected(void);
 

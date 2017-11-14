@@ -18,13 +18,11 @@
 /*******************************************************
  *                Enumerations
  *******************************************************/
-enum
-{
+enum {
     BFC_SEND, BFC_ACK = 128,
 };
 
-enum BFC_CMD
-{
+enum BFC_CMD {
     BFC_CMD_PING = 1,
     BFC_CMD_RPC = 2,
     BFC_CMD_TRIGGER = 3,
@@ -34,8 +32,7 @@ enum BFC_CMD
     BFC_CMD_GET = 7,
 };
 
-enum OTA_ACTION
-{
+enum OTA_ACTION {
     BFC_OTA_START = 1,
     BFC_OTA_OK,
     BFC_AREA_OTA,
@@ -43,8 +40,7 @@ enum OTA_ACTION
     BFC_OTA_FAIL = 255,
 };
 
-enum BFC_PROTO_VALUE
-{
+enum BFC_PROTO_VALUE {
     BFC_VALUE_TOKEN = 0,
     BFC_VALUE_REBOOT_CNT = 1,
     BFC_VALUE_BSSID = 2,
@@ -82,8 +78,7 @@ enum BFC_PROTO_VALUE
  *                Structures
  *******************************************************/
 
-typedef struct
-{
+typedef struct {
     uint8_t token_id;
     uint16_t token_val;
 } bfc_token_t;
@@ -91,6 +86,6 @@ typedef struct
 /*******************************************************
  *                Function Definitions
  *******************************************************/
-void mesh_process_received_data(mesh_addr_t* from, uint8_t* buf, uint16_t len);
+void mesh_process_received_data(mesh_addr_t *from, uint8_t *buf, uint16_t len);
 
 #endif /* _MESH_CLOUD_H_ */

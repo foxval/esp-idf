@@ -20,6 +20,7 @@
 /*******************************************************
  *                Constants
  *******************************************************/
+/* RGB configuration on ESP-WROVER-KIT board */
 #define LEDC_IO_0    (0)
 #define LEDC_IO_1    (2)
 #define LEDC_IO_2    (4)
@@ -41,30 +42,32 @@ esp_err_t mesh_light_init(void)
     bool_light_inited = true;
 
     ledc_timer_config_t ledc_timer = {
-    //set timer counter bit number
-            .bit_num = LEDC_TIMER_13_BIT,
-            //set frequency of pwm
-            .freq_hz = 5000,
-            //timer mode,
-            .speed_mode = LEDC_HIGH_SPEED_MODE,
-            //timer index
-            .timer_num = LEDC_TIMER_0 };
+        //set timer counter bit number
+        .bit_num = LEDC_TIMER_13_BIT,
+        //set frequency of pwm
+        .freq_hz = 5000,
+        //timer mode,
+        .speed_mode = LEDC_HIGH_SPEED_MODE,
+        //timer index
+        .timer_num = LEDC_TIMER_0
+    };
     ledc_timer_config(&ledc_timer);
 
     ledc_channel_config_t ledc_channel = {
-    //set LEDC channel 0
-            .channel = LEDC_CHANNEL_0,
-            //set the duty for initialization.(duty range is 0 ~ ((2**bit_num)-1)
-            .duty = 100,
-            //GPIO number
-            .gpio_num = LEDC_IO_0,
-            //GPIO INTR TYPE, as an example, we enable fade_end interrupt here.
-            .intr_type = LEDC_INTR_FADE_END,
-            //set LEDC mode, from ledc_mode_t
-            .speed_mode = LEDC_HIGH_SPEED_MODE,
-            //set LEDC timer source, if different channel use one timer,
-            //the frequency and bit_num of these channels should be the same
-            .timer_sel = LEDC_TIMER_0 };
+        //set LEDC channel 0
+        .channel = LEDC_CHANNEL_0,
+        //set the duty for initialization.(duty range is 0 ~ ((2**bit_num)-1)
+        .duty = 100,
+        //GPIO number
+        .gpio_num = LEDC_IO_0,
+        //GPIO INTR TYPE, as an example, we enable fade_end interrupt here.
+        .intr_type = LEDC_INTR_FADE_END,
+        //set LEDC mode, from ledc_mode_t
+        .speed_mode = LEDC_HIGH_SPEED_MODE,
+        //set LEDC timer source, if different channel use one timer,
+        //the frequency and bit_num of these channels should be the same
+        .timer_sel = LEDC_TIMER_0
+    };
     //set the configuration
     ledc_channel_config(&ledc_channel);
 
@@ -138,7 +141,7 @@ esp_err_t mesh_gpio_set(int value)
     return ESP_OK;
 }
 
-esp_err_t mesh_gpio_get(int* value)
+esp_err_t mesh_gpio_get(int *value)
 {
     int val_0 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
 #if 0
@@ -160,7 +163,7 @@ esp_err_t mesh_light_set(int brightness)
     return ESP_FAIL;
 }
 
-esp_err_t mesh_light_get(int* brightness)
+esp_err_t mesh_light_get(int *brightness)
 {
     return ESP_FAIL;
 }

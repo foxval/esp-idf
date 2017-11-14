@@ -32,9 +32,9 @@
  *                Function Definitions
  *******************************************************/
 esp_err_t mesh_gpio_set(int value);
-esp_err_t mesh_gpio_get(int* value);
+esp_err_t mesh_gpio_get(int *value);
 esp_err_t mesh_light_init(void);
 esp_err_t mesh_light_set(int brightness);
-esp_err_t mesh_light_get(int* brightness);
+esp_err_t mesh_light_get(int *brightness);
 
 #endif /* _MESH_LIGHT_H_ */
