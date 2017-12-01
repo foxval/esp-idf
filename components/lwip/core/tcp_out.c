@@ -1080,11 +1080,16 @@ tcp_output(struct tcp_pcb *pcb)
       pcb->flags |= TF_NAGLEMEMERR;
 #if 1//def ESP_MESH_SUPPORT
       if(err == ERR_MEM){
-         attempts ++;
-         if(!(attempts%50)) {
-           ESP_LOGW("tcp_out.c", "%s,%d attempts:%d", __func__, __LINE__, attempts);
-         }
-         continue;
+        attempts ++;
+        if(!(attempts%50)) {
+          ESP_LOGW("tcp_out.c", "%s,%d attempts:%d", __func__, __LINE__, attempts);
+        }
+        if(attempts >= 100){
+          attempts = 0;
+          return err;
+        } else {
+          continue;
+        }
       }
 #endif /* ESP_MESH_SUPPORT */
       return err;
