@@ -347,7 +347,6 @@ void print_timer_dump(void *arg) {
 		esp_timer_dump(stdout);
 		continue;
 
-
 //		heap_trace_dump();
 		if (esp_mesh_is_root() && !is_voting
 				&& esp_mesh_get_routing_table_size() >= 30) {
@@ -431,17 +430,9 @@ void app_main(void) {
 			paras.duration_ms, paras.cnx_rssi, paras.select_rssi,
 
 			paras.switch_rssi, paras.backoff_rssi);
-	mesh_cfg_qsize_t qsize;
-	ESP_ERROR_CHECK(esp_mesh_get_qsize(&qsize));
-	MESH_LOGI("recvQ:%d, toDSQ:%d, sendQ:%d", qsize.recv, qsize.toDS,
-			qsize.send);
-
-	qsize.toDS = 72;
-	qsize.send = 72;
-	ESP_ERROR_CHECK(esp_mesh_set_qsize(&qsize));
-	ESP_ERROR_CHECK(esp_mesh_get_qsize(&qsize));
-	MESH_LOGI("recvQ:%d, toDSQ:%d, sendQ:%d", qsize.recv, qsize.toDS,
-			qsize.send);
+	int qsize = 72;
+	ESP_ERROR_CHECK(esp_mesh_set_xon_qsize(qsize));
+	MESH_LOGI("Q:%d", esp_mesh_get_xon_qsize());
 
 #ifdef MESH_DISABLE_SELF_ORGANIZED
 #if 1
