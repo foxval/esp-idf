@@ -42,10 +42,11 @@
 //#define MESH_P2P_FORWARD_BCAST
 //#define MESH_P2P_FORWARD_MCAST
 //#define MESH_XON_TEST
-#define MESH_ROOT_SEND_UCAST
+//#define MESH_ROOT_SEND_UCAST
 //#define MESH_ROOT_SEND_MCAST
 //#define MESH_TCPIP_OPT_RECV_DS
 //#define MESH_REPORT_TOPO
+#define MESH_XON_TO_ROOT
 
 #ifdef MESH_XON_TEST
 #undef MESH_P2P_FORWARD_TEST
@@ -74,7 +75,7 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 #define MESH_ROUTER_PASSWD         ""   /**< password */
 
 #define MESH_MAP_PASSWD            "MAP_PASSWD"      /**< map password */
-#define MESH_MAP_CONNECTIONS       (3)               /**< max connections */
+#define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
 #define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
 
 #define MESH_PARENT_CHANNEL        MESH_ROUTER_CHANNEL
