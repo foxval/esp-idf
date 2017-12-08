@@ -193,7 +193,7 @@ typedef struct {
     uint8_t leaf_assoc;
     uint16_t total_cap;
     uint16_t total_assoc;
-    uint16_t leaf_left;
+    uint16_t layer2_cap;
     uint16_t scan_ap_num;
     int8_t ap_rssi;
     int8_t router_rssi;

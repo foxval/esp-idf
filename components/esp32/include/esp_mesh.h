@@ -518,7 +518,7 @@ esp_err_t esp_mesh_set_parent(wifi_config_t *config,
  * @brief     root waive itself
  *
  * @param     vote  vote configuration
- * @param     reason (not fully implemented yet, default:0 initialized by root)
+ * @param     reason (not fully implemented yet, default:1 initialized by root)
  *
  * @return
  *    - ESP_OK: succeed
@@ -688,22 +688,16 @@ esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t *paras);
  */
 esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t *paras);
 
-typedef struct {
-    int recv; /** queue size for esp_mesh_recv(), default:36(max:60) */
-    int send; /** queue size for mesh send, default:72(max:100) */
-    int toDS; /** queue size for esp_mesh_recv_toDS(), default:72(max:100) */
-} mesh_cfg_qsize_t;
-
 /**
  * @brief     set queue size(must be called before esp_mesh_start())
  *
- * @param     qsize
+ * @param     qsize default:72(min:36, max:105)
  *
  * @return
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t *qsize);
+esp_err_t esp_mesh_set_xon_qsize(int qsize);
 
 /**
  * @brief     get queue size
@@ -714,7 +708,7 @@ esp_err_t esp_mesh_set_qsize(mesh_cfg_qsize_t *qsize);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_qsize(mesh_cfg_qsize_t *qsize);
+int esp_mesh_get_xon_qsize(void);
 
 /**
  * @brief     return the number of upQ for a specified address

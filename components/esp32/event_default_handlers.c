@@ -390,6 +390,10 @@ static esp_err_t esp_system_event_debug(system_event_t *event)
         ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_WEAK_RSSI");
         break;
     }
+    case SYSTEM_EVENT_MESH_START_VOTE: {
+        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_START_VOTE");
+        break;
+    }
     case SYSTEM_EVENT_MESH_STOP_VOTE: {
         ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_STOP_VOTE");
         break;
