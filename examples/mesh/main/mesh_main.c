@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "esp_mesh.h"
+#include "esp_mesh_internal.h"
 #include "mesh_log.h"
 #include "mesh_cloud.h"
 #include "mesh_light.h"
@@ -402,8 +403,10 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_FLASH));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_APSTA));
     ESP_ERROR_CHECK(esp_wifi_start());
+
     ESP_ERROR_CHECK(
         esp_wifi_get_mac(ESP_IF_WIFI_STA, (uint8_t * )&mesh_sta_addr));
+
 #ifdef MESH_PRE_SCAN
     while (!is_router_found) {
         ;
@@ -667,7 +670,6 @@ void esp_mesh_p2p_tx_main(void *arg)
 
         vTaskDelay(1000 / portTICK_RATE_MS);
 #else  /*MESH_ROOT_SEND_MCAST */
-
         int i;
         for (i = 0; i < route_table_size; i++) {
             err = esp_mesh_send(&route_table[i], &data, MESH_DATA_P2P, opt,
@@ -1135,7 +1137,6 @@ esp_err_t esp_mesh_print_settings(void)
     MESH_LOGI("mesh max layer:%d", esp_mesh_get_max_layer());
     MESH_LOGI("mesh map max connections:%d", esp_mesh_get_map_connections());
     MESH_LOGI("mesh map authmode:%d", esp_mesh_get_map_authmode());
-    MESH_LOGI("mesh map beacon interval:%d", esp_mesh_get_beacon_interval());
     MESH_LOGI("mesh map vote percentage:%.2f", esp_mesh_get_vote_percentage());
     MESH_LOGI("mesh map attempts scan/vote/fail/monitorIE:%d/%d/%d/%d",
               attempts.scan, attempts.vote, attempts.fail, attempts.monitor_ie);

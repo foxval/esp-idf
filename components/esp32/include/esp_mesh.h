@@ -428,27 +428,6 @@ esp_err_t esp_mesh_set_map_connections(int connections);
 int esp_mesh_get_map_connections(void);
 
 /**
- * @brief     set mesh AP beacon interval(not implemented yet)
- *
- * @param     interval  beacon interval(ms)
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_beacon_interval(int interval);
-
-/**
- * @brief     get mesh AP beacon interval
- *
- * @param     void
- *
- * @return    beacon interval(ms)
- *
- */
-int esp_mesh_get_beacon_interval(void);
-
-/**
  * @brief     get current layer value
  *
  * @param     void
@@ -546,35 +525,6 @@ esp_err_t esp_mesh_set_vote_percentage(float percentage);
  */
 float esp_mesh_get_vote_percentage(void);
 
-typedef struct {
-    int scan;
-    int vote;
-    int fail;
-    int monitor_ie;
-} mesh_attempts_t;
-
-/**
- * @brief    set attempts for mesh self-organized networking
- *
- * @param    attempts
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_attempts(mesh_attempts_t *attempts);
-
-/**
- * @brief    get attempts for mesh self-organized networking
- *
- * @param    attempts
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_get_attempts(mesh_attempts_t *attempts);
-
 /**
  * @brief     set mesh AP associate expired time
  *
@@ -637,109 +587,5 @@ esp_err_t esp_mesh_get_routing_table(mesh_addr_t *mac, int len, int *size);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_post_toDS_state(bool reachable);
-
-/**
- * @brief     set rssi threshold
- *
- * @param     rssi  rssi threshold
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_rssi_threshold(int rssi);
-
-/**
- * @brief     get rssi threshold
- *
- * @param     void
- *
- * @return    rssi threshold
- */
-int esp_mesh_get_rssi_threshold(void);
-
-typedef struct {
-    int duration_ms; /* parent monitor duration */
-    int cnx_rssi; /* threshold for keeping a good connection */
-    int select_rssi; /* threshold for parent selection, should be a value greater than switch_rssi*/
-    int switch_rssi; /* threshold for action to reselect a better parent */
-    int backoff_rssi; /* threshold for connecting to the root */
-} mesh_switch_parent_t;
-
-/**
- * @brief     set parameters for parent switch
- *
- * @param     paras
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t *paras);
-
-/**
- * @brief     get parameters for parent switch
- *
- * @param     paras
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t *paras);
-
-/**
- * @brief     set queue size(must be called before esp_mesh_start())
- *
- * @param     qsize default:72(min:36, max:105)
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_xon_qsize(int qsize);
-
-/**
- * @brief     get queue size
- *
- * @param     qsize
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-int esp_mesh_get_xon_qsize(void);
-
-/**
- * @brief     return the number of upQ for a specified address
- *
- * @param     addr
- * @param     xseqno_in
- *
- * @return    the number of upQ for a specified address
- */
-int esp_mesh_available_txupQ_num(mesh_addr_t *addr, uint32_t *xseqno_in);
-
-/**
- * @brief     print the number of txQ waiting
- *
- * @param     void
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_print_txQ_waiting(void);
-
-/**
- * @brief     print the number of rxQ waiting
- *
- * @param     void
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_print_rxQ_waiting(void);
 
 #endif /* __ESP_MESH_H__ */
