@@ -153,6 +153,20 @@ typedef struct {
     mesh_addr_t rc_addr;
 } mesh_vote_t;
 
+typedef struct {
+    int to_parent;
+    int to_parent_p2p;
+    int to_child;
+    int to_child_p2p;
+    int mgmt;
+    int broadcast;
+} mesh_tx_pending_t;
+
+typedef struct {
+    int toDS;
+    int toSelf;
+} mesh_rx_pending_t;
+
 /*******************************************************
  *                Function Definitions
  *******************************************************/
@@ -587,5 +601,27 @@ esp_err_t esp_mesh_get_routing_table(mesh_addr_t *mac, int len, int *size);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_post_toDS_state(bool reachable);
+
+/**
+ * @brief     return the number of packets pending in TX queue
+ *
+ * @param     pending
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_get_tx_pending(mesh_tx_pending_t* pending);
+
+/**
+ * @brief     return the number of packets pending in RX queue
+ *
+ * @param     pending
+ *
+ * @return
+ *    - ESP_OK: succeed
+ *    - ESP_FAIL: failed
+ */
+esp_err_t esp_mesh_get_rx_pending(mesh_rx_pending_t* pending);
 
 #endif /* __ESP_MESH_H__ */
