@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2016-2017 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include "esp_wifi.h"
 #include "esp_wifi_types.h"
 #include "esp_wifi_internal.h"
+#include "esp_mesh_internal.h"
 
 /*******************************************************
  *                Constants
@@ -77,12 +78,11 @@ typedef enum {
 } mesh_type_t;
 
 /* flags used with send and receive */
-enum {
-    MESH_DATA_ENC = (1), /**< data encrypted(not implemented yet) */
-    MESH_DATA_P2P = (1 << 1), /**< point-to-point delivery over mesh network */
-    MESH_DATA_FROMDS = (1 << 2), /**< receive from an IP remote address */
-    MESH_DATA_TODS = (1 << 3), /**< send to an IP remote address */
-};
+#define MESH_DATA_ENC         (0x01)  /**< data encrypted(not implemented yet) */
+#define MESH_DATA_P2P         (0x02)  /**< point-to-point delivery over mesh network */
+#define MESH_DATA_FROMDS      (0x04)  /**< receive from outside of the mesh network */
+#define MESH_DATA_TODS        (0x08)  /**< send to outside of the mesh network */
+#define MESH_DATA_NONBLOCK    (0x10)  /**< esp_mesh_send() non-block */
 
 /* protocol of transmission data */
 typedef enum {
@@ -92,11 +92,11 @@ typedef enum {
     MESH_PROTO_MQTT = 3, /**< mqtt protocol */
 } mesh_proto_t;
 
-/* for reliable transmission, mesh network provides three type of services */
+/* for reliable transmission on unicast packets, mesh network provides three type of services */
 typedef enum {
-    MESH_TOS_DEF = 0, /**< default */
-    MESH_TOS_P2P = 1, /**< best effort for P2P(point-to-point) delivery */
-    MESH_TOS_E2E = 2, /**< best effort for E2E(end-to-end) delivery(not implemented yet)*/
+    MESH_TOS_P2P, /**< provide P2P(point-to-point) retransmission on mesh layer, by default */
+    MESH_TOS_E2E, /**< provide E2E(end-to-end) retransmission on mesh layer (not implemented yet)*/
+    MESH_TOS_DEF, /**< no retransmission on mesh layer */
 } mesh_tos_t;
 
 /* option type for send and receive */
@@ -146,7 +146,10 @@ typedef struct {
         uint8_t password[64]; /**< mesh AP password */
         uint8_t max_connection; /**< max number of stations allowed to connect in, max 6 */
     } map;
+    mesh_crypto_config_t *crypto;
 } mesh_cfg_t;
+
+
 
 typedef struct {
     int attempts;
@@ -611,7 +614,7 @@ esp_err_t esp_mesh_post_toDS_state(bool reachable);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_tx_pending(mesh_tx_pending_t* pending);
+esp_err_t esp_mesh_get_tx_pending(mesh_tx_pending_t *pending);
 
 /**
  * @brief     return the number of packets pending in RX queue
@@ -622,6 +625,16 @@ esp_err_t esp_mesh_get_tx_pending(mesh_tx_pending_t* pending);
  *    - ESP_OK: succeed
  *    - ESP_FAIL: failed
  */
-esp_err_t esp_mesh_get_rx_pending(mesh_rx_pending_t* pending);
+esp_err_t esp_mesh_get_rx_pending(mesh_rx_pending_t *pending);
+
+/**
+ * @brief     return the number of upQ for a specified address
+ *
+ * @param     addr
+ * @param     xseqno_in
+ *
+ * @return    the number of upQ for a specified address
+ */
+int esp_mesh_available_txupQ_num(mesh_addr_t *addr, uint32_t *xseqno_in);
 
 #endif /* __ESP_MESH_H__ */

@@ -295,6 +295,16 @@ typedef struct {
     esp_crypto_mod_exp_t crypto_mod_exp;                      /**< function used to do key exchange when use TLSV1 */
 }wpa2_crypto_funcs_t;
 
+/**
+  * @brief The crypto callback function structure used when do MESH process. The
+  *        structure can be set as software crypto or the crypto optimized by ESP32
+  *        hardware.
+  */
+typedef struct{
+    esp_aes_128_encrypt_t aes_128_encrypt;          /**< function used to process message when do WPS */
+    esp_aes_128_decrypt_t aes_128_decrypt;          /**< function used to process message when do WPS */
+}mesh_crypto_funcs_t;
+
 #ifdef __cplusplus
 }
 #endif

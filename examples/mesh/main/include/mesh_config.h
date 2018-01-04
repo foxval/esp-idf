@@ -28,37 +28,38 @@
  */
 #define MESH_XON_QSIZE_DBG
 //#define MESH_DUMP
-
+#define MESH_ASSOC_ENCRYPT_ON
 /*
  * test cases
  */
 //#define MESH_PRE_SCAN
 //#define MESH_P2P_FORWARD_TEST
-#define MESH_P2P_TOS_ON
+//#define MESH_P2P_TOS_OFF
 //#define MESH_OPT_RECV_DS
 //#define MESH_DISABLE_SELF_ORGANIZED
-#define MESH_ROOT_WAIVE_ITSELF
+//#define MESH_ROOT_WAIVE_ITSELF
 //#define MESH_P2P_FORWARD_UCAST
 //#define MESH_P2P_FORWARD_BCAST
 //#define MESH_P2P_FORWARD_MCAST
 //#define MESH_XON_TEST
-//#define MESH_ROOT_SEND_UCAST
+#define MESH_ROOT_SEND_UCAST /* down stream */
 //#define MESH_ROOT_SEND_MCAST
 //#define MESH_TCPIP_OPT_RECV_DS
 //#define MESH_REPORT_TOPO
-#define MESH_XON_TO_ROOT
+//#define MESH_XON_TO_ROOT /* up stream to root */
 
 #ifdef MESH_XON_TEST
 #undef MESH_P2P_FORWARD_TEST
 #endif /* MESH_XON_TEST */
 
-#if defined(MESH_ROOT_SEND_UCAST) || defined(MESH_ROOT_SEND_MCAST) ||defined(MESH_ROOT_WAIVE_ITSELF)
+#if defined(MESH_ROOT_SEND_UCAST) || defined(MESH_ROOT_SEND_MCAST) || defined(MESH_ROOT_WAIVE_ITSELF) || defined(MESH_XON_TO_ROOT)
 #define MESH_P2P_FORWARD_TEST
-#endif /* MESH_ROOT_SEND_UCAST || MESH_ROOT_SEND_MCAST */
+#endif /* MESH_ROOT_SEND_UCAST || MESH_ROOT_SEND_MCAST || MESH_XON_TO_ROOT */
 
 #ifdef MESH_REPORT_TOPO
 #define MESH_XON_TEST
-#define MESH_OPT_RECV_DS
+#undef MESH_P2P_TOS_OFF
+//#define MESH_OPT_RECV_DS
 #define MESH_TCPIP_OPT_RECV_DS
 #endif /* MESH_REPORT_TOPO */
 
@@ -76,13 +77,13 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 
 #define MESH_MAP_PASSWD            "MAP_PASSWD"      /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
-#define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
+#define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode, WIFI_AUTH_WPA2_PSK */
 
 #define MESH_PARENT_CHANNEL        MESH_ROUTER_CHANNEL
 #define MESH_PARENT_SSID           "ESP_XXXXXX"
 #define MESH_PARENT_PASSWD         ""
 
-#define MESH_MAX_LAYER             (5)               /**< max layer */
+#define MESH_MAX_LAYER             (10)              /**< max layer */
 
 /*******************************************************
  *                Variable Definitions

@@ -31,7 +31,7 @@
  *                Constants
  *******************************************************/
 #define RX_SIZE          (1500)
-#define TX_SIZE          (1450)
+#define TX_SIZE          (1460)
 #define TX_MCAST_SIZE    (1200)
 
 /*******************************************************
@@ -312,7 +312,15 @@ static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 static esp_err_t esp_event_handler(void *ctx, system_event_t *event)
 {
     MESH_LOGE("esp_event_handler:%d", event->event_id);
-    if (event->event_id == SYSTEM_EVENT_MESH_TODS_STATE) {
+    if (event->event_id == SYSTEM_EVENT_STA_GOT_IP) {
+        MESH_LOGE("SYSTEM_EVENT_STA_GOT_IP");
+#ifndef MESH_P2P_FORWARD_TEST
+        if (esp_mesh_is_root()) {
+            esp_mesh_tcp_client_start(MESH_SERVER_HOSTNAME,
+                                      strlen(MESH_SERVER_HOSTNAME), MESH_SERVER_PORT);
+        }
+#endif /* MESH_P2P_FORWARD_TEST */
+    } else if (event->event_id == SYSTEM_EVENT_MESH_TODS_STATE) {
         mesh_toDS_reachable = 1;
     } else if (event->event_id == SYSTEM_EVENT_MESH_WEAK_RSSI) {
         MESH_LOGE("SYSTEM_EVENT_MESH_WEAK_RSSI");
@@ -485,6 +493,12 @@ void app_main(void)
         memcpy((uint8_t *) &config->mesh_id, MESH_ID, 6);
         /* mesh event callback */
         config->event_cb = &esp_mesh_event_cb;
+#ifdef MESH_ASSOC_ENCRYPT_ON
+        /* crypto */
+        mesh_crypto_config_t crypto;
+        crypto.crypto_funcs = &g_wifi_default_mesh_crypto_funcs;
+        config->crypto = &crypto;
+#endif /* MESH_ASSOC_ENCRYPT_ON */
         /* router */
         config->router.channel = MESH_ROUTER_CHANNEL;
         config->router.ssid_len = strlen(MESH_ROUTER_SSID);
@@ -563,9 +577,9 @@ void esp_mesh_p2p_tx_main(void *arg)
     data.data = tx_buf;
     data.size = sizeof(tx_buf);
     data.proto = MESH_PROTO_BIN;
-#ifdef MESH_P2P_TOS_ON
-    data.tos = MESH_TOS_P2P;
-#endif /* MESH_P2P_TOS_ON */
+#ifdef MESH_P2P_TOS_OFF
+    data.tos = MESH_TOS_DEF;
+#endif /* MESH_P2P_TOS_OFF */
 
     /*
      * unicast
@@ -618,8 +632,8 @@ void esp_mesh_p2p_tx_main(void *arg)
                       esp_mesh_is_root() ? "[ROOT]" : "[NON-ROOT]",
                       is_voting ? "[VOTING]" : "NOT-VOTING",
                       esp_mesh_get_routing_table_size());
-//          esp_mesh_print_txQ_waiting();
-//          esp_mesh_print_rxQ_waiting();
+            esp_mesh_print_txQ_waiting();
+            esp_mesh_print_rxQ_waiting();
             vTaskDelay(5000 / portTICK_RATE_MS);
             continue;
         }
@@ -895,6 +909,7 @@ void esp_mesh_comm_tx_main(void *arg)
         ets_printf("tx start fails\n");
         vTaskDelete(NULL);
     }
+    memset(data.data, 0, TX_SIZE);
     memcpy((uint8_t *) &to.addr, MESH_SERVER_IP, sizeof(MESH_SERVER_IP));
     to.addr[5] = MESH_SERVER_PORT & 0xff;
     to.addr[4] = (MESH_SERVER_PORT >> 8) & 0xff;
@@ -916,11 +931,12 @@ void esp_mesh_comm_tx_main(void *arg)
 
     data.size = TX_SIZE;
     data.proto = MESH_PROTO_BIN;
-#ifdef MESH_P2P_TOS_ON
-    data.tos = MESH_TOS_P2P;
-#endif /* MESH_P2P_TOS_ON */
-
+#ifdef MESH_P2P_TOS_OFF
+    data.tos = MESH_TOS_DEF;
+#endif /* MESH_P2P_TOS_OFF */
+    MESH_LOGW();
     is_running = true;
+    memset(data.data, 0, TX_SIZE);
     while (is_running) {
 
         while (is_running && !esp_mesh_is_toDS_reachable()) {

@@ -59,3 +59,7 @@ const wpa2_crypto_funcs_t g_wifi_default_wpa2_crypto_funcs = {
     .crypto_mod_exp = (esp_crypto_mod_exp_t)crypto_mod_exp
 };
 
+const mesh_crypto_funcs_t g_wifi_default_mesh_crypto_funcs = {
+    .aes_128_encrypt = (esp_aes_128_encrypt_t)fast_aes_128_cbc_encrypt,
+    .aes_128_decrypt = (esp_aes_128_decrypt_t)fast_aes_128_cbc_decrypt,
+};

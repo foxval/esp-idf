@@ -19,6 +19,7 @@
 #include "esp_wifi.h"
 #include "esp_wifi_types.h"
 #include "esp_wifi_internal.h"
+#include "esp_wifi_crypto_types.h"
 
 /*******************************************************
  *                Constants
@@ -33,6 +34,13 @@ typedef struct {
     int fail;
     int monitor_ie;
 } mesh_attempts_t;
+
+
+typedef struct {
+    const mesh_crypto_funcs_t *crypto_funcs;
+} mesh_crypto_config_t;
+
+extern const mesh_crypto_funcs_t g_wifi_default_mesh_crypto_funcs;
 
 /*******************************************************
  *                Function Definitions
@@ -153,16 +161,6 @@ esp_err_t esp_mesh_set_xon_qsize(int qsize);
 int esp_mesh_get_xon_qsize(void);
 
 /**
- * @brief     return the number of upQ for a specified address
- *
- * @param     addr
- * @param     xseqno_in
- *
- * @return    the number of upQ for a specified address
- */
-int esp_mesh_available_txupQ_num(mesh_addr_t *addr, uint32_t *xseqno_in);
-
-/**
  * @brief     print the number of txQ waiting
  *
  * @param     void
@@ -183,5 +181,6 @@ esp_err_t esp_mesh_print_txQ_waiting(void);
  *    - ESP_FAIL: failed
  */
 esp_err_t esp_mesh_print_rxQ_waiting(void);
+
 
 #endif /* __ESP_MESH_INTERNAL_H__ */
