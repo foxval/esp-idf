@@ -113,7 +113,7 @@ static uint32_t s_timer_us_per_overflow;
 // will not increment s_time_base_us if this flag is set.
 static bool s_mask_overflow;
 
-//The timer_overflow_happened read alarm regiter to tell if overflow happens.
+//The timer_overflow_happened read alarm register to tell if overflow happened.
 //However, there is a monent that overflow happens, and before ISR function called
 //alarm register is set to another value, then you call timer_overflow_happened, 
 //it will return false.
@@ -190,7 +190,7 @@ void IRAM_ATTR esp_timer_impl_set_alarm(uint64_t timestamp)
     uint64_t cur_count = REG_READ(FRC_TIMER_COUNT_REG(1));
     uint32_t offset = s_timer_ticks_per_us;
 
-    //If overflow is going to happen in 1us, let's wait until it happen,
+    //If overflow is going to happen in 1us, let's wait until it happens,
     //else we think it will not happen before new alarm set.
     //And we should wait current timer count less than ALARM_OVERFLOW_VAL,
     //maybe equals to 0.

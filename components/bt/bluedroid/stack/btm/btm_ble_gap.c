@@ -467,20 +467,6 @@ tBTM_STATUS BTM_BleScan(BOOLEAN start, UINT32 duration,
             /* enable resolving list */
             btm_ble_enable_resolving_list_for_platform(BTM_BLE_RL_SCAN);
 #endif
-            // if not set scan params, set defalult scan params
-            if (!p_inq->scan_params_set)
-            {
-                /* allow config of scan type */
-                p_inq->scan_type = BTM_BLE_SCAN_MODE_ACTI;
-                p_inq->scan_interval = BTM_BLE_GAP_DISC_SCAN_INT;
-                p_inq->scan_window = BTM_BLE_GAP_DISC_SCAN_WIN;
-                p_inq->sfp = BTM_BLE_DEFAULT_SFP;
-                p_inq->scan_params_set = TRUE;
-                btsnd_hcic_ble_set_scan_params(p_inq->scan_type, p_inq->scan_interval,
-                                               p_inq->scan_window,
-                                               btm_cb.ble_ctr_cb.addr_mgnt_cb.own_addr_type,
-                                               p_inq->sfp);
-            }
             p_inq->scan_duplicate_filter = BTM_BLE_DUPLICATE_DISABLE;
             status = btm_ble_start_scan();
         }
@@ -515,7 +501,7 @@ tBTM_STATUS BTM_BleScan(BOOLEAN start, UINT32 duration,
 ** Returns          status.
 **
 *******************************************************************************/
-tBTM_STATUS BTM_BleBroadcast(BOOLEAN start)
+tBTM_STATUS BTM_BleBroadcast(BOOLEAN start, tBTM_START_STOP_ADV_CMPL_CBACK  *p_stop_adv_cback)
 {
     tBTM_STATUS status = BTM_NO_RESOURCES;
     tBTM_LE_RANDOM_CB *p_addr_cb = &btm_cb.ble_ctr_cb.addr_mgnt_cb;
@@ -553,6 +539,8 @@ tBTM_STATUS BTM_BleBroadcast(BOOLEAN start)
 
         status = btm_ble_start_adv ();
     } else if (!start) {
+        //save the stop adv callback to the BTM env.
+        p_cb->p_stop_adv_cb = p_stop_adv_cback;
         status = btm_ble_stop_adv();
 #if BLE_PRIVACY_SPT == TRUE
         btm_ble_disable_resolving_list(BTM_BLE_RL_ADV, TRUE);
@@ -1166,7 +1154,7 @@ tBTM_STATUS BTM_BleSetAdvParams(UINT16 adv_int_min, UINT16 adv_int_max,
 *******************************************************************************/
 tBTM_STATUS BTM_BleSetAdvParamsStartAdv(UINT16 adv_int_min, UINT16 adv_int_max, UINT8 adv_type,
                                         tBLE_ADDR_TYPE own_bda_type, tBLE_BD_ADDR *p_dir_bda,
-                                        tBTM_BLE_ADV_CHNL_MAP chnl_map, tBTM_BLE_AFP afp)
+                                        tBTM_BLE_ADV_CHNL_MAP chnl_map, tBTM_BLE_AFP afp, tBTM_START_ADV_CMPL_CBACK *adv_cb)
 {
     tBTM_LE_RANDOM_CB *p_addr_cb = &btm_cb.ble_ctr_cb.addr_mgnt_cb;
     tBTM_BLE_INQ_CB *p_cb = &btm_cb.ble_ctr_cb.inq_var;
@@ -1196,6 +1184,7 @@ tBTM_STATUS BTM_BleSetAdvParamsStartAdv(UINT16 adv_int_min, UINT16 adv_int_max, 
     p_addr_cb->own_addr_type = own_bda_type;
     p_cb->evt_type = adv_type;
     p_cb->afp = afp;
+    p_cb->p_adv_cb = adv_cb;
 
     if (p_dir_bda) {
         memcpy(&p_cb->direct_bda, p_dir_bda, sizeof(tBLE_BD_ADDR));
@@ -3061,6 +3050,25 @@ static void btm_ble_process_adv_pkt_cont(BD_ADDR bda, UINT8 addr_type, UINT8 evt
     }
 }
 
+static void btm_ble_recover_scan_params(void)
+{
+    tBTM_BLE_INQ_CB *p_inq = &btm_cb.ble_ctr_cb.inq_var;
+
+    if (p_inq->scan_params_set) {
+        /// set back the scan params to the controller after stop the scan
+        btsnd_hcic_ble_set_scan_params(p_inq->scan_type, p_inq->scan_interval,
+                                       p_inq->scan_window,
+                                       btm_cb.ble_ctr_cb.addr_mgnt_cb.own_addr_type,
+                                       p_inq->sfp);
+    } else {
+        /// set the default value if the scan params not set yet
+        btm_update_scanner_filter_policy(SP_ADV_ALL);
+
+        btm_cb.ble_ctr_cb.wl_state &= ~BTM_BLE_WL_SCAN;
+    }
+
+}
+
 /*******************************************************************************
 **
 ** Function         btm_ble_start_scan
@@ -3074,7 +3082,8 @@ tBTM_STATUS btm_ble_start_scan(void)
 {
     tBTM_BLE_INQ_CB *p_inq = &btm_cb.ble_ctr_cb.inq_var;
     tBTM_STATUS status = BTM_CMD_STARTED;
-
+    // recoverly the scan parameters to the controller before start scan
+    btm_ble_recover_scan_params();
     /* start scan, disable duplicate filtering */
     if (!btsnd_hcic_ble_set_scan_enable (BTM_BLE_SCAN_ENABLE, p_inq->scan_duplicate_filter)) {
         status = BTM_NO_RESOURCES;
@@ -3192,7 +3201,6 @@ static void btm_ble_stop_discover(void)
 {
     tBTM_BLE_CB *p_ble_cb = & btm_cb.ble_ctr_cb;
     tBTM_CMPL_CB *p_scan_cb = p_ble_cb->p_scan_cmpl_cb;
-
     btu_stop_timer (&p_ble_cb->scan_timer_ent);
 
     p_ble_cb->scan_activity &= ~BTM_LE_DISCOVER_ACTIVE;
@@ -3206,6 +3214,8 @@ static void btm_ble_stop_discover(void)
         btm_cb.ble_ctr_cb.inq_var.state = BTM_BLE_STOP_SCAN;
         /* stop discovery now */
         btsnd_hcic_ble_set_scan_enable (BTM_BLE_SCAN_DISABLE, BTM_BLE_DUPLICATE_ENABLE);
+        // recoverly the scan parameters to the controller after stop scan
+        btm_ble_recover_scan_params();
     }
 
     if (p_scan_cb) {
@@ -3462,9 +3472,13 @@ void btm_ble_read_remote_features_complete(UINT8 *p)
                 if (p_acl_cb->link_role == HCI_ROLE_MASTER){
                     btsnd_hcic_rmt_ver_req (p_acl_cb->hci_handle);
                 }
-
                 else{
                     if (p_acl_cb->transport == BT_TRANSPORT_LE) {
+                        if (HCI_LE_DATA_LEN_EXT_SUPPORTED(p_acl_cb->peer_le_features)) {
+                            uint16_t data_length = controller_get_interface()->get_ble_default_data_packet_length();
+                            uint16_t data_txtime = controller_get_interface()->get_ble_default_data_packet_txtime();
+                            btsnd_hcic_ble_set_data_length(p_acl_cb->hci_handle, data_length, data_txtime);
+                        }
                         l2cble_notify_le_connection (p_acl_cb->remote_addr);
                     }
                 }
@@ -3488,7 +3502,14 @@ void btm_ble_read_remote_features_complete(UINT8 *p)
 void btm_ble_write_adv_enable_complete(UINT8 *p)
 {
     tBTM_BLE_INQ_CB *p_cb = &btm_cb.ble_ctr_cb.inq_var;
+    UINT8 status = *p;
 
+    // callback to the APP after receive the adv complete from the controller.
+    if (p_cb->p_adv_cb && p_cb->adv_mode == BTM_BLE_ADV_ENABLE) {
+        (*p_cb->p_adv_cb)(status);
+    } else if (p_cb->p_stop_adv_cb && p_cb->adv_mode == BTM_BLE_ADV_DISABLE) {
+        (*p_cb->p_stop_adv_cb)(status);
+    }
     /* if write adv enable/disbale not succeed */
     if (*p != HCI_SUCCESS) {
         /* toggle back the adv mode */

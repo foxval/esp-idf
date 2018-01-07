@@ -253,7 +253,7 @@ static void btc_gattc_fill_gatt_db_conversion(uint16_t count, uint16_t num, esp_
         }
         case ESP_GATT_DB_DESCRIPTOR: {
             esp_gattc_descr_elem_t *descr_result = (esp_gattc_descr_elem_t *)result;
-            for (int i = 0; i < (num - offset); i++) {
+            for (int i = 0; i < db_size; i++) {
                 descr_result->handle = db[offset + i].attribute_handle;
                 btc128_to_bta_uuid(&bta_uuid, db[offset + i].uuid.uu);
                 bta_to_btc_uuid(&descr_result->uuid, &bta_uuid);
@@ -770,6 +770,7 @@ void btc_gattc_cb_handler(btc_msg_t *msg)
         param.write.conn_id = BTC_GATT_GET_CONN_ID(write->conn_id);
         param.write.status = write->status;
         param.write.handle = write->handle;
+        param.write.offset = write->offset;
         btc_gattc_cb_to_app(ret_evt, gattc_if, &param);
         break;
     }
@@ -858,7 +859,6 @@ void btc_gattc_cb_handler(btc_msg_t *msg)
         tBTA_GATTC_CONNECT *connect = &arg->connect;
 
         gattc_if = connect->client_if;
-        param.connect.status = connect->status;
         param.connect.conn_id = BTC_GATT_GET_CONN_ID(connect->conn_id);
         memcpy(param.connect.remote_bda, connect->remote_bda, sizeof(esp_bd_addr_t));
         btc_gattc_cb_to_app(ESP_GATTC_CONNECT_EVT, gattc_if, &param);
@@ -879,7 +879,7 @@ void btc_gattc_cb_handler(btc_msg_t *msg)
         tBTA_GATTC_DISCONNECT *disconnect = &arg->disconnect;
 
         gattc_if = disconnect->client_if;
-        param.disconnect.status = disconnect->status;
+        param.disconnect.reason = disconnect->reason;
         param.disconnect.conn_id = BTC_GATT_GET_CONN_ID(disconnect->conn_id);
         memcpy(param.disconnect.remote_bda, disconnect->remote_bda, sizeof(esp_bd_addr_t));
         btc_gattc_cb_to_app(ESP_GATTC_DISCONNECT_EVT, gattc_if, &param);
@@ -916,6 +916,15 @@ void btc_gattc_cb_handler(btc_msg_t *msg)
     case BTA_GATTC_SRVC_CHG_EVT: {
         memcpy(param.srvc_chg.remote_bda, arg->remote_bda, sizeof(esp_bd_addr_t));
         btc_gattc_cb_to_app(ESP_GATTC_SRVC_CHG_EVT, ESP_GATT_IF_NONE, &param);
+        break;
+    }
+    case BTA_GATTC_QUEUE_FULL_EVT: {
+        tBTA_GATTC_QUEUE_FULL *queue_full = &arg->queue_full;
+        gattc_if = BTC_GATT_GET_GATT_IF(queue_full->conn_id);
+        param.queue_full.conn_id = BTC_GATT_GET_CONN_ID(queue_full->conn_id);
+        param.queue_full.status = arg->status;
+        param.queue_full.is_full = queue_full->is_full;
+        btc_gattc_cb_to_app(ESP_GATTC_QUEUE_FULL_EVT, gattc_if, &param);
         break;
     }
     default:

@@ -149,12 +149,23 @@ void rtc_clk_init(rtc_clk_config_t cfg);
 /**
  * @brief Get main XTAL frequency
  *
- * This is the value passed to rtc_clk_init function, or if the value was
- * RTC_XTAL_FREQ_AUTO, the detected XTAL frequency.
+ * This is the value stored in RTC register RTC_XTAL_FREQ_REG by the bootloader. As passed to
+ * rtc_clk_init function, or if the value was RTC_XTAL_FREQ_AUTO, the detected
+ * XTAL frequency.
  *
  * @return XTAL frequency, one of rtc_xtal_freq_t
  */
 rtc_xtal_freq_t rtc_clk_xtal_freq_get();
+
+/**
+ * @brief Update XTAL frequency
+ *
+ * Updates the XTAL value stored in RTC_XTAL_FREQ_REG. Usually this value is ignored
+ * after startup.
+ *
+ * @param xtal_freq New frequency value
+ */
+void rtc_clk_xtal_freq_update(rtc_xtal_freq_t xtal_freq);
 
 /**
  * @brief Enable or disable 32 kHz XTAL oscillator
@@ -562,6 +573,36 @@ typedef struct {
  * @param cfg configuration options as rtc_config_t
  */
 void rtc_init(rtc_config_t cfg);
+
+/**
+ * Structure describing vddsdio configuration
+ */
+typedef struct {
+    uint32_t force : 1;     //!< If 1, use configuration from RTC registers; if 0, use EFUSE/bootstrapping pins.
+    uint32_t enable : 1;    //!< Enable VDDSDIO regulator
+    uint32_t tieh  : 1;     //!< Select VDDSDIO voltage: 1 — 1.8V, 0 — 3.3V
+    uint32_t drefh : 2;     //!< Tuning parameter for VDDSDIO regulator
+    uint32_t drefm : 2;     //!< Tuning parameter for VDDSDIO regulator
+    uint32_t drefl : 2;     //!< Tuning parameter for VDDSDIO regulator
+} rtc_vddsdio_config_t;
+
+/**
+ * Get current VDDSDIO configuration
+ * If VDDSDIO configuration is overridden by RTC, get values from RTC
+ * Otherwise, if VDDSDIO is configured by EFUSE, get values from EFUSE
+ * Otherwise, use default values and the level of MTDI bootstrapping pin.
+ * @return currently used VDDSDIO configuration
+ */
+rtc_vddsdio_config_t rtc_vddsdio_get_config();
+
+/**
+ * Set new VDDSDIO configuration using RTC registers.
+ * If config.force == 1, this overrides configuration done using bootstrapping
+ * pins and EFUSE.
+ *
+ * @param config new VDDSDIO configuration
+ */
+void rtc_vddsdio_set_config(rtc_vddsdio_config_t config);
 
 
 #ifdef __cplusplus

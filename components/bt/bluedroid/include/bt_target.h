@@ -647,7 +647,8 @@
 
 /* 4.1/4.2 secure connections feature */
 #ifndef SC_MODE_INCLUDED
-#define SC_MODE_INCLUDED                TRUE
+// Disable AES-CCM (BT 4.1) for BT Classic to workaround controller AES issue. E0 encryption (BT 4.0) will be used.
+#define SC_MODE_INCLUDED                FALSE
 #endif
 
 /* Used for conformance testing ONLY */
@@ -681,11 +682,15 @@
 /* The maximum number of simultaneous channels that L2CAP can support. Up to 16*/
 #ifndef MAX_L2CAP_CHANNELS
 #if (CLASSIC_BT_INCLUDED == TRUE)
-#define MAX_L2CAP_CHANNELS          8
+#define MAX_L2CAP_CHANNELS          16
 #else
+#if (SMP_INCLUDED == FALSE)
 #define MAX_L2CAP_CHANNELS          MAX_ACL_CONNECTIONS  //This is used in the BLE client when start connected with the peer device
+#else
+#define MAX_L2CAP_CHANNELS          (MAX_ACL_CONNECTIONS * 2)  //This is used in the BLE client when start connected with the peer device and in SMP
+#endif   ///SMP_INCLUDED == FALSE
 #endif   ///CLASSIC_BT_INCLUDED == TRUE
-#endif
+#endif   ///MAX_L2CAP_CHANNELS
 
 /* The maximum number of simultaneous applications that can register with L2CAP. */
 #ifndef MAX_L2CAP_CLIENTS
