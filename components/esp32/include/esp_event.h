@@ -51,12 +51,6 @@ typedef enum {
     SYSTEM_EVENT_ETH_CONNECTED,            /**< ESP32 ethernet phy link up */
     SYSTEM_EVENT_ETH_DISCONNECTED,         /**< ESP32 ethernet phy link down */
     SYSTEM_EVENT_ETH_GOT_IP,               /**< ESP32 ethernet got IP from connected AP */
-    SYSTEM_EVENT_MESH_IE_CHANGE = 50,
-    SYSTEM_EVENT_MESH_AUTO_VOTE = 51,
-    SYSTEM_EVENT_MESH_TODS_STATE = 52,
-    SYSTEM_EVENT_MESH_WEAK_RSSI = 53,
-    SYSTEM_EVENT_MESH_START_VOTE,
-    SYSTEM_EVENT_MESH_STOP_VOTE,
     SYSTEM_EVENT_MAX
 } system_event_id_t;
 

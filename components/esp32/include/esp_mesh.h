@@ -149,8 +149,6 @@ typedef struct {
     mesh_crypto_config_t *crypto;
 } mesh_cfg_t;
 
-
-
 typedef struct {
     int attempts;
     mesh_addr_t rc_addr;
@@ -496,19 +494,6 @@ esp_err_t esp_mesh_set_self_organized(bool enable);
  *
  */
 bool esp_mesh_get_self_organized(void);
-
-/**
- * @brief     set a specified parent for node over mesh network(not fully implemented yet)
- *
- * @param     config  parent configuration
- * @param     mesh_ie  parent mesh ie
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_parent(wifi_config_t *config,
-                              wifi_vnd_mesh_assoc_t *mesh_ie);
 
 /**
  * @brief     root waive itself

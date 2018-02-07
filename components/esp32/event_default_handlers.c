@@ -374,30 +374,6 @@ static esp_err_t esp_system_event_debug(system_event_t *event)
         ESP_LOGD(TAG, "SYSTEM_EVENT_ETH_GOT_IP");
         break;
     }
-    case SYSTEM_EVENT_MESH_IE_CHANGE: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_IE_CHANGE");
-        break;
-    }
-    case SYSTEM_EVENT_MESH_AUTO_VOTE: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_AUTO_VOTE");
-        break;
-    }
-    case SYSTEM_EVENT_MESH_TODS_STATE: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_TODS_STATE");
-        break;
-    }
-    case SYSTEM_EVENT_MESH_WEAK_RSSI: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_WEAK_RSSI");
-        break;
-    }
-    case SYSTEM_EVENT_MESH_START_VOTE: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_START_VOTE");
-        break;
-    }
-    case SYSTEM_EVENT_MESH_STOP_VOTE: {
-        ESP_LOGD(TAG, "SYSTEM_EVENT_MESH_STOP_VOTE");
-        break;
-    }
     default: {
         ESP_LOGW(TAG, "unexpected system event %d!", event->event_id);
         break;
