@@ -894,14 +894,6 @@ static void tcpip_adapter_dhcpc_cb(struct netif *netif)
             memcpy(ip_info_old, ip_info, sizeof(tcpip_adapter_ip_info_t));
             ESP_LOGD(TAG, "if%d ip changed=%d", tcpip_if, evt.event_info.got_ip.ip_changed);
             esp_event_send(&evt);
-
-#if 1//def ESP_MESH_SUPPORT
-            extern system_event_handler_t g_mesh_event_handler;
-            if (g_mesh_event_handler) {
-                g_mesh_event_handler(&evt);
-            }
-#endif /* ESP_MESH_SUPPORT */
-
         } else {
             ESP_LOGD(TAG, "if%d ip unchanged", tcpip_if);
         }

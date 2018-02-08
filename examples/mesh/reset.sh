@@ -44,7 +44,7 @@ do
 	#echo MAC:$c
 
 	x=$[ $[ $i%4-1 ] / 2 * 800]
-	y=$[10+$i/4*800]
-	gnome-terminal  -t $i --geometry 80x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C mlog/[$i]--${c}.md
+	y=$[10+$i/4 * 800]
+	gnome-terminal  -t $i --geometry 85x20+$x+$y -x minicom -D /dev/ttyUSB$i -c on -C mlog/[$i]--${c}.md
 } &
 done

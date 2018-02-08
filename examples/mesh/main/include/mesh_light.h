@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,5 @@
 esp_err_t mesh_gpio_set(int value);
 esp_err_t mesh_gpio_get(int *value);
 esp_err_t mesh_light_init(void);
-esp_err_t mesh_light_set(int brightness);
-esp_err_t mesh_light_get(int *brightness);
 
 #endif /* _MESH_LIGHT_H_ */

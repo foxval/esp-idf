@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,55 +23,21 @@ enum {
 };
 
 enum BFC_CMD {
-    BFC_CMD_PING = 1,
-    BFC_CMD_RPC = 2,
-    BFC_CMD_TRIGGER = 3,
-    BFC_CMD_UPGRADE = 4,
-    BFC_CMD_CONFIG = 5,
-    BFC_CMD_SET = 6,
-    BFC_CMD_GET = 7,
-};
-
-enum OTA_ACTION {
-    BFC_OTA_START = 1,
-    BFC_OTA_OK,
-    BFC_AREA_OTA,
-    BFC_OTA_REBOOT,
-    BFC_OTA_FAIL = 255,
+    BFC_CMD_PING,
+    BFC_CMD_RPC,
+    BFC_CMD_CONFIG,
+    BFC_CMD_SET ,
+    BFC_CMD_GET ,
 };
 
 enum BFC_PROTO_VALUE {
-    BFC_VALUE_TOKEN = 0,
-    BFC_VALUE_REBOOT_CNT = 1,
-    BFC_VALUE_BSSID = 2,
-    BFC_VALUE_VERSION = 3,
-    BFC_VALUE_P_BSSID = 4,
-    BFC_VALUE_RSSI = 5,
-    BFC_VALUE_BRIGHTNESS = 6,
-    BFC_VALUE_FIX_BRIGHTNESS = 7,
-    BFC_VALUE_DELAY = 8, /*　0 means bright permanently */
-    BFC_VALUE_OTA = 9,
-    BFC_VALUE_OTA_ACTION = 10,
-    BFC_VALUE_MODE = 11,
-    BFC_VALUE_PING_TIME = 12, /* unit second */
-    BFC_VALUE_PUSH_TRIGGER = 13,
-
-    BFC_VALUE_REQ_TOPO = 20,
-
-    BFC_VALUE_PING_EN = 28, /* enable ping or not */
-    BFC_VALUE_WIFI,
-    BFC_VALUE_GROUP_ID,
-    BFC_VALUE_SSID,
-    BFC_VALUE_PASSWORD,
+    BFC_VALUE_TOKEN ,
+    BFC_VALUE_ADDRESS,
+    BFC_VALUE_VERSION ,
+    BFC_VALUE_PARENT ,
+    BFC_VALUE_RSSI ,
+    BFC_VALUE_BRIGHTNESS ,
     BFC_VALUE_REBOOT,
-    BFC_VALUE_STA_AP,
-    BFC_VALUE_HEAP,
-    BFC_VALUE_NODE_INFO,
-    BFC_VALUE_IP,
-    BFC_VALUE_WIFI_INFO,
-    BFC_VALUE_EXCEPTION,
-    BFC_VALUE_OTA_STATUS = 40,
-    BFC_VALUE_RESPONSE = 127,
 };
 
 /*******************************************************

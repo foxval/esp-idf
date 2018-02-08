@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -428,7 +428,7 @@ SOCK_SEND:
                             seqno = (data.data[25] << 24)
                                     | (data.data[24] << 16)
                                     | (data.data[23] << 8) | data.data[22];
-#if 0
+#if 1
                             MESH_LOGW(
                                 "[%u/%u]ms from "MACSTR", seq:%d, len:%d, Q[%d],heap:%d",
                                 toDS_recv.ms, sock_send.ms,
@@ -639,7 +639,7 @@ static void mesh_tcpip_rx_main(void *arg)
                     free(ctl_data.data);
                     free(opt.val);
                 }
-#if 0
+#if 1
                 MESH_LOGW(
                     "[%u]s receive from server len:%d to "MACSTR", socketID:%d[%d]",
                     (int )(cur_time.tv_sec - old_time), data.size,

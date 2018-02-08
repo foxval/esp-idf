@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,16 +28,13 @@
  */
 #define MESH_XON_QSIZE_DBG
 //#define MESH_DUMP
-#define MESH_ASSOC_ENCRYPT_ON
+//#define MESH_ASSOC_ENCRYPT_ON
 /*
  * test cases
  */
-//#define MESH_PRE_SCAN
 //#define MESH_P2P_FORWARD_TEST
 //#define MESH_P2P_TOS_OFF
 //#define MESH_OPT_RECV_DS
-//#define MESH_DISABLE_SELF_ORGANIZED
-//#define MESH_ROOT_WAIVE_ITSELF
 //#define MESH_P2P_FORWARD_UCAST
 //#define MESH_P2P_FORWARD_BCAST
 //#define MESH_P2P_FORWARD_MCAST
@@ -67,13 +64,13 @@
  *                Constants
  *******************************************************/
 #ifdef MESH_ROUTER_HIDDEN
-static const uint8_t MESH_ROUTER_BSSID[6] = {0x10, 0xda, 0x43, 0x83, 0xf3, 0x8d};
+static const uint8_t MESH_ROUTER_BSSID[6] = {0x74, 0xC3, 0x30, 0xF5, 0xB4, 0xF4};
 #else /* MESH_ROUTER_HIDDEN */
 static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 #endif /* MESH_ROUTER_HIDDEN */
 #define MESH_ROUTER_CHANNEL        (9)               /**< channel */
-#define MESH_ROUTER_SSID           "udp2"     /**< ssid */
-#define MESH_ROUTER_PASSWD         ""   /**< password */
+#define MESH_ROUTER_SSID           "ROUTER_SSID"     /**< ssid */
+#define MESH_ROUTER_PASSWD         "ROUTER_PASSWD"   /**< password */
 
 #define MESH_MAP_PASSWD            "MAP_PASSWD"      /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
@@ -83,7 +80,7 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 #define MESH_PARENT_SSID           "ESP_XXXXXX"
 #define MESH_PARENT_PASSWD         ""
 
-#define MESH_MAX_LAYER             (10)              /**< max layer */
+#define MESH_MAX_LAYER             (15)              /**< max layer */
 
 /*******************************************************
  *                Variable Definitions
@@ -92,7 +89,7 @@ static const uint16_t MESH_SERVER_PORT = 7000; /**< server port */
 static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 107 }; /**< server ip */
 static const char MESH_SERVER_HOSTNAME[] = "192.168.1.107"; /**< server hostname */
 
-static const uint8_t MESH_ID[6] = { 0x18, 0xfe, 0x34, 0x32, 0x12, 0x88 };
+static const uint8_t MESH_ID[6] = { 0x77, 0x77, 0x77, 0x77, 0x77, 0x77 };
 static const uint8_t MESH_P2P_FORWARD_UADDR[6] = { 0x30, 0xae, 0xa4, 0x03, 0x89,
                                                    0xa8
                                                  };

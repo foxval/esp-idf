@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,47 +93,56 @@ esp_err_t mesh_light_init(void)
 
 esp_err_t mesh_gpio_set(int value)
 {
-    if (value == RGB_LIGHT_RED) {
+    switch (value) {
+    case RGB_LIGHT_RED:
         /* Red */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
-    } else if (value == RGB_LIGHT_GREEN) {
+        break;
+    case RGB_LIGHT_GREEN:
         /* Green */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
-    } else if (value == RGB_LIGHT_BLUE) {
+        break;
+    case RGB_LIGHT_BLUE:
         /* Blue */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
-    } else if (value == RGB_LIGHT_YELLOW) {
+        break;
+    case RGB_LIGHT_YELLOW:
         /* Yellow */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
-    } else if (value == RGB_LIGHT_PINK) {
+        break;
+    case RGB_LIGHT_PINK:
         /* Pink */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
-    } else if (value == RGB_LIGHT_INIT) {
+        break;
+    case RGB_LIGHT_INIT:
         /* can't say */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
-    } else if (value == RGB_LIGHT_WARNING) {
+        break;
+    case RGB_LIGHT_WARNING:
         /* warning */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 3000);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 3000);
-    } else {
+        break;
+    default:
         /* off */
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1, 0);
         ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2, 0);
     }
+
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1);
     ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
@@ -144,26 +153,11 @@ esp_err_t mesh_gpio_set(int value)
 esp_err_t mesh_gpio_get(int *value)
 {
     int val_0 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_0);
-#if 0
-    int val_1 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_1);
-    int val_2 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_2);
-    int val_3 = ledc_get_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_3);
-#endif
     if (val_0 == 0) {
         *value = 0;
     } else {
         *value = 100;
     }
-
     return ESP_OK;
 }
 
-esp_err_t mesh_light_set(int brightness)
-{
-    return ESP_FAIL;
-}
-
-esp_err_t mesh_light_get(int *brightness)
-{
-    return ESP_FAIL;
-}

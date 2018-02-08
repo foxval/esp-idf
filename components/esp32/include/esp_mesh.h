@@ -55,19 +55,27 @@
 
 /* event represents mesh network state */
 typedef enum {
-    MESH_EVENT_NO_AP_FOUND = 1, /**< no mesh AP found */
-    MESH_EVENT_CONNECTED = 2, /**< joins the mesh network */
-    MESH_EVENT_DISCONNECTED = 3, /**< leaves the mesh network */
-    MESH_EVENT_LAYER_CHANGE = 4, /**< layer change */
-    MESH_EVENT_ROOT_GOT_IP = 5, /**< root obtains IP address */
-    MESH_EVENT_VOTE_START = 6, /**< mesh vote starts */
-    MESH_EVENT_VOTE_DONE = 7,/**< mesh vote is over */
-    MESH_EVENT_ROOT_SWITCH_REQ = 8,/**< root switch request */
-    MESH_EVENT_ROOT_SWITCH_ACK = 9,/**< root switch acknowledgment */
-    MESH_EVENT_TODS_REACHABLE = 10, /**< IP remote address is reached */
-    MESH_EVENT_TODS_UNREACHABLE = 11, /**< IP remote address is unreachable */
-    MESH_EVENT_FAIL,
-} mesh_event_t;
+    MESH_EVENT_STARTED,
+    MESH_EVENT_STOPPED,
+    MESH_EVENT_CHANNEL_SWITCH,
+    MESH_EVENT_CHILD_CONNECTED,
+    MESH_EVENT_CHILD_DISCONNECTED,
+    MESH_EVENT_ROUTING_TABLE_ADD,
+    MESH_EVENT_ROUTING_TABLE_REMOVE,
+    MESH_EVENT_PARENT_CONNECTED,
+    MESH_EVENT_PARENT_DISCONNECTED,
+    MESH_EVENT_NO_PARNET_FOUND,/**< no parent found */
+    MESH_EVENT_LAYER_CHANGE, /**< layer change */
+    MESH_EVENT_TODS_STATE,
+    MESH_EVENT_VOTE_STARTED,
+    MESH_EVENT_VOTE_STOPPED,
+    MESH_EVENT_ROOT_ADDRESS,
+    MESH_EVENT_ROOT_SWITCH_REQ, /**< root switch request */
+    MESH_EVENT_ROOT_SWITCH_ACK,/**< root switch acknowledgment */
+    MESH_EVENT_ROOT_GOT_IP,
+    MESH_EVENT_ROOT_LOST_IP,
+    MESH_EVENT_MAX,
+} mesh_event_id_t;
 
 /* node type over mesh network */
 typedef enum {
@@ -106,16 +114,76 @@ enum {
 };
 
 /*******************************************************
- *                Type Definitions
- *******************************************************/
-typedef void (*mesh_event_cb_t)(mesh_event_t event);
-
-/*******************************************************
  *                Structures
  *******************************************************/
+
 typedef struct {
     uint8_t addr[6];
 } mesh_addr_t;
+
+typedef struct {
+    uint8_t channel;
+} mesh_event_channel_switch_t;
+
+typedef struct {
+    uint8_t self_layer;
+    system_event_sta_connected_t connected;
+} mesh_event_connected_t;
+
+typedef struct {
+    int scan_times;
+} mesh_event_no_parent_found_t;
+
+typedef struct {
+    uint8_t new_layer;
+} mesh_event_layer_change_t;
+
+typedef enum {
+    MESH_TODS_UNREACHABLE, MESH_TODS_REACHABLE,
+} mesh_event_toDS_state_t;
+
+typedef struct {
+    int reason;
+    int attempts;
+    mesh_addr_t rc_addr;
+} mesh_event_vote_started_t;
+
+typedef system_event_sta_got_ip_t mesh_event_root_got_ip_t;
+
+typedef mesh_addr_t mesh_event_root_address_t;
+
+typedef system_event_sta_disconnected_t mesh_event_disconnected_t;
+
+typedef system_event_ap_staconnected_t mesh_event_child_connected_t;
+
+typedef system_event_ap_stadisconnected_t mesh_event_child_disconnected_t;
+
+typedef struct {
+    int reason;
+    mesh_addr_t rc_addr;
+} mesh_event_root_switch_req_t;
+
+typedef union {
+    mesh_event_channel_switch_t channel_switch;
+    mesh_event_child_connected_t child_connected;
+    mesh_event_child_disconnected_t child_disconnected;
+    mesh_event_connected_t connected;
+    mesh_event_disconnected_t disconnected;
+    mesh_event_no_parent_found_t no_parent;
+    mesh_event_layer_change_t layer_change;
+    mesh_event_toDS_state_t toDS_state;
+    mesh_event_vote_started_t vote_started;
+    mesh_event_root_got_ip_t got_ip;
+    mesh_event_root_address_t root_addr;
+    mesh_event_root_switch_req_t switch_req;
+} mesh_event_info_t;
+
+typedef struct {
+    mesh_event_id_t id;
+    mesh_event_info_t info;
+} mesh_event_t;
+
+typedef void (*mesh_event_cb_t)(mesh_event_t event);
 
 typedef struct {
     uint8_t type; /**< option type */
