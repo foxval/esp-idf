@@ -8,6 +8,7 @@ API Reference
    Wi-Fi <wifi/index>
    Bluetooth <bluetooth/index>
    Ethernet <ethernet/index>
+   Mesh <mesh/index>
    Peripherals <peripherals/index>
    Protocols <protocols/index>
    Storage <storage/index>

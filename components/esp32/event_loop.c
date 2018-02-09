@@ -21,6 +21,7 @@
 #include "esp_event.h"
 #include "esp_event_loop.h"
 #include "esp_task.h"
+#include "esp_mesh.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -77,10 +78,7 @@ esp_err_t esp_event_send(system_event_t *event)
         return ESP_ERR_INVALID_STATE;
     }
 
-#if 1//def ESP_MESH_SUPPORT
-#include "esp_mesh.h"
     if (event->event_id == SYSTEM_EVENT_STA_GOT_IP || event->event_id == SYSTEM_EVENT_STA_LOST_IP) {
-        extern mesh_event_cb_t g_mesh_event_cb;
         if (g_mesh_event_cb) {
             mesh_event_t mevent;
             if (event->event_id == SYSTEM_EVENT_STA_GOT_IP) {
@@ -92,8 +90,6 @@ esp_err_t esp_event_send(system_event_t *event)
             g_mesh_event_cb(mevent);
         }
     }
-#endif /* ESP_MESH_SUPPORT */
-
 
     portBASE_TYPE ret = xQueueSendToBack(s_event_queue, event, 0);
     if (ret != pdPASS) {

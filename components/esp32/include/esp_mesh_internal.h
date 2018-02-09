@@ -21,6 +21,10 @@
 #include "esp_wifi_internal.h"
 #include "esp_wifi_crypto_types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*******************************************************
  *                Constants
  *******************************************************/
@@ -29,35 +33,38 @@
  *                Structures
  *******************************************************/
 typedef struct {
-    int scan;
-    int vote;
-    int fail;
-    int monitor_ie;
+    int scan;          /**< at least scan times before being a root, default:10 */
+    int vote;          /**< max vote times in self-healing, default:10000 */
+    int fail;          /**< parent selection fail times, if the scan times reach this value,
+                            will disconnect with associated children and join self-healing. default:60 */
+    int monitor_ie;    /**< acceptable times of parent ie change before update self ie, default:3 */
 } mesh_attempts_t;
 
-
 typedef struct {
-    const mesh_crypto_funcs_t *crypto_funcs;
-} mesh_crypto_config_t;
-
-extern const mesh_crypto_funcs_t g_wifi_default_mesh_crypto_funcs;
+    int duration_ms;   /* parent weak RSSI monitor duration, if the RSSI continues to be weak during this duration_ms,
+                          will switch to a better parent */
+    int cnx_rssi;      /* RSSI threshold for keeping a good connection with parent */
+    int select_rssi;   /* RSSI threshold for parent selection, should be a value greater than switch_rssi */
+    int switch_rssi;   /* RSSI threshold for action to reselect a better parent */
+    int backoff_rssi;  /* RSSI threshold for connecting to the root */
+} mesh_switch_parent_t;
 
 /*******************************************************
  *                Function Definitions
  *******************************************************/
 /**
- * @brief     set mesh AP beacon interval(not implemented yet)
+ * @brief     set mesh softAP beacon interval
  *
  * @param     interval  beacon interval(ms)
  *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_set_beacon_interval(int interval_ms);
 
 /**
- * @brief     get mesh AP beacon interval
+ * @brief     get mesh softAP beacon interval
  *
  * @param     void
  *
@@ -72,8 +79,8 @@ esp_err_t esp_mesh_get_beacon_interval(int *interval_ms);
  * @param    attempts
  *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_set_attempts(mesh_attempts_t *attempts);
 
@@ -83,104 +90,52 @@ esp_err_t esp_mesh_set_attempts(mesh_attempts_t *attempts);
  * @param    attempts
  *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_get_attempts(mesh_attempts_t *attempts);
 
 /**
- * @brief     set rssi threshold
- *
- * @param     rssi  rssi threshold
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_rssi_threshold(int rssi);
-
-/**
- * @brief     get rssi threshold
- *
- * @param     void
- *
- * @return    rssi threshold
- */
-int esp_mesh_get_rssi_threshold(void);
-
-typedef struct {
-    int duration_ms; /* parent monitor duration */
-    int cnx_rssi; /* threshold for keeping a good connection */
-    int select_rssi; /* threshold for parent selection, should be a value greater than switch_rssi*/
-    int switch_rssi; /* threshold for action to reselect a better parent */
-    int backoff_rssi; /* threshold for connecting to the root */
-} mesh_switch_parent_t;
-
-/**
  * @brief     set parameters for parent switch
  *
- * @param     paras
+ * @param     paras  parameters for parent switch
  *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_set_switch_parent_paras(mesh_switch_parent_t *paras);
 
 /**
  * @brief     get parameters for parent switch
  *
- * @param     paras
+ * @param     paras  parameters for parent switch
  *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_get_switch_parent_paras(mesh_switch_parent_t *paras);
 
 /**
- * @brief     set queue size(must be called before esp_mesh_start())
- *
- * @param     qsize default:72(min:36, max:105)
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-esp_err_t esp_mesh_set_xon_qsize(int qsize);
-
-/**
- * @brief     get queue size
- *
- * @param     qsize
- *
- * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
- */
-int esp_mesh_get_xon_qsize(void);
-
-/**
  * @brief     print the number of txQ waiting
  *
- * @param     void
- *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_print_txQ_waiting(void);
 
 /**
  * @brief     print the number of rxQ waiting
  *
- * @param     void
- *
  * @return
- *    - ESP_OK: succeed
- *    - ESP_FAIL: failed
+ *    - ESP_OK
+ *    - ESP_FAIL
  */
 esp_err_t esp_mesh_print_rxQ_waiting(void);
 
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* __ESP_MESH_INTERNAL_H__ */

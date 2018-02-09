@@ -20,46 +20,8 @@
 /*******************************************************
  *                Macros
  *******************************************************/
-#define MESH_P2P_FORWARD_MAX_NUM   (30)
 #define MESH_ROUTE_TABLE_NUM       (50)
-
-/*
- * debug
- */
-#define MESH_XON_QSIZE_DBG
-//#define MESH_DUMP
-//#define MESH_ASSOC_ENCRYPT_ON
-/*
- * test cases
- */
-#define MESH_ONLY_NETWORKING
-//#define MESH_P2P_FORWARD_TEST
 //#define MESH_P2P_TOS_OFF
-//#define MESH_OPT_RECV_DS
-//#define MESH_P2P_FORWARD_UCAST
-//#define MESH_P2P_FORWARD_BCAST
-//#define MESH_P2P_FORWARD_MCAST
-//#define MESH_XON_TEST
-//#define MESH_ROOT_SEND_UCAST /* down stream */
-//#define MESH_ROOT_SEND_MCAST
-//#define MESH_TCPIP_OPT_RECV_DS
-//#define MESH_REPORT_TOPO
-//#define MESH_XON_TO_ROOT /* up stream to root */
-
-#ifdef MESH_XON_TEST
-#undef MESH_P2P_FORWARD_TEST
-#endif /* MESH_XON_TEST */
-
-#if defined(MESH_ROOT_SEND_UCAST) || defined(MESH_ROOT_SEND_MCAST) || defined(MESH_ROOT_WAIVE_ITSELF) || defined(MESH_XON_TO_ROOT)
-#define MESH_P2P_FORWARD_TEST
-#endif /* MESH_ROOT_SEND_UCAST || MESH_ROOT_SEND_MCAST || MESH_XON_TO_ROOT */
-
-#ifdef MESH_REPORT_TOPO
-#define MESH_XON_TEST
-#undef MESH_P2P_TOS_OFF
-//#define MESH_OPT_RECV_DS
-#define MESH_TCPIP_OPT_RECV_DS
-#endif /* MESH_REPORT_TOPO */
 
 /*******************************************************
  *                Constants
@@ -75,7 +37,7 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 
 #define MESH_MAP_PASSWD            "MAP_PASSWD"      /**< map password */
 #define MESH_MAP_CONNECTIONS       (6)               /**< max connections */
-#define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode, WIFI_AUTH_WPA2_PSK */
+#define MESH_MAP_AUTHMODE          WIFI_AUTH_OPEN    /**< authentication mode */
 
 #define MESH_PARENT_CHANNEL        MESH_ROUTER_CHANNEL
 #define MESH_PARENT_SSID           "ESP_XXXXXX"
@@ -83,31 +45,11 @@ static const uint8_t MESH_ROUTER_BSSID[6] = { 0x00, };
 
 #define MESH_MAX_LAYER             (15)              /**< max layer */
 
+
+
 /*******************************************************
  *                Variable Definitions
  *******************************************************/
-static const uint16_t MESH_SERVER_PORT = 7000; /**< server port */
-static const uint8_t MESH_SERVER_IP[4] = { 192, 168, 1, 107 }; /**< server ip */
-static const char MESH_SERVER_HOSTNAME[] = "192.168.1.107"; /**< server hostname */
-
 static const uint8_t MESH_ID[6] = { 0x77, 0x77, 0x77, 0x77, 0x77, 0x77 };
-static const uint8_t MESH_P2P_FORWARD_UADDR[6] = { 0x30, 0xae, 0xa4, 0x03, 0x89,
-                                                   0xa8
-                                                 };
-static const uint8_t MESH_P2P_FORWARD_BADDR[6] = { 0xff, 0xff, 0xff, 0xff, 0xff,
-                                                   0xff
-                                                 };
-static const uint8_t MESH_P2P_FORWARD_MADDR[6] = { 0x01, 0x00, 0x5e, 0x00, 0x00,
-                                                   0x00
-                                                 };
-static const uint8_t MESH_BCF_LIGHT_ON[6] =
-{ 0x02, 0x00, 0xbf, 0xc0, 0x06, 0x01 };
-static const uint8_t MESH_BCF_LIGHT_OFF[6] = { 0x02, 0x00, 0xbf, 0xc0, 0x06,
-                                               0x00
-                                             };
-
-static const uint8_t MESH_P2P_FORWARD_MADDR_NODE[2 * 6] = { 0x30, 0xae, 0xa4,
-                                                            0x03, 0x6a, 0x98, 0x30, 0xae, 0xa4, 0x02, 0xa8, 0x18,
-                                                          };
 
 #endif /* _MESH_CONFIG_H_ */
