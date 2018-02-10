@@ -32,6 +32,7 @@
 /*
  * test cases
  */
+#define MESH_ONLY_NETWORKING
 //#define MESH_P2P_FORWARD_TEST
 //#define MESH_P2P_TOS_OFF
 //#define MESH_OPT_RECV_DS
@@ -39,7 +40,7 @@
 //#define MESH_P2P_FORWARD_BCAST
 //#define MESH_P2P_FORWARD_MCAST
 //#define MESH_XON_TEST
-#define MESH_ROOT_SEND_UCAST /* down stream */
+//#define MESH_ROOT_SEND_UCAST /* down stream */
 //#define MESH_ROOT_SEND_MCAST
 //#define MESH_TCPIP_OPT_RECV_DS
 //#define MESH_REPORT_TOPO

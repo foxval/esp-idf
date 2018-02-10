@@ -184,12 +184,13 @@ void esp_mesh_event_handler(mesh_event_t event)
         } else {
             esp_mesh_disable_dhcp();
         }
-
+#ifndef MESH_ONLY_NETWORKING
 #ifdef MESH_P2P_FORWARD_TEST
         esp_mesh_comm_p2p_start();
 #else /* MESH_P2P_FORWARD_TEST */
         esp_mesh_comm_server_start();
 #endif /* MESH_P2P_FORWARD_TEST */
+#endif /* MESH_ONLY_NETWORKING */
         break;
 
     case MESH_EVENT_PARENT_DISCONNECTED:
@@ -459,7 +460,7 @@ void esp_mesh_p2p_tx_main(void *arg)
         }
 #endif /* MESH_ROOT_SEND_MCAST */
 
-#else /* MESH_ROOT_SEND_UCAST || MESH_ROOT_SEND_MCAST */
+#elif defined MESH_ROOT_SEND_BCAST
         esp_mesh_send(&to, &data, MESH_DATA_P2P, opt, opt ? 1 : 0);
 #endif /* MESH_ROOT_SEND_UCAST || MESH_ROOT_SEND_MCAST */
     }
@@ -659,8 +660,7 @@ void esp_mesh_comm_tx_main(void *arg)
     data.data[18] = BFC_VALUE_BRIGHTNESS;
     mesh_gpio_get((int *) &data.data[19]);
     data.data[20] = BFC_VALUE_RSSI;
-    esp_wifi_get_rssi((int *) &data.data[21]);
-    data.data[21] = 0 - data.data[21];
+    data.data[21] = -50;
 
     data.size = TX_SIZE;
     data.proto = MESH_PROTO_BIN;
@@ -671,12 +671,6 @@ void esp_mesh_comm_tx_main(void *arg)
     is_running = true;
     memset(data.data, 0, TX_SIZE);
     while (is_running) {
-
-        printf("esp_mesh_get_routing_table_size:%d\n\n",
-               esp_mesh_get_routing_table_size());
-        vTaskDelay(1000 / portTICK_RATE_MS);
-        continue;
-
         while (is_running && !esp_mesh_is_toDS_reachable()) {
             /*
              * wait for DS reachable
