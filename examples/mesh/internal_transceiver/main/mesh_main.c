@@ -75,7 +75,7 @@ void esp_mesh_p2p_tx_main(void *arg)
 
     is_running = true;
     while (is_running) {
-        /* nodes do nothing but print */
+        /* normal nodes rather than root do nothing but print */
         if (!esp_mesh_is_root()) {
             ESP_LOGI(MESH_TAG, "[layer:%d]%s%s[rtableSize:%d]", mesh_layer,
                      is_mesh_connected ? "CONNECT" : "DISCONNECT",
@@ -364,5 +364,5 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_mesh_set_config(&cfg));
     /* mesh start */
     ESP_ERROR_CHECK(esp_mesh_start());
-    ESP_LOGI(MESH_TAG, "mesh start, mheap:%d\n", esp_get_free_heap_size());
+    ESP_LOGI(MESH_TAG, "mesh starts successfully, heap:%d\n", esp_get_free_heap_size());
 }

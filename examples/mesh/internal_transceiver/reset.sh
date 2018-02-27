@@ -1,7 +1,7 @@
 #!/bin/bash
 #set -e
 
-export IDF_PATH=$(pwd)/../../../esp-idf
+export IDF_PATH=$(pwd)/../../../../esp-idf
 echo "======================"
 echo "check IDF_PATH:" $IDF_PATH
 echo "======================"

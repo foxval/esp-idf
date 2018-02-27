@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := mesh
+PROJECT_NAME := internal_transceiver
 
 include $(IDF_PATH)/make/project.mk
 
