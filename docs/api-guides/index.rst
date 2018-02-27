@@ -21,5 +21,5 @@ API Guides
    Console Component <console>
    ROM debug console <romconsole>
    WiFi Driver <wifi>
-   Mesh Network <mesh>
+   Mesh Stack <mesh>
    External SPI-connected RAM <external-ram>

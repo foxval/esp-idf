@@ -1071,33 +1071,11 @@ tcp_output(struct tcp_pcb *pcb)
     }
 #endif /* TCP_OVERSIZE_DBGCHECK */
     err = tcp_output_segment(seg, pcb);
-
-#if 1//def ESP_MESH_SUPPORT
-#include "esp_log.h"
-    static int attempts = 0;
-#endif /* ESP_MESH_SUPPORT */
     if (err != ERR_OK) {
       /* segment could not be sent, for whatever reason */
       pcb->flags |= TF_NAGLEMEMERR;
-#if 1//def ESP_MESH_SUPPORT
-      if(err == ERR_MEM){
-        attempts ++;
-        if(!(attempts%50)) {
-          ESP_LOGW("tcp_out.c", "%s,%d attempts:%d", __func__, __LINE__, attempts);
-        }
-        if(attempts >= 100){
-          attempts = 0;
-          return err;
-        } else {
-          continue;
-        }
-      }
-#endif /* ESP_MESH_SUPPORT */
       return err;
     }
-#if 1//def ESP_MESH_SUPPORT
-    attempts = 0;
-#endif /* ESP_MESH_SUPPORT */
     pcb->unsent = seg->next;
     if (pcb->state != SYN_SENT) {
       pcb->flags &= ~(TF_ACK_DELAY | TF_ACK_NOW);
