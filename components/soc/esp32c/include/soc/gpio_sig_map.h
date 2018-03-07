@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -413,6 +413,8 @@
 #define ANT_SEL5_IDX			221
 #define ANT_SEL6_IDX			222
 #define ANT_SEL7_IDX			223
+#define SIG_IN_FUNC220_IDX			220
+#define SIG_IN_FUNC221_IDX			221
 #define SIG_IN_FUNC224_IDX			224
 #define SIG_IN_FUNC225_IDX			225
 #define SIG_IN_FUNC226_IDX			226

@@ -22,7 +22,9 @@
 #include "esp_event.h"
 #include "esp_event_loop.h"
 #include "esp_task.h"
+#ifdef CONFIG_ESP_IS_ESP32
 #include "esp_eth.h"
+#endif
 #include "esp_system.h"
 
 #include "rom/ets_sys.h"
@@ -74,7 +76,10 @@ esp_err_t system_event_eth_start_handle_default(system_event_t *event)
     tcpip_adapter_ip_info_t eth_ip;
     uint8_t eth_mac[6];
 
+#ifdef CONFIG_CHIP_IS_ESP32
+    //by now, only esp32 have ethernet interface.
     esp_eth_get_mac(eth_mac);
+#endif
     tcpip_adapter_get_ip_info(TCPIP_ADAPTER_IF_ETH, &eth_ip);
     tcpip_adapter_eth_start(eth_mac, &eth_ip);
 

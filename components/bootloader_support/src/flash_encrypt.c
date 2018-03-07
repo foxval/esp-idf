@@ -135,7 +135,13 @@ static esp_err_t initialise_flash_encryption(void)
 #endif
 #ifndef CONFIG_SECURE_BOOT_ALLOW_JTAG
     ESP_LOGI(TAG, "Disable JTAG...");
+#ifdef CONFIG_CHIP_IS_ESP32
     new_wdata6 |= EFUSE_RD_DISABLE_JTAG;
+#else
+#ifdef CONFIG_CHIP_IS_ESP32C
+    new_wdata6 |= EFUSE_HARD_DISABLE_JTAG;
+#endif
+#endif
 #else
     ESP_LOGW(TAG, "Not disabling JTAG - SECURITY COMPROMISED");
 #endif

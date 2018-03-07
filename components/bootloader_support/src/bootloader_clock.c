@@ -36,11 +36,17 @@ void bootloader_clock_configure()
      * document). For rev. 0, switch to 240 instead if it was chosen in
      * menuconfig.
      */
+#ifdef CONFIG_CHIP_IS_ESP32
     uint32_t chip_ver_reg = REG_READ(EFUSE_BLK0_RDATA3_REG);
     if ((chip_ver_reg & EFUSE_RD_CHIP_VER_REV1_M) == 0 &&
             CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ == 240) {
         cpu_freq = RTC_CPU_FREQ_240M;
     }
+#else
+    if (CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ == 240) {
+        cpu_freq = RTC_CPU_FREQ_240M;
+    }
+#endif
 
     rtc_clk_config_t clk_cfg = RTC_CLK_CONFIG_DEFAULT();
     clk_cfg.xtal_freq = CONFIG_ESP32_XTAL_FREQ;

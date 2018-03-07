@@ -13,6 +13,11 @@
 // limitations under the License.
 #ifndef __TIMG_REG_H__
 #define __TIMG_REG_H__
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 
 /* The value that needs to be written to TIMG_WDT_WKEY to write-enable the wdt registers */
@@ -70,6 +75,12 @@
 #define TIMG_T0_ALARM_EN_M  (BIT(10))
 #define TIMG_T0_ALARM_EN_V  0x1
 #define TIMG_T0_ALARM_EN_S  10
+/* TIMG_T0_USE_REFTICK : R/W ;bitpos:[9] ;default: 1'd0 ; */
+/*description: */
+#define TIMG_T0_USE_REFTICK  (BIT(9))
+#define TIMG_T0_USE_REFTICK_M  (BIT(9))
+#define TIMG_T0_USE_REFTICK_V  0x1
+#define TIMG_T0_USE_REFTICK_S  9
 
 #define TIMG_T0LO_REG(i)          (REG_TIMG_BASE(i) + 0x0004)
 /* TIMG_T0_LO : RO ;bitpos:[31:0] ;default: 32'h0 ; */
@@ -180,6 +191,12 @@
 #define TIMG_T1_ALARM_EN_M  (BIT(10))
 #define TIMG_T1_ALARM_EN_V  0x1
 #define TIMG_T1_ALARM_EN_S  10
+/* TIMG_T1_USE_REFTICK : R/W ;bitpos:[9] ;default: 1'd0 ; */
+/*description: */
+#define TIMG_T1_USE_REFTICK  (BIT(9))
+#define TIMG_T1_USE_REFTICK_M  (BIT(9))
+#define TIMG_T1_USE_REFTICK_V  0x1
+#define TIMG_T1_USE_REFTICK_S  9
 
 #define TIMG_T1LO_REG(i)          (REG_TIMG_BASE(i) + 0x0028)
 /* TIMG_T1_LO : RO ;bitpos:[31:0] ;default: 32'h0 ; */
@@ -309,6 +326,18 @@
 #define TIMG_WDT_FLASHBOOT_MOD_EN_M  (BIT(14))
 #define TIMG_WDT_FLASHBOOT_MOD_EN_V  0x1
 #define TIMG_WDT_FLASHBOOT_MOD_EN_S  14
+/* TIMG_WDT_PROCPU_RESET_EN : R/W ;bitpos:[13] ;default: 1'd0 ; */
+/*description: */
+#define TIMG_WDT_PROCPU_RESET_EN  (BIT(13))
+#define TIMG_WDT_PROCPU_RESET_EN_M  (BIT(13))
+#define TIMG_WDT_PROCPU_RESET_EN_V  0x1
+#define TIMG_WDT_PROCPU_RESET_EN_S  13
+/* TIMG_WDT_APPCPU_RESET_EN : R/W ;bitpos:[12] ;default: 1'd0 ; */
+/*description: */
+#define TIMG_WDT_APPCPU_RESET_EN  (BIT(12))
+#define TIMG_WDT_APPCPU_RESET_EN_M  (BIT(12))
+#define TIMG_WDT_APPCPU_RESET_EN_V  0x1
+#define TIMG_WDT_APPCPU_RESET_EN_S  12
 
 #define TIMG_WDTCONFIG1_REG(i)          (REG_TIMG_BASE(i) + 0x004c)
 /* TIMG_WDT_CLK_PRESCALE : R/W ;bitpos:[31:16] ;default: 16'h1 ; */
@@ -467,6 +496,12 @@
 #define TIMG_LACT_RTC_ONLY_M  (BIT(7))
 #define TIMG_LACT_RTC_ONLY_V  0x1
 #define TIMG_LACT_RTC_ONLY_S  7
+/* TIMG_LACT_USE_REFTICK : R/W ;bitpos:[6] ;default: 1'd0 ; */
+/*description: */
+#define TIMG_LACT_USE_REFTICK  (BIT(6))
+#define TIMG_LACT_USE_REFTICK_M  (BIT(6))
+#define TIMG_LACT_USE_REFTICK_V  0x1
+#define TIMG_LACT_USE_REFTICK_S  6
 
 #define TIMG_LACTRTC_REG(i)          (REG_TIMG_BASE(i) + 0x0074)
 /* TIMG_LACT_RTC_STEP_LEN : R/W ;bitpos:[31:6] ;default: 26'h0 ; */
@@ -645,7 +680,7 @@
 #define TIMG_T0_INT_CLR_S  0
 
 #define TIMG_NTIMERS_DATE_REG(i)          (REG_TIMG_BASE(i) + 0x00f8)
-/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1604290 ; */
+/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1612140 ; */
 /*description: Version of this regfile*/
 #define TIMG_NTIMERS_DATE  0x0FFFFFFF
 #define TIMG_NTIMERS_DATE_M  ((TIMG_NTIMERS_DATE_V)<<(TIMG_NTIMERS_DATE_S))
@@ -660,6 +695,9 @@
 #define TIMG_CLK_EN_V  0x1
 #define TIMG_CLK_EN_S  31
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

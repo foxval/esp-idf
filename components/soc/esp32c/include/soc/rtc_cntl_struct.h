@@ -21,8 +21,8 @@ extern "C" {
 typedef volatile struct {
     union {
         struct {
-            uint32_t sw_stall_appcpu_c0:  2;             /*{reg_sw_stall_appcpu_c1[5:0]   reg_sw_stall_appcpu_c0[1:0]}  == 0x86 will stall APP CPU*/
-            uint32_t sw_stall_procpu_c0:  2;             /*{reg_sw_stall_procpu_c1[5:0]   reg_sw_stall_procpu_c0[1:0]}  == 0x86 will stall PRO CPU*/
+            uint32_t sw_stall_appcpu_c0:  2;             /*{reg_sw_stall_appcpu_c1[5:0]   reg_sw_stall_appcpu_c0[1:0]} == 0x86 will stall APP CPU*/
+            uint32_t sw_stall_procpu_c0:  2;             /*{reg_sw_stall_procpu_c1[5:0]   reg_sw_stall_procpu_c0[1:0]} == 0x86 will stall PRO CPU*/
             uint32_t sw_appcpu_rst:       1;             /*APP CPU SW reset*/
             uint32_t sw_procpu_rst:       1;             /*PRO CPU SW reset*/
             uint32_t bb_i2c_force_pd:     1;             /*BB_I2C force power down*/
@@ -58,7 +58,7 @@ typedef volatile struct {
     union {
         struct {
             uint32_t slp_val_hi:             16;         /*RTC sleep timer high 16 bits*/
-            uint32_t main_timer_alarm_en: 1;         /*timer alarm enable bit*/
+            uint32_t main_timer_alarm_en:     1;         /*timer alarm enable bit*/
             uint32_t reserved17:             15;
         };
         uint32_t val;
@@ -66,22 +66,26 @@ typedef volatile struct {
     union {
         struct {
             uint32_t reserved0:      30;
-            uint32_t valid:  1;                 /*To indicate the register is updated*/
-            uint32_t update: 1;                 /*Set 1: to update register with RTC timer*/
+            uint32_t valid:           1;                 /*To indicate the register is updated*/
+            uint32_t update:          1;                 /*Set 1: to update register with RTC timer*/
         };
         uint32_t val;
     } time_update;
     uint32_t time0;                                  /*RTC timer low 32 bits*/
     union {
         struct {
-            uint32_t time_hi:16;                     /*RTC timer high 16 bits*/
+            uint32_t time_hi:    16;                     /*RTC timer high 16 bits*/
             uint32_t reserved16: 16;
         };
         uint32_t val;
     } time1;
     union {
         struct {
-            uint32_t reserved0:             20;
+            uint32_t reserved0:             16;
+            uint32_t saradc_int_en:          1;          /*saradc interrupt enable*/
+            uint32_t tsens_int_en:           1;          /*tsens interrupt enable*/
+            uint32_t cocpu_wakeup:           1;          /*riscV cocpu wake up register*/
+            uint32_t cocpu_wakeup_force_en:  1;          /*riscV cocpu force wake up*/
             uint32_t touch_wakeup_force_en:  1;          /*touch controller force wake up*/
             uint32_t ulp_cp_wakeup_force_en: 1;          /*ULP-coprocessor force wake up*/
             uint32_t apb2rtc_bridge_sel:     1;          /*1: APB to RTC using bridge   0: APB to RTC using sync*/
@@ -89,8 +93,8 @@ typedef volatile struct {
             uint32_t ulp_cp_slp_timer_en:    1;          /*ULP-coprocessor timer enable bit*/
             uint32_t reserved25:             3;
             uint32_t sdio_active_ind:        1;          /*SDIO active indication*/
-            uint32_t slp_wakeup:             1;          /*sleep wakeup bit*/
-            uint32_t slp_reject:             1;          /*sleep reject bit*/
+            uint32_t slp_wakeup:             1;          /*leep wakeup bit*/
+            uint32_t slp_reject:             1;          /*leep reject bit*/
             uint32_t sleep_en:               1;          /*sleep enable bit*/
         };
         uint32_t val;
@@ -142,7 +146,17 @@ typedef volatile struct {
     } timer5;
     union {
         struct {
-            uint32_t reserved0:          23;
+            uint32_t reserved0:            16;
+            uint32_t dg_dcdc_wait_timer:    9;
+            uint32_t dg_dcdc_powerup_timer: 7;
+        };
+        uint32_t val;
+    } timer6;
+    union {
+        struct {
+            uint32_t reserved0:          19;
+            uint32_t pkdet_cal_force_en:  2;             /*pkdet force option*/
+            uint32_t pwdet_cal_force_en:  2;             /*pwdet force option*/
             uint32_t plla_force_pd:       1;             /*PLLA force power down*/
             uint32_t plla_force_pu:       1;             /*PLLA force power up*/
             uint32_t bbpll_cal_slp_start: 1;             /*start BBPLL calibration during sleep*/
@@ -151,7 +165,7 @@ typedef volatile struct {
             uint32_t rfrx_pbus_pu:        1;             /*1: RFRX_PBUS power up   otherwise power down*/
             uint32_t reserved29:          1;
             uint32_t ckgen_i2c_pu:        1;             /*1: CKGEN_I2C power up   otherwise power down*/
-            uint32_t pll_i2c_pu:          1;             /*1: PLL_I2C power up   otherwise power down*/
+            uint32_t pll_i2c_pu:          1;
         };
         uint32_t val;
     } ana_conf;
@@ -167,90 +181,99 @@ typedef volatile struct {
     } reset_state;
     union {
         struct {
-            uint32_t wakeup_cause:      11;              /*wakeup cause*/
-            uint32_t rtc_wakeup_ena:    11;              /*wakeup enable bitmap*/
+            uint32_t wakeup_cause:      12;              /*wakeup cause*/
+            uint32_t rtc_wakeup_ena:    12;              /*wakeup enable bitmap*/
             uint32_t gpio_wakeup_filter: 1;              /*enable filter for gpio wakeup event*/
-            uint32_t reserved23:         9;
+            uint32_t reserved25:         7;
         };
         uint32_t val;
     } wakeup_state;
     union {
         struct {
-            uint32_t slp_wakeup:     1;          /*enable sleep wakeup interrupt*/
-            uint32_t slp_reject:     1;          /*enable sleep reject interrupt*/
-            uint32_t sdio_idle:      1;          /*enable SDIO idle interrupt*/
-            uint32_t rtc_wdt:        1;          /*enable RTC WDT interrupt*/
-            uint32_t rtc_time_valid: 1;          /*enable RTC time valid interrupt*/
-            uint32_t rtc_ulp_cp:     1;          /*enable ULP-coprocessor interrupt*/
-            uint32_t rtc_touch:      1;          /*enable touch interrupt*/
-            uint32_t rtc_brown_out:  1;          /*enable brown out interrupt*/
-            uint32_t rtc_main_timer: 1;          /*enable RTC main timer interrupt*/
-            uint32_t reserved9:             23;
+            uint32_t slp_wakeup:             1;          /*enable sleep wakeup interrupt*/
+            uint32_t slp_reject:             1;          /*enable sleep reject interrupt*/
+            uint32_t sdio_idle:              1;          /*enable SDIO idle interrupt*/
+            uint32_t rtc_wdt:                1;          /*enable RTC WDT interrupt*/
+            uint32_t rtc_time_valid:         1;          /*enable RTC time valid interrupt*/
+            uint32_t rtc_ulp_cp:             1;          /*enable ULP-coprocessor interrupt*/
+            uint32_t rtc_touch:              1;          /*enable touch interrupt*/
+            uint32_t rtc_brown_out:          1;          /*enable brown out interrupt*/
+            uint32_t rtc_main_timer:         1;          /*enable RTC main timer interrupt*/
+            uint32_t rtc_saradc:             1;          /*enable saradc interrupt*/
+            uint32_t rtc_tsens:              1;          /*enable tsens interrupt*/
+            uint32_t rtc_cocpu:              1;          /*enable riscV cocpu interrupt*/
+            uint32_t reserved12:            20;
         };
         uint32_t val;
     } int_ena;
     union {
         struct {
-            uint32_t slp_wakeup:     1;          /*sleep wakeup interrupt raw*/
-            uint32_t slp_reject:     1;          /*sleep reject interrupt raw*/
-            uint32_t sdio_idle:      1;          /*SDIO idle interrupt raw*/
-            uint32_t rtc_wdt:        1;          /*RTC WDT interrupt raw*/
-            uint32_t rtc_time_valid: 1;          /*RTC time valid interrupt raw*/
-            uint32_t rtc_ulp_cp:     1;          /*ULP-coprocessor interrupt raw*/
-            uint32_t rtc_touch:      1;          /*touch interrupt raw*/
-            uint32_t rtc_brown_out:  1;          /*brown out interrupt raw*/
-            uint32_t rtc_main_timer: 1;          /*RTC main timer interrupt raw*/
-            uint32_t reserved9:             23;
+            uint32_t slp_wakeup:             1;          /*sleep wakeup interrupt raw*/
+            uint32_t slp_reject:             1;          /*sleep reject interrupt raw*/
+            uint32_t sdio_idle:              1;          /*SDIO idle interrupt raw*/
+            uint32_t rtc_wdt:                1;          /*RTC WDT interrupt raw*/
+            uint32_t rtc_time_valid:         1;          /*RTC time valid interrupt raw*/
+            uint32_t rtc_ulp_cp:             1;          /*ULP-coprocessor interrupt raw*/
+            uint32_t rtc_touch:              1;          /*touch interrupt raw*/
+            uint32_t rtc_brown_out:          1;          /*brown out interrupt raw*/
+            uint32_t rtc_main_timer:         1;          /*RTC main timer interrupt raw*/
+            uint32_t rtc_saradc:             1;          /*saradc interrupt raw*/
+            uint32_t rtc_tsens:              1;          /*tsens interrupt raw*/
+            uint32_t rtc_cocpu:              1;          /*riscV cocpu interrupt raw*/
+            uint32_t reserved12:            20;
         };
         uint32_t val;
     } int_raw;
     union {
         struct {
-            uint32_t slp_wakeup:     1;           /*sleep wakeup interrupt state*/
-            uint32_t slp_reject:     1;           /*sleep reject interrupt state*/
-            uint32_t sdio_idle:      1;           /*SDIO idle interrupt state*/
-            uint32_t rtc_wdt:        1;           /*RTC WDT interrupt state*/
-            uint32_t rtc_time_valid: 1;           /*RTC time valid interrupt state*/
-            uint32_t rtc_sar:        1;           /*ULP-coprocessor interrupt state*/
-            uint32_t rtc_touch:      1;           /*touch interrupt state*/
-            uint32_t rtc_brown_out:  1;           /*brown out interrupt state*/
-            uint32_t rtc_main_timer: 1;           /*RTC main timer interrupt state*/
-            uint32_t reserved9:            23;
+            uint32_t slp_wakeup:            1;           /*sleep wakeup interrupt state*/
+            uint32_t slp_reject:            1;           /*sleep reject interrupt state*/
+            uint32_t sdio_idle:             1;           /*SDIO idle interrupt state*/
+            uint32_t rtc_wdt:               1;           /*RTC WDT interrupt state*/
+            uint32_t rtc_time_valid:        1;           /*RTC time valid interrupt state*/
+            uint32_t rtc_ulp_cp:            1;           /*ULP-coprocessor interrupt state*/
+            uint32_t rtc_touch:             1;           /*touch interrupt state*/
+            uint32_t rtc_brown_out:         1;           /*brown out interrupt state*/
+            uint32_t rtc_main_timer:        1;           /*RTC main timer interrupt state*/
+            uint32_t rtc_saradc:            1;           /*saradc interrupt state*/
+            uint32_t rtc_tsens:             1;           /*tsens interrupt state*/
+            uint32_t rtc_cocpu:             1;           /*riscV cocpu interrupt state*/
+            uint32_t reserved12:           20;
         };
         uint32_t val;
     } int_st;
     union {
         struct {
-            uint32_t slp_wakeup:     1;          /*Clear sleep wakeup interrupt state*/
-            uint32_t slp_reject:     1;          /*Clear sleep reject interrupt state*/
-            uint32_t sdio_idle:      1;          /*Clear SDIO idle interrupt state*/
-            uint32_t rtc_wdt:        1;          /*Clear RTC WDT interrupt state*/
-            uint32_t rtc_time_valid: 1;          /*Clear RTC time valid interrupt state*/
-            uint32_t rtc_sar:        1;          /*Clear ULP-coprocessor interrupt state*/
-            uint32_t rtc_touch:      1;          /*Clear touch interrupt state*/
-            uint32_t rtc_brown_out:  1;          /*Clear brown out interrupt state*/
-            uint32_t rtc_main_timer: 1;          /*Clear RTC main timer interrupt state*/
-            uint32_t reserved9:             23;
+            uint32_t slp_wakeup:             1;          /*Clear sleep wakeup interrupt state*/
+            uint32_t slp_reject:             1;          /*Clear sleep reject interrupt state*/
+            uint32_t sdio_idle:              1;          /*Clear SDIO idle interrupt state*/
+            uint32_t rtc_wdt:                1;          /*Clear RTC WDT interrupt state*/
+            uint32_t rtc_time_valid:         1;          /*Clear RTC time valid interrupt state*/
+            uint32_t rtc_ulp_cp:             1;          /*Clear ULP-coprocessor interrupt state*/
+            uint32_t rtc_touch:              1;          /*Clear touch interrupt state*/
+            uint32_t rtc_brown_out:          1;          /*Clear brown out interrupt state*/
+            uint32_t rtc_main_timer:         1;          /*Clear RTC main timer interrupt state*/
+            uint32_t rtc_saradc:             1;          /*Clear saradc interrupt state*/
+            uint32_t rtc_tsens:              1;          /*Clear tsens interrupt state*/
+            uint32_t rtc_cocpu:              1;          /*Clear riscV cocpu interrupt state*/
+            uint32_t reserved12:            20;
         };
         uint32_t val;
     } int_clr;
-    uint32_t rtc_store0;                                 /*32-bit general purpose retention register*/
-    uint32_t rtc_store1;                                 /*32-bit general purpose retention register*/
-    uint32_t rtc_store2;                                 /*32-bit general purpose retention register*/
-    uint32_t rtc_store3;                                 /*32-bit general purpose retention register*/
+    uint32_t store[4];                                 /**/
     union {
         struct {
             uint32_t reserved0:     30;
-            uint32_t ctr_lv: 1;                  /*0: power down XTAL at high level  1: power down XTAL at low level*/
-            uint32_t ctr_en: 1;                  /*enable control XTAL by external pads*/
+            uint32_t ctr_lv:         1;                  /*0: power down XTAL at high level  1: power down XTAL at low level*/
+            uint32_t ctr_en:         1;
         };
         uint32_t val;
     } ext_xtl_conf;
     union {
         struct {
             uint32_t reserved0:     30;
-            uint32_t wakeup0_lv: 1;                  /*0: external wakeup at low level  1: external wakeup at high level*/
-            uint32_t wakeup1_lv: 1;                  /*0: external wakeup at low level  1: external wakeup at high level*/
+            uint32_t wakeup0_lv:     1;                  /*0: external wakeup at low level  1: external wakeup at high level*/
+            uint32_t wakeup1_lv:     1;
         };
         uint32_t val;
     } ext_wakeup_conf;
@@ -261,15 +284,15 @@ typedef volatile struct {
             uint32_t sdio_reject_en:      1;             /*enable SDIO reject*/
             uint32_t light_slp_reject_en: 1;             /*enable reject for light sleep*/
             uint32_t deep_slp_reject_en:  1;             /*enable reject for deep sleep*/
-            uint32_t reject_cause:        4;             /*sleep reject cause*/
+            uint32_t reject_cause:        4;
         };
         uint32_t val;
     } slp_reject_conf;
     union {
         struct {
             uint32_t reserved0:        29;
-            uint32_t cpusel_conf:   1;               /*CPU sel option*/
-            uint32_t cpuperiod_sel: 2;               /*CPU period sel*/
+            uint32_t cpusel_conf:       1;               /*CPU sel option*/
+            uint32_t cpuperiod_sel:     2;
         };
         uint32_t val;
     } cpu_period_conf;
@@ -282,14 +305,15 @@ typedef volatile struct {
     } sdio_act_conf;
     union {
         struct {
-            uint32_t reserved0:           4;
+            uint32_t reserved0:           3;
+            uint32_t ck8m_div_sel_vld:    1;             /*used to sync reg_ck8m_div_sel bus. Clear vld before set reg_ck8m_div_sel  then set vld to actually switch the clk*/
             uint32_t ck8m_div:            2;             /*CK8M_D256_OUT divider. 00: div128  01: div256  10: div512  11: div1024.*/
             uint32_t enb_ck8m:            1;             /*disable CK8M and CK8M_D256_OUT*/
             uint32_t enb_ck8m_div:        1;             /*1: CK8M_D256_OUT is actually CK8M  0: CK8M_D256_OUT is CK8M divided by 256*/
             uint32_t dig_xtal32k_en:      1;             /*enable CK_XTAL_32K for digital core (no relationship with RTC core)*/
             uint32_t dig_clk8m_d256_en:   1;             /*enable CK8M_D256_OUT for digital core (no relationship with RTC core)*/
             uint32_t dig_clk8m_en:        1;             /*enable CK8M for digital core (no relationship with RTC core)*/
-            uint32_t ck8m_dfreq_force:    1;
+            uint32_t reserved11:          1;
             uint32_t ck8m_div_sel:        3;             /*divider = reg_ck8m_div_sel + 1*/
             uint32_t xtal_force_nogating: 1;             /*XTAL force no gating during sleep*/
             uint32_t ck8m_force_nogating: 1;             /*CK8M force no gating during sleep*/
@@ -298,10 +322,23 @@ typedef volatile struct {
             uint32_t ck8m_force_pu:       1;             /*CK8M force power up*/
             uint32_t soc_clk_sel:         2;             /*SOC clock sel. 0: XTAL  1: PLL  2: CK8M  3: APLL*/
             uint32_t fast_clk_rtc_sel:    1;             /*fast_clk_rtc sel. 0: XTAL div 4  1: CK8M*/
-            uint32_t ana_clk_rtc_sel:     2;             /*slow_clk_rtc sel. 0: SLOW_CK  1: CK_XTAL_32K  2: CK8M_D256_OUT*/
+            uint32_t ana_clk_rtc_sel:     2;
         };
         uint32_t val;
     } clk_conf;
+    union {
+        struct {
+            uint32_t reserved0:           15;
+            uint32_t dbias_xtal_32k:       2;            /*DBIAS_XTAL_32K*/
+            uint32_t dres_xtal_32k:        2;            /*DRES_XTAL_32K*/
+            uint32_t xpd_xtal_32k:         1;            /*XPD_XTAL_32K*/
+            uint32_t dac_xtal_32k:         2;            /*DAC_XTAL_32K*/
+            uint32_t rtc_xtal32k_gpio_sel: 1;            /*XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
+            uint32_t rtc_ana_clk_div_vld:  1;            /*used to sync div bus. clear vld before set reg_rtc_ana_clk_div  then set vld to actually switch the clk*/
+            uint32_t rtc_ana_clk_div:      8;
+        };
+        uint32_t val;
+    } slow_clk_conf;
     union {
         struct {
             uint32_t reserved0:   21;
@@ -312,7 +349,7 @@ typedef volatile struct {
             uint32_t drefl_sdio:   2;                    /*SW option for DREFL_SDIO. Only active when reg_sdio_force = 1*/
             uint32_t drefm_sdio:   2;                    /*SW option for DREFM_SDIO. Only active when reg_sdio_force = 1*/
             uint32_t drefh_sdio:   2;                    /*SW option for DREFH_SDIO. Only active when reg_sdio_force = 1*/
-            uint32_t xpd_sdio:     1;                    /*SW option for XPD_SDIO_REG. Only active when reg_sdio_force = 1*/
+            uint32_t xpd_sdio:     1;
         };
         uint32_t val;
     } sdio_conf;
@@ -325,7 +362,7 @@ typedef volatile struct {
             uint32_t dec_heartbeat_period:  1;           /*DEC_HEARTBEAT_PERIOD*/
             uint32_t inc_heartbeat_period:  1;           /*INC_HEARTBEAT_PERIOD*/
             uint32_t dec_heartbeat_width:   1;           /*DEC_HEARTBEAT_WIDTH*/
-            uint32_t rst_bias_i2c:          1;           /*RST_BIAS_I2C*/
+            uint32_t rst_bias_i2c:          1;
         };
         uint32_t val;
     } bias_conf;
@@ -341,34 +378,41 @@ typedef volatile struct {
             uint32_t rtc_dboost_force_pd: 1;             /*RTC_DBOOST force power down*/
             uint32_t rtc_dboost_force_pu: 1;             /*RTC_DBOOST force power up*/
             uint32_t rtc_force_pd:        1;             /*RTC_REG force power down (for RTC_REG power down means decrease the voltage to 0.8v or lower )*/
-            uint32_t rtc_force_pu:        1;             /*RTC_REG force power up*/
+            uint32_t rtc_force_pu:        1;
         };
         uint32_t val;
     } rtc;
     union {
         struct {
-            uint32_t fastmem_force_noiso: 1;         /*Fast RTC memory force no ISO*/
-            uint32_t fastmem_force_iso:   1;         /*Fast RTC memory force ISO*/
-            uint32_t slowmem_force_noiso: 1;         /*RTC memory force no ISO*/
-            uint32_t slowmem_force_iso:   1;         /*RTC memory force ISO*/
+            uint32_t fastmem_force_noiso:     1;         /*Fast RTC memory force no ISO*/
+            uint32_t fastmem_force_iso:       1;         /*Fast RTC memory force ISO*/
+            uint32_t slowmem_force_noiso:     1;         /*RTC memory force no ISO*/
+            uint32_t slowmem_force_iso:       1;         /*RTC memory force ISO*/
             uint32_t rtc_force_iso:           1;         /*rtc_peri force ISO*/
-            uint32_t force_noiso:         1;         /*rtc_peri force no ISO*/
-            uint32_t fastmem_folw_cpu:    1;         /*1: Fast RTC memory PD following CPU  0: fast RTC memory PD following RTC state machine*/
-            uint32_t fastmem_force_lpd:   1;         /*Fast RTC memory force PD*/
-            uint32_t fastmem_force_lpu:   1;         /*Fast RTC memory force no PD*/
-            uint32_t slowmem_folw_cpu:    1;         /*1: RTC memory  PD following CPU  0: RTC memory PD following RTC state machine*/
-            uint32_t slowmem_force_lpd:   1;         /*RTC memory force PD*/
-            uint32_t slowmem_force_lpu:   1;         /*RTC memory force no PD*/
-            uint32_t fastmem_force_pd:    1;         /*Fast RTC memory force power down*/
-            uint32_t fastmem_force_pu:    1;         /*Fast RTC memory force power up*/
-            uint32_t fastmem_pd_en:       1;         /*enable power down fast RTC memory in sleep*/
-            uint32_t slowmem_force_pd:    1;         /*RTC memory force power down*/
-            uint32_t slowmem_force_pu:    1;         /*RTC memory force power up*/
-            uint32_t slowmem_pd_en:       1;         /*enable power down RTC memory in sleep*/
-            uint32_t pwc_force_pd:        1;         /*rtc_peri force power down*/
-            uint32_t pwc_force_pu:        1;         /*rtc_peri force power up*/
-            uint32_t pd_en:               1;         /*enable power down rtc_peri in sleep*/
-            uint32_t reserved21:             11;
+            uint32_t rtc_force_noiso:         1;         /*rtc_peri force no ISO*/
+            uint32_t fastmem_folw_cpu:        1;         /*1: Fast RTC memory PD following CPU  0: fast RTC memory PD following RTC state machine*/
+            uint32_t fastmem_force_lpd:       1;         /*Fast RTC memory force PD*/
+            uint32_t fastmem_force_lpu:       1;         /*Fast RTC memory force no PD*/
+            uint32_t slowmem_folw_cpu:        1;         /*1: RTC memory  PD following CPU  0: RTC memory PD following RTC state machine*/
+            uint32_t slowmem_force_lpd:       1;         /*RTC memory force PD*/
+            uint32_t slowmem_force_lpu:       1;         /*RTC memory force no PD*/
+            uint32_t fastmem_force_pd:        1;         /*Fast RTC memory force power down*/
+            uint32_t fastmem_force_pu:        1;         /*Fast RTC memory force power up*/
+            uint32_t fastmem_pd_en:           1;         /*enable power down fast RTC memory in sleep*/
+            uint32_t slowmem_force_pd:        1;         /*RTC memory force power down*/
+            uint32_t slowmem_force_pu:        1;         /*RTC memory force power up*/
+            uint32_t slowmem_pd_en:           1;         /*enable power down RTC memory in sleep*/
+            uint32_t rtc_force_pd:            1;         /*rtc_peri force power down*/
+            uint32_t rtc_force_pu:            1;         /*rtc_peri force power up*/
+            uint32_t rtc_pd_en:               1;         /*enable power down rtc_peri in sleep*/
+            uint32_t rtc_pad_autohold:        1;         /*read only register to indicate rtc pad auto-hold status*/
+            uint32_t clr_rtc_pad_autohold:    1;         /*wtite only register to clear rtc pad auto-hold*/
+            uint32_t rtc_pad_autohold_en:     1;         /*rtc pad enable auto-hold*/
+            uint32_t rtc_pad_force_noiso:     1;         /*rtc pad force no ISO*/
+            uint32_t rtc_pad_force_iso:       1;         /*rtc pad force ISO*/
+            uint32_t rtc_pad_force_unhold:    1;         /*rtc pad force un-hold*/
+            uint32_t rtc_pad_force_hold:      1;         /*rtc pad force hold*/
+            uint32_t reserved28:              4;
         };
         uint32_t val;
     } rtc_pwc;
@@ -393,7 +437,9 @@ typedef volatile struct {
             uint32_t wifi_force_pu:       1;             /*wifi force power up*/
             uint32_t dg_wrap_force_pd:    1;             /*digital core force power down*/
             uint32_t dg_wrap_force_pu:    1;             /*digital core force power up*/
-            uint32_t reserved21:          3;
+            uint32_t dg_dcdc_force_pd:    1;             /*digital dcdc force power down*/
+            uint32_t dg_dcdc_force_pu:    1;             /*digital dcdc force power up*/
+            uint32_t dg_dcdc_pd_en:       1;             /*enable power down digital dcdc in sleep*/
             uint32_t rom0_pd_en:          1;             /*enable power down ROM in sleep*/
             uint32_t inter_ram0_pd_en:    1;             /*enable power down internal SRAM 0 in sleep*/
             uint32_t inter_ram1_pd_en:    1;             /*enable power down internal SRAM 1 in sleep*/
@@ -401,7 +447,7 @@ typedef volatile struct {
             uint32_t inter_ram3_pd_en:    1;             /*enable power down internal SRAM 3 in sleep*/
             uint32_t inter_ram4_pd_en:    1;             /*enable power down internal SRAM 4 in sleep*/
             uint32_t wifi_pd_en:          1;             /*enable power down wifi in sleep*/
-            uint32_t dg_wrap_pd_en:       1;             /*enable power down digital core in sleep*/
+            uint32_t dg_wrap_pd_en:       1;
         };
         uint32_t val;
     } dig_pwc;
@@ -432,26 +478,26 @@ typedef volatile struct {
             uint32_t wifi_force_iso:         1;          /*wifi force ISO*/
             uint32_t wifi_force_noiso:       1;          /*wifi force no ISO*/
             uint32_t dg_wrap_force_iso:      1;          /*digital core force ISO*/
-            uint32_t dg_wrap_force_noiso:    1;          /*digital core force no ISO*/
+            uint32_t dg_wrap_force_noiso:    1;
         };
         uint32_t val;
     } dig_iso;
     union {
         struct {
             uint32_t reserved0:            7;
-            uint32_t pause_in_slp:     1;            /*pause WDT in sleep*/
-            uint32_t appcpu_reset_en:  1;            /*enable WDT reset APP CPU*/
-            uint32_t procpu_reset_en:  1;            /*enable WDT reset PRO CPU*/
-            uint32_t flashboot_mod_en: 1;            /*enable WDT in flash boot*/
-            uint32_t sys_reset_length: 3;            /*system reset counter length*/
-            uint32_t cpu_reset_length: 3;            /*CPU reset counter length*/
-            uint32_t level_int_en:     1;            /*N/A*/
-            uint32_t edge_int_en:      1;            /*N/A*/
-            uint32_t stg3:             3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
-            uint32_t stg2:             3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
-            uint32_t stg1:             3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
-            uint32_t stg0:             3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
-            uint32_t en:               1;            /*enable RTC WDT*/
+            uint32_t pause_in_slp:         1;            /*pause WDT in sleep*/
+            uint32_t appcpu_reset_en:      1;            /*enable WDT reset APP CPU*/
+            uint32_t procpu_reset_en:      1;            /*enable WDT reset PRO CPU*/
+            uint32_t flashboot_mod_en:     1;            /*enable WDT in flash boot*/
+            uint32_t sys_reset_length:     3;            /*system reset counter length*/
+            uint32_t cpu_reset_length:     3;            /*CPU reset counter length*/
+            uint32_t level_int_en:         1;            /*N/A*/
+            uint32_t edge_int_en:          1;            /*N/A*/
+            uint32_t stg3:                 3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
+            uint32_t stg2:                 3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
+            uint32_t stg1:                 3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
+            uint32_t stg0:                 3;            /*1: interrupt stage en  2: CPU reset stage en  3: system reset stage en  4: RTC reset stage en*/
+            uint32_t en:                   1;
         };
         uint32_t val;
     } wdt_config0;
@@ -462,7 +508,7 @@ typedef volatile struct {
     union {
         struct {
             uint32_t reserved0:   31;
-            uint32_t feed: 1;
+            uint32_t feed:         1;
         };
         uint32_t val;
     } wdt_feed;
@@ -471,22 +517,22 @@ typedef volatile struct {
         struct {
             uint32_t reserved0: 29;
             uint32_t ent_rtc:    1;                      /*ENT_RTC*/
-            uint32_t dtest_rtc:  2;                      /*DTEST_RTC*/
+            uint32_t dtest_rtc:  2;
         };
         uint32_t val;
     } test_mux;
     union {
         struct {
             uint32_t reserved0:         20;
-            uint32_t appcpu_c1: 6;              /*{reg_sw_stall_appcpu_c1[5:0]   reg_sw_stall_appcpu_c0[1:0]}  == 0x86 will stall APP CPU*/
-            uint32_t procpu_c1: 6;              /*{reg_sw_stall_procpu_c1[5:0]   reg_sw_stall_procpu_c0[1:0]}  == 0x86 will stall PRO CPU*/
+            uint32_t appcpu_c1:          6;              /*{reg_sw_stall_appcpu_c1[5:0]   reg_sw_stall_appcpu_c0[1:0]} == 0x86 will stall APP CPU*/
+            uint32_t procpu_c1:          6;
         };
         uint32_t val;
     } sw_cpu_stall;
-    uint32_t store4;                                 /*32-bit general purpose retention register*/
-    uint32_t store5;                                 /*32-bit general purpose retention register*/
-    uint32_t store6;                                 /*32-bit general purpose retention register*/
-    uint32_t store7;                                 /*32-bit general purpose retention register*/
+    uint32_t store4;                                 /**/
+    uint32_t store5;                                 /**/
+    uint32_t store6;                                 /**/
+    uint32_t store7;                                 /**/
     uint32_t diag0;                                  /**/
     uint32_t diag1;                                  /**/
     union {
@@ -515,15 +561,15 @@ typedef volatile struct {
     } hold_force;
     union {
         struct {
-            uint32_t ext_wakeup1_sel:       18;          /*Bitmap to select RTC pads for ext wakeup1*/
-            uint32_t ext_wakeup1_status_clr: 1;          /*clear ext wakeup1 status*/
+            uint32_t sel:                   18;          /*Bitmap to select RTC pads for ext wakeup1*/
+            uint32_t status_clr:             1;          /*clear ext wakeup1 status*/
             uint32_t reserved19:            13;
         };
         uint32_t val;
     } ext_wakeup1;
     union {
         struct {
-            uint32_t ext_wakeup1_status:18;              /*ext wakeup1 status*/
+            uint32_t status:            18;              /*ext wakeup1 status*/
             uint32_t reserved18:        14;
         };
         uint32_t val;
@@ -531,22 +577,21 @@ typedef volatile struct {
     union {
         struct {
             uint32_t reserved0:                14;
-            uint32_t close_flash_ena: 1;       /*enable close flash when brown out happens*/
-            uint32_t pd_rf_ena:       1;       /*enable power down RF when brown out happens*/
-            uint32_t rst_wait:       10;       /*brown out reset wait cycles*/
-            uint32_t rst_ena:         1;       /*enable brown out reset*/
-            uint32_t thres:          3;       /*brown out threshold*/
-            uint32_t ena:             1;       /*enable brown out*/
-            uint32_t det:         1;       /*brown out detect*/
+            uint32_t close_flash_ena:           1;       /*enable close flash when brown out happens*/
+            uint32_t pd_rf_ena:                 1;       /*enable power down RF when brown out happens*/
+            uint32_t rst_wait:                 10;       /*brown out reset wait cycles*/
+            uint32_t rst_ena:                   1;       /*enable brown out reset*/
+            uint32_t thres:                     3;       /*brown out threshold*/
+            uint32_t ena:                       1;       /*enable brown out*/
+            uint32_t det:                       1;
         };
         uint32_t val;
     } brown_out;
-    uint32_t reserved_39;
-    uint32_t reserved_3d;
-    uint32_t reserved_41;
-    uint32_t reserved_45;
-    uint32_t reserved_49;
-    uint32_t reserved_4d;
+    uint32_t reserved_3b;
+    uint32_t reserved_3f;
+    uint32_t reserved_43;
+    uint32_t reserved_47;
+    uint32_t reserved_4b;
     union {
         struct {
             uint32_t date:      28;
@@ -556,7 +601,6 @@ typedef volatile struct {
     } date;
 } rtc_cntl_dev_t;
 extern rtc_cntl_dev_t RTCCNTL;
-
 #ifdef __cplusplus
 }
 #endif

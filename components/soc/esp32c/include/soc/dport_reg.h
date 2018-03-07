@@ -14,15 +14,15 @@
 #ifndef _SOC_DPORT_REG_H_
 #define _SOC_DPORT_REG_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 
 #ifndef __ASSEMBLER__
 #include "dport_access.h"
 #endif
-   
-/* Registers defined in this header file must be accessed using special macros,
- * prefixed with DPORT_. See soc/dport_access.h file for details.
- */
 
 #define DPORT_PRO_BOOT_REMAP_CTRL_REG          (DR_REG_DPORT_BASE + 0x000)
 /* DPORT_PRO_BOOT_REMAP : R/W ;bitpos:[0] ;default: 1'b0 ; */
@@ -95,7 +95,7 @@
 #define DPORT_PERI_CLK_EN_S  0
 
 #define DPORT_PERI_RST_EN_REG          (DR_REG_DPORT_BASE + 0x020)
-/* DPORT_PERI_RST_EN : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/* DPORT_PERI_RST_EN : R/W ;bitpos:[31:0] ;default: 32'hffffffff ; */
 /*description: */
 #define DPORT_PERI_RST_EN  0xFFFFFFFF
 #define DPORT_PERI_RST_EN_M  ((DPORT_PERI_RST_EN_V)<<(DPORT_PERI_RST_EN_S))
@@ -111,6 +111,7 @@
 #define DPORT_PERI_EN_SECUREBOOT (1<<3)
 /* NB: Digital signature reset will hold AES & RSA in reset */
 #define DPORT_PERI_EN_DIGITAL_SIGNATURE (1<<4)
+#define DPORT_PERI_EN_ASSIST_DEBUG (1<<7)
 
 #define DPORT_WIFI_BB_CFG_REG          (DR_REG_DPORT_BASE + 0x024)
 /* DPORT_WIFI_BB_CFG : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
@@ -161,18 +162,12 @@
 #define DPORT_APPCPU_BOOT_ADDR_S  0
 
 #define DPORT_CPU_PER_CONF_REG          (DR_REG_DPORT_BASE + 0x03C)
-/* DPORT_FAST_CLK_RTC_SEL : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/* DPORT_PLL_FREQ_SEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_FAST_CLK_RTC_SEL  (BIT(3))
-#define DPORT_FAST_CLK_RTC_SEL_M  (BIT(3))
-#define DPORT_FAST_CLK_RTC_SEL_V  0x1
-#define DPORT_FAST_CLK_RTC_SEL_S  3
-/* DPORT_LOWSPEED_CLK_SEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_LOWSPEED_CLK_SEL  (BIT(2))
-#define DPORT_LOWSPEED_CLK_SEL_M  (BIT(2))
-#define DPORT_LOWSPEED_CLK_SEL_V  0x1
-#define DPORT_LOWSPEED_CLK_SEL_S  2
+#define DPORT_PLL_FREQ_SEL  (BIT(2))
+#define DPORT_PLL_FREQ_SEL_M  (BIT(2))
+#define DPORT_PLL_FREQ_SEL_V  0x1
+#define DPORT_PLL_FREQ_SEL_S  2
 /* DPORT_CPUPERIOD_SEL : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_CPUPERIOD_SEL  0x00000003
@@ -180,7 +175,39 @@
 #define DPORT_CPUPERIOD_SEL_V  0x3
 #define DPORT_CPUPERIOD_SEL_S  0
 
-#define DPORT_PRO_CACHE_CTRL_REG          (DR_REG_DPORT_BASE + 0x040)
+#define DPORT_JTAG_CTRL_REG          (DR_REG_DPORT_BASE + 0x040)
+/* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY  (BIT(0))
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_M  (BIT(0))
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_V  0x1
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_S  0
+
+#define DPORT_PRO_CACHE_CTRL_REG          (DR_REG_DPORT_BASE + 0x044)
+/* DPORT_PRO_CACHE_FLUSH_DONE : RO ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_FLUSH_DONE  (BIT(20))
+#define DPORT_PRO_CACHE_FLUSH_DONE_M  (BIT(20))
+#define DPORT_PRO_CACHE_FLUSH_DONE_V  0x1
+#define DPORT_PRO_CACHE_FLUSH_DONE_S  20
+/* DPORT_PRO_CACHE_FLUSH_ENA : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_FLUSH_ENA  (BIT(19))
+#define DPORT_PRO_CACHE_FLUSH_ENA_M  (BIT(19))
+#define DPORT_PRO_CACHE_FLUSH_ENA_V  0x1
+#define DPORT_PRO_CACHE_FLUSH_ENA_S  19
+/* DPORT_PRO_CACHE_CLEAN_DONE : RO ;bitpos:[18] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_CLEAN_DONE  (BIT(18))
+#define DPORT_PRO_CACHE_CLEAN_DONE_M  (BIT(18))
+#define DPORT_PRO_CACHE_CLEAN_DONE_V  0x1
+#define DPORT_PRO_CACHE_CLEAN_DONE_S  18
+/* DPORT_PRO_CACHE_CLEAN_ENA : R/W ;bitpos:[17] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_CLEAN_ENA  (BIT(17))
+#define DPORT_PRO_CACHE_CLEAN_ENA_M  (BIT(17))
+#define DPORT_PRO_CACHE_CLEAN_ENA_V  0x1
+#define DPORT_PRO_CACHE_CLEAN_ENA_S  17
 /* DPORT_PRO_DRAM_HL : R/W ;bitpos:[16] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_DRAM_HL  (BIT(16))
@@ -223,18 +250,6 @@
 #define DPORT_PRO_SINGLE_IRAM_ENA_M  (BIT(10))
 #define DPORT_PRO_SINGLE_IRAM_ENA_V  0x1
 #define DPORT_PRO_SINGLE_IRAM_ENA_S  10
-/* DPORT_PRO_CACHE_LOCK_3_EN : R/W ;bitpos:[9] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_LOCK_3_EN  (BIT(9))
-#define DPORT_PRO_CACHE_LOCK_3_EN_M  (BIT(9))
-#define DPORT_PRO_CACHE_LOCK_3_EN_V  0x1
-#define DPORT_PRO_CACHE_LOCK_3_EN_S  9
-/* DPORT_PRO_CACHE_LOCK_2_EN : R/W ;bitpos:[8] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_LOCK_2_EN  (BIT(8))
-#define DPORT_PRO_CACHE_LOCK_2_EN_M  (BIT(8))
-#define DPORT_PRO_CACHE_LOCK_2_EN_V  0x1
-#define DPORT_PRO_CACHE_LOCK_2_EN_S  8
 /* DPORT_PRO_CACHE_LOCK_1_EN : R/W ;bitpos:[7] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_CACHE_LOCK_1_EN  (BIT(7))
@@ -247,18 +262,18 @@
 #define DPORT_PRO_CACHE_LOCK_0_EN_M  (BIT(6))
 #define DPORT_PRO_CACHE_LOCK_0_EN_V  0x1
 #define DPORT_PRO_CACHE_LOCK_0_EN_S  6
-/* DPORT_PRO_CACHE_FLUSH_DONE : RO ;bitpos:[5] ;default: 1'b0 ; */
+/* DPORT_PRO_CACHE_INVALIDATE_DONE : RO ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_CACHE_FLUSH_DONE  (BIT(5))
-#define DPORT_PRO_CACHE_FLUSH_DONE_M  (BIT(5))
-#define DPORT_PRO_CACHE_FLUSH_DONE_V  0x1
-#define DPORT_PRO_CACHE_FLUSH_DONE_S  5
-/* DPORT_PRO_CACHE_FLUSH_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
+#define DPORT_PRO_CACHE_INVALIDATE_DONE  (BIT(5))
+#define DPORT_PRO_CACHE_INVALIDATE_DONE_M  (BIT(5))
+#define DPORT_PRO_CACHE_INVALIDATE_DONE_V  0x1
+#define DPORT_PRO_CACHE_INVALIDATE_DONE_S  5
+/* DPORT_PRO_CACHE_INVALIDATE_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_PRO_CACHE_FLUSH_ENA  (BIT(4))
-#define DPORT_PRO_CACHE_FLUSH_ENA_M  (BIT(4))
-#define DPORT_PRO_CACHE_FLUSH_ENA_V  0x1
-#define DPORT_PRO_CACHE_FLUSH_ENA_S  4
+#define DPORT_PRO_CACHE_INVALIDATE_ENA  (BIT(4))
+#define DPORT_PRO_CACHE_INVALIDATE_ENA_M  (BIT(4))
+#define DPORT_PRO_CACHE_INVALIDATE_ENA_V  0x1
+#define DPORT_PRO_CACHE_INVALIDATE_ENA_S  4
 /* DPORT_PRO_CACHE_ENABLE : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_CACHE_ENABLE  (BIT(3))
@@ -271,14 +286,14 @@
 #define DPORT_PRO_CACHE_MODE_M  (BIT(2))
 #define DPORT_PRO_CACHE_MODE_V  0x1
 #define DPORT_PRO_CACHE_MODE_S  2
-
-#define DPORT_PRO_CACHE_CTRL1_REG          (DR_REG_DPORT_BASE + 0x044)
-/* DPORT_PRO_CACHE_MMU_IA_CLR : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/* DPORT_PRO_CACHE_CLK_ON : R/W ;bitpos:[1] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_PRO_CACHE_MMU_IA_CLR  (BIT(13))
-#define DPORT_PRO_CACHE_MMU_IA_CLR_M  (BIT(13))
-#define DPORT_PRO_CACHE_MMU_IA_CLR_V  0x1
-#define DPORT_PRO_CACHE_MMU_IA_CLR_S  13
+#define DPORT_PRO_CACHE_CLK_ON  (BIT(1))
+#define DPORT_PRO_CACHE_CLK_ON_M  (BIT(1))
+#define DPORT_PRO_CACHE_CLK_ON_V  0x1
+#define DPORT_PRO_CACHE_CLK_ON_S  1
+
+#define DPORT_PRO_CACHE_CTRL1_REG          (DR_REG_DPORT_BASE + 0x048)
 /* DPORT_PRO_CMMU_PD : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_CMMU_PD  (BIT(12))
@@ -340,7 +355,7 @@
 #define DPORT_PRO_CACHE_MASK_IRAM0_V  0x1
 #define DPORT_PRO_CACHE_MASK_IRAM0_S  0
 
-#define DPORT_PRO_CACHE_LOCK_0_ADDR_REG          (DR_REG_DPORT_BASE + 0x048)
+#define DPORT_PRO_CACHE_LOCK_0_ADDR_REG          (DR_REG_DPORT_BASE + 0x04C)
 /* DPORT_PRO_CACHE_LOCK_0_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
 /*description: */
 #define DPORT_PRO_CACHE_LOCK_0_ADDR_MAX  0x0000000F
@@ -360,7 +375,7 @@
 #define DPORT_PRO_CACHE_LOCK_0_ADDR_PRE_V  0x3FFF
 #define DPORT_PRO_CACHE_LOCK_0_ADDR_PRE_S  0
 
-#define DPORT_PRO_CACHE_LOCK_1_ADDR_REG          (DR_REG_DPORT_BASE + 0x04C)
+#define DPORT_PRO_CACHE_LOCK_1_ADDR_REG          (DR_REG_DPORT_BASE + 0x050)
 /* DPORT_PRO_CACHE_LOCK_1_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
 /*description: */
 #define DPORT_PRO_CACHE_LOCK_1_ADDR_MAX  0x0000000F
@@ -380,47 +395,31 @@
 #define DPORT_PRO_CACHE_LOCK_1_ADDR_PRE_V  0x3FFF
 #define DPORT_PRO_CACHE_LOCK_1_ADDR_PRE_S  0
 
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_REG          (DR_REG_DPORT_BASE + 0x050)
-/* DPORT_PRO_CACHE_LOCK_2_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
+#define DPORT_APP_CACHE_CTRL_REG          (DR_REG_DPORT_BASE + 0x054)
+/* DPORT_APP_CACHE_FLUSH_DONE : RO ;bitpos:[18] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MAX  0x0000000F
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MAX_M  ((DPORT_PRO_CACHE_LOCK_2_ADDR_MAX_V)<<(DPORT_PRO_CACHE_LOCK_2_ADDR_MAX_S))
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MAX_V  0xF
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MAX_S  18
-/* DPORT_PRO_CACHE_LOCK_2_ADDR_MIN : R/W ;bitpos:[17:14] ;default: 4'h0 ; */
+#define DPORT_APP_CACHE_FLUSH_DONE  (BIT(18))
+#define DPORT_APP_CACHE_FLUSH_DONE_M  (BIT(18))
+#define DPORT_APP_CACHE_FLUSH_DONE_V  0x1
+#define DPORT_APP_CACHE_FLUSH_DONE_S  18
+/* DPORT_APP_CACHE_FLUSH_ENA : R/W ;bitpos:[17] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MIN  0x0000000F
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MIN_M  ((DPORT_PRO_CACHE_LOCK_2_ADDR_MIN_V)<<(DPORT_PRO_CACHE_LOCK_2_ADDR_MIN_S))
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MIN_V  0xF
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_MIN_S  14
-/* DPORT_PRO_CACHE_LOCK_2_ADDR_PRE : R/W ;bitpos:[13:0] ;default: 14'h0 ; */
+#define DPORT_APP_CACHE_FLUSH_ENA  (BIT(17))
+#define DPORT_APP_CACHE_FLUSH_ENA_M  (BIT(17))
+#define DPORT_APP_CACHE_FLUSH_ENA_V  0x1
+#define DPORT_APP_CACHE_FLUSH_ENA_S  17
+/* DPORT_APP_CACHE_CLEAN_DONE : RO ;bitpos:[16] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_PRE  0x00003FFF
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_PRE_M  ((DPORT_PRO_CACHE_LOCK_2_ADDR_PRE_V)<<(DPORT_PRO_CACHE_LOCK_2_ADDR_PRE_S))
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_PRE_V  0x3FFF
-#define DPORT_PRO_CACHE_LOCK_2_ADDR_PRE_S  0
-
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_REG          (DR_REG_DPORT_BASE + 0x054)
-/* DPORT_PRO_CACHE_LOCK_3_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
+#define DPORT_APP_CACHE_CLEAN_DONE  (BIT(16))
+#define DPORT_APP_CACHE_CLEAN_DONE_M  (BIT(16))
+#define DPORT_APP_CACHE_CLEAN_DONE_V  0x1
+#define DPORT_APP_CACHE_CLEAN_DONE_S  16
+/* DPORT_APP_CACHE_CLEAN_ENA : R/W ;bitpos:[15] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MAX  0x0000000F
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MAX_M  ((DPORT_PRO_CACHE_LOCK_3_ADDR_MAX_V)<<(DPORT_PRO_CACHE_LOCK_3_ADDR_MAX_S))
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MAX_V  0xF
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MAX_S  18
-/* DPORT_PRO_CACHE_LOCK_3_ADDR_MIN : R/W ;bitpos:[17:14] ;default: 4'h0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MIN  0x0000000F
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MIN_M  ((DPORT_PRO_CACHE_LOCK_3_ADDR_MIN_V)<<(DPORT_PRO_CACHE_LOCK_3_ADDR_MIN_S))
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MIN_V  0xF
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_MIN_S  14
-/* DPORT_PRO_CACHE_LOCK_3_ADDR_PRE : R/W ;bitpos:[13:0] ;default: 14'h0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_PRE  0x00003FFF
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_PRE_M  ((DPORT_PRO_CACHE_LOCK_3_ADDR_PRE_V)<<(DPORT_PRO_CACHE_LOCK_3_ADDR_PRE_S))
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_PRE_V  0x3FFF
-#define DPORT_PRO_CACHE_LOCK_3_ADDR_PRE_S  0
-
-#define DPORT_APP_CACHE_CTRL_REG          (DR_REG_DPORT_BASE + 0x058)
+#define DPORT_APP_CACHE_CLEAN_ENA  (BIT(15))
+#define DPORT_APP_CACHE_CLEAN_ENA_M  (BIT(15))
+#define DPORT_APP_CACHE_CLEAN_ENA_V  0x1
+#define DPORT_APP_CACHE_CLEAN_ENA_S  15
 /* DPORT_APP_DRAM_HL : R/W ;bitpos:[14] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_DRAM_HL  (BIT(14))
@@ -451,18 +450,6 @@
 #define DPORT_APP_SINGLE_IRAM_ENA_M  (BIT(10))
 #define DPORT_APP_SINGLE_IRAM_ENA_V  0x1
 #define DPORT_APP_SINGLE_IRAM_ENA_S  10
-/* DPORT_APP_CACHE_LOCK_3_EN : R/W ;bitpos:[9] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_3_EN  (BIT(9))
-#define DPORT_APP_CACHE_LOCK_3_EN_M  (BIT(9))
-#define DPORT_APP_CACHE_LOCK_3_EN_V  0x1
-#define DPORT_APP_CACHE_LOCK_3_EN_S  9
-/* DPORT_APP_CACHE_LOCK_2_EN : R/W ;bitpos:[8] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_2_EN  (BIT(8))
-#define DPORT_APP_CACHE_LOCK_2_EN_M  (BIT(8))
-#define DPORT_APP_CACHE_LOCK_2_EN_V  0x1
-#define DPORT_APP_CACHE_LOCK_2_EN_S  8
 /* DPORT_APP_CACHE_LOCK_1_EN : R/W ;bitpos:[7] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_CACHE_LOCK_1_EN  (BIT(7))
@@ -475,18 +462,18 @@
 #define DPORT_APP_CACHE_LOCK_0_EN_M  (BIT(6))
 #define DPORT_APP_CACHE_LOCK_0_EN_V  0x1
 #define DPORT_APP_CACHE_LOCK_0_EN_S  6
-/* DPORT_APP_CACHE_FLUSH_DONE : RO ;bitpos:[5] ;default: 1'b0 ; */
+/* DPORT_APP_CACHE_INVALIDATE_DONE : RO ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_APP_CACHE_FLUSH_DONE  (BIT(5))
-#define DPORT_APP_CACHE_FLUSH_DONE_M  (BIT(5))
-#define DPORT_APP_CACHE_FLUSH_DONE_V  0x1
-#define DPORT_APP_CACHE_FLUSH_DONE_S  5
-/* DPORT_APP_CACHE_FLUSH_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
+#define DPORT_APP_CACHE_INVALIDATE_DONE  (BIT(5))
+#define DPORT_APP_CACHE_INVALIDATE_DONE_M  (BIT(5))
+#define DPORT_APP_CACHE_INVALIDATE_DONE_V  0x1
+#define DPORT_APP_CACHE_INVALIDATE_DONE_S  5
+/* DPORT_APP_CACHE_INVALIDATE_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_APP_CACHE_FLUSH_ENA  (BIT(4))
-#define DPORT_APP_CACHE_FLUSH_ENA_M  (BIT(4))
-#define DPORT_APP_CACHE_FLUSH_ENA_V  0x1
-#define DPORT_APP_CACHE_FLUSH_ENA_S  4
+#define DPORT_APP_CACHE_INVALIDATE_ENA  (BIT(4))
+#define DPORT_APP_CACHE_INVALIDATE_ENA_M  (BIT(4))
+#define DPORT_APP_CACHE_INVALIDATE_ENA_V  0x1
+#define DPORT_APP_CACHE_INVALIDATE_ENA_S  4
 /* DPORT_APP_CACHE_ENABLE : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_CACHE_ENABLE  (BIT(3))
@@ -499,14 +486,14 @@
 #define DPORT_APP_CACHE_MODE_M  (BIT(2))
 #define DPORT_APP_CACHE_MODE_V  0x1
 #define DPORT_APP_CACHE_MODE_S  2
-
-#define DPORT_APP_CACHE_CTRL1_REG          (DR_REG_DPORT_BASE + 0x05C)
-/* DPORT_APP_CACHE_MMU_IA_CLR : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/* DPORT_APP_CACHE_CLK_ON : R/W ;bitpos:[1] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_APP_CACHE_MMU_IA_CLR  (BIT(13))
-#define DPORT_APP_CACHE_MMU_IA_CLR_M  (BIT(13))
-#define DPORT_APP_CACHE_MMU_IA_CLR_V  0x1
-#define DPORT_APP_CACHE_MMU_IA_CLR_S  13
+#define DPORT_APP_CACHE_CLK_ON  (BIT(1))
+#define DPORT_APP_CACHE_CLK_ON_M  (BIT(1))
+#define DPORT_APP_CACHE_CLK_ON_V  0x1
+#define DPORT_APP_CACHE_CLK_ON_S  1
+
+#define DPORT_APP_CACHE_CTRL1_REG          (DR_REG_DPORT_BASE + 0x058)
 /* DPORT_APP_CMMU_PD : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_CMMU_PD  (BIT(12))
@@ -568,7 +555,7 @@
 #define DPORT_APP_CACHE_MASK_IRAM0_V  0x1
 #define DPORT_APP_CACHE_MASK_IRAM0_S  0
 
-#define DPORT_APP_CACHE_LOCK_0_ADDR_REG          (DR_REG_DPORT_BASE + 0x060)
+#define DPORT_APP_CACHE_LOCK_0_ADDR_REG          (DR_REG_DPORT_BASE + 0x05C)
 /* DPORT_APP_CACHE_LOCK_0_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
 /*description: */
 #define DPORT_APP_CACHE_LOCK_0_ADDR_MAX  0x0000000F
@@ -588,7 +575,7 @@
 #define DPORT_APP_CACHE_LOCK_0_ADDR_PRE_V  0x3FFF
 #define DPORT_APP_CACHE_LOCK_0_ADDR_PRE_S  0
 
-#define DPORT_APP_CACHE_LOCK_1_ADDR_REG          (DR_REG_DPORT_BASE + 0x064)
+#define DPORT_APP_CACHE_LOCK_1_ADDR_REG          (DR_REG_DPORT_BASE + 0x060)
 /* DPORT_APP_CACHE_LOCK_1_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
 /*description: */
 #define DPORT_APP_CACHE_LOCK_1_ADDR_MAX  0x0000000F
@@ -608,47 +595,7 @@
 #define DPORT_APP_CACHE_LOCK_1_ADDR_PRE_V  0x3FFF
 #define DPORT_APP_CACHE_LOCK_1_ADDR_PRE_S  0
 
-#define DPORT_APP_CACHE_LOCK_2_ADDR_REG          (DR_REG_DPORT_BASE + 0x068)
-/* DPORT_APP_CACHE_LOCK_2_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MAX  0x0000000F
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MAX_M  ((DPORT_APP_CACHE_LOCK_2_ADDR_MAX_V)<<(DPORT_APP_CACHE_LOCK_2_ADDR_MAX_S))
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MAX_V  0xF
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MAX_S  18
-/* DPORT_APP_CACHE_LOCK_2_ADDR_MIN : R/W ;bitpos:[17:14] ;default: 4'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MIN  0x0000000F
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MIN_M  ((DPORT_APP_CACHE_LOCK_2_ADDR_MIN_V)<<(DPORT_APP_CACHE_LOCK_2_ADDR_MIN_S))
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MIN_V  0xF
-#define DPORT_APP_CACHE_LOCK_2_ADDR_MIN_S  14
-/* DPORT_APP_CACHE_LOCK_2_ADDR_PRE : R/W ;bitpos:[13:0] ;default: 14'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_2_ADDR_PRE  0x00003FFF
-#define DPORT_APP_CACHE_LOCK_2_ADDR_PRE_M  ((DPORT_APP_CACHE_LOCK_2_ADDR_PRE_V)<<(DPORT_APP_CACHE_LOCK_2_ADDR_PRE_S))
-#define DPORT_APP_CACHE_LOCK_2_ADDR_PRE_V  0x3FFF
-#define DPORT_APP_CACHE_LOCK_2_ADDR_PRE_S  0
-
-#define DPORT_APP_CACHE_LOCK_3_ADDR_REG          (DR_REG_DPORT_BASE + 0x06C)
-/* DPORT_APP_CACHE_LOCK_3_ADDR_MAX : R/W ;bitpos:[21:18] ;default: 4'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MAX  0x0000000F
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MAX_M  ((DPORT_APP_CACHE_LOCK_3_ADDR_MAX_V)<<(DPORT_APP_CACHE_LOCK_3_ADDR_MAX_S))
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MAX_V  0xF
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MAX_S  18
-/* DPORT_APP_CACHE_LOCK_3_ADDR_MIN : R/W ;bitpos:[17:14] ;default: 4'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MIN  0x0000000F
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MIN_M  ((DPORT_APP_CACHE_LOCK_3_ADDR_MIN_V)<<(DPORT_APP_CACHE_LOCK_3_ADDR_MIN_S))
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MIN_V  0xF
-#define DPORT_APP_CACHE_LOCK_3_ADDR_MIN_S  14
-/* DPORT_APP_CACHE_LOCK_3_ADDR_PRE : R/W ;bitpos:[13:0] ;default: 14'h0 ; */
-/*description: */
-#define DPORT_APP_CACHE_LOCK_3_ADDR_PRE  0x00003FFF
-#define DPORT_APP_CACHE_LOCK_3_ADDR_PRE_M  ((DPORT_APP_CACHE_LOCK_3_ADDR_PRE_V)<<(DPORT_APP_CACHE_LOCK_3_ADDR_PRE_S))
-#define DPORT_APP_CACHE_LOCK_3_ADDR_PRE_V  0x3FFF
-#define DPORT_APP_CACHE_LOCK_3_ADDR_PRE_S  0
-
-#define DPORT_TRACEMEM_MUX_MODE_REG          (DR_REG_DPORT_BASE + 0x070)
+#define DPORT_TRACEMEM_MUX_MODE_REG          (DR_REG_DPORT_BASE + 0x064)
 /* DPORT_TRACEMEM_MUX_MODE : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_TRACEMEM_MUX_MODE  0x00000003
@@ -656,7 +603,7 @@
 #define DPORT_TRACEMEM_MUX_MODE_V  0x3
 #define DPORT_TRACEMEM_MUX_MODE_S  0
 
-#define DPORT_PRO_TRACEMEM_ENA_REG          (DR_REG_DPORT_BASE + 0x074)
+#define DPORT_PRO_TRACEMEM_ENA_REG          (DR_REG_DPORT_BASE + 0x068)
 /* DPORT_PRO_TRACEMEM_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_TRACEMEM_ENA  (BIT(0))
@@ -664,7 +611,7 @@
 #define DPORT_PRO_TRACEMEM_ENA_V  0x1
 #define DPORT_PRO_TRACEMEM_ENA_S  0
 
-#define DPORT_APP_TRACEMEM_ENA_REG          (DR_REG_DPORT_BASE + 0x078)
+#define DPORT_APP_TRACEMEM_ENA_REG          (DR_REG_DPORT_BASE + 0x06C)
 /* DPORT_APP_TRACEMEM_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_TRACEMEM_ENA  (BIT(0))
@@ -672,7 +619,7 @@
 #define DPORT_APP_TRACEMEM_ENA_V  0x1
 #define DPORT_APP_TRACEMEM_ENA_S  0
 
-#define DPORT_CACHE_MUX_MODE_REG          (DR_REG_DPORT_BASE + 0x07C)
+#define DPORT_CACHE_MUX_MODE_REG          (DR_REG_DPORT_BASE + 0x070)
 /* DPORT_CACHE_MUX_MODE : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_CACHE_MUX_MODE  0x00000003
@@ -680,55 +627,31 @@
 #define DPORT_CACHE_MUX_MODE_V  0x3
 #define DPORT_CACHE_MUX_MODE_S  0
 
-#define DPORT_IMMU_PAGE_MODE_REG          (DR_REG_DPORT_BASE + 0x080)
+#define DPORT_IMMU_PAGE_MODE_REG          (DR_REG_DPORT_BASE + 0x074)
 /* DPORT_IMMU_PAGE_MODE : R/W ;bitpos:[2:1] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_IMMU_PAGE_MODE  0x00000003
 #define DPORT_IMMU_PAGE_MODE_M  ((DPORT_IMMU_PAGE_MODE_V)<<(DPORT_IMMU_PAGE_MODE_S))
 #define DPORT_IMMU_PAGE_MODE_V  0x3
 #define DPORT_IMMU_PAGE_MODE_S  1
-/* DPORT_INTERNAL_SRAM_IMMU_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_IMMU_ENA  (BIT(0))
-#define DPORT_INTERNAL_SRAM_IMMU_ENA_M  (BIT(0))
-#define DPORT_INTERNAL_SRAM_IMMU_ENA_V  0x1
-#define DPORT_INTERNAL_SRAM_IMMU_ENA_S  0
 
-#define DPORT_DMMU_PAGE_MODE_REG          (DR_REG_DPORT_BASE + 0x084)
+#define DPORT_DMMU_PAGE_MODE_REG          (DR_REG_DPORT_BASE + 0x078)
 /* DPORT_DMMU_PAGE_MODE : R/W ;bitpos:[2:1] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_DMMU_PAGE_MODE  0x00000003
 #define DPORT_DMMU_PAGE_MODE_M  ((DPORT_DMMU_PAGE_MODE_V)<<(DPORT_DMMU_PAGE_MODE_S))
 #define DPORT_DMMU_PAGE_MODE_V  0x3
 #define DPORT_DMMU_PAGE_MODE_S  1
-/* DPORT_INTERNAL_SRAM_DMMU_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_DMMU_ENA  (BIT(0))
-#define DPORT_INTERNAL_SRAM_DMMU_ENA_M  (BIT(0))
-#define DPORT_INTERNAL_SRAM_DMMU_ENA_V  0x1
-#define DPORT_INTERNAL_SRAM_DMMU_ENA_S  0
 
-#define DPORT_ROM_MPU_ENA_REG          (DR_REG_DPORT_BASE + 0x088)
-/* DPORT_APP_ROM_MPU_ENA : R/W ;bitpos:[2] ;default: 1'b0 ; */
+#define DPORT_CLOCK_GATE_REG          (DR_REG_DPORT_BASE + 0x07C)
+/* DPORT_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_APP_ROM_MPU_ENA  (BIT(2))
-#define DPORT_APP_ROM_MPU_ENA_M  (BIT(2))
-#define DPORT_APP_ROM_MPU_ENA_V  0x1
-#define DPORT_APP_ROM_MPU_ENA_S  2
-/* DPORT_PRO_ROM_MPU_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_ROM_MPU_ENA  (BIT(1))
-#define DPORT_PRO_ROM_MPU_ENA_M  (BIT(1))
-#define DPORT_PRO_ROM_MPU_ENA_V  0x1
-#define DPORT_PRO_ROM_MPU_ENA_S  1
-/* DPORT_SHARE_ROM_MPU_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_SHARE_ROM_MPU_ENA  (BIT(0))
-#define DPORT_SHARE_ROM_MPU_ENA_M  (BIT(0))
-#define DPORT_SHARE_ROM_MPU_ENA_V  0x1
-#define DPORT_SHARE_ROM_MPU_ENA_S  0
+#define DPORT_CLK_EN  (BIT(0))
+#define DPORT_CLK_EN_M  (BIT(0))
+#define DPORT_CLK_EN_V  0x1
+#define DPORT_CLK_EN_S  0
 
-#define DPORT_MEM_PD_MASK_REG          (DR_REG_DPORT_BASE + 0x08C)
+#define DPORT_MEM_PD_MASK_REG          (DR_REG_DPORT_BASE + 0x080)
 /* DPORT_LSLP_MEM_PD_MASK : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_LSLP_MEM_PD_MASK  (BIT(0))
@@ -736,7 +659,7 @@
 #define DPORT_LSLP_MEM_PD_MASK_V  0x1
 #define DPORT_LSLP_MEM_PD_MASK_S  0
 
-#define DPORT_ROM_PD_CTRL_REG          (DR_REG_DPORT_BASE + 0x090)
+#define DPORT_ROM_PD_CTRL_REG          (DR_REG_DPORT_BASE + 0x084)
 /* DPORT_SHARE_ROM_PD : R/W ;bitpos:[7:2] ;default: 6'h0 ; */
 /*description: */
 #define DPORT_SHARE_ROM_PD  0x0000003F
@@ -756,7 +679,7 @@
 #define DPORT_PRO_ROM_PD_V  0x1
 #define DPORT_PRO_ROM_PD_S  0
 
-#define DPORT_ROM_FO_CTRL_REG          (DR_REG_DPORT_BASE + 0x094)
+#define DPORT_ROM_FO_CTRL_REG          (DR_REG_DPORT_BASE + 0x088)
 /* DPORT_SHARE_ROM_FO : R/W ;bitpos:[7:2] ;default: 6'h0 ; */
 /*description: */
 #define DPORT_SHARE_ROM_FO  0x0000003F
@@ -776,7 +699,7 @@
 #define DPORT_PRO_ROM_FO_V  0x1
 #define DPORT_PRO_ROM_FO_S  0
 
-#define DPORT_SRAM_PD_CTRL_0_REG          (DR_REG_DPORT_BASE + 0x098)
+#define DPORT_SRAM_PD_CTRL_0_REG          (DR_REG_DPORT_BASE + 0x08C)
 /* DPORT_SRAM_PD_0 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_SRAM_PD_0  0xFFFFFFFF
@@ -784,7 +707,7 @@
 #define DPORT_SRAM_PD_0_V  0xFFFFFFFF
 #define DPORT_SRAM_PD_0_S  0
 
-#define DPORT_SRAM_PD_CTRL_1_REG          (DR_REG_DPORT_BASE + 0x09C)
+#define DPORT_SRAM_PD_CTRL_1_REG          (DR_REG_DPORT_BASE + 0x090)
 /* DPORT_SRAM_PD_1 : R/W ;bitpos:[0] ;default: 1'h0 ; */
 /*description: */
 #define DPORT_SRAM_PD_1  (BIT(0))
@@ -792,7 +715,7 @@
 #define DPORT_SRAM_PD_1_V  0x1
 #define DPORT_SRAM_PD_1_S  0
 
-#define DPORT_SRAM_FO_CTRL_0_REG          (DR_REG_DPORT_BASE + 0x0A0)
+#define DPORT_SRAM_FO_CTRL_0_REG          (DR_REG_DPORT_BASE + 0x094)
 /* DPORT_SRAM_FO_0 : R/W ;bitpos:[31:0] ;default: 32'hffffffff ; */
 /*description: */
 #define DPORT_SRAM_FO_0  0xFFFFFFFF
@@ -800,7 +723,7 @@
 #define DPORT_SRAM_FO_0_V  0xFFFFFFFF
 #define DPORT_SRAM_FO_0_S  0
 
-#define DPORT_SRAM_FO_CTRL_1_REG          (DR_REG_DPORT_BASE + 0x0A4)
+#define DPORT_SRAM_FO_CTRL_1_REG          (DR_REG_DPORT_BASE + 0x098)
 /* DPORT_SRAM_FO_1 : R/W ;bitpos:[0] ;default: 1'h1 ; */
 /*description: */
 #define DPORT_SRAM_FO_1  (BIT(0))
@@ -808,7 +731,7 @@
 #define DPORT_SRAM_FO_1_V  0x1
 #define DPORT_SRAM_FO_1_S  0
 
-#define DPORT_IRAM_DRAM_AHB_SEL_REG          (DR_REG_DPORT_BASE + 0x0A8)
+#define DPORT_IRAM_DRAM_AHB_SEL_REG          (DR_REG_DPORT_BASE + 0x09C)
 /* DPORT_MAC_DUMP_MODE : R/W ;bitpos:[6:5] ;default: 2'h0 ; */
 /*description: */
 #define DPORT_MAC_DUMP_MODE  0x00000003
@@ -846,7 +769,7 @@
 #define DPORT_MASK_PRO_IRAM_V  0x1
 #define DPORT_MASK_PRO_IRAM_S  0
 
-#define DPORT_TAG_FO_CTRL_REG          (DR_REG_DPORT_BASE + 0x0AC)
+#define DPORT_TAG_FO_CTRL_REG          (DR_REG_DPORT_BASE + 0x0A0)
 /* DPORT_APP_CACHE_TAG_PD : R/W ;bitpos:[9] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APP_CACHE_TAG_PD  (BIT(9))
@@ -872,7 +795,7 @@
 #define DPORT_PRO_CACHE_TAG_FORCE_ON_V  0x1
 #define DPORT_PRO_CACHE_TAG_FORCE_ON_S  0
 
-#define DPORT_AHB_LITE_MASK_REG          (DR_REG_DPORT_BASE + 0x0B0)
+#define DPORT_AHB_LITE_MASK_REG          (DR_REG_DPORT_BASE + 0x0A4)
 /* DPORT_AHB_LITE_SDHOST_PID_REG : R/W ;bitpos:[13:11] ;default: 3'b0 ; */
 /*description: */
 #define DPORT_AHB_LITE_SDHOST_PID_REG  0x00000007
@@ -910,7 +833,7 @@
 #define DPORT_AHB_LITE_MASK_PRO_V  0x1
 #define DPORT_AHB_LITE_MASK_PRO_S  0
 
-#define DPORT_AHB_MPU_TABLE_0_REG          (DR_REG_DPORT_BASE + 0x0B4)
+#define DPORT_AHB_MPU_TABLE_0_REG          (DR_REG_DPORT_BASE + 0x0A8)
 /* DPORT_AHB_ACCESS_GRANT_0 : R/W ;bitpos:[31:0] ;default: 32'hffffffff ; */
 /*description: */
 #define DPORT_AHB_ACCESS_GRANT_0  0xFFFFFFFF
@@ -918,7 +841,7 @@
 #define DPORT_AHB_ACCESS_GRANT_0_V  0xFFFFFFFF
 #define DPORT_AHB_ACCESS_GRANT_0_S  0
 
-#define DPORT_AHB_MPU_TABLE_1_REG          (DR_REG_DPORT_BASE + 0x0B8)
+#define DPORT_AHB_MPU_TABLE_1_REG          (DR_REG_DPORT_BASE + 0x0AC)
 /* DPORT_AHB_ACCESS_GRANT_1 : R/W ;bitpos:[8:0] ;default: 9'h1ff ; */
 /*description: */
 #define DPORT_AHB_ACCESS_GRANT_1  0x000001FF
@@ -926,7 +849,7 @@
 #define DPORT_AHB_ACCESS_GRANT_1_V  0x1FF
 #define DPORT_AHB_ACCESS_GRANT_1_S  0
 
-#define DPORT_HOST_INF_SEL_REG          (DR_REG_DPORT_BASE + 0x0BC)
+#define DPORT_HOST_INF_SEL_REG          (DR_REG_DPORT_BASE + 0x0B0)
 /* DPORT_LINK_DEVICE_SEL : R/W ;bitpos:[15:8] ;default: 8'h0 ; */
 /*description: */
 #define DPORT_LINK_DEVICE_SEL  0x000000FF
@@ -940,7 +863,7 @@
 #define DPORT_PERI_IO_SWAP_V  0xFF
 #define DPORT_PERI_IO_SWAP_S  0
 
-#define DPORT_PERIP_CLK_EN_REG          (DR_REG_DPORT_BASE + 0x0C0)
+#define DPORT_PERIP_CLK_EN_REG          (DR_REG_DPORT_BASE + 0x0B4)
 /* DPORT_PERIP_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hf9c1e06f ; */
 /*description: */
 #define DPORT_PERIP_CLK_EN  0xFFFFFFFF
@@ -978,7 +901,7 @@
 #define DPORT_SPI_CLK_EN_1   (BIT(1)) /** Deprecated, please use DPORT_SPI01_CLK_EN **/
 #define DPORT_SPI01_CLK_EN   (BIT(1))
 #define DPORT_TIMERS_CLK_EN   (BIT(0))
-#define DPORT_PERIP_RST_EN_REG          (DR_REG_DPORT_BASE + 0x0C4)
+#define DPORT_PERIP_RST_EN_REG          (DR_REG_DPORT_BASE + 0x0B8)
 /* DPORT_PERIP_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PERIP_RST  0xFFFFFFFF
@@ -1015,7 +938,7 @@
 #define DPORT_SPI_RST_1   (BIT(1)) /** Deprecated, please use DPORT_SPI01_RST **/
 #define DPORT_SPI01_RST   (BIT(1))
 #define DPORT_TIMERS_RST   (BIT(0))
-#define DPORT_SLAVE_SPI_CONFIG_REG          (DR_REG_DPORT_BASE + 0x0C8)
+#define DPORT_SLAVE_SPI_CONFIG_REG          (DR_REG_DPORT_BASE + 0x0BC)
 /* DPORT_SPI_DECRYPT_ENABLE : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_SPI_DECRYPT_ENABLE  (BIT(12))
@@ -1041,7 +964,7 @@
 #define DPORT_SLAVE_SPI_MASK_PRO_V  0x1
 #define DPORT_SLAVE_SPI_MASK_PRO_S  0
 
-#define DPORT_WIFI_CLK_EN_REG          (DR_REG_DPORT_BASE + 0x0CC)
+#define DPORT_WIFI_CLK_EN_REG          (DR_REG_DPORT_BASE + 0x0C0)
 /* DPORT_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
 /*description: */
 #define DPORT_WIFI_CLK_EN  0xFFFFFFFF
@@ -1049,10 +972,10 @@
 #define DPORT_WIFI_CLK_EN_V  0xFFFFFFFF
 #define DPORT_WIFI_CLK_EN_S  0
 
-/* Mask for all Wifi clock bits - 1, 2, 10 */
-#define DPORT_WIFI_CLK_WIFI_EN  0x00000406
+/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15 */
+#define DPORT_WIFI_CLK_WIFI_EN  0x000007cf
 #define DPORT_WIFI_CLK_WIFI_EN_M  ((DPORT_WIFI_CLK_WIFI_EN_V)<<(DPORT_WIFI_CLK_WIFI_EN_S))
-#define DPORT_WIFI_CLK_WIFI_EN_V  0x406
+#define DPORT_WIFI_CLK_WIFI_EN_V  0x7cf
 #define DPORT_WIFI_CLK_WIFI_EN_S  0
 /* Mask for all Bluetooth clock bits - 11, 16, 17 */
 #define DPORT_WIFI_CLK_BT_EN  0x61
@@ -1073,8 +996,7 @@
 #define DPORT_WIFI_CLK_SDIO_HOST_EN  BIT(13)
 #define DPORT_WIFI_CLK_EMAC_EN  BIT(14)
 #define DPORT_WIFI_CLK_RNG_EN  BIT(15)
-
-#define DPORT_CORE_RST_EN_REG          (DR_REG_DPORT_BASE + 0x0D0)
+#define DPORT_CORE_RST_EN_REG         (DR_REG_DPORT_BASE + 0x0C4)
 /* DPORT_CORE_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_RW_BTLP_RST (BIT(10))
@@ -1089,7 +1011,7 @@
 #define DPORT_FE_RST (BIT(1))
 #define DPORT_BB_RST (BIT(0))  
 
-#define DPORT_BT_LPCK_DIV_INT_REG          (DR_REG_DPORT_BASE + 0x0D4)
+#define DPORT_BT_LPCK_DIV_INT_REG          (DR_REG_DPORT_BASE + 0x0C8)
 /* DPORT_BTEXTWAKEUP_REQ : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_BTEXTWAKEUP_REQ  (BIT(12))
@@ -1103,7 +1025,7 @@
 #define DPORT_BT_LPCK_DIV_NUM_V  0xFFF
 #define DPORT_BT_LPCK_DIV_NUM_S  0
 
-#define DPORT_BT_LPCK_DIV_FRAC_REG          (DR_REG_DPORT_BASE + 0x0D8)
+#define DPORT_BT_LPCK_DIV_FRAC_REG          (DR_REG_DPORT_BASE + 0x0CC)
 /* DPORT_LPCLK_SEL_XTAL32K : R/W ;bitpos:[27] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_LPCLK_SEL_XTAL32K  (BIT(27))
@@ -1141,7 +1063,7 @@
 #define DPORT_BT_LPCK_DIV_B_V  0xFFF
 #define DPORT_BT_LPCK_DIV_B_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_0_REG          (DR_REG_DPORT_BASE + 0x0DC)
+#define DPORT_CPU_INTR_FROM_CPU_0_REG          (DR_REG_DPORT_BASE + 0x0D0)
 /* DPORT_CPU_INTR_FROM_CPU_0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_0  (BIT(0))
@@ -1149,7 +1071,7 @@
 #define DPORT_CPU_INTR_FROM_CPU_0_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_0_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_1_REG          (DR_REG_DPORT_BASE + 0x0E0)
+#define DPORT_CPU_INTR_FROM_CPU_1_REG          (DR_REG_DPORT_BASE + 0x0D4)
 /* DPORT_CPU_INTR_FROM_CPU_1 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_1  (BIT(0))
@@ -1157,7 +1079,7 @@
 #define DPORT_CPU_INTR_FROM_CPU_1_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_1_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_2_REG          (DR_REG_DPORT_BASE + 0x0E4)
+#define DPORT_CPU_INTR_FROM_CPU_2_REG          (DR_REG_DPORT_BASE + 0x0D8)
 /* DPORT_CPU_INTR_FROM_CPU_2 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_2  (BIT(0))
@@ -1165,7 +1087,7 @@
 #define DPORT_CPU_INTR_FROM_CPU_2_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_2_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_3_REG          (DR_REG_DPORT_BASE + 0x0E8)
+#define DPORT_CPU_INTR_FROM_CPU_3_REG          (DR_REG_DPORT_BASE + 0x0DC)
 /* DPORT_CPU_INTR_FROM_CPU_3 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_3  (BIT(0))
@@ -1173,7 +1095,7 @@
 #define DPORT_CPU_INTR_FROM_CPU_3_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_3_S  0
 
-#define DPORT_PRO_INTR_STATUS_0_REG          (DR_REG_DPORT_BASE + 0x0EC)
+#define DPORT_PRO_INTR_STATUS_0_REG          (DR_REG_DPORT_BASE + 0x0E0)
 /* DPORT_PRO_INTR_STATUS_0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_0  0xFFFFFFFF
@@ -1181,7 +1103,7 @@
 #define DPORT_PRO_INTR_STATUS_0_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_0_S  0
 
-#define DPORT_PRO_INTR_STATUS_1_REG          (DR_REG_DPORT_BASE + 0x0F0)
+#define DPORT_PRO_INTR_STATUS_1_REG          (DR_REG_DPORT_BASE + 0x0E4)
 /* DPORT_PRO_INTR_STATUS_1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_1  0xFFFFFFFF
@@ -1189,7 +1111,7 @@
 #define DPORT_PRO_INTR_STATUS_1_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_1_S  0
 
-#define DPORT_PRO_INTR_STATUS_2_REG          (DR_REG_DPORT_BASE + 0x0F4)
+#define DPORT_PRO_INTR_STATUS_2_REG          (DR_REG_DPORT_BASE + 0x0E8)
 /* DPORT_PRO_INTR_STATUS_2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_2  0xFFFFFFFF
@@ -1197,7 +1119,7 @@
 #define DPORT_PRO_INTR_STATUS_2_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_2_S  0
 
-#define DPORT_APP_INTR_STATUS_0_REG          (DR_REG_DPORT_BASE + 0x0F8)
+#define DPORT_APP_INTR_STATUS_0_REG          (DR_REG_DPORT_BASE + 0x0EC)
 /* DPORT_APP_INTR_STATUS_0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_APP_INTR_STATUS_0  0xFFFFFFFF
@@ -1205,7 +1127,7 @@
 #define DPORT_APP_INTR_STATUS_0_V  0xFFFFFFFF
 #define DPORT_APP_INTR_STATUS_0_S  0
 
-#define DPORT_APP_INTR_STATUS_1_REG          (DR_REG_DPORT_BASE + 0x0FC)
+#define DPORT_APP_INTR_STATUS_1_REG          (DR_REG_DPORT_BASE + 0x0F0)
 /* DPORT_APP_INTR_STATUS_1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_APP_INTR_STATUS_1  0xFFFFFFFF
@@ -1213,7 +1135,7 @@
 #define DPORT_APP_INTR_STATUS_1_V  0xFFFFFFFF
 #define DPORT_APP_INTR_STATUS_1_S  0
 
-#define DPORT_APP_INTR_STATUS_2_REG          (DR_REG_DPORT_BASE + 0x100)
+#define DPORT_APP_INTR_STATUS_2_REG          (DR_REG_DPORT_BASE + 0x0F4)
 /* DPORT_APP_INTR_STATUS_2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_APP_INTR_STATUS_2  0xFFFFFFFF
@@ -1221,7 +1143,7 @@
 #define DPORT_APP_INTR_STATUS_2_V  0xFFFFFFFF
 #define DPORT_APP_INTR_STATUS_2_S  0
 
-#define DPORT_PRO_MAC_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x104)
+#define DPORT_PRO_MAC_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x0F8)
 /* DPORT_PRO_MAC_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_MAC_INTR_MAP  0x0000001F
@@ -1229,7 +1151,7 @@
 #define DPORT_PRO_MAC_INTR_MAP_V  0x1F
 #define DPORT_PRO_MAC_INTR_MAP_S  0
 
-#define DPORT_PRO_MAC_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x108)
+#define DPORT_PRO_MAC_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x0FC)
 /* DPORT_PRO_MAC_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_MAC_NMI_MAP  0x0000001F
@@ -1237,7 +1159,7 @@
 #define DPORT_PRO_MAC_NMI_MAP_V  0x1F
 #define DPORT_PRO_MAC_NMI_MAP_S  0
 
-#define DPORT_PRO_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x10C)
+#define DPORT_PRO_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x100)
 /* DPORT_PRO_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BB_INT_MAP  0x0000001F
@@ -1245,7 +1167,7 @@
 #define DPORT_PRO_BB_INT_MAP_V  0x1F
 #define DPORT_PRO_BB_INT_MAP_S  0
 
-#define DPORT_PRO_BT_MAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x110)
+#define DPORT_PRO_BT_MAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x104)
 /* DPORT_PRO_BT_MAC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_MAC_INT_MAP  0x0000001F
@@ -1253,7 +1175,7 @@
 #define DPORT_PRO_BT_MAC_INT_MAP_V  0x1F
 #define DPORT_PRO_BT_MAC_INT_MAP_S  0
 
-#define DPORT_PRO_BT_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x114)
+#define DPORT_PRO_BT_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x108)
 /* DPORT_PRO_BT_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_BB_INT_MAP  0x0000001F
@@ -1261,7 +1183,7 @@
 #define DPORT_PRO_BT_BB_INT_MAP_V  0x1F
 #define DPORT_PRO_BT_BB_INT_MAP_S  0
 
-#define DPORT_PRO_BT_BB_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x118)
+#define DPORT_PRO_BT_BB_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x10C)
 /* DPORT_PRO_BT_BB_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_BB_NMI_MAP  0x0000001F
@@ -1269,7 +1191,7 @@
 #define DPORT_PRO_BT_BB_NMI_MAP_V  0x1F
 #define DPORT_PRO_BT_BB_NMI_MAP_S  0
 
-#define DPORT_PRO_RWBT_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x11C)
+#define DPORT_PRO_RWBT_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x110)
 /* DPORT_PRO_RWBT_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBT_IRQ_MAP  0x0000001F
@@ -1277,7 +1199,7 @@
 #define DPORT_PRO_RWBT_IRQ_MAP_V  0x1F
 #define DPORT_PRO_RWBT_IRQ_MAP_S  0
 
-#define DPORT_PRO_RWBLE_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x120)
+#define DPORT_PRO_RWBLE_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x114)
 /* DPORT_PRO_RWBLE_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBLE_IRQ_MAP  0x0000001F
@@ -1285,7 +1207,7 @@
 #define DPORT_PRO_RWBLE_IRQ_MAP_V  0x1F
 #define DPORT_PRO_RWBLE_IRQ_MAP_S  0
 
-#define DPORT_PRO_RWBT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x124)
+#define DPORT_PRO_RWBT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x118)
 /* DPORT_PRO_RWBT_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBT_NMI_MAP  0x0000001F
@@ -1293,7 +1215,7 @@
 #define DPORT_PRO_RWBT_NMI_MAP_V  0x1F
 #define DPORT_PRO_RWBT_NMI_MAP_S  0
 
-#define DPORT_PRO_RWBLE_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x128)
+#define DPORT_PRO_RWBLE_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x11C)
 /* DPORT_PRO_RWBLE_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBLE_NMI_MAP  0x0000001F
@@ -1301,7 +1223,7 @@
 #define DPORT_PRO_RWBLE_NMI_MAP_V  0x1F
 #define DPORT_PRO_RWBLE_NMI_MAP_S  0
 
-#define DPORT_PRO_SLC0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x12C)
+#define DPORT_PRO_SLC0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x120)
 /* DPORT_PRO_SLC0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SLC0_INTR_MAP  0x0000001F
@@ -1309,7 +1231,7 @@
 #define DPORT_PRO_SLC0_INTR_MAP_V  0x1F
 #define DPORT_PRO_SLC0_INTR_MAP_S  0
 
-#define DPORT_PRO_SLC1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x130)
+#define DPORT_PRO_SLC1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x124)
 /* DPORT_PRO_SLC1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SLC1_INTR_MAP  0x0000001F
@@ -1317,7 +1239,7 @@
 #define DPORT_PRO_SLC1_INTR_MAP_V  0x1F
 #define DPORT_PRO_SLC1_INTR_MAP_S  0
 
-#define DPORT_PRO_UHCI0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x134)
+#define DPORT_PRO_UHCI0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x128)
 /* DPORT_PRO_UHCI0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UHCI0_INTR_MAP  0x0000001F
@@ -1325,7 +1247,7 @@
 #define DPORT_PRO_UHCI0_INTR_MAP_V  0x1F
 #define DPORT_PRO_UHCI0_INTR_MAP_S  0
 
-#define DPORT_PRO_UHCI1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x138)
+#define DPORT_PRO_UHCI1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x12C)
 /* DPORT_PRO_UHCI1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UHCI1_INTR_MAP  0x0000001F
@@ -1333,7 +1255,7 @@
 #define DPORT_PRO_UHCI1_INTR_MAP_V  0x1F
 #define DPORT_PRO_UHCI1_INTR_MAP_S  0
 
-#define DPORT_PRO_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x13C)
+#define DPORT_PRO_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x130)
 /* DPORT_PRO_TG_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP  0x0000001F
@@ -1341,7 +1263,7 @@
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x140)
+#define DPORT_PRO_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x134)
 /* DPORT_PRO_TG_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP  0x0000001F
@@ -1349,7 +1271,7 @@
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x144)
+#define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x138)
 /* DPORT_PRO_TG_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP  0x0000001F
@@ -1357,7 +1279,7 @@
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x148)
+#define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x13C)
 /* DPORT_PRO_TG_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP  0x0000001F
@@ -1365,7 +1287,7 @@
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x14C)
+#define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x140)
 /* DPORT_PRO_TG1_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP  0x0000001F
@@ -1373,7 +1295,7 @@
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x150)
+#define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x144)
 /* DPORT_PRO_TG1_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP  0x0000001F
@@ -1381,7 +1303,7 @@
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x154)
+#define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x148)
 /* DPORT_PRO_TG1_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP  0x0000001F
@@ -1389,7 +1311,7 @@
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x158)
+#define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x14C)
 /* DPORT_PRO_TG1_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP  0x0000001F
@@ -1397,7 +1319,7 @@
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_GPIO_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x15C)
+#define DPORT_PRO_GPIO_INTERRUPT_PRO_MAP_REG          (DR_REG_DPORT_BASE + 0x150)
 /* DPORT_PRO_GPIO_INTERRUPT_PRO_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_MAP  0x0000001F
@@ -1405,7 +1327,7 @@
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_MAP_V  0x1F
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_MAP_S  0
 
-#define DPORT_PRO_GPIO_INTERRUPT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x160)
+#define DPORT_PRO_GPIO_INTERRUPT_PRO_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x154)
 /* DPORT_PRO_GPIO_INTERRUPT_PRO_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_NMI_MAP  0x0000001F
@@ -1413,7 +1335,15 @@
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_NMI_MAP_V  0x1F
 #define DPORT_PRO_GPIO_INTERRUPT_PRO_NMI_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_DPORT_BASE + 0x164)
+#define DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_REG          (DR_REG_DPORT_BASE + 0x158)
+/* DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP  0x0000001F
+#define DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_M  ((DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_V)<<(DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_S))
+#define DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_V  0x1F
+#define DPORT_PRO_ALONE_GPIO_IN_INTR_PRO_MAP_S  0
+
+#define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_DPORT_BASE + 0x15C)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP  0x0000001F
@@ -1421,7 +1351,7 @@
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_DPORT_BASE + 0x168)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_DPORT_BASE + 0x160)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP  0x0000001F
@@ -1429,7 +1359,7 @@
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_DPORT_BASE + 0x16C)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_DPORT_BASE + 0x164)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP  0x0000001F
@@ -1437,7 +1367,7 @@
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_DPORT_BASE + 0x170)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_DPORT_BASE + 0x168)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP  0x0000001F
@@ -1445,7 +1375,7 @@
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_0_MAP_REG          (DR_REG_DPORT_BASE + 0x174)
+#define DPORT_PRO_SPI_INTR_0_MAP_REG          (DR_REG_DPORT_BASE + 0x16C)
 /* DPORT_PRO_SPI_INTR_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_0_MAP  0x0000001F
@@ -1453,7 +1383,7 @@
 #define DPORT_PRO_SPI_INTR_0_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_0_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_1_MAP_REG          (DR_REG_DPORT_BASE + 0x178)
+#define DPORT_PRO_SPI_INTR_1_MAP_REG          (DR_REG_DPORT_BASE + 0x170)
 /* DPORT_PRO_SPI_INTR_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_1_MAP  0x0000001F
@@ -1461,7 +1391,7 @@
 #define DPORT_PRO_SPI_INTR_1_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_1_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_2_MAP_REG          (DR_REG_DPORT_BASE + 0x17C)
+#define DPORT_PRO_SPI_INTR_2_MAP_REG          (DR_REG_DPORT_BASE + 0x174)
 /* DPORT_PRO_SPI_INTR_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_2_MAP  0x0000001F
@@ -1469,7 +1399,7 @@
 #define DPORT_PRO_SPI_INTR_2_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_2_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_3_MAP_REG          (DR_REG_DPORT_BASE + 0x180)
+#define DPORT_PRO_SPI_INTR_3_MAP_REG          (DR_REG_DPORT_BASE + 0x178)
 /* DPORT_PRO_SPI_INTR_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_3_MAP  0x0000001F
@@ -1477,7 +1407,7 @@
 #define DPORT_PRO_SPI_INTR_3_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_3_MAP_S  0
 
-#define DPORT_PRO_I2S0_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x184)
+#define DPORT_PRO_I2S0_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x17C)
 /* DPORT_PRO_I2S0_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2S0_INT_MAP  0x0000001F
@@ -1485,7 +1415,7 @@
 #define DPORT_PRO_I2S0_INT_MAP_V  0x1F
 #define DPORT_PRO_I2S0_INT_MAP_S  0
 
-#define DPORT_PRO_I2S1_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x188)
+#define DPORT_PRO_I2S1_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x180)
 /* DPORT_PRO_I2S1_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2S1_INT_MAP  0x0000001F
@@ -1493,7 +1423,7 @@
 #define DPORT_PRO_I2S1_INT_MAP_V  0x1F
 #define DPORT_PRO_I2S1_INT_MAP_S  0
 
-#define DPORT_PRO_UART_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x18C)
+#define DPORT_PRO_UART_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x184)
 /* DPORT_PRO_UART_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART_INTR_MAP  0x0000001F
@@ -1501,7 +1431,7 @@
 #define DPORT_PRO_UART_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART_INTR_MAP_S  0
 
-#define DPORT_PRO_UART1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x190)
+#define DPORT_PRO_UART1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x188)
 /* DPORT_PRO_UART1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART1_INTR_MAP  0x0000001F
@@ -1509,7 +1439,7 @@
 #define DPORT_PRO_UART1_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART1_INTR_MAP_S  0
 
-#define DPORT_PRO_UART2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x194)
+#define DPORT_PRO_UART2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x18C)
 /* DPORT_PRO_UART2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART2_INTR_MAP  0x0000001F
@@ -1517,7 +1447,7 @@
 #define DPORT_PRO_UART2_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART2_INTR_MAP_S  0
 
-#define DPORT_PRO_SDIO_HOST_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x198)
+#define DPORT_PRO_SDIO_HOST_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x190)
 /* DPORT_PRO_SDIO_HOST_INTERRUPT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SDIO_HOST_INTERRUPT_MAP  0x0000001F
@@ -1525,15 +1455,7 @@
 #define DPORT_PRO_SDIO_HOST_INTERRUPT_MAP_V  0x1F
 #define DPORT_PRO_SDIO_HOST_INTERRUPT_MAP_S  0
 
-#define DPORT_PRO_EMAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x19C)
-/* DPORT_PRO_EMAC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
-/*description: */
-#define DPORT_PRO_EMAC_INT_MAP  0x0000001F
-#define DPORT_PRO_EMAC_INT_MAP_M  ((DPORT_PRO_EMAC_INT_MAP_V)<<(DPORT_PRO_EMAC_INT_MAP_S))
-#define DPORT_PRO_EMAC_INT_MAP_V  0x1F
-#define DPORT_PRO_EMAC_INT_MAP_S  0
-
-#define DPORT_PRO_PWM0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1A0)
+#define DPORT_PRO_PWM0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x194)
 /* DPORT_PRO_PWM0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM0_INTR_MAP  0x0000001F
@@ -1541,7 +1463,7 @@
 #define DPORT_PRO_PWM0_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM0_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1A4)
+#define DPORT_PRO_PWM1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x198)
 /* DPORT_PRO_PWM1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM1_INTR_MAP  0x0000001F
@@ -1549,7 +1471,7 @@
 #define DPORT_PRO_PWM1_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM1_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1A8)
+#define DPORT_PRO_PWM2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x19C)
 /* DPORT_PRO_PWM2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM2_INTR_MAP  0x0000001F
@@ -1557,7 +1479,7 @@
 #define DPORT_PRO_PWM2_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM2_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM3_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1AC)
+#define DPORT_PRO_PWM3_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1A0)
 /* DPORT_PRO_PWM3_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM3_INTR_MAP  0x0000001F
@@ -1565,7 +1487,7 @@
 #define DPORT_PRO_PWM3_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM3_INTR_MAP_S  0
 
-#define DPORT_PRO_LEDC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1B0)
+#define DPORT_PRO_LEDC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1A4)
 /* DPORT_PRO_LEDC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_LEDC_INT_MAP  0x0000001F
@@ -1573,7 +1495,7 @@
 #define DPORT_PRO_LEDC_INT_MAP_V  0x1F
 #define DPORT_PRO_LEDC_INT_MAP_S  0
 
-#define DPORT_PRO_EFUSE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1B4)
+#define DPORT_PRO_EFUSE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1A8)
 /* DPORT_PRO_EFUSE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_EFUSE_INT_MAP  0x0000001F
@@ -1581,7 +1503,7 @@
 #define DPORT_PRO_EFUSE_INT_MAP_V  0x1F
 #define DPORT_PRO_EFUSE_INT_MAP_S  0
 
-#define DPORT_PRO_CAN_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1B8)
+#define DPORT_PRO_CAN_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1AC)
 /* DPORT_PRO_CAN_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CAN_INT_MAP  0x0000001F
@@ -1589,7 +1511,7 @@
 #define DPORT_PRO_CAN_INT_MAP_V  0x1F
 #define DPORT_PRO_CAN_INT_MAP_S  0
 
-#define DPORT_PRO_RTC_CORE_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1BC)
+#define DPORT_PRO_RTC_CORE_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1B0)
 /* DPORT_PRO_RTC_CORE_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RTC_CORE_INTR_MAP  0x0000001F
@@ -1597,7 +1519,7 @@
 #define DPORT_PRO_RTC_CORE_INTR_MAP_V  0x1F
 #define DPORT_PRO_RTC_CORE_INTR_MAP_S  0
 
-#define DPORT_PRO_RMT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1C0)
+#define DPORT_PRO_RMT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1B4)
 /* DPORT_PRO_RMT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RMT_INTR_MAP  0x0000001F
@@ -1605,7 +1527,7 @@
 #define DPORT_PRO_RMT_INTR_MAP_V  0x1F
 #define DPORT_PRO_RMT_INTR_MAP_S  0
 
-#define DPORT_PRO_PCNT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1C4)
+#define DPORT_PRO_PCNT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1B8)
 /* DPORT_PRO_PCNT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PCNT_INTR_MAP  0x0000001F
@@ -1613,7 +1535,7 @@
 #define DPORT_PRO_PCNT_INTR_MAP_V  0x1F
 #define DPORT_PRO_PCNT_INTR_MAP_S  0
 
-#define DPORT_PRO_I2C_EXT0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1C8)
+#define DPORT_PRO_I2C_EXT0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1BC)
 /* DPORT_PRO_I2C_EXT0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2C_EXT0_INTR_MAP  0x0000001F
@@ -1621,7 +1543,7 @@
 #define DPORT_PRO_I2C_EXT0_INTR_MAP_V  0x1F
 #define DPORT_PRO_I2C_EXT0_INTR_MAP_S  0
 
-#define DPORT_PRO_I2C_EXT1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1CC)
+#define DPORT_PRO_I2C_EXT1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1C0)
 /* DPORT_PRO_I2C_EXT1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2C_EXT1_INTR_MAP  0x0000001F
@@ -1629,7 +1551,7 @@
 #define DPORT_PRO_I2C_EXT1_INTR_MAP_V  0x1F
 #define DPORT_PRO_I2C_EXT1_INTR_MAP_S  0
 
-#define DPORT_PRO_RSA_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1D0)
+#define DPORT_PRO_RSA_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x1C4)
 /* DPORT_PRO_RSA_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RSA_INTR_MAP  0x0000001F
@@ -1637,7 +1559,7 @@
 #define DPORT_PRO_RSA_INTR_MAP_V  0x1F
 #define DPORT_PRO_RSA_INTR_MAP_S  0
 
-#define DPORT_PRO_SPI1_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1D4)
+#define DPORT_PRO_SPI1_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1C8)
 /* DPORT_PRO_SPI1_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI1_DMA_INT_MAP  0x0000001F
@@ -1645,7 +1567,7 @@
 #define DPORT_PRO_SPI1_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_SPI1_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_SPI2_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1D8)
+#define DPORT_PRO_SPI2_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1CC)
 /* DPORT_PRO_SPI2_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI2_DMA_INT_MAP  0x0000001F
@@ -1653,7 +1575,7 @@
 #define DPORT_PRO_SPI2_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_SPI2_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_SPI3_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1DC)
+#define DPORT_PRO_SPI3_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1D0)
 /* DPORT_PRO_SPI3_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI3_DMA_INT_MAP  0x0000001F
@@ -1661,7 +1583,7 @@
 #define DPORT_PRO_SPI3_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_SPI3_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_WDG_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1E0)
+#define DPORT_PRO_WDG_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1D4)
 /* DPORT_PRO_WDG_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_WDG_INT_MAP  0x0000001F
@@ -1669,7 +1591,7 @@
 #define DPORT_PRO_WDG_INT_MAP_V  0x1F
 #define DPORT_PRO_WDG_INT_MAP_S  0
 
-#define DPORT_PRO_TIMER_INT1_MAP_REG          (DR_REG_DPORT_BASE + 0x1E4)
+#define DPORT_PRO_TIMER_INT1_MAP_REG          (DR_REG_DPORT_BASE + 0x1D8)
 /* DPORT_PRO_TIMER_INT1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TIMER_INT1_MAP  0x0000001F
@@ -1677,7 +1599,7 @@
 #define DPORT_PRO_TIMER_INT1_MAP_V  0x1F
 #define DPORT_PRO_TIMER_INT1_MAP_S  0
 
-#define DPORT_PRO_TIMER_INT2_MAP_REG          (DR_REG_DPORT_BASE + 0x1E8)
+#define DPORT_PRO_TIMER_INT2_MAP_REG          (DR_REG_DPORT_BASE + 0x1DC)
 /* DPORT_PRO_TIMER_INT2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TIMER_INT2_MAP  0x0000001F
@@ -1685,7 +1607,7 @@
 #define DPORT_PRO_TIMER_INT2_MAP_V  0x1F
 #define DPORT_PRO_TIMER_INT2_MAP_S  0
 
-#define DPORT_PRO_TG_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1EC)
+#define DPORT_PRO_TG_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1E0)
 /* DPORT_PRO_TG_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP  0x0000001F
@@ -1693,7 +1615,7 @@
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F0)
+#define DPORT_PRO_TG_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1E4)
 /* DPORT_PRO_TG_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP  0x0000001F
@@ -1701,7 +1623,7 @@
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F4)
+#define DPORT_PRO_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1E8)
 /* DPORT_PRO_TG_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP  0x0000001F
@@ -1709,7 +1631,7 @@
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F8)
+#define DPORT_PRO_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1EC)
 /* DPORT_PRO_TG_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP  0x0000001F
@@ -1717,7 +1639,7 @@
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1FC)
+#define DPORT_PRO_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F0)
 /* DPORT_PRO_TG1_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP  0x0000001F
@@ -1725,7 +1647,7 @@
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x200)
+#define DPORT_PRO_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F4)
 /* DPORT_PRO_TG1_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP  0x0000001F
@@ -1733,7 +1655,7 @@
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x204)
+#define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1F8)
 /* DPORT_PRO_TG1_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP  0x0000001F
@@ -1741,7 +1663,7 @@
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x208)
+#define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x1FC)
 /* DPORT_PRO_TG1_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP  0x0000001F
@@ -1749,23 +1671,15 @@
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_MMU_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x20C)
-/* DPORT_PRO_MMU_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+#define DPORT_PRO_MEM_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x200)
+/* DPORT_PRO_MEM_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
-#define DPORT_PRO_MMU_IA_INT_MAP  0x0000001F
-#define DPORT_PRO_MMU_IA_INT_MAP_M  ((DPORT_PRO_MMU_IA_INT_MAP_V)<<(DPORT_PRO_MMU_IA_INT_MAP_S))
-#define DPORT_PRO_MMU_IA_INT_MAP_V  0x1F
-#define DPORT_PRO_MMU_IA_INT_MAP_S  0
+#define DPORT_PRO_MEM_IA_INT_MAP  0x0000001F
+#define DPORT_PRO_MEM_IA_INT_MAP_M  ((DPORT_PRO_MEM_IA_INT_MAP_V)<<(DPORT_PRO_MEM_IA_INT_MAP_S))
+#define DPORT_PRO_MEM_IA_INT_MAP_V  0x1F
+#define DPORT_PRO_MEM_IA_INT_MAP_S  0
 
-#define DPORT_PRO_MPU_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x210)
-/* DPORT_PRO_MPU_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
-/*description: */
-#define DPORT_PRO_MPU_IA_INT_MAP  0x0000001F
-#define DPORT_PRO_MPU_IA_INT_MAP_M  ((DPORT_PRO_MPU_IA_INT_MAP_V)<<(DPORT_PRO_MPU_IA_INT_MAP_S))
-#define DPORT_PRO_MPU_IA_INT_MAP_V  0x1F
-#define DPORT_PRO_MPU_IA_INT_MAP_S  0
-
-#define DPORT_PRO_CACHE_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x214)
+#define DPORT_PRO_CACHE_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x204)
 /* DPORT_PRO_CACHE_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CACHE_IA_INT_MAP  0x0000001F
@@ -1773,7 +1687,15 @@
 #define DPORT_PRO_CACHE_IA_INT_MAP_V  0x1F
 #define DPORT_PRO_CACHE_IA_INT_MAP_S  0
 
-#define DPORT_APP_MAC_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x218)
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x208)
+/* DPORT_PRO_ASSIST_DEBUG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP  0x0000001F
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_M  ((DPORT_PRO_ASSIST_DEBUG_INTR_MAP_V)<<(DPORT_PRO_ASSIST_DEBUG_INTR_MAP_S))
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_V  0x1F
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_S  0
+
+#define DPORT_APP_MAC_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x20C)
 /* DPORT_APP_MAC_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_MAC_INTR_MAP  0x0000001F
@@ -1781,7 +1703,7 @@
 #define DPORT_APP_MAC_INTR_MAP_V  0x1F
 #define DPORT_APP_MAC_INTR_MAP_S  0
 
-#define DPORT_APP_MAC_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x21C)
+#define DPORT_APP_MAC_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x210)
 /* DPORT_APP_MAC_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_MAC_NMI_MAP  0x0000001F
@@ -1789,7 +1711,7 @@
 #define DPORT_APP_MAC_NMI_MAP_V  0x1F
 #define DPORT_APP_MAC_NMI_MAP_S  0
 
-#define DPORT_APP_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x220)
+#define DPORT_APP_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x214)
 /* DPORT_APP_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_BB_INT_MAP  0x0000001F
@@ -1797,7 +1719,7 @@
 #define DPORT_APP_BB_INT_MAP_V  0x1F
 #define DPORT_APP_BB_INT_MAP_S  0
 
-#define DPORT_APP_BT_MAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x224)
+#define DPORT_APP_BT_MAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x218)
 /* DPORT_APP_BT_MAC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_BT_MAC_INT_MAP  0x0000001F
@@ -1805,7 +1727,7 @@
 #define DPORT_APP_BT_MAC_INT_MAP_V  0x1F
 #define DPORT_APP_BT_MAC_INT_MAP_S  0
 
-#define DPORT_APP_BT_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x228)
+#define DPORT_APP_BT_BB_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x21C)
 /* DPORT_APP_BT_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_BT_BB_INT_MAP  0x0000001F
@@ -1813,7 +1735,7 @@
 #define DPORT_APP_BT_BB_INT_MAP_V  0x1F
 #define DPORT_APP_BT_BB_INT_MAP_S  0
 
-#define DPORT_APP_BT_BB_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x22C)
+#define DPORT_APP_BT_BB_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x220)
 /* DPORT_APP_BT_BB_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_BT_BB_NMI_MAP  0x0000001F
@@ -1821,7 +1743,7 @@
 #define DPORT_APP_BT_BB_NMI_MAP_V  0x1F
 #define DPORT_APP_BT_BB_NMI_MAP_S  0
 
-#define DPORT_APP_RWBT_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x230)
+#define DPORT_APP_RWBT_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x224)
 /* DPORT_APP_RWBT_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RWBT_IRQ_MAP  0x0000001F
@@ -1829,7 +1751,7 @@
 #define DPORT_APP_RWBT_IRQ_MAP_V  0x1F
 #define DPORT_APP_RWBT_IRQ_MAP_S  0
 
-#define DPORT_APP_RWBLE_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x234)
+#define DPORT_APP_RWBLE_IRQ_MAP_REG          (DR_REG_DPORT_BASE + 0x228)
 /* DPORT_APP_RWBLE_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RWBLE_IRQ_MAP  0x0000001F
@@ -1837,7 +1759,7 @@
 #define DPORT_APP_RWBLE_IRQ_MAP_V  0x1F
 #define DPORT_APP_RWBLE_IRQ_MAP_S  0
 
-#define DPORT_APP_RWBT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x238)
+#define DPORT_APP_RWBT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x22C)
 /* DPORT_APP_RWBT_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RWBT_NMI_MAP  0x0000001F
@@ -1845,7 +1767,7 @@
 #define DPORT_APP_RWBT_NMI_MAP_V  0x1F
 #define DPORT_APP_RWBT_NMI_MAP_S  0
 
-#define DPORT_APP_RWBLE_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x23C)
+#define DPORT_APP_RWBLE_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x230)
 /* DPORT_APP_RWBLE_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RWBLE_NMI_MAP  0x0000001F
@@ -1853,7 +1775,7 @@
 #define DPORT_APP_RWBLE_NMI_MAP_V  0x1F
 #define DPORT_APP_RWBLE_NMI_MAP_S  0
 
-#define DPORT_APP_SLC0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x240)
+#define DPORT_APP_SLC0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x234)
 /* DPORT_APP_SLC0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SLC0_INTR_MAP  0x0000001F
@@ -1861,7 +1783,7 @@
 #define DPORT_APP_SLC0_INTR_MAP_V  0x1F
 #define DPORT_APP_SLC0_INTR_MAP_S  0
 
-#define DPORT_APP_SLC1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x244)
+#define DPORT_APP_SLC1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x238)
 /* DPORT_APP_SLC1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SLC1_INTR_MAP  0x0000001F
@@ -1869,7 +1791,7 @@
 #define DPORT_APP_SLC1_INTR_MAP_V  0x1F
 #define DPORT_APP_SLC1_INTR_MAP_S  0
 
-#define DPORT_APP_UHCI0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x248)
+#define DPORT_APP_UHCI0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x23C)
 /* DPORT_APP_UHCI0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_UHCI0_INTR_MAP  0x0000001F
@@ -1877,7 +1799,7 @@
 #define DPORT_APP_UHCI0_INTR_MAP_V  0x1F
 #define DPORT_APP_UHCI0_INTR_MAP_S  0
 
-#define DPORT_APP_UHCI1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x24C)
+#define DPORT_APP_UHCI1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x240)
 /* DPORT_APP_UHCI1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_UHCI1_INTR_MAP  0x0000001F
@@ -1885,7 +1807,7 @@
 #define DPORT_APP_UHCI1_INTR_MAP_V  0x1F
 #define DPORT_APP_UHCI1_INTR_MAP_S  0
 
-#define DPORT_APP_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x250)
+#define DPORT_APP_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x244)
 /* DPORT_APP_TG_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_T0_LEVEL_INT_MAP  0x0000001F
@@ -1893,7 +1815,7 @@
 #define DPORT_APP_TG_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x254)
+#define DPORT_APP_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x248)
 /* DPORT_APP_TG_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_T1_LEVEL_INT_MAP  0x0000001F
@@ -1901,7 +1823,7 @@
 #define DPORT_APP_TG_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x258)
+#define DPORT_APP_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x24C)
 /* DPORT_APP_TG_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_WDT_LEVEL_INT_MAP  0x0000001F
@@ -1909,7 +1831,7 @@
 #define DPORT_APP_TG_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x25C)
+#define DPORT_APP_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x250)
 /* DPORT_APP_TG_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_LACT_LEVEL_INT_MAP  0x0000001F
@@ -1917,7 +1839,7 @@
 #define DPORT_APP_TG_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x260)
+#define DPORT_APP_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x254)
 /* DPORT_APP_TG1_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_T0_LEVEL_INT_MAP  0x0000001F
@@ -1925,7 +1847,7 @@
 #define DPORT_APP_TG1_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x264)
+#define DPORT_APP_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x258)
 /* DPORT_APP_TG1_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_T1_LEVEL_INT_MAP  0x0000001F
@@ -1933,7 +1855,7 @@
 #define DPORT_APP_TG1_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x268)
+#define DPORT_APP_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x25C)
 /* DPORT_APP_TG1_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_WDT_LEVEL_INT_MAP  0x0000001F
@@ -1941,7 +1863,7 @@
 #define DPORT_APP_TG1_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x26C)
+#define DPORT_APP_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x260)
 /* DPORT_APP_TG1_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_LACT_LEVEL_INT_MAP  0x0000001F
@@ -1949,7 +1871,7 @@
 #define DPORT_APP_TG1_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_APP_GPIO_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x270)
+#define DPORT_APP_GPIO_INTERRUPT_APP_MAP_REG          (DR_REG_DPORT_BASE + 0x264)
 /* DPORT_APP_GPIO_INTERRUPT_APP_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_GPIO_INTERRUPT_APP_MAP  0x0000001F
@@ -1957,7 +1879,7 @@
 #define DPORT_APP_GPIO_INTERRUPT_APP_MAP_V  0x1F
 #define DPORT_APP_GPIO_INTERRUPT_APP_MAP_S  0
 
-#define DPORT_APP_GPIO_INTERRUPT_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x274)
+#define DPORT_APP_GPIO_INTERRUPT_APP_NMI_MAP_REG          (DR_REG_DPORT_BASE + 0x268)
 /* DPORT_APP_GPIO_INTERRUPT_APP_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_GPIO_INTERRUPT_APP_NMI_MAP  0x0000001F
@@ -1965,7 +1887,15 @@
 #define DPORT_APP_GPIO_INTERRUPT_APP_NMI_MAP_V  0x1F
 #define DPORT_APP_GPIO_INTERRUPT_APP_NMI_MAP_S  0
 
-#define DPORT_APP_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_DPORT_BASE + 0x278)
+#define DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_REG          (DR_REG_DPORT_BASE + 0x26C)
+/* DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP  0x0000001F
+#define DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_M  ((DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_V)<<(DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_S))
+#define DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_V  0x1F
+#define DPORT_APP_ALONE_GPIO_IN_INTR_APP_MAP_S  0
+
+#define DPORT_APP_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_DPORT_BASE + 0x270)
 /* DPORT_APP_CPU_INTR_FROM_CPU_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CPU_INTR_FROM_CPU_0_MAP  0x0000001F
@@ -1973,7 +1903,7 @@
 #define DPORT_APP_CPU_INTR_FROM_CPU_0_MAP_V  0x1F
 #define DPORT_APP_CPU_INTR_FROM_CPU_0_MAP_S  0
 
-#define DPORT_APP_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_DPORT_BASE + 0x27C)
+#define DPORT_APP_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_DPORT_BASE + 0x274)
 /* DPORT_APP_CPU_INTR_FROM_CPU_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CPU_INTR_FROM_CPU_1_MAP  0x0000001F
@@ -1981,7 +1911,7 @@
 #define DPORT_APP_CPU_INTR_FROM_CPU_1_MAP_V  0x1F
 #define DPORT_APP_CPU_INTR_FROM_CPU_1_MAP_S  0
 
-#define DPORT_APP_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_DPORT_BASE + 0x280)
+#define DPORT_APP_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_DPORT_BASE + 0x278)
 /* DPORT_APP_CPU_INTR_FROM_CPU_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CPU_INTR_FROM_CPU_2_MAP  0x0000001F
@@ -1989,7 +1919,7 @@
 #define DPORT_APP_CPU_INTR_FROM_CPU_2_MAP_V  0x1F
 #define DPORT_APP_CPU_INTR_FROM_CPU_2_MAP_S  0
 
-#define DPORT_APP_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_DPORT_BASE + 0x284)
+#define DPORT_APP_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_DPORT_BASE + 0x27C)
 /* DPORT_APP_CPU_INTR_FROM_CPU_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CPU_INTR_FROM_CPU_3_MAP  0x0000001F
@@ -1997,7 +1927,7 @@
 #define DPORT_APP_CPU_INTR_FROM_CPU_3_MAP_V  0x1F
 #define DPORT_APP_CPU_INTR_FROM_CPU_3_MAP_S  0
 
-#define DPORT_APP_SPI_INTR_0_MAP_REG          (DR_REG_DPORT_BASE + 0x288)
+#define DPORT_APP_SPI_INTR_0_MAP_REG          (DR_REG_DPORT_BASE + 0x280)
 /* DPORT_APP_SPI_INTR_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI_INTR_0_MAP  0x0000001F
@@ -2005,7 +1935,7 @@
 #define DPORT_APP_SPI_INTR_0_MAP_V  0x1F
 #define DPORT_APP_SPI_INTR_0_MAP_S  0
 
-#define DPORT_APP_SPI_INTR_1_MAP_REG          (DR_REG_DPORT_BASE + 0x28C)
+#define DPORT_APP_SPI_INTR_1_MAP_REG          (DR_REG_DPORT_BASE + 0x284)
 /* DPORT_APP_SPI_INTR_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI_INTR_1_MAP  0x0000001F
@@ -2013,7 +1943,7 @@
 #define DPORT_APP_SPI_INTR_1_MAP_V  0x1F
 #define DPORT_APP_SPI_INTR_1_MAP_S  0
 
-#define DPORT_APP_SPI_INTR_2_MAP_REG          (DR_REG_DPORT_BASE + 0x290)
+#define DPORT_APP_SPI_INTR_2_MAP_REG          (DR_REG_DPORT_BASE + 0x288)
 /* DPORT_APP_SPI_INTR_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI_INTR_2_MAP  0x0000001F
@@ -2021,7 +1951,7 @@
 #define DPORT_APP_SPI_INTR_2_MAP_V  0x1F
 #define DPORT_APP_SPI_INTR_2_MAP_S  0
 
-#define DPORT_APP_SPI_INTR_3_MAP_REG          (DR_REG_DPORT_BASE + 0x294)
+#define DPORT_APP_SPI_INTR_3_MAP_REG          (DR_REG_DPORT_BASE + 0x28C)
 /* DPORT_APP_SPI_INTR_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI_INTR_3_MAP  0x0000001F
@@ -2029,7 +1959,7 @@
 #define DPORT_APP_SPI_INTR_3_MAP_V  0x1F
 #define DPORT_APP_SPI_INTR_3_MAP_S  0
 
-#define DPORT_APP_I2S0_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x298)
+#define DPORT_APP_I2S0_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x290)
 /* DPORT_APP_I2S0_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_I2S0_INT_MAP  0x0000001F
@@ -2037,7 +1967,7 @@
 #define DPORT_APP_I2S0_INT_MAP_V  0x1F
 #define DPORT_APP_I2S0_INT_MAP_S  0
 
-#define DPORT_APP_I2S1_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x29C)
+#define DPORT_APP_I2S1_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x294)
 /* DPORT_APP_I2S1_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_I2S1_INT_MAP  0x0000001F
@@ -2045,7 +1975,7 @@
 #define DPORT_APP_I2S1_INT_MAP_V  0x1F
 #define DPORT_APP_I2S1_INT_MAP_S  0
 
-#define DPORT_APP_UART_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2A0)
+#define DPORT_APP_UART_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x298)
 /* DPORT_APP_UART_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_UART_INTR_MAP  0x0000001F
@@ -2053,7 +1983,7 @@
 #define DPORT_APP_UART_INTR_MAP_V  0x1F
 #define DPORT_APP_UART_INTR_MAP_S  0
 
-#define DPORT_APP_UART1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2A4)
+#define DPORT_APP_UART1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x29C)
 /* DPORT_APP_UART1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_UART1_INTR_MAP  0x0000001F
@@ -2061,7 +1991,7 @@
 #define DPORT_APP_UART1_INTR_MAP_V  0x1F
 #define DPORT_APP_UART1_INTR_MAP_S  0
 
-#define DPORT_APP_UART2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2A8)
+#define DPORT_APP_UART2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2A0)
 /* DPORT_APP_UART2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_UART2_INTR_MAP  0x0000001F
@@ -2069,7 +1999,7 @@
 #define DPORT_APP_UART2_INTR_MAP_V  0x1F
 #define DPORT_APP_UART2_INTR_MAP_S  0
 
-#define DPORT_APP_SDIO_HOST_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x2AC)
+#define DPORT_APP_SDIO_HOST_INTERRUPT_MAP_REG          (DR_REG_DPORT_BASE + 0x2A4)
 /* DPORT_APP_SDIO_HOST_INTERRUPT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SDIO_HOST_INTERRUPT_MAP  0x0000001F
@@ -2077,15 +2007,7 @@
 #define DPORT_APP_SDIO_HOST_INTERRUPT_MAP_V  0x1F
 #define DPORT_APP_SDIO_HOST_INTERRUPT_MAP_S  0
 
-#define DPORT_APP_EMAC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2B0)
-/* DPORT_APP_EMAC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
-/*description: */
-#define DPORT_APP_EMAC_INT_MAP  0x0000001F
-#define DPORT_APP_EMAC_INT_MAP_M  ((DPORT_APP_EMAC_INT_MAP_V)<<(DPORT_APP_EMAC_INT_MAP_S))
-#define DPORT_APP_EMAC_INT_MAP_V  0x1F
-#define DPORT_APP_EMAC_INT_MAP_S  0
-
-#define DPORT_APP_PWM0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2B4)
+#define DPORT_APP_PWM0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2A8)
 /* DPORT_APP_PWM0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_PWM0_INTR_MAP  0x0000001F
@@ -2093,7 +2015,7 @@
 #define DPORT_APP_PWM0_INTR_MAP_V  0x1F
 #define DPORT_APP_PWM0_INTR_MAP_S  0
 
-#define DPORT_APP_PWM1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2B8)
+#define DPORT_APP_PWM1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2AC)
 /* DPORT_APP_PWM1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_PWM1_INTR_MAP  0x0000001F
@@ -2101,7 +2023,7 @@
 #define DPORT_APP_PWM1_INTR_MAP_V  0x1F
 #define DPORT_APP_PWM1_INTR_MAP_S  0
 
-#define DPORT_APP_PWM2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2BC)
+#define DPORT_APP_PWM2_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2B0)
 /* DPORT_APP_PWM2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_PWM2_INTR_MAP  0x0000001F
@@ -2109,7 +2031,7 @@
 #define DPORT_APP_PWM2_INTR_MAP_V  0x1F
 #define DPORT_APP_PWM2_INTR_MAP_S  0
 
-#define DPORT_APP_PWM3_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2C0)
+#define DPORT_APP_PWM3_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2B4)
 /* DPORT_APP_PWM3_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_PWM3_INTR_MAP  0x0000001F
@@ -2117,7 +2039,7 @@
 #define DPORT_APP_PWM3_INTR_MAP_V  0x1F
 #define DPORT_APP_PWM3_INTR_MAP_S  0
 
-#define DPORT_APP_LEDC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2C4)
+#define DPORT_APP_LEDC_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2B8)
 /* DPORT_APP_LEDC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_LEDC_INT_MAP  0x0000001F
@@ -2125,7 +2047,7 @@
 #define DPORT_APP_LEDC_INT_MAP_V  0x1F
 #define DPORT_APP_LEDC_INT_MAP_S  0
 
-#define DPORT_APP_EFUSE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2C8)
+#define DPORT_APP_EFUSE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2BC)
 /* DPORT_APP_EFUSE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_EFUSE_INT_MAP  0x0000001F
@@ -2133,7 +2055,7 @@
 #define DPORT_APP_EFUSE_INT_MAP_V  0x1F
 #define DPORT_APP_EFUSE_INT_MAP_S  0
 
-#define DPORT_APP_CAN_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2CC)
+#define DPORT_APP_CAN_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2C0)
 /* DPORT_APP_CAN_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CAN_INT_MAP  0x0000001F
@@ -2141,7 +2063,7 @@
 #define DPORT_APP_CAN_INT_MAP_V  0x1F
 #define DPORT_APP_CAN_INT_MAP_S  0
 
-#define DPORT_APP_RTC_CORE_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D0)
+#define DPORT_APP_RTC_CORE_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2C4)
 /* DPORT_APP_RTC_CORE_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RTC_CORE_INTR_MAP  0x0000001F
@@ -2149,7 +2071,7 @@
 #define DPORT_APP_RTC_CORE_INTR_MAP_V  0x1F
 #define DPORT_APP_RTC_CORE_INTR_MAP_S  0
 
-#define DPORT_APP_RMT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D4)
+#define DPORT_APP_RMT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2C8)
 /* DPORT_APP_RMT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RMT_INTR_MAP  0x0000001F
@@ -2157,7 +2079,7 @@
 #define DPORT_APP_RMT_INTR_MAP_V  0x1F
 #define DPORT_APP_RMT_INTR_MAP_S  0
 
-#define DPORT_APP_PCNT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D8)
+#define DPORT_APP_PCNT_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2CC)
 /* DPORT_APP_PCNT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_PCNT_INTR_MAP  0x0000001F
@@ -2165,7 +2087,7 @@
 #define DPORT_APP_PCNT_INTR_MAP_V  0x1F
 #define DPORT_APP_PCNT_INTR_MAP_S  0
 
-#define DPORT_APP_I2C_EXT0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2DC)
+#define DPORT_APP_I2C_EXT0_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D0)
 /* DPORT_APP_I2C_EXT0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_I2C_EXT0_INTR_MAP  0x0000001F
@@ -2173,7 +2095,7 @@
 #define DPORT_APP_I2C_EXT0_INTR_MAP_V  0x1F
 #define DPORT_APP_I2C_EXT0_INTR_MAP_S  0
 
-#define DPORT_APP_I2C_EXT1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2E0)
+#define DPORT_APP_I2C_EXT1_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D4)
 /* DPORT_APP_I2C_EXT1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_I2C_EXT1_INTR_MAP  0x0000001F
@@ -2181,7 +2103,7 @@
 #define DPORT_APP_I2C_EXT1_INTR_MAP_V  0x1F
 #define DPORT_APP_I2C_EXT1_INTR_MAP_S  0
 
-#define DPORT_APP_RSA_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2E4)
+#define DPORT_APP_RSA_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x2D8)
 /* DPORT_APP_RSA_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_RSA_INTR_MAP  0x0000001F
@@ -2189,7 +2111,7 @@
 #define DPORT_APP_RSA_INTR_MAP_V  0x1F
 #define DPORT_APP_RSA_INTR_MAP_S  0
 
-#define DPORT_APP_SPI1_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2E8)
+#define DPORT_APP_SPI1_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2DC)
 /* DPORT_APP_SPI1_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI1_DMA_INT_MAP  0x0000001F
@@ -2197,7 +2119,7 @@
 #define DPORT_APP_SPI1_DMA_INT_MAP_V  0x1F
 #define DPORT_APP_SPI1_DMA_INT_MAP_S  0
 
-#define DPORT_APP_SPI2_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2EC)
+#define DPORT_APP_SPI2_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2E0)
 /* DPORT_APP_SPI2_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI2_DMA_INT_MAP  0x0000001F
@@ -2205,7 +2127,7 @@
 #define DPORT_APP_SPI2_DMA_INT_MAP_V  0x1F
 #define DPORT_APP_SPI2_DMA_INT_MAP_S  0
 
-#define DPORT_APP_SPI3_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2F0)
+#define DPORT_APP_SPI3_DMA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2E4)
 /* DPORT_APP_SPI3_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_SPI3_DMA_INT_MAP  0x0000001F
@@ -2213,7 +2135,7 @@
 #define DPORT_APP_SPI3_DMA_INT_MAP_V  0x1F
 #define DPORT_APP_SPI3_DMA_INT_MAP_S  0
 
-#define DPORT_APP_WDG_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2F4)
+#define DPORT_APP_WDG_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2E8)
 /* DPORT_APP_WDG_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_WDG_INT_MAP  0x0000001F
@@ -2221,7 +2143,7 @@
 #define DPORT_APP_WDG_INT_MAP_V  0x1F
 #define DPORT_APP_WDG_INT_MAP_S  0
 
-#define DPORT_APP_TIMER_INT1_MAP_REG          (DR_REG_DPORT_BASE + 0x2F8)
+#define DPORT_APP_TIMER_INT1_MAP_REG          (DR_REG_DPORT_BASE + 0x2EC)
 /* DPORT_APP_TIMER_INT1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TIMER_INT1_MAP  0x0000001F
@@ -2229,7 +2151,7 @@
 #define DPORT_APP_TIMER_INT1_MAP_V  0x1F
 #define DPORT_APP_TIMER_INT1_MAP_S  0
 
-#define DPORT_APP_TIMER_INT2_MAP_REG          (DR_REG_DPORT_BASE + 0x2FC)
+#define DPORT_APP_TIMER_INT2_MAP_REG          (DR_REG_DPORT_BASE + 0x2F0)
 /* DPORT_APP_TIMER_INT2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TIMER_INT2_MAP  0x0000001F
@@ -2237,7 +2159,7 @@
 #define DPORT_APP_TIMER_INT2_MAP_V  0x1F
 #define DPORT_APP_TIMER_INT2_MAP_S  0
 
-#define DPORT_APP_TG_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x300)
+#define DPORT_APP_TG_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2F4)
 /* DPORT_APP_TG_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_T0_EDGE_INT_MAP  0x0000001F
@@ -2245,7 +2167,7 @@
 #define DPORT_APP_TG_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x304)
+#define DPORT_APP_TG_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2F8)
 /* DPORT_APP_TG_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_T1_EDGE_INT_MAP  0x0000001F
@@ -2253,7 +2175,7 @@
 #define DPORT_APP_TG_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x308)
+#define DPORT_APP_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x2FC)
 /* DPORT_APP_TG_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_WDT_EDGE_INT_MAP  0x0000001F
@@ -2261,7 +2183,7 @@
 #define DPORT_APP_TG_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x30C)
+#define DPORT_APP_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x300)
 /* DPORT_APP_TG_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG_LACT_EDGE_INT_MAP  0x0000001F
@@ -2269,7 +2191,7 @@
 #define DPORT_APP_TG_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x310)
+#define DPORT_APP_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x304)
 /* DPORT_APP_TG1_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_T0_EDGE_INT_MAP  0x0000001F
@@ -2277,7 +2199,7 @@
 #define DPORT_APP_TG1_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x314)
+#define DPORT_APP_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x308)
 /* DPORT_APP_TG1_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_T1_EDGE_INT_MAP  0x0000001F
@@ -2285,7 +2207,7 @@
 #define DPORT_APP_TG1_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x318)
+#define DPORT_APP_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x30C)
 /* DPORT_APP_TG1_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_WDT_EDGE_INT_MAP  0x0000001F
@@ -2293,7 +2215,7 @@
 #define DPORT_APP_TG1_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x31C)
+#define DPORT_APP_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x310)
 /* DPORT_APP_TG1_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_TG1_LACT_EDGE_INT_MAP  0x0000001F
@@ -2301,23 +2223,15 @@
 #define DPORT_APP_TG1_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_APP_TG1_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_APP_MMU_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x320)
-/* DPORT_APP_MMU_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+#define DPORT_APP_MEM_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x314)
+/* DPORT_APP_MEM_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
-#define DPORT_APP_MMU_IA_INT_MAP  0x0000001F
-#define DPORT_APP_MMU_IA_INT_MAP_M  ((DPORT_APP_MMU_IA_INT_MAP_V)<<(DPORT_APP_MMU_IA_INT_MAP_S))
-#define DPORT_APP_MMU_IA_INT_MAP_V  0x1F
-#define DPORT_APP_MMU_IA_INT_MAP_S  0
+#define DPORT_APP_MEM_IA_INT_MAP  0x0000001F
+#define DPORT_APP_MEM_IA_INT_MAP_M  ((DPORT_APP_MEM_IA_INT_MAP_V)<<(DPORT_APP_MEM_IA_INT_MAP_S))
+#define DPORT_APP_MEM_IA_INT_MAP_V  0x1F
+#define DPORT_APP_MEM_IA_INT_MAP_S  0
 
-#define DPORT_APP_MPU_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x324)
-/* DPORT_APP_MPU_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
-/*description: */
-#define DPORT_APP_MPU_IA_INT_MAP  0x0000001F
-#define DPORT_APP_MPU_IA_INT_MAP_M  ((DPORT_APP_MPU_IA_INT_MAP_V)<<(DPORT_APP_MPU_IA_INT_MAP_S))
-#define DPORT_APP_MPU_IA_INT_MAP_V  0x1F
-#define DPORT_APP_MPU_IA_INT_MAP_S  0
-
-#define DPORT_APP_CACHE_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x328)
+#define DPORT_APP_CACHE_IA_INT_MAP_REG          (DR_REG_DPORT_BASE + 0x318)
 /* DPORT_APP_CACHE_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_APP_CACHE_IA_INT_MAP  0x0000001F
@@ -2325,7 +2239,15 @@
 #define DPORT_APP_CACHE_IA_INT_MAP_V  0x1F
 #define DPORT_APP_CACHE_IA_INT_MAP_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_UART_REG          (DR_REG_DPORT_BASE + 0x32C)
+#define DPORT_APP_ASSIST_DEBUG_INTR_MAP_REG          (DR_REG_DPORT_BASE + 0x31C)
+/* DPORT_APP_ASSIST_DEBUG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_APP_ASSIST_DEBUG_INTR_MAP  0x0000001F
+#define DPORT_APP_ASSIST_DEBUG_INTR_MAP_M  ((DPORT_APP_ASSIST_DEBUG_INTR_MAP_V)<<(DPORT_APP_ASSIST_DEBUG_INTR_MAP_S))
+#define DPORT_APP_ASSIST_DEBUG_INTR_MAP_V  0x1F
+#define DPORT_APP_ASSIST_DEBUG_INTR_MAP_S  0
+
+#define DPORT_AHBLITE_MPU_TABLE_UART_REG          (DR_REG_DPORT_BASE + 0x320)
 /* DPORT_UART_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_UART_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2333,23 +2255,23 @@
 #define DPORT_UART_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_UART_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SPI1_REG          (DR_REG_DPORT_BASE + 0x330)
-/* DPORT_SPI1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SPI1_REG          (DR_REG_DPORT_BASE + 0x324)
+/* DPORT_SPI_1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SPI1_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SPI1_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI1_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI1_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SPI1_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SPI1_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SPI_1_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SPI_1_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_1_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_1_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SPI_1_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SPI_1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SPI0_REG          (DR_REG_DPORT_BASE + 0x334)
-/* DPORT_SPI0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SPI0_REG          (DR_REG_DPORT_BASE + 0x328)
+/* DPORT_SPI_0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SPI0_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SPI0_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI0_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI0_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SPI0_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SPI0_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SPI_0_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SPI_0_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_0_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_0_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SPI_0_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SPI_0_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_GPIO_REG          (DR_REG_DPORT_BASE + 0x338)
+#define DPORT_AHBLITE_MPU_TABLE_GPIO_REG          (DR_REG_DPORT_BASE + 0x32C)
 /* DPORT_GPIO_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_GPIO_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2357,7 +2279,7 @@
 #define DPORT_GPIO_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_GPIO_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_FE2_REG          (DR_REG_DPORT_BASE + 0x33C)
+#define DPORT_AHBLITE_MPU_TABLE_FE2_REG          (DR_REG_DPORT_BASE + 0x330)
 /* DPORT_FE2_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_FE2_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2365,7 +2287,7 @@
 #define DPORT_FE2_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_FE2_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_FE_REG          (DR_REG_DPORT_BASE + 0x340)
+#define DPORT_AHBLITE_MPU_TABLE_FE_REG          (DR_REG_DPORT_BASE + 0x334)
 /* DPORT_FE_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_FE_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2373,7 +2295,7 @@
 #define DPORT_FE_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_FE_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_TIMER_REG          (DR_REG_DPORT_BASE + 0x344)
+#define DPORT_AHBLITE_MPU_TABLE_TIMER_REG          (DR_REG_DPORT_BASE + 0x338)
 /* DPORT_TIMER_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_TIMER_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2381,7 +2303,7 @@
 #define DPORT_TIMER_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_TIMER_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_RTC_REG          (DR_REG_DPORT_BASE + 0x348)
+#define DPORT_AHBLITE_MPU_TABLE_RTC_REG          (DR_REG_DPORT_BASE + 0x33C)
 /* DPORT_RTC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_RTC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2389,15 +2311,15 @@
 #define DPORT_RTC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_RTC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_IO_MUX_REG          (DR_REG_DPORT_BASE + 0x34C)
-/* DPORT_IOMUX_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_IO_MUX_REG          (DR_REG_DPORT_BASE + 0x340)
+/* DPORT_IO_MUX_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_IOMUX_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_IOMUX_ACCESS_GRANT_CONFIG_M  ((DPORT_IOMUX_ACCESS_GRANT_CONFIG_V)<<(DPORT_IOMUX_ACCESS_GRANT_CONFIG_S))
-#define DPORT_IOMUX_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_IOMUX_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_IO_MUX_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_IO_MUX_ACCESS_GRANT_CONFIG_M  ((DPORT_IO_MUX_ACCESS_GRANT_CONFIG_V)<<(DPORT_IO_MUX_ACCESS_GRANT_CONFIG_S))
+#define DPORT_IO_MUX_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_IO_MUX_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_WDG_REG          (DR_REG_DPORT_BASE + 0x350)
+#define DPORT_AHBLITE_MPU_TABLE_WDG_REG          (DR_REG_DPORT_BASE + 0x344)
 /* DPORT_WDG_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_WDG_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2405,7 +2327,7 @@
 #define DPORT_WDG_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_WDG_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_HINF_REG          (DR_REG_DPORT_BASE + 0x354)
+#define DPORT_AHBLITE_MPU_TABLE_HINF_REG          (DR_REG_DPORT_BASE + 0x348)
 /* DPORT_HINF_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_HINF_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2413,7 +2335,7 @@
 #define DPORT_HINF_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_HINF_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_UHCI1_REG          (DR_REG_DPORT_BASE + 0x358)
+#define DPORT_AHBLITE_MPU_TABLE_UHCI1_REG          (DR_REG_DPORT_BASE + 0x34C)
 /* DPORT_UHCI1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_UHCI1_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2421,7 +2343,7 @@
 #define DPORT_UHCI1_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_UHCI1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_MISC_REG          (DR_REG_DPORT_BASE + 0x35C)
+#define DPORT_AHBLITE_MPU_TABLE_MISC_REG          (DR_REG_DPORT_BASE + 0x350)
 /* DPORT_MISC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_MISC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2429,7 +2351,7 @@
 #define DPORT_MISC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_MISC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_I2C_REG          (DR_REG_DPORT_BASE + 0x360)
+#define DPORT_AHBLITE_MPU_TABLE_I2C_REG          (DR_REG_DPORT_BASE + 0x354)
 /* DPORT_I2C_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_I2C_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2437,7 +2359,7 @@
 #define DPORT_I2C_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_I2C_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_I2S0_REG          (DR_REG_DPORT_BASE + 0x364)
+#define DPORT_AHBLITE_MPU_TABLE_I2S0_REG          (DR_REG_DPORT_BASE + 0x358)
 /* DPORT_I2S0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_I2S0_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2445,7 +2367,7 @@
 #define DPORT_I2S0_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_I2S0_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_UART1_REG          (DR_REG_DPORT_BASE + 0x368)
+#define DPORT_AHBLITE_MPU_TABLE_UART1_REG          (DR_REG_DPORT_BASE + 0x35C)
 /* DPORT_UART1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_UART1_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2453,7 +2375,7 @@
 #define DPORT_UART1_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_UART1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_BT_REG          (DR_REG_DPORT_BASE + 0x36C)
+#define DPORT_AHBLITE_MPU_TABLE_BT_REG          (DR_REG_DPORT_BASE + 0x360)
 /* DPORT_BT_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_BT_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2461,23 +2383,23 @@
 #define DPORT_BT_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_BT_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_BT_BUFFER_REG          (DR_REG_DPORT_BASE + 0x370)
-/* DPORT_BTBUFFER_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_BT_BUFFER_REG          (DR_REG_DPORT_BASE + 0x364)
+/* DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_BTBUFFER_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_BTBUFFER_ACCESS_GRANT_CONFIG_M  ((DPORT_BTBUFFER_ACCESS_GRANT_CONFIG_V)<<(DPORT_BTBUFFER_ACCESS_GRANT_CONFIG_S))
-#define DPORT_BTBUFFER_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_BTBUFFER_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG_M  ((DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG_V)<<(DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG_S))
+#define DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_BT_BUFFER_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_I2C_EXT0_REG          (DR_REG_DPORT_BASE + 0x374)
-/* DPORT_I2CEXT0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_I2C_EXT0_REG          (DR_REG_DPORT_BASE + 0x368)
+/* DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_I2CEXT0_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_I2CEXT0_ACCESS_GRANT_CONFIG_M  ((DPORT_I2CEXT0_ACCESS_GRANT_CONFIG_V)<<(DPORT_I2CEXT0_ACCESS_GRANT_CONFIG_S))
-#define DPORT_I2CEXT0_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_I2CEXT0_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG_M  ((DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG_V)<<(DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG_S))
+#define DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_I2C_EXT0_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_UHCI0_REG          (DR_REG_DPORT_BASE + 0x378)
+#define DPORT_AHBLITE_MPU_TABLE_UHCI0_REG          (DR_REG_DPORT_BASE + 0x36C)
 /* DPORT_UHCI0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_UHCI0_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2485,7 +2407,7 @@
 #define DPORT_UHCI0_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_UHCI0_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SLCHOST_REG          (DR_REG_DPORT_BASE + 0x37C)
+#define DPORT_AHBLITE_MPU_TABLE_SLCHOST_REG          (DR_REG_DPORT_BASE + 0x370)
 /* DPORT_SLCHOST_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_SLCHOST_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2493,7 +2415,7 @@
 #define DPORT_SLCHOST_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_SLCHOST_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_RMT_REG          (DR_REG_DPORT_BASE + 0x380)
+#define DPORT_AHBLITE_MPU_TABLE_RMT_REG          (DR_REG_DPORT_BASE + 0x374)
 /* DPORT_RMT_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_RMT_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2501,7 +2423,7 @@
 #define DPORT_RMT_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_RMT_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PCNT_REG          (DR_REG_DPORT_BASE + 0x384)
+#define DPORT_AHBLITE_MPU_TABLE_PCNT_REG          (DR_REG_DPORT_BASE + 0x378)
 /* DPORT_PCNT_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PCNT_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2509,7 +2431,7 @@
 #define DPORT_PCNT_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PCNT_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SLC_REG          (DR_REG_DPORT_BASE + 0x388)
+#define DPORT_AHBLITE_MPU_TABLE_SLC_REG          (DR_REG_DPORT_BASE + 0x37C)
 /* DPORT_SLC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_SLC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2517,7 +2439,7 @@
 #define DPORT_SLC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_SLC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_LEDC_REG          (DR_REG_DPORT_BASE + 0x38C)
+#define DPORT_AHBLITE_MPU_TABLE_LEDC_REG          (DR_REG_DPORT_BASE + 0x380)
 /* DPORT_LEDC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_LEDC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2525,7 +2447,7 @@
 #define DPORT_LEDC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_LEDC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_EFUSE_REG          (DR_REG_DPORT_BASE + 0x390)
+#define DPORT_AHBLITE_MPU_TABLE_EFUSE_REG          (DR_REG_DPORT_BASE + 0x384)
 /* DPORT_EFUSE_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_EFUSE_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2533,15 +2455,15 @@
 #define DPORT_EFUSE_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_EFUSE_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SPI_ENCRYPT_REG          (DR_REG_DPORT_BASE + 0x394)
-/* DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SPI_ENCRYPT_REG          (DR_REG_DPORT_BASE + 0x388)
+/* DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SPI_ENCRYPY_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SPI_ENCRYPT_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_BB_REG          (DR_REG_DPORT_BASE + 0x398)
+#define DPORT_AHBLITE_MPU_TABLE_BB_REG          (DR_REG_DPORT_BASE + 0x38C)
 /* DPORT_BB_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_BB_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2549,7 +2471,7 @@
 #define DPORT_BB_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_BB_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PWM0_REG          (DR_REG_DPORT_BASE + 0x39C)
+#define DPORT_AHBLITE_MPU_TABLE_PWM0_REG          (DR_REG_DPORT_BASE + 0x390)
 /* DPORT_PWM0_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PWM0_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2557,7 +2479,7 @@
 #define DPORT_PWM0_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PWM0_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_TIMERGROUP_REG          (DR_REG_DPORT_BASE + 0x3A0)
+#define DPORT_AHBLITE_MPU_TABLE_TIMERGROUP_REG          (DR_REG_DPORT_BASE + 0x394)
 /* DPORT_TIMERGROUP_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_TIMERGROUP_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2565,7 +2487,7 @@
 #define DPORT_TIMERGROUP_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_TIMERGROUP_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_TIMERGROUP1_REG          (DR_REG_DPORT_BASE + 0x3A4)
+#define DPORT_AHBLITE_MPU_TABLE_TIMERGROUP1_REG          (DR_REG_DPORT_BASE + 0x398)
 /* DPORT_TIMERGROUP1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_TIMERGROUP1_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2573,55 +2495,47 @@
 #define DPORT_TIMERGROUP1_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_TIMERGROUP1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SPI2_REG          (DR_REG_DPORT_BASE + 0x3A8)
-/* DPORT_SPI2_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SPI2_REG          (DR_REG_DPORT_BASE + 0x39C)
+/* DPORT_SPI_2_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SPI2_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SPI2_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI2_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI2_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SPI2_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SPI2_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SPI_2_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SPI_2_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_2_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_2_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SPI_2_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SPI_2_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SPI3_REG          (DR_REG_DPORT_BASE + 0x3AC)
-/* DPORT_SPI3_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SPI3_REG          (DR_REG_DPORT_BASE + 0x3A0)
+/* DPORT_SPI_3_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SPI3_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SPI3_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI3_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI3_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SPI3_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SPI3_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SPI_3_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SPI_3_ACCESS_GRANT_CONFIG_M  ((DPORT_SPI_3_ACCESS_GRANT_CONFIG_V)<<(DPORT_SPI_3_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SPI_3_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SPI_3_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_APB_CTRL_REG          (DR_REG_DPORT_BASE + 0x3B0)
-/* DPORT_APBCTRL_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_APB_CTRL_REG          (DR_REG_DPORT_BASE + 0x3A4)
+/* DPORT_APB_CTRL_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_APBCTRL_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_APBCTRL_ACCESS_GRANT_CONFIG_M  ((DPORT_APBCTRL_ACCESS_GRANT_CONFIG_V)<<(DPORT_APBCTRL_ACCESS_GRANT_CONFIG_S))
-#define DPORT_APBCTRL_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_APBCTRL_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_APB_CTRL_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_APB_CTRL_ACCESS_GRANT_CONFIG_M  ((DPORT_APB_CTRL_ACCESS_GRANT_CONFIG_V)<<(DPORT_APB_CTRL_ACCESS_GRANT_CONFIG_S))
+#define DPORT_APB_CTRL_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_APB_CTRL_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_I2C_EXT1_REG          (DR_REG_DPORT_BASE + 0x3B4)
-/* DPORT_I2CEXT1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_I2C_EXT1_REG          (DR_REG_DPORT_BASE + 0x3A8)
+/* DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_I2CEXT1_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_I2CEXT1_ACCESS_GRANT_CONFIG_M  ((DPORT_I2CEXT1_ACCESS_GRANT_CONFIG_V)<<(DPORT_I2CEXT1_ACCESS_GRANT_CONFIG_S))
-#define DPORT_I2CEXT1_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_I2CEXT1_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG_M  ((DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG_V)<<(DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG_S))
+#define DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_I2C_EXT1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_SDIO_HOST_REG          (DR_REG_DPORT_BASE + 0x3B8)
-/* DPORT_SDIOHOST_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+#define DPORT_AHBLITE_MPU_TABLE_SDIO_HOST_REG          (DR_REG_DPORT_BASE + 0x3AC)
+/* DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
-#define DPORT_SDIOHOST_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_SDIOHOST_ACCESS_GRANT_CONFIG_M  ((DPORT_SDIOHOST_ACCESS_GRANT_CONFIG_V)<<(DPORT_SDIOHOST_ACCESS_GRANT_CONFIG_S))
-#define DPORT_SDIOHOST_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_SDIOHOST_ACCESS_GRANT_CONFIG_S  0
+#define DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG_M  ((DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG_V)<<(DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG_S))
+#define DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_SDIO_HOST_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_EMAC_REG          (DR_REG_DPORT_BASE + 0x3BC)
-/* DPORT_EMAC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
-/*description: */
-#define DPORT_EMAC_ACCESS_GRANT_CONFIG  0x0000003F
-#define DPORT_EMAC_ACCESS_GRANT_CONFIG_M  ((DPORT_EMAC_ACCESS_GRANT_CONFIG_V)<<(DPORT_EMAC_ACCESS_GRANT_CONFIG_S))
-#define DPORT_EMAC_ACCESS_GRANT_CONFIG_V  0x3F
-#define DPORT_EMAC_ACCESS_GRANT_CONFIG_S  0
-
-#define DPORT_AHBLITE_MPU_TABLE_CAN_REG          (DR_REG_DPORT_BASE + 0x3C0)
+#define DPORT_AHBLITE_MPU_TABLE_CAN_REG          (DR_REG_DPORT_BASE + 0x3B0)
 /* DPORT_CAN_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_CAN_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2629,7 +2543,7 @@
 #define DPORT_CAN_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_CAN_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PWM1_REG          (DR_REG_DPORT_BASE + 0x3C4)
+#define DPORT_AHBLITE_MPU_TABLE_PWM1_REG          (DR_REG_DPORT_BASE + 0x3B4)
 /* DPORT_PWM1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PWM1_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2637,7 +2551,7 @@
 #define DPORT_PWM1_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PWM1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_I2S1_REG          (DR_REG_DPORT_BASE + 0x3C8)
+#define DPORT_AHBLITE_MPU_TABLE_I2S1_REG          (DR_REG_DPORT_BASE + 0x3B8)
 /* DPORT_I2S1_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_I2S1_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2645,7 +2559,7 @@
 #define DPORT_I2S1_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_I2S1_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_UART2_REG          (DR_REG_DPORT_BASE + 0x3CC)
+#define DPORT_AHBLITE_MPU_TABLE_UART2_REG          (DR_REG_DPORT_BASE + 0x3BC)
 /* DPORT_UART2_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_UART2_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2653,7 +2567,7 @@
 #define DPORT_UART2_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_UART2_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PWM2_REG          (DR_REG_DPORT_BASE + 0x3D0)
+#define DPORT_AHBLITE_MPU_TABLE_PWM2_REG          (DR_REG_DPORT_BASE + 0x3C0)
 /* DPORT_PWM2_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PWM2_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2661,7 +2575,7 @@
 #define DPORT_PWM2_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PWM2_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PWM3_REG          (DR_REG_DPORT_BASE + 0x3D4)
+#define DPORT_AHBLITE_MPU_TABLE_PWM3_REG          (DR_REG_DPORT_BASE + 0x3C4)
 /* DPORT_PWM3_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PWM3_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2669,7 +2583,7 @@
 #define DPORT_PWM3_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PWM3_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_RWBT_REG          (DR_REG_DPORT_BASE + 0x3D8)
+#define DPORT_AHBLITE_MPU_TABLE_RWBT_REG          (DR_REG_DPORT_BASE + 0x3C8)
 /* DPORT_RWBT_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_RWBT_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2677,7 +2591,7 @@
 #define DPORT_RWBT_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_RWBT_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_BTMAC_REG          (DR_REG_DPORT_BASE + 0x3DC)
+#define DPORT_AHBLITE_MPU_TABLE_BTMAC_REG          (DR_REG_DPORT_BASE + 0x3CC)
 /* DPORT_BTMAC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_BTMAC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2685,7 +2599,7 @@
 #define DPORT_BTMAC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_BTMAC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_WIFIMAC_REG          (DR_REG_DPORT_BASE + 0x3E0)
+#define DPORT_AHBLITE_MPU_TABLE_WIFIMAC_REG          (DR_REG_DPORT_BASE + 0x3D0)
 /* DPORT_WIFIMAC_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_WIFIMAC_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2693,7 +2607,7 @@
 #define DPORT_WIFIMAC_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_WIFIMAC_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_AHBLITE_MPU_TABLE_PWR_REG          (DR_REG_DPORT_BASE + 0x3E4)
+#define DPORT_AHBLITE_MPU_TABLE_PWR_REG          (DR_REG_DPORT_BASE + 0x3D4)
 /* DPORT_PWR_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
 /*description: */
 #define DPORT_PWR_ACCESS_GRANT_CONFIG  0x0000003F
@@ -2701,864 +2615,7 @@
 #define DPORT_PWR_ACCESS_GRANT_CONFIG_V  0x3F
 #define DPORT_PWR_ACCESS_GRANT_CONFIG_S  0
 
-#define DPORT_MEM_ACCESS_DBUG0_REG          (DR_REG_DPORT_BASE + 0x3E8)
-/* DPORT_INTERNAL_SRAM_MMU_MULTI_HIT : RO ;bitpos:[29:26] ;default: 4'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_MMU_MULTI_HIT  0x0000000F
-#define DPORT_INTERNAL_SRAM_MMU_MULTI_HIT_M  ((DPORT_INTERNAL_SRAM_MMU_MULTI_HIT_V)<<(DPORT_INTERNAL_SRAM_MMU_MULTI_HIT_S))
-#define DPORT_INTERNAL_SRAM_MMU_MULTI_HIT_V  0xF
-#define DPORT_INTERNAL_SRAM_MMU_MULTI_HIT_S  26
-/* DPORT_INTERNAL_SRAM_IA : RO ;bitpos:[25:14] ;default: 12'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_IA  0x00000FFF
-#define DPORT_INTERNAL_SRAM_IA_M  ((DPORT_INTERNAL_SRAM_IA_V)<<(DPORT_INTERNAL_SRAM_IA_S))
-#define DPORT_INTERNAL_SRAM_IA_V  0xFFF
-#define DPORT_INTERNAL_SRAM_IA_S  14
-/* DPORT_INTERNAL_SRAM_MMU_AD : RO ;bitpos:[13:10] ;default: 4'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_MMU_AD  0x0000000F
-#define DPORT_INTERNAL_SRAM_MMU_AD_M  ((DPORT_INTERNAL_SRAM_MMU_AD_V)<<(DPORT_INTERNAL_SRAM_MMU_AD_S))
-#define DPORT_INTERNAL_SRAM_MMU_AD_V  0xF
-#define DPORT_INTERNAL_SRAM_MMU_AD_S  10
-/* DPORT_SHARE_ROM_IA : RO ;bitpos:[9:6] ;default: 4'b0 ; */
-/*description: */
-#define DPORT_SHARE_ROM_IA  0x0000000F
-#define DPORT_SHARE_ROM_IA_M  ((DPORT_SHARE_ROM_IA_V)<<(DPORT_SHARE_ROM_IA_S))
-#define DPORT_SHARE_ROM_IA_V  0xF
-#define DPORT_SHARE_ROM_IA_S  6
-/* DPORT_SHARE_ROM_MPU_AD : RO ;bitpos:[5:4] ;default: 2'b0 ; */
-/*description: */
-#define DPORT_SHARE_ROM_MPU_AD  0x00000003
-#define DPORT_SHARE_ROM_MPU_AD_M  ((DPORT_SHARE_ROM_MPU_AD_V)<<(DPORT_SHARE_ROM_MPU_AD_S))
-#define DPORT_SHARE_ROM_MPU_AD_V  0x3
-#define DPORT_SHARE_ROM_MPU_AD_S  4
-/* DPORT_APP_ROM_IA : RO ;bitpos:[3] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_ROM_IA  (BIT(3))
-#define DPORT_APP_ROM_IA_M  (BIT(3))
-#define DPORT_APP_ROM_IA_V  0x1
-#define DPORT_APP_ROM_IA_S  3
-/* DPORT_APP_ROM_MPU_AD : RO ;bitpos:[2] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_ROM_MPU_AD  (BIT(2))
-#define DPORT_APP_ROM_MPU_AD_M  (BIT(2))
-#define DPORT_APP_ROM_MPU_AD_V  0x1
-#define DPORT_APP_ROM_MPU_AD_S  2
-/* DPORT_PRO_ROM_IA : RO ;bitpos:[1] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_ROM_IA  (BIT(1))
-#define DPORT_PRO_ROM_IA_M  (BIT(1))
-#define DPORT_PRO_ROM_IA_V  0x1
-#define DPORT_PRO_ROM_IA_S  1
-/* DPORT_PRO_ROM_MPU_AD : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_ROM_MPU_AD  (BIT(0))
-#define DPORT_PRO_ROM_MPU_AD_M  (BIT(0))
-#define DPORT_PRO_ROM_MPU_AD_V  0x1
-#define DPORT_PRO_ROM_MPU_AD_S  0
-
-#define DPORT_MEM_ACCESS_DBUG1_REG          (DR_REG_DPORT_BASE + 0x3EC)
-/* DPORT_AHBLITE_IA : RO ;bitpos:[10] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_AHBLITE_IA  (BIT(10))
-#define DPORT_AHBLITE_IA_M  (BIT(10))
-#define DPORT_AHBLITE_IA_V  0x1
-#define DPORT_AHBLITE_IA_S  10
-/* DPORT_AHBLITE_ACCESS_DENY : RO ;bitpos:[9] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_AHBLITE_ACCESS_DENY  (BIT(9))
-#define DPORT_AHBLITE_ACCESS_DENY_M  (BIT(9))
-#define DPORT_AHBLITE_ACCESS_DENY_V  0x1
-#define DPORT_AHBLITE_ACCESS_DENY_S  9
-/* DPORT_AHB_ACCESS_DENY : RO ;bitpos:[8] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_AHB_ACCESS_DENY  (BIT(8))
-#define DPORT_AHB_ACCESS_DENY_M  (BIT(8))
-#define DPORT_AHB_ACCESS_DENY_V  0x1
-#define DPORT_AHB_ACCESS_DENY_S  8
-/* DPORT_PIDGEN_IA : RO ;bitpos:[7:6] ;default: 2'b0 ; */
-/*description: */
-#define DPORT_PIDGEN_IA  0x00000003
-#define DPORT_PIDGEN_IA_M  ((DPORT_PIDGEN_IA_V)<<(DPORT_PIDGEN_IA_S))
-#define DPORT_PIDGEN_IA_V  0x3
-#define DPORT_PIDGEN_IA_S  6
-/* DPORT_ARB_IA : RO ;bitpos:[5:4] ;default: 2'b0 ; */
-/*description: */
-#define DPORT_ARB_IA  0x00000003
-#define DPORT_ARB_IA_M  ((DPORT_ARB_IA_V)<<(DPORT_ARB_IA_S))
-#define DPORT_ARB_IA_V  0x3
-#define DPORT_ARB_IA_S  4
-/* DPORT_INTERNAL_SRAM_MMU_MISS : RO ;bitpos:[3:0] ;default: 4'b0 ; */
-/*description: */
-#define DPORT_INTERNAL_SRAM_MMU_MISS  0x0000000F
-#define DPORT_INTERNAL_SRAM_MMU_MISS_M  ((DPORT_INTERNAL_SRAM_MMU_MISS_V)<<(DPORT_INTERNAL_SRAM_MMU_MISS_S))
-#define DPORT_INTERNAL_SRAM_MMU_MISS_V  0xF
-#define DPORT_INTERNAL_SRAM_MMU_MISS_S  0
-
-#define DPORT_PRO_DCACHE_DBUG0_REG          (DR_REG_DPORT_BASE + 0x3F0)
-/* DPORT_PRO_RX_END : RO ;bitpos:[23] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_RX_END  (BIT(23))
-#define DPORT_PRO_RX_END_M  (BIT(23))
-#define DPORT_PRO_RX_END_V  0x1
-#define DPORT_PRO_RX_END_S  23
-/* DPORT_PRO_SLAVE_WDATA_V : RO ;bitpos:[22] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_SLAVE_WDATA_V  (BIT(22))
-#define DPORT_PRO_SLAVE_WDATA_V_M  (BIT(22))
-#define DPORT_PRO_SLAVE_WDATA_V_V  0x1
-#define DPORT_PRO_SLAVE_WDATA_V_S  22
-/* DPORT_PRO_SLAVE_WR : RO ;bitpos:[21] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_SLAVE_WR  (BIT(21))
-#define DPORT_PRO_SLAVE_WR_M  (BIT(21))
-#define DPORT_PRO_SLAVE_WR_V  0x1
-#define DPORT_PRO_SLAVE_WR_S  21
-/* DPORT_PRO_TX_END : RO ;bitpos:[20] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_TX_END  (BIT(20))
-#define DPORT_PRO_TX_END_M  (BIT(20))
-#define DPORT_PRO_TX_END_V  0x1
-#define DPORT_PRO_TX_END_S  20
-/* DPORT_PRO_WR_BAK_TO_READ : RO ;bitpos:[19] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_WR_BAK_TO_READ  (BIT(19))
-#define DPORT_PRO_WR_BAK_TO_READ_M  (BIT(19))
-#define DPORT_PRO_WR_BAK_TO_READ_V  0x1
-#define DPORT_PRO_WR_BAK_TO_READ_S  19
-/* DPORT_PRO_CACHE_STATE : RO ;bitpos:[18:7] ;default: 12'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_STATE  0x00000FFF
-#define DPORT_PRO_CACHE_STATE_M  ((DPORT_PRO_CACHE_STATE_V)<<(DPORT_PRO_CACHE_STATE_S))
-#define DPORT_PRO_CACHE_STATE_V  0xFFF
-#define DPORT_PRO_CACHE_STATE_S  7
-/* DPORT_PRO_CACHE_IA : RO ;bitpos:[6:1] ;default: 6'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_IA  0x0000003F
-#define DPORT_PRO_CACHE_IA_M  ((DPORT_PRO_CACHE_IA_V)<<(DPORT_PRO_CACHE_IA_S))
-#define DPORT_PRO_CACHE_IA_V  0x3F
-#define DPORT_PRO_CACHE_IA_S  1
-/* DPORT_PRO_CACHE_MMU_IA : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_MMU_IA  (BIT(0))
-#define DPORT_PRO_CACHE_MMU_IA_M  (BIT(0))
-#define DPORT_PRO_CACHE_MMU_IA_V  0x1
-#define DPORT_PRO_CACHE_MMU_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG1_REG          (DR_REG_DPORT_BASE + 0x3F4)
-/* DPORT_PRO_CTAG_RAM_RDATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_PRO_CTAG_RAM_RDATA  0xFFFFFFFF
-#define DPORT_PRO_CTAG_RAM_RDATA_M  ((DPORT_PRO_CTAG_RAM_RDATA_V)<<(DPORT_PRO_CTAG_RAM_RDATA_S))
-#define DPORT_PRO_CTAG_RAM_RDATA_V  0xFFFFFFFF
-#define DPORT_PRO_CTAG_RAM_RDATA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG2_REG          (DR_REG_DPORT_BASE + 0x3F8)
-/* DPORT_PRO_CACHE_VADDR : RO ;bitpos:[26:0] ;default: 27'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_VADDR  0x07FFFFFF
-#define DPORT_PRO_CACHE_VADDR_M  ((DPORT_PRO_CACHE_VADDR_V)<<(DPORT_PRO_CACHE_VADDR_S))
-#define DPORT_PRO_CACHE_VADDR_V  0x7FFFFFF
-#define DPORT_PRO_CACHE_VADDR_S  0
-
-#define DPORT_PRO_DCACHE_DBUG3_REG          (DR_REG_DPORT_BASE + 0x3FC)
-/* DPORT_PRO_CACHE_IRAM0_PID_ERROR : RO ;bitpos:[15] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CACHE_IRAM0_PID_ERROR  (BIT(15))
-#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_M  (BIT(15))
-#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_V  0x1
-#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_S  15
-/* DPORT_PRO_CPU_DISABLED_CACHE_IA : RO ;bitpos:[14:9] ;default: 6'b0 ; */
-/*description: */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA  0x0000003F
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_M  ((DPORT_PRO_CPU_DISABLED_CACHE_IA_V)<<(DPORT_PRO_CPU_DISABLED_CACHE_IA_S))
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_V  0x3F
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_S  9
-/* This is the contents of DPORT_PRO_CPU_DISABLED_CACHE_IA field expanded */
-/* The following bits will be set upon invalid access for different memory
- * regions: */
-/* Port of the APP CPU cache when cache is used in high/low or odd/even mode */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_OPPOSITE   BIT(9)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_OPPOSITE_M BIT(9)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_OPPOSITE_V 1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_OPPOSITE_S 9
-/* DRAM1: 0x3F80_0000 ~ 0x3FBF_FFFF(R/W) */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DRAM1    BIT(10)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DRAM1_M  BIT(10)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DRAM1_V  1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DRAM1_S  10
-/* IROM0: 0x4080_0000 ~ 0x40BF_FFFF(RO) */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IROM0    BIT(11)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IROM0_M  BIT(11)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IROM0_V  1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IROM0_S  11
-/* IRAM1:  0x4040_0000 ~ 0x407F_FFFF(RO) */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM1    BIT(12)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM1_M  BIT(12)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM1_V  1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM1_S  12
-/* IRAM0: 0x4080_0000 ~ 0x40BF_FFFF(RO) */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM0    BIT(13)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM0_M  BIT(13)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM0_V  1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_IRAM0_S  13
-/* DROM0: 0x3F40_0000 ~ 0x3F7F_FFFF (RO) */
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DROM0    BIT(14)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DROM0_M  BIT(14)
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DROM0_V  1
-#define DPORT_PRO_CPU_DISABLED_CACHE_IA_DROM0_S  14
-
-/* DPORT_PRO_MMU_RDATA : RO ;bitpos:[8:0] ;default: 9'h0 ; */
-/*description: */
-#define DPORT_PRO_MMU_RDATA  0x000001FF
-#define DPORT_PRO_MMU_RDATA_M  ((DPORT_PRO_MMU_RDATA_V)<<(DPORT_PRO_MMU_RDATA_S))
-#define DPORT_PRO_MMU_RDATA_V  0x1FF
-#define DPORT_PRO_MMU_RDATA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG4_REG          (DR_REG_DPORT_BASE + 0x400)
-/* DPORT_PRO_DRAM1ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_DRAM1ADDR0_IA  0x000FFFFF
-#define DPORT_PRO_DRAM1ADDR0_IA_M  ((DPORT_PRO_DRAM1ADDR0_IA_V)<<(DPORT_PRO_DRAM1ADDR0_IA_S))
-#define DPORT_PRO_DRAM1ADDR0_IA_V  0xFFFFF
-#define DPORT_PRO_DRAM1ADDR0_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG5_REG          (DR_REG_DPORT_BASE + 0x404)
-/* DPORT_PRO_DROM0ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_DROM0ADDR0_IA  0x000FFFFF
-#define DPORT_PRO_DROM0ADDR0_IA_M  ((DPORT_PRO_DROM0ADDR0_IA_V)<<(DPORT_PRO_DROM0ADDR0_IA_S))
-#define DPORT_PRO_DROM0ADDR0_IA_V  0xFFFFF
-#define DPORT_PRO_DROM0ADDR0_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG6_REG          (DR_REG_DPORT_BASE + 0x408)
-/* DPORT_PRO_IRAM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_IRAM0ADDR_IA  0x000FFFFF
-#define DPORT_PRO_IRAM0ADDR_IA_M  ((DPORT_PRO_IRAM0ADDR_IA_V)<<(DPORT_PRO_IRAM0ADDR_IA_S))
-#define DPORT_PRO_IRAM0ADDR_IA_V  0xFFFFF
-#define DPORT_PRO_IRAM0ADDR_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG7_REG          (DR_REG_DPORT_BASE + 0x40C)
-/* DPORT_PRO_IRAM1ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_IRAM1ADDR_IA  0x000FFFFF
-#define DPORT_PRO_IRAM1ADDR_IA_M  ((DPORT_PRO_IRAM1ADDR_IA_V)<<(DPORT_PRO_IRAM1ADDR_IA_S))
-#define DPORT_PRO_IRAM1ADDR_IA_V  0xFFFFF
-#define DPORT_PRO_IRAM1ADDR_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG8_REG          (DR_REG_DPORT_BASE + 0x410)
-/* DPORT_PRO_IROM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_IROM0ADDR_IA  0x000FFFFF
-#define DPORT_PRO_IROM0ADDR_IA_M  ((DPORT_PRO_IROM0ADDR_IA_V)<<(DPORT_PRO_IROM0ADDR_IA_S))
-#define DPORT_PRO_IROM0ADDR_IA_V  0xFFFFF
-#define DPORT_PRO_IROM0ADDR_IA_S  0
-
-#define DPORT_PRO_DCACHE_DBUG9_REG          (DR_REG_DPORT_BASE + 0x414)
-/* DPORT_PRO_OPSDRAMADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_PRO_OPSDRAMADDR_IA  0x000FFFFF
-#define DPORT_PRO_OPSDRAMADDR_IA_M  ((DPORT_PRO_OPSDRAMADDR_IA_V)<<(DPORT_PRO_OPSDRAMADDR_IA_S))
-#define DPORT_PRO_OPSDRAMADDR_IA_V  0xFFFFF
-#define DPORT_PRO_OPSDRAMADDR_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG0_REG          (DR_REG_DPORT_BASE + 0x418)
-/* DPORT_APP_RX_END : RO ;bitpos:[23] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_RX_END  (BIT(23))
-#define DPORT_APP_RX_END_M  (BIT(23))
-#define DPORT_APP_RX_END_V  0x1
-#define DPORT_APP_RX_END_S  23
-/* DPORT_APP_SLAVE_WDATA_V : RO ;bitpos:[22] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_SLAVE_WDATA_V  (BIT(22))
-#define DPORT_APP_SLAVE_WDATA_V_M  (BIT(22))
-#define DPORT_APP_SLAVE_WDATA_V_V  0x1
-#define DPORT_APP_SLAVE_WDATA_V_S  22
-/* DPORT_APP_SLAVE_WR : RO ;bitpos:[21] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_SLAVE_WR  (BIT(21))
-#define DPORT_APP_SLAVE_WR_M  (BIT(21))
-#define DPORT_APP_SLAVE_WR_V  0x1
-#define DPORT_APP_SLAVE_WR_S  21
-/* DPORT_APP_TX_END : RO ;bitpos:[20] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_TX_END  (BIT(20))
-#define DPORT_APP_TX_END_M  (BIT(20))
-#define DPORT_APP_TX_END_V  0x1
-#define DPORT_APP_TX_END_S  20
-/* DPORT_APP_WR_BAK_TO_READ : RO ;bitpos:[19] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_WR_BAK_TO_READ  (BIT(19))
-#define DPORT_APP_WR_BAK_TO_READ_M  (BIT(19))
-#define DPORT_APP_WR_BAK_TO_READ_V  0x1
-#define DPORT_APP_WR_BAK_TO_READ_S  19
-/* DPORT_APP_CACHE_STATE : RO ;bitpos:[18:7] ;default: 12'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_STATE  0x00000FFF
-#define DPORT_APP_CACHE_STATE_M  ((DPORT_APP_CACHE_STATE_V)<<(DPORT_APP_CACHE_STATE_S))
-#define DPORT_APP_CACHE_STATE_V  0xFFF
-#define DPORT_APP_CACHE_STATE_S  7
-/* DPORT_APP_CACHE_IA : RO ;bitpos:[6:1] ;default: 6'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_IA  0x0000003F
-#define DPORT_APP_CACHE_IA_M  ((DPORT_APP_CACHE_IA_V)<<(DPORT_APP_CACHE_IA_S))
-#define DPORT_APP_CACHE_IA_V  0x3F
-#define DPORT_APP_CACHE_IA_S  1
-/* DPORT_APP_CACHE_MMU_IA : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_MMU_IA  (BIT(0))
-#define DPORT_APP_CACHE_MMU_IA_M  (BIT(0))
-#define DPORT_APP_CACHE_MMU_IA_V  0x1
-#define DPORT_APP_CACHE_MMU_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG1_REG          (DR_REG_DPORT_BASE + 0x41C)
-/* DPORT_APP_CTAG_RAM_RDATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_APP_CTAG_RAM_RDATA  0xFFFFFFFF
-#define DPORT_APP_CTAG_RAM_RDATA_M  ((DPORT_APP_CTAG_RAM_RDATA_V)<<(DPORT_APP_CTAG_RAM_RDATA_S))
-#define DPORT_APP_CTAG_RAM_RDATA_V  0xFFFFFFFF
-#define DPORT_APP_CTAG_RAM_RDATA_S  0
-
-#define DPORT_APP_DCACHE_DBUG2_REG          (DR_REG_DPORT_BASE + 0x420)
-/* DPORT_APP_CACHE_VADDR : RO ;bitpos:[26:0] ;default: 27'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_VADDR  0x07FFFFFF
-#define DPORT_APP_CACHE_VADDR_M  ((DPORT_APP_CACHE_VADDR_V)<<(DPORT_APP_CACHE_VADDR_S))
-#define DPORT_APP_CACHE_VADDR_V  0x7FFFFFF
-#define DPORT_APP_CACHE_VADDR_S  0
-
-#define DPORT_APP_DCACHE_DBUG3_REG          (DR_REG_DPORT_BASE + 0x424)
-/* DPORT_APP_CACHE_IRAM0_PID_ERROR : RO ;bitpos:[15] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CACHE_IRAM0_PID_ERROR  (BIT(15))
-#define DPORT_APP_CACHE_IRAM0_PID_ERROR_M  (BIT(15))
-#define DPORT_APP_CACHE_IRAM0_PID_ERROR_V  0x1
-#define DPORT_APP_CACHE_IRAM0_PID_ERROR_S  15
-/* DPORT_APP_CPU_DISABLED_CACHE_IA : RO ;bitpos:[14:9] ;default: 6'b0 ; */
-/*description: */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA  0x0000003F
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_M  ((DPORT_APP_CPU_DISABLED_CACHE_IA_V)<<(DPORT_APP_CPU_DISABLED_CACHE_IA_S))
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_V  0x3F
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_S  9
-/* This is the contents of DPORT_APP_CPU_DISABLED_CACHE_IA field expanded */
-/* The following bits will be set upon invalid access for different memory
- * regions: */
-/* Port of the PRO CPU cache when cache is used in high/low or odd/even mode */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_OPPOSITE   BIT(9)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_OPPOSITE_M BIT(9)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_OPPOSITE_V 1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_OPPOSITE_S 9
-/* DRAM1: 0x3F80_0000 ~ 0x3FBF_FFFF(R/W) */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DRAM1    BIT(10)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DRAM1_M  BIT(10)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DRAM1_V  1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DRAM1_S  10
-/* IROM0: 0x4080_0000 ~ 0x40BF_FFFF(RO) */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IROM0    BIT(11)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IROM0_M  BIT(11)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IROM0_V  1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IROM0_S  11
-/* IRAM1:  0x4040_0000 ~ 0x407F_FFFF(RO) */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM1    BIT(12)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM1_M  BIT(12)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM1_V  1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM1_S  12
-/* IRAM0: 0x4080_0000 ~ 0x40BF_FFFF(RO) */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM0    BIT(13)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM0_M  BIT(13)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM0_V  1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_IRAM0_S  13
-/* DROM0: 0x3F40_0000 ~ 0x3F7F_FFFF (RO) */
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DROM0    BIT(14)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DROM0_M  BIT(14)
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DROM0_V  1
-#define DPORT_APP_CPU_DISABLED_CACHE_IA_DROM0_S  14
-
-/* DPORT_APP_MMU_RDATA : RO ;bitpos:[8:0] ;default: 9'h0 ; */
-/*description: */
-#define DPORT_APP_MMU_RDATA  0x000001FF
-#define DPORT_APP_MMU_RDATA_M  ((DPORT_APP_MMU_RDATA_V)<<(DPORT_APP_MMU_RDATA_S))
-#define DPORT_APP_MMU_RDATA_V  0x1FF
-#define DPORT_APP_MMU_RDATA_S  0
-
-#define DPORT_APP_DCACHE_DBUG4_REG          (DR_REG_DPORT_BASE + 0x428)
-/* DPORT_APP_DRAM1ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_DRAM1ADDR0_IA  0x000FFFFF
-#define DPORT_APP_DRAM1ADDR0_IA_M  ((DPORT_APP_DRAM1ADDR0_IA_V)<<(DPORT_APP_DRAM1ADDR0_IA_S))
-#define DPORT_APP_DRAM1ADDR0_IA_V  0xFFFFF
-#define DPORT_APP_DRAM1ADDR0_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG5_REG          (DR_REG_DPORT_BASE + 0x42C)
-/* DPORT_APP_DROM0ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_DROM0ADDR0_IA  0x000FFFFF
-#define DPORT_APP_DROM0ADDR0_IA_M  ((DPORT_APP_DROM0ADDR0_IA_V)<<(DPORT_APP_DROM0ADDR0_IA_S))
-#define DPORT_APP_DROM0ADDR0_IA_V  0xFFFFF
-#define DPORT_APP_DROM0ADDR0_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG6_REG          (DR_REG_DPORT_BASE + 0x430)
-/* DPORT_APP_IRAM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_IRAM0ADDR_IA  0x000FFFFF
-#define DPORT_APP_IRAM0ADDR_IA_M  ((DPORT_APP_IRAM0ADDR_IA_V)<<(DPORT_APP_IRAM0ADDR_IA_S))
-#define DPORT_APP_IRAM0ADDR_IA_V  0xFFFFF
-#define DPORT_APP_IRAM0ADDR_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG7_REG          (DR_REG_DPORT_BASE + 0x434)
-/* DPORT_APP_IRAM1ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_IRAM1ADDR_IA  0x000FFFFF
-#define DPORT_APP_IRAM1ADDR_IA_M  ((DPORT_APP_IRAM1ADDR_IA_V)<<(DPORT_APP_IRAM1ADDR_IA_S))
-#define DPORT_APP_IRAM1ADDR_IA_V  0xFFFFF
-#define DPORT_APP_IRAM1ADDR_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG8_REG          (DR_REG_DPORT_BASE + 0x438)
-/* DPORT_APP_IROM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_IROM0ADDR_IA  0x000FFFFF
-#define DPORT_APP_IROM0ADDR_IA_M  ((DPORT_APP_IROM0ADDR_IA_V)<<(DPORT_APP_IROM0ADDR_IA_S))
-#define DPORT_APP_IROM0ADDR_IA_V  0xFFFFF
-#define DPORT_APP_IROM0ADDR_IA_S  0
-
-#define DPORT_APP_DCACHE_DBUG9_REG          (DR_REG_DPORT_BASE + 0x43C)
-/* DPORT_APP_OPSDRAMADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: */
-#define DPORT_APP_OPSDRAMADDR_IA  0x000FFFFF
-#define DPORT_APP_OPSDRAMADDR_IA_M  ((DPORT_APP_OPSDRAMADDR_IA_V)<<(DPORT_APP_OPSDRAMADDR_IA_S))
-#define DPORT_APP_OPSDRAMADDR_IA_V  0xFFFFF
-#define DPORT_APP_OPSDRAMADDR_IA_S  0
-
-#define DPORT_PRO_CPU_RECORD_CTRL_REG          (DR_REG_DPORT_BASE + 0x440)
-/* DPORT_PRO_CPU_PDEBUG_ENABLE : R/W ;bitpos:[8] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_PRO_CPU_PDEBUG_ENABLE  (BIT(8))
-#define DPORT_PRO_CPU_PDEBUG_ENABLE_M  (BIT(8))
-#define DPORT_PRO_CPU_PDEBUG_ENABLE_V  0x1
-#define DPORT_PRO_CPU_PDEBUG_ENABLE_S  8
-/* DPORT_PRO_CPU_RECORD_DISABLE : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CPU_RECORD_DISABLE  (BIT(4))
-#define DPORT_PRO_CPU_RECORD_DISABLE_M  (BIT(4))
-#define DPORT_PRO_CPU_RECORD_DISABLE_V  0x1
-#define DPORT_PRO_CPU_RECORD_DISABLE_S  4
-/* DPORT_PRO_CPU_RECORD_ENABLE : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CPU_RECORD_ENABLE  (BIT(0))
-#define DPORT_PRO_CPU_RECORD_ENABLE_M  (BIT(0))
-#define DPORT_PRO_CPU_RECORD_ENABLE_V  0x1
-#define DPORT_PRO_CPU_RECORD_ENABLE_S  0
-
-#define DPORT_PRO_CPU_RECORD_STATUS_REG          (DR_REG_DPORT_BASE + 0x444)
-/* DPORT_PRO_CPU_RECORDING : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PRO_CPU_RECORDING  (BIT(0))
-#define DPORT_PRO_CPU_RECORDING_M  (BIT(0))
-#define DPORT_PRO_CPU_RECORDING_V  0x1
-#define DPORT_PRO_CPU_RECORDING_S  0
-
-#define DPORT_PRO_CPU_RECORD_PID_REG          (DR_REG_DPORT_BASE + 0x448)
-/* DPORT_RECORD_PRO_PID : RO ;bitpos:[2:0] ;default: 3'd0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PID  0x00000007
-#define DPORT_RECORD_PRO_PID_M  ((DPORT_RECORD_PRO_PID_V)<<(DPORT_RECORD_PRO_PID_S))
-#define DPORT_RECORD_PRO_PID_V  0x7
-#define DPORT_RECORD_PRO_PID_S  0
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGINST_REG          (DR_REG_DPORT_BASE + 0x44C)
-/* DPORT_RECORD_PRO_PDEBUGINST : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGINST  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGINST_M  ((DPORT_RECORD_PRO_PDEBUGINST_V)<<(DPORT_RECORD_PRO_PDEBUGINST_S))
-#define DPORT_RECORD_PRO_PDEBUGINST_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGINST_S  0
-/* register layout:
- * SIZE [7..0] 		 : Instructions normally complete in the W stage. The size of the instruction in the W is given
- *                	   by this field in number of bytes. If it is 8’b0 in a given cycle the W stage has no completing
- *                	   instruction. This is also known as a bubble cycle. Also see DPORT_PRO_CPU_RECORD_PDEBUGSTATUS_REG.
- * ISRC [14..12]	 : Instruction source.
-** LOOP [23..20]	 : Loopback status.
-** CINTLEVEL [27..24]: CINTLEVEL.
-*/
-#define DPORT_RECORD_PDEBUGINST_SZ_M  		((DPORT_RECORD_PDEBUGINST_SZ_V)<<(DPORT_RECORD_PDEBUGINST_SZ_S))
-#define DPORT_RECORD_PDEBUGINST_SZ_V  		0xFF
-#define DPORT_RECORD_PDEBUGINST_SZ_S  		0
-#define DPORT_RECORD_PDEBUGINST_SZ(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGINST_SZ_S) & DPORT_RECORD_PDEBUGINST_SZ_V)
-#define DPORT_RECORD_PDEBUGINST_ISRC_M  	((DPORT_RECORD_PDEBUGINST_ISRC_V)<<(DPORT_RECORD_PDEBUGINST_ISRC_S))
-#define DPORT_RECORD_PDEBUGINST_ISRC_V  	0x07
-#define DPORT_RECORD_PDEBUGINST_ISRC_S  	12
-#define DPORT_RECORD_PDEBUGINST_ISRC(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGINST_ISRC_S) & DPORT_RECORD_PDEBUGINST_ISRC_V)
-// #define DPORT_RECORD_PDEBUGINST_LOOP_M  	((DPORT_RECORD_PDEBUGINST_LOOP_V)<<(DPORT_RECORD_PDEBUGINST_LOOP_S))
-// #define DPORT_RECORD_PDEBUGINST_LOOP_V  	0x0F
-// #define DPORT_RECORD_PDEBUGINST_LOOP_S  	20
-// #define DPORT_RECORD_PDEBUGINST_LOOP(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGINST_LOOP_S) & DPORT_RECORD_PDEBUGINST_LOOP_V)
-#define DPORT_RECORD_PDEBUGINST_LOOP_REP 	(BIT(20)) /* loopback will occur */
-#define DPORT_RECORD_PDEBUGINST_LOOP		(BIT(21)) /* last inst of loop */
-#define DPORT_RECORD_PDEBUGINST_CINTL_M  	((DPORT_RECORD_PDEBUGINST_CINTL_V)<<(DPORT_RECORD_PDEBUGINST_CINTL_S))
-#define DPORT_RECORD_PDEBUGINST_CINTL_V  	0x0F
-#define DPORT_RECORD_PDEBUGINST_CINTL_S  	24
-#define DPORT_RECORD_PDEBUGINST_CINTL(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGINST_CINTL_S) & DPORT_RECORD_PDEBUGINST_CINTL_V)
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGSTATUS_REG          (DR_REG_DPORT_BASE + 0x450)
-/* DPORT_RECORD_PRO_PDEBUGSTATUS : RO ;bitpos:[7:0] ;default: 8'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGSTATUS  0x000000FF
-#define DPORT_RECORD_PRO_PDEBUGSTATUS_M  ((DPORT_RECORD_PRO_PDEBUGSTATUS_V)<<(DPORT_RECORD_PRO_PDEBUGSTATUS_S))
-#define DPORT_RECORD_PRO_PDEBUGSTATUS_V  0xFF
-#define DPORT_RECORD_PRO_PDEBUGSTATUS_S  0
-/* register layout:
- * BBCAUSE [5..0]: Indicates cause for bubble cycle. See below for posible values. When DPORT_RECORD_PDEBUGINST_SZ == 0
- * INSNTYPE[5..0]: Indicates type of instruction retiring in the W stage. See below for posible values. When DPORT_RECORD_PDEBUGINST_SZ > 0
-*/
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_M  		((DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_V)<<(DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_S))
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_V  		0x3F
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_S  		0
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_S) & DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_V)
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_PSO		0x00 /* Power shut off */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_DEP		0x02 /* Register dependency or resource conflict. See DPORT_XXX_CPU_RECORD_PDEBUGDATA_REG for extra info. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_CTL		0x04 /* Control transfer bubble */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_ICM		0x08 /* I-cache miss (incl uncached miss) */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_DCM		0x0C /* D-cache miss (excl uncached miss) */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_EXC0		0x10 /* Exception or interrupt (W stage). See DPORT_XXX_CPU_RECORD_PDEBUGDATA_REG for extra info.
-															The virtual address of the instruction that was killed appears on DPORT_PRO_CPU_RECORD_PDEBUGPC_REG[31:0] */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_EXC1		0x11 /* Exception or interrupt (W+1 stage). See DPORT_XXX_CPU_RECORD_PDEBUGDATA_REG for extra info. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_RPL		0x14 /* Instruction replay (other). DPORT_XXX_CPU_RECORD_PDEBUGDATA_REG has the PC of the replaying instruction. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_ITLB		0x18 /* HW ITLB refill. The refill address and data are available on
-															DPORT_PRO_CPU_RECORD_PDEBUGLS0ADDR_REG and DPORT_PRO_CPU_RECORD_PDEBUGLS0DATA_REG. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_ITLBM		0x1A /* ITLB miss */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_DTLB		0x1C /* HW DTLB refill. The refill address and data are available on
-															DPORT_PRO_CPU_RECORD_PDEBUGLS0ADDR_REG and DPORT_PRO_CPU_RECORD_PDEBUGLS0DATA_REG. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_DTLBM		0x1E /* DTLB miss */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_STALL		0x20 /* Stall . The cause of the global stall is further classified in the DPORT_XXX_CPU_RECORD_PDEBUGDATA_REG. */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_HWMEC		0x24 /* HW-corrected memory error */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_WAITI		0x28 /* WAITI mode */
-#define DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_OTHER		0x3C /* all other bubbles */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_M  		((DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_V)<<(DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_S))
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_V  		0x3F
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_S  		0
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_S) & DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_V)
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_JX		0x00 /* JX */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_CALLX	0x04 /* CALLX */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_CRET		0x08 /* All call returns */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_ERET		0x0C /* All exception returns */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_B		0x10 /* Branch taken or loop not taken */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_J		0x14 /* J */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_CALL		0x18 /* CALL */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_BN		0x1C /* Branch not taken */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_LOOP		0x20 /* Loop instruction (taken) */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_S32C1I	0x24 /* S32C1I. The address and load data (before the conditional store) are available on the LS signals*/
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_WXSR2LB	0x28 /* WSR/XSR to LBEGIN */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_WSR2MMID	0x2C /* WSR to MMID */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_RWXSR	0x30 /* RSR or WSR (except MMID and LBEGIN) or XSR (except LBEGIN) */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_RWER		0x34 /* RER or WER */
-#define DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_DEF		0x3C /* Default */
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGDATA_REG          (DR_REG_DPORT_BASE + 0x454)
-/* DPORT_RECORD_PRO_PDEBUGDATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGDATA  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGDATA_M  ((DPORT_RECORD_PRO_PDEBUGDATA_V)<<(DPORT_RECORD_PRO_PDEBUGDATA_S))
-#define DPORT_RECORD_PRO_PDEBUGDATA_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGDATA_S  0
-/* register layout when bubble cycke cause is DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_DEP:
- *
- * HALT [17]: HALT instruction (TX only)
- * MEMW [16]: MEMW, EXTW or EXCW instruction dependency
- * REG  [12]: register dependencies or resource (e.g.TIE ports) conflicts
- * STR  [11]: store release (instruction) dependency
- * LSU  [8] : various LSU dependencies (MHT access, prefetch, cache access insts, s32c1i, etc)
- * OTHER[0] : all other hold dependencies resulting from data or resource dependencies
-*/
-#define DPORT_RECORD_PDEBUGDATA_DEP_HALT  	(BIT(17))
-#define DPORT_RECORD_PDEBUGDATA_DEP_MEMW  	(BIT(16))
-#define DPORT_RECORD_PDEBUGDATA_DEP_REG  	(BIT(12))
-#define DPORT_RECORD_PDEBUGDATA_DEP_STR  	(BIT(11))
-#define DPORT_RECORD_PDEBUGDATA_DEP_LSU  	(BIT(8))
-#define DPORT_RECORD_PDEBUGDATA_DEP_OTHER	(BIT(0))
-/* register layout when bubble cycke cause is DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_EXCn:
- *
- * EXCCAUSE[21..16]: Processor exception cause
- * EXCVEC  [4..0]  : Encoded Exception Vector
-*/
-#define DPORT_RECORD_PDEBUGDATA_EXCCAUSE_M  	((DPORT_RECORD_PDEBUGDATA_EXCCAUSE_V)<<(DPORT_RECORD_PDEBUGDATA_EXCCAUSE_S))
-#define DPORT_RECORD_PDEBUGDATA_EXCCAUSE_V  	0x3F
-#define DPORT_RECORD_PDEBUGDATA_EXCCAUSE_S  	16
-#define DPORT_RECORD_PDEBUGDATA_EXCCAUSE(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGDATA_EXCCAUSE_S) & DPORT_RECORD_PDEBUGDATA_EXCCAUSE_V)
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_M  		((DPORT_RECORD_PDEBUGDATA_EXCCAUSE_V)<<(DPORT_RECORD_PDEBUGDATA_EXCCAUSE_S))
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_V  		0x1F
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_S  		0
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGDATA_EXCCAUSE_S) & DPORT_RECORD_PDEBUGDATA_EXCCAUSE_V)
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_NONE		0x00 /* no vector */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_RST		0x01 /* Reset */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_DBG		0x02 /* Debug (repl corresp level “n”) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_NMI		0x03 /* NMI (repl corresp level “n”) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_USR		0x04 /* User */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_KRNL		0x05 /* Kernel */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_DBL		0x06 /* Double */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_EMEM		0x07 /* Memory Error */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_OVF4		0x0A /* Window Overflow 4 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_UNF4		0x0B /* Window Underflow 4 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_OVF8		0x0C /* Window Overflow 8 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_UNF8		0x0D /* Window Underflow 8 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_OVF12	0x0E /* Window Overflow 12 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_UNF12	0x0F /* Window Underflow 12 */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_INT2		0x10 /* Int Level 2 (n/a if debug/NMI) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_INT3		0x11 /* Int Level 3 (n/a if debug/NMI) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_INT4		0x12 /* Int Level 4 (n/a if debug/NMI) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_INT5		0x13 /* Int Level 5 (n/a if debug/NMI) */
-#define DPORT_RECORD_PDEBUGDATA_EXCVEC_INT6		0x14 /* Int Level 6 (n/a if debug/NMI) */
-/* register layout when bubble cycke cause is DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_STALL:
- *
- * ITERDIV[19]  : Iterative divide stall.
- * ITERMUL[18]  : Iterative multiply stall.
- * BANKCONFL[16]: Bank-conflict stall.
- * BPLOAD[15]  	: Bypass load stall.
- * LSPROC[14]  	: Load/store miss-processing stall.
- * L32R[13]	   	: FastL32R stall.
- * BPIFETCH[12]	: Bypass I fetch stall.
- * RUNSTALL[10]	: RunStall.
- * TIE[9] 	   	: TIE port stall.
- * IPIF[8]	   	: Instruction RAM inbound-PIF stall.
- * IRAMBUSY[7] 	: Instruction RAM/ROM busy stall.
- * ICM[6] 	   	: I-cache-miss stall.
- * LSU[4]      	: The LSU will stall the pipeline under various local memory access conflict situations.
- * DCM[3] 	   	: D-cache-miss stall.
- * BUFFCONFL[2]	: Store buffer conflict stall.
- * BUFF[1] 	   	: Store buffer full stall.
-*/
-#define DPORT_RECORD_PDEBUGDATA_STALL_ITERDIV	(BIT(19))
-#define DPORT_RECORD_PDEBUGDATA_STALL_ITERMUL	(BIT(18))
-#define DPORT_RECORD_PDEBUGDATA_STALL_BANKCONFL	(BIT(16))
-#define DPORT_RECORD_PDEBUGDATA_STALL_BPLOAD	(BIT(15))
-#define DPORT_RECORD_PDEBUGDATA_STALL_LSPROC	(BIT(14))
-#define DPORT_RECORD_PDEBUGDATA_STALL_L32R		(BIT(13))
-#define DPORT_RECORD_PDEBUGDATA_STALL_BPIFETCH	(BIT(12))
-#define DPORT_RECORD_PDEBUGDATA_STALL_RUN		(BIT(10))
-#define DPORT_RECORD_PDEBUGDATA_STALL_TIE		(BIT(9))
-#define DPORT_RECORD_PDEBUGDATA_STALL_IPIF		(BIT(8))
-#define DPORT_RECORD_PDEBUGDATA_STALL_IRAMBUSY	(BIT(7))
-#define DPORT_RECORD_PDEBUGDATA_STALL_ICM		(BIT(6))
-#define DPORT_RECORD_PDEBUGDATA_STALL_LSU		(BIT(4))
-#define DPORT_RECORD_PDEBUGDATA_STALL_DCM		(BIT(3))
-#define DPORT_RECORD_PDEBUGDATA_STALL_BUFFCONFL	(BIT(2))
-#define DPORT_RECORD_PDEBUGDATA_STALL_BUFF		(BIT(1))
-/* register layout for DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_RWXSR:
- *
- * XSR[10]		: XSR Instruction
- * WSR[9]		: WSR Instruction
- * RSR[8]		: RSR Instruction
- * SR[7..0] : Special Register Number
-*/
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_XSR		(BIT(10))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_WSR		(BIT(9))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_RSR		(BIT(8))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_M  		((DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_V)<<(DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_S))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_V  		0xFF
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_S  		0
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_S) & DPORT_RECORD_PDEBUGDATA_INSNTYPE_SR_V)
-/* register layout for DPORT_RECORD_PDEBUGSTATUS_INSNTYPE_RWER:
- *
- * ER[13..2]: ER Address
- * WER[1]	: WER Instruction
- * RER[0]	: RER Instruction
-*/
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_M  		((DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_V)<<(DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_S))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_V  		0xFFF
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_S  		2
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_S) & DPORT_RECORD_PDEBUGDATA_INSNTYPE_ER_V)
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_WER		(BIT(1))
-#define DPORT_RECORD_PDEBUGDATA_INSNTYPE_RER		(BIT(0))
-
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGPC_REG          (DR_REG_DPORT_BASE + 0x458)
-/* DPORT_RECORD_PRO_PDEBUGPC : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGPC  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGPC_M  ((DPORT_RECORD_PRO_PDEBUGPC_V)<<(DPORT_RECORD_PRO_PDEBUGPC_S))
-#define DPORT_RECORD_PRO_PDEBUGPC_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGPC_S  0
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGLS0STAT_REG          (DR_REG_DPORT_BASE + 0x45C)
-/* DPORT_RECORD_PRO_PDEBUGLS0STAT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGLS0STAT  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0STAT_M  ((DPORT_RECORD_PRO_PDEBUGLS0STAT_V)<<(DPORT_RECORD_PRO_PDEBUGLS0STAT_S))
-#define DPORT_RECORD_PRO_PDEBUGLS0STAT_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0STAT_S  0
-/* register layout:
- * TYPE [3..0] 	 : Type of instruction in LS.
- * SZ [7..4]	 : Operand size.
- * DTLBM [8]	 : Data TLB miss.
- * DCM [9]		 : D-cache miss.
- * DCH [10]		 : D-cache hit.
- * UC [12]		 : Uncached.
- * WB [13]		 : Writeback.
- * COH [16]	     : Coherency.
- * STCOH [18..17]: Coherent state.
- * TGT [23..20]  : Local target.
-*/
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_M  		((DPORT_RECORD_PDEBUGLS0STAT_TYPE_V)<<(DPORT_RECORD_PDEBUGLS0STAT_TYPE_S))
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_V  		0x0F
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_S  		0
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGLS0STAT_TYPE_S) & DPORT_RECORD_PDEBUGLS0STAT_TYPE_V)
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_NONE	0x00 /* neither */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_ITLBR	0x01 /* hw itlb refill */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_DTLBR	0x02 /* hw dtlb refill */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_LD		0x05 /* load */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_STR		0x06 /* store */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_L32R	0x08 /* l32r */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_S32CLI1	0x0A /* s32ci1 */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_CTI		0x0C /* cache test inst */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_RWXSR	0x0E /* rsr/wsr/xsr */
-#define DPORT_RECORD_PDEBUGLS0STAT_TYPE_RWER	0x0F /* rer/wer */
-#define DPORT_RECORD_PDEBUGLS0STAT_SZ_M  		((DPORT_RECORD_PDEBUGLS0STAT_SZ_V)<<(DPORT_RECORD_PDEBUGLS0STAT_SZ_S))
-#define DPORT_RECORD_PDEBUGLS0STAT_SZ_V  		0x0F
-#define DPORT_RECORD_PDEBUGLS0STAT_SZ_S  		4
-#define DPORT_RECORD_PDEBUGLS0STAT_SZ(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGLS0STAT_SZ_S) & DPORT_RECORD_PDEBUGLS0STAT_SZ_V)
-#define DPORT_RECORD_PDEBUGLS0STAT_SZB(_r_)		((8<<DPORT_RECORD_PDEBUGLS0STAT_SZ(_r_))/8) // in bytes
-#define DPORT_RECORD_PDEBUGLS0STAT_DTLBM		(BIT(8))
-#define DPORT_RECORD_PDEBUGLS0STAT_DCM			(BIT(9))
-#define DPORT_RECORD_PDEBUGLS0STAT_DCH			(BIT(10))
-#define DPORT_RECORD_PDEBUGLS0STAT_UC			(BIT(12))
-#define DPORT_RECORD_PDEBUGLS0STAT_WB			(BIT(13))
-#define DPORT_RECORD_PDEBUGLS0STAT_COH			(BIT(16))
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_M  	((DPORT_RECORD_PDEBUGLS0STAT_STCOH_V)<<(DPORT_RECORD_PDEBUGLS0STAT_STCOH_S))
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_V  	0x03
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_S  	17
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH(_r_)	(((_r_)>>DPORT_RECORD_PDEBUGLS0STAT_STCOH_S) & DPORT_RECORD_PDEBUGLS0STAT_STCOH_V)
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_NONE  	0x0 /* neither shared nor exclusive nor modified */
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_SHARED	0x1 /* shared */
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_EXCL  	0x2 /* exclusive */
-#define DPORT_RECORD_PDEBUGLS0STAT_STCOH_MOD  	0x3 /* modified */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_M  		((DPORT_RECORD_PDEBUGLS0STAT_TGT_V)<<(DPORT_RECORD_PDEBUGLS0STAT_TGT_S))
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_V  		0x0F
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_S  		20
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT(_r_)		(((_r_)>>DPORT_RECORD_PDEBUGLS0STAT_TGT_S) & DPORT_RECORD_PDEBUGLS0STAT_TGT_V)
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_EXT  	0x0 /* not to local memory */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_IRAM0	0x2 /* 001x: InstRAM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_IRAM1	0x3 /* 001x: InstRAM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_IROM0  	0x4 /* 010x: InstROM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_IROM1  	0x5 /* 010x: InstROM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_DRAM0  	0x0A /* 101x: DataRAM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_DRAM1  	0x0B /* 101x: DataRAM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_DROM0  	0xE /* 111x: DataROM (0/1) */
-#define DPORT_RECORD_PDEBUGLS0STAT_TGT_DROM1  	0xF /* 111x: DataROM (0/1) */
-// #define DPORT_RECORD_PDEBUGLS0STAT_TGT_IRAM(_t_)	(((_t_)&0xE)=0x2) /* 001x: InstRAM (0/1) */
-// #define DPORT_RECORD_PDEBUGLS0STAT_TGT_IROM(_t_)  	(((_t_)&0xE)=0x4) /* 010x: InstROM (0/1) */
-// #define DPORT_RECORD_PDEBUGLS0STAT_TGT_DRAM(_t_)  	(((_t_)&0xE)=0x2) /* 101x: DataRAM (0/1) */
-// #define DPORT_RECORD_PDEBUGLS0STAT_TGT_DROM(_t_)  	(((_t_)&0xE)=0x2) /* 111x: DataROM (0/1) */
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGLS0ADDR_REG          (DR_REG_DPORT_BASE + 0x460)
-/* DPORT_RECORD_PRO_PDEBUGLS0ADDR : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGLS0ADDR  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0ADDR_M  ((DPORT_RECORD_PRO_PDEBUGLS0ADDR_V)<<(DPORT_RECORD_PRO_PDEBUGLS0ADDR_S))
-#define DPORT_RECORD_PRO_PDEBUGLS0ADDR_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0ADDR_S  0
-
-#define DPORT_PRO_CPU_RECORD_PDEBUGLS0DATA_REG          (DR_REG_DPORT_BASE + 0x464)
-/* DPORT_RECORD_PRO_PDEBUGLS0DATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_PRO_PDEBUGLS0DATA  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0DATA_M  ((DPORT_RECORD_PRO_PDEBUGLS0DATA_V)<<(DPORT_RECORD_PRO_PDEBUGLS0DATA_S))
-#define DPORT_RECORD_PRO_PDEBUGLS0DATA_V  0xFFFFFFFF
-#define DPORT_RECORD_PRO_PDEBUGLS0DATA_S  0
-
-#define DPORT_APP_CPU_RECORD_CTRL_REG          (DR_REG_DPORT_BASE + 0x468)
-/* DPORT_APP_CPU_PDEBUG_ENABLE : R/W ;bitpos:[8] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_APP_CPU_PDEBUG_ENABLE  (BIT(8))
-#define DPORT_APP_CPU_PDEBUG_ENABLE_M  (BIT(8))
-#define DPORT_APP_CPU_PDEBUG_ENABLE_V  0x1
-#define DPORT_APP_CPU_PDEBUG_ENABLE_S  8
-/* DPORT_APP_CPU_RECORD_DISABLE : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CPU_RECORD_DISABLE  (BIT(4))
-#define DPORT_APP_CPU_RECORD_DISABLE_M  (BIT(4))
-#define DPORT_APP_CPU_RECORD_DISABLE_V  0x1
-#define DPORT_APP_CPU_RECORD_DISABLE_S  4
-/* DPORT_APP_CPU_RECORD_ENABLE : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CPU_RECORD_ENABLE  (BIT(0))
-#define DPORT_APP_CPU_RECORD_ENABLE_M  (BIT(0))
-#define DPORT_APP_CPU_RECORD_ENABLE_V  0x1
-#define DPORT_APP_CPU_RECORD_ENABLE_S  0
-
-#define DPORT_APP_CPU_RECORD_STATUS_REG          (DR_REG_DPORT_BASE + 0x46C)
-/* DPORT_APP_CPU_RECORDING : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_APP_CPU_RECORDING  (BIT(0))
-#define DPORT_APP_CPU_RECORDING_M  (BIT(0))
-#define DPORT_APP_CPU_RECORDING_V  0x1
-#define DPORT_APP_CPU_RECORDING_S  0
-
-#define DPORT_APP_CPU_RECORD_PID_REG          (DR_REG_DPORT_BASE + 0x470)
-/* DPORT_RECORD_APP_PID : RO ;bitpos:[2:0] ;default: 3'd0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PID  0x00000007
-#define DPORT_RECORD_APP_PID_M  ((DPORT_RECORD_APP_PID_V)<<(DPORT_RECORD_APP_PID_S))
-#define DPORT_RECORD_APP_PID_V  0x7
-#define DPORT_RECORD_APP_PID_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGINST_REG          (DR_REG_DPORT_BASE + 0x474)
-/* DPORT_RECORD_APP_PDEBUGINST : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGINST  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGINST_M  ((DPORT_RECORD_APP_PDEBUGINST_V)<<(DPORT_RECORD_APP_PDEBUGINST_S))
-#define DPORT_RECORD_APP_PDEBUGINST_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGINST_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGSTATUS_REG          (DR_REG_DPORT_BASE + 0x478)
-/* DPORT_RECORD_APP_PDEBUGSTATUS : RO ;bitpos:[7:0] ;default: 8'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGSTATUS  0x000000FF
-#define DPORT_RECORD_APP_PDEBUGSTATUS_M  ((DPORT_RECORD_APP_PDEBUGSTATUS_V)<<(DPORT_RECORD_APP_PDEBUGSTATUS_S))
-#define DPORT_RECORD_APP_PDEBUGSTATUS_V  0xFF
-#define DPORT_RECORD_APP_PDEBUGSTATUS_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGDATA_REG          (DR_REG_DPORT_BASE + 0x47C)
-/* DPORT_RECORD_APP_PDEBUGDATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGDATA  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGDATA_M  ((DPORT_RECORD_APP_PDEBUGDATA_V)<<(DPORT_RECORD_APP_PDEBUGDATA_S))
-#define DPORT_RECORD_APP_PDEBUGDATA_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGDATA_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGPC_REG          (DR_REG_DPORT_BASE + 0x480)
-/* DPORT_RECORD_APP_PDEBUGPC : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGPC  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGPC_M  ((DPORT_RECORD_APP_PDEBUGPC_V)<<(DPORT_RECORD_APP_PDEBUGPC_S))
-#define DPORT_RECORD_APP_PDEBUGPC_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGPC_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGLS0STAT_REG          (DR_REG_DPORT_BASE + 0x484)
-/* DPORT_RECORD_APP_PDEBUGLS0STAT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGLS0STAT  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0STAT_M  ((DPORT_RECORD_APP_PDEBUGLS0STAT_V)<<(DPORT_RECORD_APP_PDEBUGLS0STAT_S))
-#define DPORT_RECORD_APP_PDEBUGLS0STAT_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0STAT_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGLS0ADDR_REG          (DR_REG_DPORT_BASE + 0x488)
-/* DPORT_RECORD_APP_PDEBUGLS0ADDR : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGLS0ADDR  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0ADDR_M  ((DPORT_RECORD_APP_PDEBUGLS0ADDR_V)<<(DPORT_RECORD_APP_PDEBUGLS0ADDR_S))
-#define DPORT_RECORD_APP_PDEBUGLS0ADDR_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0ADDR_S  0
-
-#define DPORT_APP_CPU_RECORD_PDEBUGLS0DATA_REG          (DR_REG_DPORT_BASE + 0x48C)
-/* DPORT_RECORD_APP_PDEBUGLS0DATA : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: */
-#define DPORT_RECORD_APP_PDEBUGLS0DATA  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0DATA_M  ((DPORT_RECORD_APP_PDEBUGLS0DATA_V)<<(DPORT_RECORD_APP_PDEBUGLS0DATA_S))
-#define DPORT_RECORD_APP_PDEBUGLS0DATA_V  0xFFFFFFFF
-#define DPORT_RECORD_APP_PDEBUGLS0DATA_S  0
-
-#define DPORT_RSA_PD_CTRL_REG          (DR_REG_DPORT_BASE + 0x490)
+#define DPORT_RSA_PD_CTRL_REG          (DR_REG_DPORT_BASE + 0x3D8)
 /* DPORT_RSA_PD : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_RSA_PD  (BIT(0))
@@ -3566,7 +2623,7 @@
 #define DPORT_RSA_PD_V  0x1
 #define DPORT_RSA_PD_S  0
 
-#define DPORT_ROM_MPU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x494)
+#define DPORT_ROM_MPU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x3DC)
 /* DPORT_ROM_MPU_TABLE0 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_ROM_MPU_TABLE0  0x00000003
@@ -3574,7 +2631,7 @@
 #define DPORT_ROM_MPU_TABLE0_V  0x3
 #define DPORT_ROM_MPU_TABLE0_S  0
 
-#define DPORT_ROM_MPU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x498)
+#define DPORT_ROM_MPU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x3E0)
 /* DPORT_ROM_MPU_TABLE1 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_ROM_MPU_TABLE1  0x00000003
@@ -3582,7 +2639,7 @@
 #define DPORT_ROM_MPU_TABLE1_V  0x3
 #define DPORT_ROM_MPU_TABLE1_S  0
 
-#define DPORT_ROM_MPU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x49C)
+#define DPORT_ROM_MPU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x3E4)
 /* DPORT_ROM_MPU_TABLE2 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_ROM_MPU_TABLE2  0x00000003
@@ -3590,7 +2647,7 @@
 #define DPORT_ROM_MPU_TABLE2_V  0x3
 #define DPORT_ROM_MPU_TABLE2_S  0
 
-#define DPORT_ROM_MPU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x4A0)
+#define DPORT_ROM_MPU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x3E8)
 /* DPORT_ROM_MPU_TABLE3 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_ROM_MPU_TABLE3  0x00000003
@@ -3598,7 +2655,7 @@
 #define DPORT_ROM_MPU_TABLE3_V  0x3
 #define DPORT_ROM_MPU_TABLE3_S  0
 
-#define DPORT_SHROM_MPU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x4A4)
+#define DPORT_SHROM_MPU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x3EC)
 /* DPORT_SHROM_MPU_TABLE0 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE0  0x00000003
@@ -3606,7 +2663,7 @@
 #define DPORT_SHROM_MPU_TABLE0_V  0x3
 #define DPORT_SHROM_MPU_TABLE0_S  0
 
-#define DPORT_SHROM_MPU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x4A8)
+#define DPORT_SHROM_MPU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x3F0)
 /* DPORT_SHROM_MPU_TABLE1 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE1  0x00000003
@@ -3614,7 +2671,7 @@
 #define DPORT_SHROM_MPU_TABLE1_V  0x3
 #define DPORT_SHROM_MPU_TABLE1_S  0
 
-#define DPORT_SHROM_MPU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x4AC)
+#define DPORT_SHROM_MPU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x3F4)
 /* DPORT_SHROM_MPU_TABLE2 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE2  0x00000003
@@ -3622,7 +2679,7 @@
 #define DPORT_SHROM_MPU_TABLE2_V  0x3
 #define DPORT_SHROM_MPU_TABLE2_S  0
 
-#define DPORT_SHROM_MPU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x4B0)
+#define DPORT_SHROM_MPU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x3F8)
 /* DPORT_SHROM_MPU_TABLE3 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE3  0x00000003
@@ -3630,7 +2687,7 @@
 #define DPORT_SHROM_MPU_TABLE3_V  0x3
 #define DPORT_SHROM_MPU_TABLE3_S  0
 
-#define DPORT_SHROM_MPU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x4B4)
+#define DPORT_SHROM_MPU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x3FC)
 /* DPORT_SHROM_MPU_TABLE4 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE4  0x00000003
@@ -3638,7 +2695,7 @@
 #define DPORT_SHROM_MPU_TABLE4_V  0x3
 #define DPORT_SHROM_MPU_TABLE4_S  0
 
-#define DPORT_SHROM_MPU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x4B8)
+#define DPORT_SHROM_MPU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x400)
 /* DPORT_SHROM_MPU_TABLE5 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE5  0x00000003
@@ -3646,7 +2703,7 @@
 #define DPORT_SHROM_MPU_TABLE5_V  0x3
 #define DPORT_SHROM_MPU_TABLE5_S  0
 
-#define DPORT_SHROM_MPU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x4BC)
+#define DPORT_SHROM_MPU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x404)
 /* DPORT_SHROM_MPU_TABLE6 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE6  0x00000003
@@ -3654,7 +2711,7 @@
 #define DPORT_SHROM_MPU_TABLE6_V  0x3
 #define DPORT_SHROM_MPU_TABLE6_S  0
 
-#define DPORT_SHROM_MPU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x4C0)
+#define DPORT_SHROM_MPU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x408)
 /* DPORT_SHROM_MPU_TABLE7 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE7  0x00000003
@@ -3662,7 +2719,7 @@
 #define DPORT_SHROM_MPU_TABLE7_V  0x3
 #define DPORT_SHROM_MPU_TABLE7_S  0
 
-#define DPORT_SHROM_MPU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x4C4)
+#define DPORT_SHROM_MPU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x40C)
 /* DPORT_SHROM_MPU_TABLE8 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE8  0x00000003
@@ -3670,7 +2727,7 @@
 #define DPORT_SHROM_MPU_TABLE8_V  0x3
 #define DPORT_SHROM_MPU_TABLE8_S  0
 
-#define DPORT_SHROM_MPU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x4C8)
+#define DPORT_SHROM_MPU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x410)
 /* DPORT_SHROM_MPU_TABLE9 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE9  0x00000003
@@ -3678,7 +2735,7 @@
 #define DPORT_SHROM_MPU_TABLE9_V  0x3
 #define DPORT_SHROM_MPU_TABLE9_S  0
 
-#define DPORT_SHROM_MPU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x4CC)
+#define DPORT_SHROM_MPU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x414)
 /* DPORT_SHROM_MPU_TABLE10 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE10  0x00000003
@@ -3686,7 +2743,7 @@
 #define DPORT_SHROM_MPU_TABLE10_V  0x3
 #define DPORT_SHROM_MPU_TABLE10_S  0
 
-#define DPORT_SHROM_MPU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x4D0)
+#define DPORT_SHROM_MPU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x418)
 /* DPORT_SHROM_MPU_TABLE11 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE11  0x00000003
@@ -3694,7 +2751,7 @@
 #define DPORT_SHROM_MPU_TABLE11_V  0x3
 #define DPORT_SHROM_MPU_TABLE11_S  0
 
-#define DPORT_SHROM_MPU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x4D4)
+#define DPORT_SHROM_MPU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x41C)
 /* DPORT_SHROM_MPU_TABLE12 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE12  0x00000003
@@ -3702,7 +2759,7 @@
 #define DPORT_SHROM_MPU_TABLE12_V  0x3
 #define DPORT_SHROM_MPU_TABLE12_S  0
 
-#define DPORT_SHROM_MPU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x4D8)
+#define DPORT_SHROM_MPU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x420)
 /* DPORT_SHROM_MPU_TABLE13 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE13  0x00000003
@@ -3710,7 +2767,7 @@
 #define DPORT_SHROM_MPU_TABLE13_V  0x3
 #define DPORT_SHROM_MPU_TABLE13_S  0
 
-#define DPORT_SHROM_MPU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x4DC)
+#define DPORT_SHROM_MPU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x424)
 /* DPORT_SHROM_MPU_TABLE14 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE14  0x00000003
@@ -3718,7 +2775,7 @@
 #define DPORT_SHROM_MPU_TABLE14_V  0x3
 #define DPORT_SHROM_MPU_TABLE14_S  0
 
-#define DPORT_SHROM_MPU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x4E0)
+#define DPORT_SHROM_MPU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x428)
 /* DPORT_SHROM_MPU_TABLE15 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE15  0x00000003
@@ -3726,7 +2783,7 @@
 #define DPORT_SHROM_MPU_TABLE15_V  0x3
 #define DPORT_SHROM_MPU_TABLE15_S  0
 
-#define DPORT_SHROM_MPU_TABLE16_REG          (DR_REG_DPORT_BASE + 0x4E4)
+#define DPORT_SHROM_MPU_TABLE16_REG          (DR_REG_DPORT_BASE + 0x42C)
 /* DPORT_SHROM_MPU_TABLE16 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE16  0x00000003
@@ -3734,7 +2791,7 @@
 #define DPORT_SHROM_MPU_TABLE16_V  0x3
 #define DPORT_SHROM_MPU_TABLE16_S  0
 
-#define DPORT_SHROM_MPU_TABLE17_REG          (DR_REG_DPORT_BASE + 0x4E8)
+#define DPORT_SHROM_MPU_TABLE17_REG          (DR_REG_DPORT_BASE + 0x430)
 /* DPORT_SHROM_MPU_TABLE17 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE17  0x00000003
@@ -3742,7 +2799,7 @@
 #define DPORT_SHROM_MPU_TABLE17_V  0x3
 #define DPORT_SHROM_MPU_TABLE17_S  0
 
-#define DPORT_SHROM_MPU_TABLE18_REG          (DR_REG_DPORT_BASE + 0x4EC)
+#define DPORT_SHROM_MPU_TABLE18_REG          (DR_REG_DPORT_BASE + 0x434)
 /* DPORT_SHROM_MPU_TABLE18 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE18  0x00000003
@@ -3750,7 +2807,7 @@
 #define DPORT_SHROM_MPU_TABLE18_V  0x3
 #define DPORT_SHROM_MPU_TABLE18_S  0
 
-#define DPORT_SHROM_MPU_TABLE19_REG          (DR_REG_DPORT_BASE + 0x4F0)
+#define DPORT_SHROM_MPU_TABLE19_REG          (DR_REG_DPORT_BASE + 0x438)
 /* DPORT_SHROM_MPU_TABLE19 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE19  0x00000003
@@ -3758,7 +2815,7 @@
 #define DPORT_SHROM_MPU_TABLE19_V  0x3
 #define DPORT_SHROM_MPU_TABLE19_S  0
 
-#define DPORT_SHROM_MPU_TABLE20_REG          (DR_REG_DPORT_BASE + 0x4F4)
+#define DPORT_SHROM_MPU_TABLE20_REG          (DR_REG_DPORT_BASE + 0x43C)
 /* DPORT_SHROM_MPU_TABLE20 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE20  0x00000003
@@ -3766,7 +2823,7 @@
 #define DPORT_SHROM_MPU_TABLE20_V  0x3
 #define DPORT_SHROM_MPU_TABLE20_S  0
 
-#define DPORT_SHROM_MPU_TABLE21_REG          (DR_REG_DPORT_BASE + 0x4F8)
+#define DPORT_SHROM_MPU_TABLE21_REG          (DR_REG_DPORT_BASE + 0x440)
 /* DPORT_SHROM_MPU_TABLE21 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE21  0x00000003
@@ -3774,7 +2831,7 @@
 #define DPORT_SHROM_MPU_TABLE21_V  0x3
 #define DPORT_SHROM_MPU_TABLE21_S  0
 
-#define DPORT_SHROM_MPU_TABLE22_REG          (DR_REG_DPORT_BASE + 0x4FC)
+#define DPORT_SHROM_MPU_TABLE22_REG          (DR_REG_DPORT_BASE + 0x444)
 /* DPORT_SHROM_MPU_TABLE22 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE22  0x00000003
@@ -3782,7 +2839,7 @@
 #define DPORT_SHROM_MPU_TABLE22_V  0x3
 #define DPORT_SHROM_MPU_TABLE22_S  0
 
-#define DPORT_SHROM_MPU_TABLE23_REG          (DR_REG_DPORT_BASE + 0x500)
+#define DPORT_SHROM_MPU_TABLE23_REG          (DR_REG_DPORT_BASE + 0x448)
 /* DPORT_SHROM_MPU_TABLE23 : R/W ;bitpos:[1:0] ;default: 2'b1 ; */
 /*description: */
 #define DPORT_SHROM_MPU_TABLE23  0x00000003
@@ -3790,7 +2847,7 @@
 #define DPORT_SHROM_MPU_TABLE23_V  0x3
 #define DPORT_SHROM_MPU_TABLE23_S  0
 
-#define DPORT_IMMU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x504)
+#define DPORT_IMMU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x44C)
 /* DPORT_IMMU_TABLE0 : R/W ;bitpos:[6:0] ;default: 7'd0 ; */
 /*description: */
 #define DPORT_IMMU_TABLE0  0x0000007F
@@ -3798,7 +2855,7 @@
 #define DPORT_IMMU_TABLE0_V  0x7F
 #define DPORT_IMMU_TABLE0_S  0
 
-#define DPORT_IMMU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x508)
+#define DPORT_IMMU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x450)
 /* DPORT_IMMU_TABLE1 : R/W ;bitpos:[6:0] ;default: 7'd1 ; */
 /*description: */
 #define DPORT_IMMU_TABLE1  0x0000007F
@@ -3806,7 +2863,7 @@
 #define DPORT_IMMU_TABLE1_V  0x7F
 #define DPORT_IMMU_TABLE1_S  0
 
-#define DPORT_IMMU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x50C)
+#define DPORT_IMMU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x454)
 /* DPORT_IMMU_TABLE2 : R/W ;bitpos:[6:0] ;default: 7'd2 ; */
 /*description: */
 #define DPORT_IMMU_TABLE2  0x0000007F
@@ -3814,7 +2871,7 @@
 #define DPORT_IMMU_TABLE2_V  0x7F
 #define DPORT_IMMU_TABLE2_S  0
 
-#define DPORT_IMMU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x510)
+#define DPORT_IMMU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x458)
 /* DPORT_IMMU_TABLE3 : R/W ;bitpos:[6:0] ;default: 7'd3 ; */
 /*description: */
 #define DPORT_IMMU_TABLE3  0x0000007F
@@ -3822,7 +2879,7 @@
 #define DPORT_IMMU_TABLE3_V  0x7F
 #define DPORT_IMMU_TABLE3_S  0
 
-#define DPORT_IMMU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x514)
+#define DPORT_IMMU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x45C)
 /* DPORT_IMMU_TABLE4 : R/W ;bitpos:[6:0] ;default: 7'd4 ; */
 /*description: */
 #define DPORT_IMMU_TABLE4  0x0000007F
@@ -3830,7 +2887,7 @@
 #define DPORT_IMMU_TABLE4_V  0x7F
 #define DPORT_IMMU_TABLE4_S  0
 
-#define DPORT_IMMU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x518)
+#define DPORT_IMMU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x460)
 /* DPORT_IMMU_TABLE5 : R/W ;bitpos:[6:0] ;default: 7'd5 ; */
 /*description: */
 #define DPORT_IMMU_TABLE5  0x0000007F
@@ -3838,7 +2895,7 @@
 #define DPORT_IMMU_TABLE5_V  0x7F
 #define DPORT_IMMU_TABLE5_S  0
 
-#define DPORT_IMMU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x51C)
+#define DPORT_IMMU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x464)
 /* DPORT_IMMU_TABLE6 : R/W ;bitpos:[6:0] ;default: 7'd6 ; */
 /*description: */
 #define DPORT_IMMU_TABLE6  0x0000007F
@@ -3846,7 +2903,7 @@
 #define DPORT_IMMU_TABLE6_V  0x7F
 #define DPORT_IMMU_TABLE6_S  0
 
-#define DPORT_IMMU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x520)
+#define DPORT_IMMU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x468)
 /* DPORT_IMMU_TABLE7 : R/W ;bitpos:[6:0] ;default: 7'd7 ; */
 /*description: */
 #define DPORT_IMMU_TABLE7  0x0000007F
@@ -3854,7 +2911,7 @@
 #define DPORT_IMMU_TABLE7_V  0x7F
 #define DPORT_IMMU_TABLE7_S  0
 
-#define DPORT_IMMU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x524)
+#define DPORT_IMMU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x46C)
 /* DPORT_IMMU_TABLE8 : R/W ;bitpos:[6:0] ;default: 7'd8 ; */
 /*description: */
 #define DPORT_IMMU_TABLE8  0x0000007F
@@ -3862,7 +2919,7 @@
 #define DPORT_IMMU_TABLE8_V  0x7F
 #define DPORT_IMMU_TABLE8_S  0
 
-#define DPORT_IMMU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x528)
+#define DPORT_IMMU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x470)
 /* DPORT_IMMU_TABLE9 : R/W ;bitpos:[6:0] ;default: 7'd9 ; */
 /*description: */
 #define DPORT_IMMU_TABLE9  0x0000007F
@@ -3870,7 +2927,7 @@
 #define DPORT_IMMU_TABLE9_V  0x7F
 #define DPORT_IMMU_TABLE9_S  0
 
-#define DPORT_IMMU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x52C)
+#define DPORT_IMMU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x474)
 /* DPORT_IMMU_TABLE10 : R/W ;bitpos:[6:0] ;default: 7'd10 ; */
 /*description: */
 #define DPORT_IMMU_TABLE10  0x0000007F
@@ -3878,7 +2935,7 @@
 #define DPORT_IMMU_TABLE10_V  0x7F
 #define DPORT_IMMU_TABLE10_S  0
 
-#define DPORT_IMMU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x530)
+#define DPORT_IMMU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x478)
 /* DPORT_IMMU_TABLE11 : R/W ;bitpos:[6:0] ;default: 7'd11 ; */
 /*description: */
 #define DPORT_IMMU_TABLE11  0x0000007F
@@ -3886,7 +2943,7 @@
 #define DPORT_IMMU_TABLE11_V  0x7F
 #define DPORT_IMMU_TABLE11_S  0
 
-#define DPORT_IMMU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x534)
+#define DPORT_IMMU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x47C)
 /* DPORT_IMMU_TABLE12 : R/W ;bitpos:[6:0] ;default: 7'd12 ; */
 /*description: */
 #define DPORT_IMMU_TABLE12  0x0000007F
@@ -3894,7 +2951,7 @@
 #define DPORT_IMMU_TABLE12_V  0x7F
 #define DPORT_IMMU_TABLE12_S  0
 
-#define DPORT_IMMU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x538)
+#define DPORT_IMMU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x480)
 /* DPORT_IMMU_TABLE13 : R/W ;bitpos:[6:0] ;default: 7'd13 ; */
 /*description: */
 #define DPORT_IMMU_TABLE13  0x0000007F
@@ -3902,7 +2959,7 @@
 #define DPORT_IMMU_TABLE13_V  0x7F
 #define DPORT_IMMU_TABLE13_S  0
 
-#define DPORT_IMMU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x53C)
+#define DPORT_IMMU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x484)
 /* DPORT_IMMU_TABLE14 : R/W ;bitpos:[6:0] ;default: 7'd14 ; */
 /*description: */
 #define DPORT_IMMU_TABLE14  0x0000007F
@@ -3910,7 +2967,7 @@
 #define DPORT_IMMU_TABLE14_V  0x7F
 #define DPORT_IMMU_TABLE14_S  0
 
-#define DPORT_IMMU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x540)
+#define DPORT_IMMU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x488)
 /* DPORT_IMMU_TABLE15 : R/W ;bitpos:[6:0] ;default: 7'd15 ; */
 /*description: */
 #define DPORT_IMMU_TABLE15  0x0000007F
@@ -3918,7 +2975,7 @@
 #define DPORT_IMMU_TABLE15_V  0x7F
 #define DPORT_IMMU_TABLE15_S  0
 
-#define DPORT_DMMU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x544)
+#define DPORT_DMMU_TABLE0_REG          (DR_REG_DPORT_BASE + 0x48C)
 /* DPORT_DMMU_TABLE0 : R/W ;bitpos:[6:0] ;default: 7'd0 ; */
 /*description: */
 #define DPORT_DMMU_TABLE0  0x0000007F
@@ -3926,7 +2983,7 @@
 #define DPORT_DMMU_TABLE0_V  0x7F
 #define DPORT_DMMU_TABLE0_S  0
 
-#define DPORT_DMMU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x548)
+#define DPORT_DMMU_TABLE1_REG          (DR_REG_DPORT_BASE + 0x490)
 /* DPORT_DMMU_TABLE1 : R/W ;bitpos:[6:0] ;default: 7'd1 ; */
 /*description: */
 #define DPORT_DMMU_TABLE1  0x0000007F
@@ -3934,7 +2991,7 @@
 #define DPORT_DMMU_TABLE1_V  0x7F
 #define DPORT_DMMU_TABLE1_S  0
 
-#define DPORT_DMMU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x54C)
+#define DPORT_DMMU_TABLE2_REG          (DR_REG_DPORT_BASE + 0x494)
 /* DPORT_DMMU_TABLE2 : R/W ;bitpos:[6:0] ;default: 7'd2 ; */
 /*description: */
 #define DPORT_DMMU_TABLE2  0x0000007F
@@ -3942,7 +2999,7 @@
 #define DPORT_DMMU_TABLE2_V  0x7F
 #define DPORT_DMMU_TABLE2_S  0
 
-#define DPORT_DMMU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x550)
+#define DPORT_DMMU_TABLE3_REG          (DR_REG_DPORT_BASE + 0x498)
 /* DPORT_DMMU_TABLE3 : R/W ;bitpos:[6:0] ;default: 7'd3 ; */
 /*description: */
 #define DPORT_DMMU_TABLE3  0x0000007F
@@ -3950,7 +3007,7 @@
 #define DPORT_DMMU_TABLE3_V  0x7F
 #define DPORT_DMMU_TABLE3_S  0
 
-#define DPORT_DMMU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x554)
+#define DPORT_DMMU_TABLE4_REG          (DR_REG_DPORT_BASE + 0x49C)
 /* DPORT_DMMU_TABLE4 : R/W ;bitpos:[6:0] ;default: 7'd4 ; */
 /*description: */
 #define DPORT_DMMU_TABLE4  0x0000007F
@@ -3958,7 +3015,7 @@
 #define DPORT_DMMU_TABLE4_V  0x7F
 #define DPORT_DMMU_TABLE4_S  0
 
-#define DPORT_DMMU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x558)
+#define DPORT_DMMU_TABLE5_REG          (DR_REG_DPORT_BASE + 0x4A0)
 /* DPORT_DMMU_TABLE5 : R/W ;bitpos:[6:0] ;default: 7'd5 ; */
 /*description: */
 #define DPORT_DMMU_TABLE5  0x0000007F
@@ -3966,7 +3023,7 @@
 #define DPORT_DMMU_TABLE5_V  0x7F
 #define DPORT_DMMU_TABLE5_S  0
 
-#define DPORT_DMMU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x55C)
+#define DPORT_DMMU_TABLE6_REG          (DR_REG_DPORT_BASE + 0x4A4)
 /* DPORT_DMMU_TABLE6 : R/W ;bitpos:[6:0] ;default: 7'd6 ; */
 /*description: */
 #define DPORT_DMMU_TABLE6  0x0000007F
@@ -3974,7 +3031,7 @@
 #define DPORT_DMMU_TABLE6_V  0x7F
 #define DPORT_DMMU_TABLE6_S  0
 
-#define DPORT_DMMU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x560)
+#define DPORT_DMMU_TABLE7_REG          (DR_REG_DPORT_BASE + 0x4A8)
 /* DPORT_DMMU_TABLE7 : R/W ;bitpos:[6:0] ;default: 7'd7 ; */
 /*description: */
 #define DPORT_DMMU_TABLE7  0x0000007F
@@ -3982,7 +3039,7 @@
 #define DPORT_DMMU_TABLE7_V  0x7F
 #define DPORT_DMMU_TABLE7_S  0
 
-#define DPORT_DMMU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x564)
+#define DPORT_DMMU_TABLE8_REG          (DR_REG_DPORT_BASE + 0x4AC)
 /* DPORT_DMMU_TABLE8 : R/W ;bitpos:[6:0] ;default: 7'd8 ; */
 /*description: */
 #define DPORT_DMMU_TABLE8  0x0000007F
@@ -3990,7 +3047,7 @@
 #define DPORT_DMMU_TABLE8_V  0x7F
 #define DPORT_DMMU_TABLE8_S  0
 
-#define DPORT_DMMU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x568)
+#define DPORT_DMMU_TABLE9_REG          (DR_REG_DPORT_BASE + 0x4B0)
 /* DPORT_DMMU_TABLE9 : R/W ;bitpos:[6:0] ;default: 7'd9 ; */
 /*description: */
 #define DPORT_DMMU_TABLE9  0x0000007F
@@ -3998,7 +3055,7 @@
 #define DPORT_DMMU_TABLE9_V  0x7F
 #define DPORT_DMMU_TABLE9_S  0
 
-#define DPORT_DMMU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x56C)
+#define DPORT_DMMU_TABLE10_REG          (DR_REG_DPORT_BASE + 0x4B4)
 /* DPORT_DMMU_TABLE10 : R/W ;bitpos:[6:0] ;default: 7'd10 ; */
 /*description: */
 #define DPORT_DMMU_TABLE10  0x0000007F
@@ -4006,7 +3063,7 @@
 #define DPORT_DMMU_TABLE10_V  0x7F
 #define DPORT_DMMU_TABLE10_S  0
 
-#define DPORT_DMMU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x570)
+#define DPORT_DMMU_TABLE11_REG          (DR_REG_DPORT_BASE + 0x4B8)
 /* DPORT_DMMU_TABLE11 : R/W ;bitpos:[6:0] ;default: 7'd11 ; */
 /*description: */
 #define DPORT_DMMU_TABLE11  0x0000007F
@@ -4014,7 +3071,7 @@
 #define DPORT_DMMU_TABLE11_V  0x7F
 #define DPORT_DMMU_TABLE11_S  0
 
-#define DPORT_DMMU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x574)
+#define DPORT_DMMU_TABLE12_REG          (DR_REG_DPORT_BASE + 0x4BC)
 /* DPORT_DMMU_TABLE12 : R/W ;bitpos:[6:0] ;default: 7'd12 ; */
 /*description: */
 #define DPORT_DMMU_TABLE12  0x0000007F
@@ -4022,7 +3079,7 @@
 #define DPORT_DMMU_TABLE12_V  0x7F
 #define DPORT_DMMU_TABLE12_S  0
 
-#define DPORT_DMMU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x578)
+#define DPORT_DMMU_TABLE13_REG          (DR_REG_DPORT_BASE + 0x4C0)
 /* DPORT_DMMU_TABLE13 : R/W ;bitpos:[6:0] ;default: 7'd13 ; */
 /*description: */
 #define DPORT_DMMU_TABLE13  0x0000007F
@@ -4030,7 +3087,7 @@
 #define DPORT_DMMU_TABLE13_V  0x7F
 #define DPORT_DMMU_TABLE13_S  0
 
-#define DPORT_DMMU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x57C)
+#define DPORT_DMMU_TABLE14_REG          (DR_REG_DPORT_BASE + 0x4C4)
 /* DPORT_DMMU_TABLE14 : R/W ;bitpos:[6:0] ;default: 7'd14 ; */
 /*description: */
 #define DPORT_DMMU_TABLE14  0x0000007F
@@ -4038,7 +3095,7 @@
 #define DPORT_DMMU_TABLE14_V  0x7F
 #define DPORT_DMMU_TABLE14_S  0
 
-#define DPORT_DMMU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x580)
+#define DPORT_DMMU_TABLE15_REG          (DR_REG_DPORT_BASE + 0x4C8)
 /* DPORT_DMMU_TABLE15 : R/W ;bitpos:[6:0] ;default: 7'd15 ; */
 /*description: */
 #define DPORT_DMMU_TABLE15  0x0000007F
@@ -4046,39 +3103,19 @@
 #define DPORT_DMMU_TABLE15_V  0x7F
 #define DPORT_DMMU_TABLE15_S  0
 
-#define DPORT_PRO_INTRUSION_CTRL_REG          (DR_REG_DPORT_BASE + 0x584)
-/* DPORT_PRO_INTRUSION_RECORD_RESET_N : R/W ;bitpos:[0] ;default: 1'b1 ; */
+#define DPORT_FRONT_END_MEM_PD_REG          (DR_REG_DPORT_BASE + 0x4CC)
+/* DPORT_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_PRO_INTRUSION_RECORD_RESET_N  (BIT(0))
-#define DPORT_PRO_INTRUSION_RECORD_RESET_N_M  (BIT(0))
-#define DPORT_PRO_INTRUSION_RECORD_RESET_N_V  0x1
-#define DPORT_PRO_INTRUSION_RECORD_RESET_N_S  0
-
-#define DPORT_PRO_INTRUSION_STATUS_REG          (DR_REG_DPORT_BASE + 0x588)
-/* DPORT_PRO_INTRUSION_RECORD : RO ;bitpos:[3:0] ;default: 4'b0 ; */
+#define DPORT_DC_MEM_FORCE_PD  (BIT(5))
+#define DPORT_DC_MEM_FORCE_PD_M  (BIT(5))
+#define DPORT_DC_MEM_FORCE_PD_V  0x1
+#define DPORT_DC_MEM_FORCE_PD_S  5
+/* DPORT_DC_MEM_FORCE_PU : R/W ;bitpos:[4] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_PRO_INTRUSION_RECORD  0x0000000F
-#define DPORT_PRO_INTRUSION_RECORD_M  ((DPORT_PRO_INTRUSION_RECORD_V)<<(DPORT_PRO_INTRUSION_RECORD_S))
-#define DPORT_PRO_INTRUSION_RECORD_V  0xF
-#define DPORT_PRO_INTRUSION_RECORD_S  0
-
-#define DPORT_APP_INTRUSION_CTRL_REG          (DR_REG_DPORT_BASE + 0x58C)
-/* DPORT_APP_INTRUSION_RECORD_RESET_N : R/W ;bitpos:[0] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_APP_INTRUSION_RECORD_RESET_N  (BIT(0))
-#define DPORT_APP_INTRUSION_RECORD_RESET_N_M  (BIT(0))
-#define DPORT_APP_INTRUSION_RECORD_RESET_N_V  0x1
-#define DPORT_APP_INTRUSION_RECORD_RESET_N_S  0
-
-#define DPORT_APP_INTRUSION_STATUS_REG          (DR_REG_DPORT_BASE + 0x590)
-/* DPORT_APP_INTRUSION_RECORD : RO ;bitpos:[3:0] ;default: 4'b0 ; */
-/*description: */
-#define DPORT_APP_INTRUSION_RECORD  0x0000000F
-#define DPORT_APP_INTRUSION_RECORD_M  ((DPORT_APP_INTRUSION_RECORD_V)<<(DPORT_APP_INTRUSION_RECORD_S))
-#define DPORT_APP_INTRUSION_RECORD_V  0xF
-#define DPORT_APP_INTRUSION_RECORD_S  0
-
-#define DPORT_FRONT_END_MEM_PD_REG          (DR_REG_DPORT_BASE + 0x594)
+#define DPORT_DC_MEM_FORCE_PU  (BIT(4))
+#define DPORT_DC_MEM_FORCE_PU_M  (BIT(4))
+#define DPORT_DC_MEM_FORCE_PU_V  0x1
+#define DPORT_DC_MEM_FORCE_PU_S  4
 /* DPORT_PBUS_MEM_FORCE_PD : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PBUS_MEM_FORCE_PD  (BIT(3))
@@ -4104,104 +3141,365 @@
 #define DPORT_AGC_MEM_FORCE_PU_V  0x1
 #define DPORT_AGC_MEM_FORCE_PU_S  0
 
-#define DPORT_MMU_IA_INT_EN_REG          (DR_REG_DPORT_BASE + 0x598)
-/* DPORT_MMU_IA_INT_EN : R/W ;bitpos:[23:0] ;default: 24'b0 ; */
+#define DPORT_MEM_ACCESS_DBUG0_REG          (DR_REG_DPORT_BASE + 0x4D0)
+/* DPORT_AHBLITE_IA : RO ;bitpos:[24:23] ;default: 2'b0 ; */
 /*description: */
-#define DPORT_MMU_IA_INT_EN  0x00FFFFFF
-#define DPORT_MMU_IA_INT_EN_M  ((DPORT_MMU_IA_INT_EN_V)<<(DPORT_MMU_IA_INT_EN_S))
-#define DPORT_MMU_IA_INT_EN_V  0xFFFFFF
-#define DPORT_MMU_IA_INT_EN_S  0
-
-#define DPORT_MPU_IA_INT_EN_REG          (DR_REG_DPORT_BASE + 0x59C)
-/* DPORT_MPU_IA_INT_EN : R/W ;bitpos:[16:0] ;default: 17'b0 ; */
+#define DPORT_AHBLITE_IA  0x00000003
+#define DPORT_AHBLITE_IA_M  ((DPORT_AHBLITE_IA_V)<<(DPORT_AHBLITE_IA_S))
+#define DPORT_AHBLITE_IA_V  0x3
+#define DPORT_AHBLITE_IA_S  23
+/* DPORT_PRO_DPORT_IA : RO ;bitpos:[22:18] ;default: 5'b0 ; */
 /*description: */
-#define DPORT_MPU_IA_INT_EN  0x0001FFFF
-#define DPORT_MPU_IA_INT_EN_M  ((DPORT_MPU_IA_INT_EN_V)<<(DPORT_MPU_IA_INT_EN_S))
-#define DPORT_MPU_IA_INT_EN_V  0x1FFFF
-#define DPORT_MPU_IA_INT_EN_S  0
+#define DPORT_PRO_DPORT_IA  0x0000001F
+#define DPORT_PRO_DPORT_IA_M  ((DPORT_PRO_DPORT_IA_V)<<(DPORT_PRO_DPORT_IA_S))
+#define DPORT_PRO_DPORT_IA_V  0x1F
+#define DPORT_PRO_DPORT_IA_S  18
+/* DPORT_PRO_INTERNAL_SRAM_IA : RO ;bitpos:[17:5] ;default: 13'b0 ; */
+/*description: */
+#define DPORT_PRO_INTERNAL_SRAM_IA  0x00001FFF
+#define DPORT_PRO_INTERNAL_SRAM_IA_M  ((DPORT_PRO_INTERNAL_SRAM_IA_V)<<(DPORT_PRO_INTERNAL_SRAM_IA_S))
+#define DPORT_PRO_INTERNAL_SRAM_IA_V  0x1FFF
+#define DPORT_PRO_INTERNAL_SRAM_IA_S  5
+/* DPORT_PRO_SHARE_ROM_IA : RO ;bitpos:[4:2] ;default: 3'b0 ; */
+/*description: */
+#define DPORT_PRO_SHARE_ROM_IA  0x00000007
+#define DPORT_PRO_SHARE_ROM_IA_M  ((DPORT_PRO_SHARE_ROM_IA_V)<<(DPORT_PRO_SHARE_ROM_IA_S))
+#define DPORT_PRO_SHARE_ROM_IA_V  0x7
+#define DPORT_PRO_SHARE_ROM_IA_S  2
+/* DPORT_PRO_ROM_IA : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define DPORT_PRO_ROM_IA  0x00000003
+#define DPORT_PRO_ROM_IA_M  ((DPORT_PRO_ROM_IA_V)<<(DPORT_PRO_ROM_IA_S))
+#define DPORT_PRO_ROM_IA_V  0x3
+#define DPORT_PRO_ROM_IA_S  0
 
-#define DPORT_CACHE_IA_INT_EN_REG          (DR_REG_DPORT_BASE + 0x5A0)
-/* DPORT_CACHE_IA_INT_EN : R/W ;bitpos:[27:0] ;default: 28'b0 ; */
-/*description: Interrupt enable bits for various invalid cache access reasons*/
-#define DPORT_CACHE_IA_INT_EN  0x0FFFFFFF
-#define DPORT_CACHE_IA_INT_EN_M  ((DPORT_CACHE_IA_INT_EN_V)<<(DPORT_CACHE_IA_INT_EN_S))
-#define DPORT_CACHE_IA_INT_EN_V  0xFFFFFFF
-#define DPORT_CACHE_IA_INT_EN_S  0
+#define DPORT_MEM_ACCESS_DBUG1_REG          (DR_REG_DPORT_BASE + 0x4D4)
+/* DPORT_APP_DPORT_IA : RO ;bitpos:[21:17] ;default: 5'b0 ; */
+/*description: */
+#define DPORT_APP_DPORT_IA  0x0000001F
+#define DPORT_APP_DPORT_IA_M  ((DPORT_APP_DPORT_IA_V)<<(DPORT_APP_DPORT_IA_S))
+#define DPORT_APP_DPORT_IA_V  0x1F
+#define DPORT_APP_DPORT_IA_S  17
+/* DPORT_APP_INTERNAL_SRAM_IA : RO ;bitpos:[16:5] ;default: 12'b0 ; */
+/*description: */
+#define DPORT_APP_INTERNAL_SRAM_IA  0x00000FFF
+#define DPORT_APP_INTERNAL_SRAM_IA_M  ((DPORT_APP_INTERNAL_SRAM_IA_V)<<(DPORT_APP_INTERNAL_SRAM_IA_S))
+#define DPORT_APP_INTERNAL_SRAM_IA_V  0xFFF
+#define DPORT_APP_INTERNAL_SRAM_IA_S  5
+/* DPORT_APP_SHARE_ROM_IA : RO ;bitpos:[4:2] ;default: 3'b0 ; */
+/*description: */
+#define DPORT_APP_SHARE_ROM_IA  0x00000007
+#define DPORT_APP_SHARE_ROM_IA_M  ((DPORT_APP_SHARE_ROM_IA_V)<<(DPORT_APP_SHARE_ROM_IA_S))
+#define DPORT_APP_SHARE_ROM_IA_V  0x7
+#define DPORT_APP_SHARE_ROM_IA_S  2
+/* DPORT_APP_ROM_IA : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define DPORT_APP_ROM_IA  0x00000003
+#define DPORT_APP_ROM_IA_M  ((DPORT_APP_ROM_IA_V)<<(DPORT_APP_ROM_IA_S))
+#define DPORT_APP_ROM_IA_V  0x3
+#define DPORT_APP_ROM_IA_S  0
+
+#define DPORT_PRO_MEM_IA_INT_CTRL_REG          (DR_REG_DPORT_BASE + 0x4D8)
+/* DPORT_PRO_MEM_IA_INT_CLR : R/W ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_MEM_IA_INT_CLR  (BIT(25))
+#define DPORT_PRO_MEM_IA_INT_CLR_M  (BIT(25))
+#define DPORT_PRO_MEM_IA_INT_CLR_V  0x1
+#define DPORT_PRO_MEM_IA_INT_CLR_S  25
+/* DPORT_PRO_MEM_IA_INT_EN : R/W ;bitpos:[24:0] ;default: 25'b0 ; */
+/*description: */
+#define DPORT_PRO_MEM_IA_INT_EN  0x01FFFFFF
+#define DPORT_PRO_MEM_IA_INT_EN_M  ((DPORT_PRO_MEM_IA_INT_EN_V)<<(DPORT_PRO_MEM_IA_INT_EN_S))
+#define DPORT_PRO_MEM_IA_INT_EN_V  0x1FFFFFF
+#define DPORT_PRO_MEM_IA_INT_EN_S  0
+
+#define DPORT_APP_MEM_IA_INT_CTRL_REG          (DR_REG_DPORT_BASE + 0x4DC)
+/* DPORT_APP_MEM_IA_INT_CLR : R/W ;bitpos:[22] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_MEM_IA_INT_CLR  (BIT(22))
+#define DPORT_APP_MEM_IA_INT_CLR_M  (BIT(22))
+#define DPORT_APP_MEM_IA_INT_CLR_V  0x1
+#define DPORT_APP_MEM_IA_INT_CLR_S  22
+/* DPORT_APP_MEM_IA_INT_EN : R/W ;bitpos:[21:0] ;default: 22'b0 ; */
+/*description: */
+#define DPORT_APP_MEM_IA_INT_EN  0x003FFFFF
+#define DPORT_APP_MEM_IA_INT_EN_M  ((DPORT_APP_MEM_IA_INT_EN_V)<<(DPORT_APP_MEM_IA_INT_EN_S))
+#define DPORT_APP_MEM_IA_INT_EN_V  0x3FFFFF
+#define DPORT_APP_MEM_IA_INT_EN_S  0
+
+#define DPORT_PRO_CACHE_IA_INT_EN_REG          (DR_REG_DPORT_BASE + 0x4E0)
+/* DPORT_PRO_CACHE_INT_CLR : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_INT_CLR  (BIT(15))
+#define DPORT_PRO_CACHE_INT_CLR_M  (BIT(15))
+#define DPORT_PRO_CACHE_INT_CLR_V  0x1
+#define DPORT_PRO_CACHE_INT_CLR_S  15
+/* DPORT_PRO_CACHE_IA_INT_EN : R/W ;bitpos:[14:1] ;default: 14'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_IA_INT_EN  0x00003FFF
+#define DPORT_PRO_CACHE_IA_INT_EN_M  ((DPORT_PRO_CACHE_IA_INT_EN_V)<<(DPORT_PRO_CACHE_IA_INT_EN_S))
+#define DPORT_PRO_CACHE_IA_INT_EN_V  0x3FFF
+#define DPORT_PRO_CACHE_IA_INT_EN_S  1
+
 /* Contents of DPORT_CACHE_IA_INT_EN field: */
-/* DPORT_CACHE_IA_INT_PRO_OPPOSITE : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/* DPORT_CACHE_IA_INT_PRO_OPPOSITE : R/W ;bitpos:[6] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to APP CPU cache when cache disabled */
-#define DPORT_CACHE_IA_INT_PRO_OPPOSITE    BIT(19)
-#define DPORT_CACHE_IA_INT_PRO_OPPOSITE_M  BIT(19)
+#define DPORT_CACHE_IA_INT_PRO_OPPOSITE    BIT(6)
+#define DPORT_CACHE_IA_INT_PRO_OPPOSITE_M  BIT(6)
 #define DPORT_CACHE_IA_INT_PRO_OPPOSITE_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_OPPOSITE_S  (19)
-/* DPORT_CACHE_IA_INT_PRO_DRAM1 : R/W ;bitpos:[18] ;default: 1'b0 ; */
+#define DPORT_CACHE_IA_INT_PRO_OPPOSITE_S  (6)
+/* DPORT_CACHE_IA_INT_PRO_DRAM1 : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to DRAM1 when cache is disabled */
-#define DPORT_CACHE_IA_INT_PRO_DRAM1    BIT(18)
-#define DPORT_CACHE_IA_INT_PRO_DRAM1_M  BIT(18)
+#define DPORT_CACHE_IA_INT_PRO_DRAM1    BIT(5)
+#define DPORT_CACHE_IA_INT_PRO_DRAM1_M  BIT(5)
 #define DPORT_CACHE_IA_INT_PRO_DRAM1_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_DRAM1_S  (18)
-/* DPORT_CACHE_IA_INT_PRO_IROM0 : R/W ;bitpos:[17] ;default: 1'b0 ; */
+#define DPORT_CACHE_IA_INT_PRO_DRAM1_S  (5)
+/* DPORT_CACHE_IA_INT_PRO_IROM0 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to IROM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_PRO_IROM0    BIT(17)
-#define DPORT_CACHE_IA_INT_PRO_IROM0_M  BIT(17)
+#define DPORT_CACHE_IA_INT_PRO_IROM0    BIT(4)
+#define DPORT_CACHE_IA_INT_PRO_IROM0_M  BIT(4)
 #define DPORT_CACHE_IA_INT_PRO_IROM0_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_IROM0_S  (17)
-/* DPORT_CACHE_IA_INT_PRO_IRAM1 : R/W ;bitpos:[16] ;default: 1'b0 ; */
+#define DPORT_CACHE_IA_INT_PRO_IROM0_S  (4)
+/* DPORT_CACHE_IA_INT_PRO_IRAM1 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to IRAM1 when cache is disabled */
-#define DPORT_CACHE_IA_INT_PRO_IRAM1    BIT(16)
-#define DPORT_CACHE_IA_INT_PRO_IRAM1_M  BIT(16)
+#define DPORT_CACHE_IA_INT_PRO_IRAM1    BIT(3)
+#define DPORT_CACHE_IA_INT_PRO_IRAM1_M  BIT(3)
 #define DPORT_CACHE_IA_INT_PRO_IRAM1_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_IRAM1_S  (16)
-/* DPORT_CACHE_IA_INT_PRO_IRAM0 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+#define DPORT_CACHE_IA_INT_PRO_IRAM1_S  (3)
+/* DPORT_CACHE_IA_INT_PRO_IRAM0 : R/W ;bitpos:[2] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to IRAM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_PRO_IRAM0    BIT(15)
-#define DPORT_CACHE_IA_INT_PRO_IRAM0_M  BIT(15)
+#define DPORT_CACHE_IA_INT_PRO_IRAM0    BIT(2)
+#define DPORT_CACHE_IA_INT_PRO_IRAM0_M  BIT(2)
 #define DPORT_CACHE_IA_INT_PRO_IRAM0_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_IRAM0_S  (15)
-/* DPORT_CACHE_IA_INT_PRO_DROM0 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+#define DPORT_CACHE_IA_INT_PRO_IRAM0_S  (2)
+/* DPORT_CACHE_IA_INT_PRO_DROM0 : R/W ;bitpos:[1] ;default: 1'b0 ; */
 /*description: PRO CPU invalid access to DROM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_PRO_DROM0    BIT(14)
-#define DPORT_CACHE_IA_INT_PRO_DROM0_M  BIT(14)
+#define DPORT_CACHE_IA_INT_PRO_DROM0    BIT(1)
+#define DPORT_CACHE_IA_INT_PRO_DROM0_M  BIT(1)
 #define DPORT_CACHE_IA_INT_PRO_DROM0_V  (1)
-#define DPORT_CACHE_IA_INT_PRO_DROM0_S  (14)
-/* DPORT_CACHE_IA_INT_APP_OPPOSITE : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to APP CPU cache when cache disabled */
-#define DPORT_CACHE_IA_INT_APP_OPPOSITE    BIT(5)
-#define DPORT_CACHE_IA_INT_APP_OPPOSITE_M  BIT(5)
-#define DPORT_CACHE_IA_INT_APP_OPPOSITE_V  (1)
-#define DPORT_CACHE_IA_INT_APP_OPPOSITE_S  (5)
-/* DPORT_CACHE_IA_INT_APP_DRAM1 : R/W ;bitpos:43] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to DRAM1 when cache is disabled */
-#define DPORT_CACHE_IA_INT_APP_DRAM1    BIT(4)
-#define DPORT_CACHE_IA_INT_APP_DRAM1_M  BIT(4)
-#define DPORT_CACHE_IA_INT_APP_DRAM1_V  (1)
-#define DPORT_CACHE_IA_INT_APP_DRAM1_S  (4)
-/* DPORT_CACHE_IA_INT_APP_IROM0 : R/W ;bitpos:[3] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to IROM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_APP_IROM0    BIT(3)
-#define DPORT_CACHE_IA_INT_APP_IROM0_M  BIT(3)
-#define DPORT_CACHE_IA_INT_APP_IROM0_V  (1)
-#define DPORT_CACHE_IA_INT_APP_IROM0_S  (3)
-/* DPORT_CACHE_IA_INT_APP_IRAM1 : R/W ;bitpos:[2] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to IRAM1 when cache is disabled */
-#define DPORT_CACHE_IA_INT_APP_IRAM1    BIT(2)
-#define DPORT_CACHE_IA_INT_APP_IRAM1_M  BIT(2)
-#define DPORT_CACHE_IA_INT_APP_IRAM1_V  (1)
-#define DPORT_CACHE_IA_INT_APP_IRAM1_S  (2)
-/* DPORT_CACHE_IA_INT_APP_IRAM0 : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to IRAM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_APP_IRAM0    BIT(1)
-#define DPORT_CACHE_IA_INT_APP_IRAM0_M  BIT(1)
-#define DPORT_CACHE_IA_INT_APP_IRAM0_V  (1)
-#define DPORT_CACHE_IA_INT_APP_IRAM0_S  (1)
-/* DPORT_CACHE_IA_INT_APP_DROM0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: APP CPU invalid access to DROM0 when cache is disabled */
-#define DPORT_CACHE_IA_INT_APP_DROM0    BIT(0)
-#define DPORT_CACHE_IA_INT_APP_DROM0_M  BIT(0)
-#define DPORT_CACHE_IA_INT_APP_DROM0_V  (1)
-#define DPORT_CACHE_IA_INT_APP_DROM0_S  (0)
+#define DPORT_CACHE_IA_INT_PRO_DROM0_S  (1)
 
-#define DPORT_SECURE_BOOT_CTRL_REG          (DR_REG_DPORT_BASE + 0x5A4)
+
+/* DPORT_PRO_CACHE_DBG_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_PRO_CACHE_DBG_EN  (BIT(0))
+#define DPORT_PRO_CACHE_DBG_EN_M  (BIT(0))
+#define DPORT_PRO_CACHE_DBG_EN_V  0x1
+#define DPORT_PRO_CACHE_DBG_EN_S  0
+
+#define DPORT_PRO_DCACHE_DBUG1_REG          (DR_REG_DPORT_BASE + 0x4E4)
+/* DPORT_PRO_SLAVE_WDATA_V : RO ;bitpos:[22] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_SLAVE_WDATA_V  (BIT(22))
+#define DPORT_PRO_SLAVE_WDATA_V_M  (BIT(22))
+#define DPORT_PRO_SLAVE_WDATA_V_V  0x1
+#define DPORT_PRO_SLAVE_WDATA_V_S  22
+/* DPORT_PRO_SLAVE_WR : RO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_SLAVE_WR  (BIT(21))
+#define DPORT_PRO_SLAVE_WR_M  (BIT(21))
+#define DPORT_PRO_SLAVE_WR_V  0x1
+#define DPORT_PRO_SLAVE_WR_S  21
+/* DPORT_PRO_CACHE_IA : RO ;bitpos:[6:1] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_IA  0x0000003F
+#define DPORT_PRO_CACHE_IA_M  ((DPORT_PRO_CACHE_IA_V)<<(DPORT_PRO_CACHE_IA_S))
+#define DPORT_PRO_CACHE_IA_V  0x3F
+#define DPORT_PRO_CACHE_IA_S  1
+/* DPORT_PRO_CACHE_MMU_IA : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_MMU_IA  (BIT(0))
+#define DPORT_PRO_CACHE_MMU_IA_M  (BIT(0))
+#define DPORT_PRO_CACHE_MMU_IA_V  0x1
+#define DPORT_PRO_CACHE_MMU_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG2_REG          (DR_REG_DPORT_BASE + 0x4E8)
+/* DPORT_PRO_CACHE_STATE : RO ;bitpos:[11:0] ;default: 12'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_STATE  0x00000FFF
+#define DPORT_PRO_CACHE_STATE_M  ((DPORT_PRO_CACHE_STATE_V)<<(DPORT_PRO_CACHE_STATE_S))
+#define DPORT_PRO_CACHE_STATE_V  0xFFF
+#define DPORT_PRO_CACHE_STATE_S  0
+
+#define DPORT_PRO_DCACHE_DBUG3_REG          (DR_REG_DPORT_BASE + 0x4EC)
+/* DPORT_PRO_CACHE_IRAM0_PID_ERROR : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_IRAM0_PID_ERROR  (BIT(15))
+#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_M  (BIT(15))
+#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_V  0x1
+#define DPORT_PRO_CACHE_IRAM0_PID_ERROR_S  15
+/* DPORT_PRO_CPU_DISABLED_CACHE_IA : RO ;bitpos:[14:9] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_CPU_DISABLED_CACHE_IA  0x0000003F
+#define DPORT_PRO_CPU_DISABLED_CACHE_IA_M  ((DPORT_PRO_CPU_DISABLED_CACHE_IA_V)<<(DPORT_PRO_CPU_DISABLED_CACHE_IA_S))
+#define DPORT_PRO_CPU_DISABLED_CACHE_IA_V  0x3F
+#define DPORT_PRO_CPU_DISABLED_CACHE_IA_S  9
+
+#define DPORT_PRO_DCACHE_DBUG4_REG          (DR_REG_DPORT_BASE + 0x4F0)
+/* DPORT_PRO_DRAM1ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_DRAM1ADDR0_IA  0x000FFFFF
+#define DPORT_PRO_DRAM1ADDR0_IA_M  ((DPORT_PRO_DRAM1ADDR0_IA_V)<<(DPORT_PRO_DRAM1ADDR0_IA_S))
+#define DPORT_PRO_DRAM1ADDR0_IA_V  0xFFFFF
+#define DPORT_PRO_DRAM1ADDR0_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG5_REG          (DR_REG_DPORT_BASE + 0x4F4)
+/* DPORT_PRO_DROM0ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_DROM0ADDR0_IA  0x000FFFFF
+#define DPORT_PRO_DROM0ADDR0_IA_M  ((DPORT_PRO_DROM0ADDR0_IA_V)<<(DPORT_PRO_DROM0ADDR0_IA_S))
+#define DPORT_PRO_DROM0ADDR0_IA_V  0xFFFFF
+#define DPORT_PRO_DROM0ADDR0_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG6_REG          (DR_REG_DPORT_BASE + 0x4F8)
+/* DPORT_PRO_IRAM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_IRAM0ADDR_IA  0x000FFFFF
+#define DPORT_PRO_IRAM0ADDR_IA_M  ((DPORT_PRO_IRAM0ADDR_IA_V)<<(DPORT_PRO_IRAM0ADDR_IA_S))
+#define DPORT_PRO_IRAM0ADDR_IA_V  0xFFFFF
+#define DPORT_PRO_IRAM0ADDR_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG7_REG          (DR_REG_DPORT_BASE + 0x4FC)
+/* DPORT_PRO_IRAM1ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_IRAM1ADDR_IA  0x000FFFFF
+#define DPORT_PRO_IRAM1ADDR_IA_M  ((DPORT_PRO_IRAM1ADDR_IA_V)<<(DPORT_PRO_IRAM1ADDR_IA_S))
+#define DPORT_PRO_IRAM1ADDR_IA_V  0xFFFFF
+#define DPORT_PRO_IRAM1ADDR_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG8_REG          (DR_REG_DPORT_BASE + 0x500)
+/* DPORT_PRO_IROM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_IROM0ADDR_IA  0x000FFFFF
+#define DPORT_PRO_IROM0ADDR_IA_M  ((DPORT_PRO_IROM0ADDR_IA_V)<<(DPORT_PRO_IROM0ADDR_IA_S))
+#define DPORT_PRO_IROM0ADDR_IA_V  0xFFFFF
+#define DPORT_PRO_IROM0ADDR_IA_S  0
+
+#define DPORT_PRO_DCACHE_DBUG9_REG          (DR_REG_DPORT_BASE + 0x504)
+/* DPORT_PRO_OPSDRAMADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_PRO_OPSDRAMADDR_IA  0x000FFFFF
+#define DPORT_PRO_OPSDRAMADDR_IA_M  ((DPORT_PRO_OPSDRAMADDR_IA_V)<<(DPORT_PRO_OPSDRAMADDR_IA_S))
+#define DPORT_PRO_OPSDRAMADDR_IA_V  0xFFFFF
+#define DPORT_PRO_OPSDRAMADDR_IA_S  0
+
+#define DPORT_APP_CACHE_IA_INT_EN_REG          (DR_REG_DPORT_BASE + 0x508)
+/* DPORT_APP_CACHE_INT_CLR : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_INT_CLR  (BIT(15))
+#define DPORT_APP_CACHE_INT_CLR_M  (BIT(15))
+#define DPORT_APP_CACHE_INT_CLR_V  0x1
+#define DPORT_APP_CACHE_INT_CLR_S  15
+/* DPORT_APP_CACHE_IA_INT_EN : R/W ;bitpos:[14:1] ;default: 14'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_IA_INT_EN  0x00003FFF
+#define DPORT_APP_CACHE_IA_INT_EN_M  ((DPORT_APP_CACHE_IA_INT_EN_V)<<(DPORT_APP_CACHE_IA_INT_EN_S))
+#define DPORT_APP_CACHE_IA_INT_EN_V  0x3FFF
+#define DPORT_APP_CACHE_IA_INT_EN_S  1
+/* DPORT_APP_CACHE_DBG_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_APP_CACHE_DBG_EN  (BIT(0))
+#define DPORT_APP_CACHE_DBG_EN_M  (BIT(0))
+#define DPORT_APP_CACHE_DBG_EN_V  0x1
+#define DPORT_APP_CACHE_DBG_EN_S  0
+
+#define DPORT_APP_DCACHE_DBUG1_REG          (DR_REG_DPORT_BASE + 0x50C)
+/* DPORT_APP_SLAVE_WDATA_V : RO ;bitpos:[22] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_SLAVE_WDATA_V  (BIT(22))
+#define DPORT_APP_SLAVE_WDATA_V_M  (BIT(22))
+#define DPORT_APP_SLAVE_WDATA_V_V  0x1
+#define DPORT_APP_SLAVE_WDATA_V_S  22
+/* DPORT_APP_SLAVE_WR : RO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_SLAVE_WR  (BIT(21))
+#define DPORT_APP_SLAVE_WR_M  (BIT(21))
+#define DPORT_APP_SLAVE_WR_V  0x1
+#define DPORT_APP_SLAVE_WR_S  21
+/* DPORT_APP_CACHE_IA : RO ;bitpos:[6:1] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_IA  0x0000003F
+#define DPORT_APP_CACHE_IA_M  ((DPORT_APP_CACHE_IA_V)<<(DPORT_APP_CACHE_IA_S))
+#define DPORT_APP_CACHE_IA_V  0x3F
+#define DPORT_APP_CACHE_IA_S  1
+/* DPORT_APP_CACHE_MMU_IA : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_MMU_IA  (BIT(0))
+#define DPORT_APP_CACHE_MMU_IA_M  (BIT(0))
+#define DPORT_APP_CACHE_MMU_IA_V  0x1
+#define DPORT_APP_CACHE_MMU_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG2_REG          (DR_REG_DPORT_BASE + 0x510)
+/* DPORT_APP_CACHE_STATE : RO ;bitpos:[11:0] ;default: 12'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_STATE  0x00000FFF
+#define DPORT_APP_CACHE_STATE_M  ((DPORT_APP_CACHE_STATE_V)<<(DPORT_APP_CACHE_STATE_S))
+#define DPORT_APP_CACHE_STATE_V  0xFFF
+#define DPORT_APP_CACHE_STATE_S  0
+
+#define DPORT_APP_DCACHE_DBUG3_REG          (DR_REG_DPORT_BASE + 0x514)
+/* DPORT_APP_CACHE_IRAM0_PID_ERROR : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_IRAM0_PID_ERROR  (BIT(15))
+#define DPORT_APP_CACHE_IRAM0_PID_ERROR_M  (BIT(15))
+#define DPORT_APP_CACHE_IRAM0_PID_ERROR_V  0x1
+#define DPORT_APP_CACHE_IRAM0_PID_ERROR_S  15
+/* DPORT_APP_CPU_DISABLED_CACHE_IA : RO ;bitpos:[14:9] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_CPU_DISABLED_CACHE_IA  0x0000003F
+#define DPORT_APP_CPU_DISABLED_CACHE_IA_M  ((DPORT_APP_CPU_DISABLED_CACHE_IA_V)<<(DPORT_APP_CPU_DISABLED_CACHE_IA_S))
+#define DPORT_APP_CPU_DISABLED_CACHE_IA_V  0x3F
+#define DPORT_APP_CPU_DISABLED_CACHE_IA_S  9
+
+#define DPORT_APP_DCACHE_DBUG4_REG          (DR_REG_DPORT_BASE + 0x518)
+/* DPORT_APP_DRAM1ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_DRAM1ADDR0_IA  0x000FFFFF
+#define DPORT_APP_DRAM1ADDR0_IA_M  ((DPORT_APP_DRAM1ADDR0_IA_V)<<(DPORT_APP_DRAM1ADDR0_IA_S))
+#define DPORT_APP_DRAM1ADDR0_IA_V  0xFFFFF
+#define DPORT_APP_DRAM1ADDR0_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG5_REG          (DR_REG_DPORT_BASE + 0x51C)
+/* DPORT_APP_DROM0ADDR0_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_DROM0ADDR0_IA  0x000FFFFF
+#define DPORT_APP_DROM0ADDR0_IA_M  ((DPORT_APP_DROM0ADDR0_IA_V)<<(DPORT_APP_DROM0ADDR0_IA_S))
+#define DPORT_APP_DROM0ADDR0_IA_V  0xFFFFF
+#define DPORT_APP_DROM0ADDR0_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG6_REG          (DR_REG_DPORT_BASE + 0x520)
+/* DPORT_APP_IRAM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_IRAM0ADDR_IA  0x000FFFFF
+#define DPORT_APP_IRAM0ADDR_IA_M  ((DPORT_APP_IRAM0ADDR_IA_V)<<(DPORT_APP_IRAM0ADDR_IA_S))
+#define DPORT_APP_IRAM0ADDR_IA_V  0xFFFFF
+#define DPORT_APP_IRAM0ADDR_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG7_REG          (DR_REG_DPORT_BASE + 0x524)
+/* DPORT_APP_IRAM1ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_IRAM1ADDR_IA  0x000FFFFF
+#define DPORT_APP_IRAM1ADDR_IA_M  ((DPORT_APP_IRAM1ADDR_IA_V)<<(DPORT_APP_IRAM1ADDR_IA_S))
+#define DPORT_APP_IRAM1ADDR_IA_V  0xFFFFF
+#define DPORT_APP_IRAM1ADDR_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG8_REG          (DR_REG_DPORT_BASE + 0x528)
+/* DPORT_APP_IROM0ADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_IROM0ADDR_IA  0x000FFFFF
+#define DPORT_APP_IROM0ADDR_IA_M  ((DPORT_APP_IROM0ADDR_IA_V)<<(DPORT_APP_IROM0ADDR_IA_S))
+#define DPORT_APP_IROM0ADDR_IA_V  0xFFFFF
+#define DPORT_APP_IROM0ADDR_IA_S  0
+
+#define DPORT_APP_DCACHE_DBUG9_REG          (DR_REG_DPORT_BASE + 0x52C)
+/* DPORT_APP_OPSDRAMADDR_IA : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define DPORT_APP_OPSDRAMADDR_IA  0x000FFFFF
+#define DPORT_APP_OPSDRAMADDR_IA_M  ((DPORT_APP_OPSDRAMADDR_IA_V)<<(DPORT_APP_OPSDRAMADDR_IA_S))
+#define DPORT_APP_OPSDRAMADDR_IA_V  0xFFFFF
+#define DPORT_APP_OPSDRAMADDR_IA_S  0
+
+#define DPORT_SECURE_BOOT_CTRL_REG          (DR_REG_DPORT_BASE + 0x530)
 /* DPORT_SW_BOOTLOADER_SEL : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_SW_BOOTLOADER_SEL  (BIT(0))
@@ -4209,7 +3507,7 @@
 #define DPORT_SW_BOOTLOADER_SEL_V  0x1
 #define DPORT_SW_BOOTLOADER_SEL_S  0
 
-#define DPORT_SPI_DMA_CHAN_SEL_REG          (DR_REG_DPORT_BASE + 0x5A8)
+#define DPORT_SPI_DMA_CHAN_SEL_REG          (DR_REG_DPORT_BASE + 0x534)
 /* DPORT_SPI3_DMA_CHAN_SEL : R/W ;bitpos:[5:4] ;default: 2'b00 ; */
 /*description: */
 #define DPORT_SPI3_DMA_CHAN_SEL  0x00000003
@@ -4229,7 +3527,7 @@
 #define DPORT_SPI1_DMA_CHAN_SEL_V  0x3
 #define DPORT_SPI1_DMA_CHAN_SEL_S  0
 
-#define DPORT_PRO_VECBASE_CTRL_REG          (DR_REG_DPORT_BASE + 0x5AC)
+#define DPORT_PRO_VECBASE_CTRL_REG          (DR_REG_DPORT_BASE + 0x538)
 /* DPORT_PRO_OUT_VECBASE_SEL : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_PRO_OUT_VECBASE_SEL  0x00000003
@@ -4237,7 +3535,7 @@
 #define DPORT_PRO_OUT_VECBASE_SEL_V  0x3
 #define DPORT_PRO_OUT_VECBASE_SEL_S  0
 
-#define DPORT_PRO_VECBASE_SET_REG          (DR_REG_DPORT_BASE + 0x5B0)
+#define DPORT_PRO_VECBASE_SET_REG          (DR_REG_DPORT_BASE + 0x53C)
 /* DPORT_PRO_OUT_VECBASE_REG : R/W ;bitpos:[21:0] ;default: 22'b0 ; */
 /*description: */
 #define DPORT_PRO_OUT_VECBASE_REG  0x003FFFFF
@@ -4245,7 +3543,7 @@
 #define DPORT_PRO_OUT_VECBASE_REG_V  0x3FFFFF
 #define DPORT_PRO_OUT_VECBASE_REG_S  0
 
-#define DPORT_APP_VECBASE_CTRL_REG          (DR_REG_DPORT_BASE + 0x5B4)
+#define DPORT_APP_VECBASE_CTRL_REG          (DR_REG_DPORT_BASE + 0x540)
 /* DPORT_APP_OUT_VECBASE_SEL : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
 #define DPORT_APP_OUT_VECBASE_SEL  0x00000003
@@ -4253,7 +3551,7 @@
 #define DPORT_APP_OUT_VECBASE_SEL_V  0x3
 #define DPORT_APP_OUT_VECBASE_SEL_S  0
 
-#define DPORT_APP_VECBASE_SET_REG          (DR_REG_DPORT_BASE + 0x5B8)
+#define DPORT_APP_VECBASE_SET_REG          (DR_REG_DPORT_BASE + 0x544)
 /* DPORT_APP_OUT_VECBASE_REG : R/W ;bitpos:[21:0] ;default: 22'b0 ; */
 /*description: */
 #define DPORT_APP_OUT_VECBASE_REG  0x003FFFFF
@@ -4261,24 +3559,406 @@
 #define DPORT_APP_OUT_VECBASE_REG_V  0x3FFFFF
 #define DPORT_APP_OUT_VECBASE_REG_S  0
 
+#define DPORT_PRO_CMMU_EXC_RECORD0_REG          (DR_REG_DPORT_BASE + 0x548)
+/* DPORT_PRO_CMMU_EXC_RECORD0 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CMMU_EXC_RECORD0  0xFFFFFFFF
+#define DPORT_PRO_CMMU_EXC_RECORD0_M  ((DPORT_PRO_CMMU_EXC_RECORD0_V)<<(DPORT_PRO_CMMU_EXC_RECORD0_S))
+#define DPORT_PRO_CMMU_EXC_RECORD0_V  0xFFFFFFFF
+#define DPORT_PRO_CMMU_EXC_RECORD0_S  0
+
+#define DPORT_PRO_CMMU_EXC_RECORD1_REG          (DR_REG_DPORT_BASE + 0x54C)
+/* DPORT_PRO_CMMU_EXC_RECORD1 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CMMU_EXC_RECORD1  0xFFFFFFFF
+#define DPORT_PRO_CMMU_EXC_RECORD1_M  ((DPORT_PRO_CMMU_EXC_RECORD1_V)<<(DPORT_PRO_CMMU_EXC_RECORD1_S))
+#define DPORT_PRO_CMMU_EXC_RECORD1_V  0xFFFFFFFF
+#define DPORT_PRO_CMMU_EXC_RECORD1_S  0
+
+#define DPORT_PRO_CMMU_EXC_RECORD2_REG          (DR_REG_DPORT_BASE + 0x550)
+/* DPORT_PRO_CMMU_EXC_RECORD2 : RO ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_CMMU_EXC_RECORD2  0x0000003F
+#define DPORT_PRO_CMMU_EXC_RECORD2_M  ((DPORT_PRO_CMMU_EXC_RECORD2_V)<<(DPORT_PRO_CMMU_EXC_RECORD2_S))
+#define DPORT_PRO_CMMU_EXC_RECORD2_V  0x3F
+#define DPORT_PRO_CMMU_EXC_RECORD2_S  0
+
+#define DPORT_APP_CMMU_EXC_RECORD0_REG          (DR_REG_DPORT_BASE + 0x554)
+/* DPORT_APP_CMMU_EXC_RECORD0 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CMMU_EXC_RECORD0  0xFFFFFFFF
+#define DPORT_APP_CMMU_EXC_RECORD0_M  ((DPORT_APP_CMMU_EXC_RECORD0_V)<<(DPORT_APP_CMMU_EXC_RECORD0_S))
+#define DPORT_APP_CMMU_EXC_RECORD0_V  0xFFFFFFFF
+#define DPORT_APP_CMMU_EXC_RECORD0_S  0
+
+#define DPORT_APP_CMMU_EXC_RECORD1_REG          (DR_REG_DPORT_BASE + 0x558)
+/* DPORT_APP_CMMU_EXC_RECORD1 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CMMU_EXC_RECORD1  0xFFFFFFFF
+#define DPORT_APP_CMMU_EXC_RECORD1_M  ((DPORT_APP_CMMU_EXC_RECORD1_V)<<(DPORT_APP_CMMU_EXC_RECORD1_S))
+#define DPORT_APP_CMMU_EXC_RECORD1_V  0xFFFFFFFF
+#define DPORT_APP_CMMU_EXC_RECORD1_S  0
+
+#define DPORT_APP_CMMU_EXC_RECORD2_REG          (DR_REG_DPORT_BASE + 0x55C)
+/* DPORT_APP_CMMU_EXC_RECORD2 : RO ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_CMMU_EXC_RECORD2  0x0000003F
+#define DPORT_APP_CMMU_EXC_RECORD2_M  ((DPORT_APP_CMMU_EXC_RECORD2_V)<<(DPORT_APP_CMMU_EXC_RECORD2_S))
+#define DPORT_APP_CMMU_EXC_RECORD2_V  0x3F
+#define DPORT_APP_CMMU_EXC_RECORD2_S  0
+
+#define DPORT_PRO_CACHE_MEM_SYNC0_REG          (DR_REG_DPORT_BASE + 0x560)
+/* DPORT_PRO_MEMSYNCADDR : R/W ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_MEMSYNCADDR  0xFFFFFFFF
+#define DPORT_PRO_MEMSYNCADDR_M  ((DPORT_PRO_MEMSYNCADDR_V)<<(DPORT_PRO_MEMSYNCADDR_S))
+#define DPORT_PRO_MEMSYNCADDR_V  0xFFFFFFFF
+#define DPORT_PRO_MEMSYNCADDR_S  0
+
+#define DPORT_PRO_CACHE_MEM_SYNC1_REG          (DR_REG_DPORT_BASE + 0x564)
+/* DPORT_PRO_CFG_PID : R/W ;bitpos:[19:17] ;default: 3'b0 ; */
+/*description: */
+#define DPORT_PRO_CFG_PID  0x00000007
+#define DPORT_PRO_CFG_PID_M  ((DPORT_PRO_CFG_PID_V)<<(DPORT_PRO_CFG_PID_S))
+#define DPORT_PRO_CFG_PID_V  0x7
+#define DPORT_PRO_CFG_PID_S  17
+/* DPORT_PRO_CFG_SYNC : R/W ;bitpos:[16] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CFG_SYNC  (BIT(16))
+#define DPORT_PRO_CFG_SYNC_M  (BIT(16))
+#define DPORT_PRO_CFG_SYNC_V  0x1
+#define DPORT_PRO_CFG_SYNC_S  16
+/* DPORT_PRO_MEMSYNCSIZE : R/W ;bitpos:[15:0] ;default: 16'h8000 ; */
+/*description: */
+#define DPORT_PRO_MEMSYNCSIZE  0x0000FFFF
+#define DPORT_PRO_MEMSYNCSIZE_M  ((DPORT_PRO_MEMSYNCSIZE_V)<<(DPORT_PRO_MEMSYNCSIZE_S))
+#define DPORT_PRO_MEMSYNCSIZE_V  0xFFFF
+#define DPORT_PRO_MEMSYNCSIZE_S  0
+
+#define DPORT_APP_CACHE_MEM_SYNC0_REG          (DR_REG_DPORT_BASE + 0x568)
+/* DPORT_APP_MEMSYNCADDR : R/W ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_MEMSYNCADDR  0xFFFFFFFF
+#define DPORT_APP_MEMSYNCADDR_M  ((DPORT_APP_MEMSYNCADDR_V)<<(DPORT_APP_MEMSYNCADDR_S))
+#define DPORT_APP_MEMSYNCADDR_V  0xFFFFFFFF
+#define DPORT_APP_MEMSYNCADDR_S  0
+
+#define DPORT_APP_CACHE_MEM_SYNC1_REG          (DR_REG_DPORT_BASE + 0x56C)
+/* DPORT_APP_CFG_PID : R/W ;bitpos:[19:17] ;default: 3'b0 ; */
+/*description: */
+#define DPORT_APP_CFG_PID  0x00000007
+#define DPORT_APP_CFG_PID_M  ((DPORT_APP_CFG_PID_V)<<(DPORT_APP_CFG_PID_S))
+#define DPORT_APP_CFG_PID_V  0x7
+#define DPORT_APP_CFG_PID_S  17
+/* DPORT_APP_CFG_SYNC : R/W ;bitpos:[16] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CFG_SYNC  (BIT(16))
+#define DPORT_APP_CFG_SYNC_M  (BIT(16))
+#define DPORT_APP_CFG_SYNC_V  0x1
+#define DPORT_APP_CFG_SYNC_S  16
+/* DPORT_APP_MEMSYNCSIZE : R/W ;bitpos:[15:0] ;default: 16'h8000 ; */
+/*description: */
+#define DPORT_APP_MEMSYNCSIZE  0x0000FFFF
+#define DPORT_APP_MEMSYNCSIZE_M  ((DPORT_APP_MEMSYNCSIZE_V)<<(DPORT_APP_MEMSYNCSIZE_S))
+#define DPORT_APP_MEMSYNCSIZE_V  0xFFFF
+#define DPORT_APP_MEMSYNCSIZE_S  0
+
+#define DPORT_PRO_CACHE_FLASH_RD_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x570)
+/* DPORT_PRO_CPUFLASH_RD_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUFLASH_RD_MISSCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RD_MISSCNT_M  ((DPORT_PRO_CPUFLASH_RD_MISSCNT_V)<<(DPORT_PRO_CPUFLASH_RD_MISSCNT_S))
+#define DPORT_PRO_CPUFLASH_RD_MISSCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RD_MISSCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_RD_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x574)
+/* DPORT_PRO_CPUSRAM_RD_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_RD_MISSCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RD_MISSCNT_M  ((DPORT_PRO_CPUSRAM_RD_MISSCNT_V)<<(DPORT_PRO_CPUSRAM_RD_MISSCNT_S))
+#define DPORT_PRO_CPUSRAM_RD_MISSCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RD_MISSCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_WR_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x578)
+/* DPORT_PRO_CPUSRAM_WR_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_WR_MISSCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WR_MISSCNT_M  ((DPORT_PRO_CPUSRAM_WR_MISSCNT_V)<<(DPORT_PRO_CPUSRAM_WR_MISSCNT_S))
+#define DPORT_PRO_CPUSRAM_WR_MISSCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WR_MISSCNT_S  0
+
+#define DPORT_PRO_CACHE_FLASH_RD_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x57C)
+/* DPORT_PRO_CPUFLASH_RD_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUFLASH_RD_WBCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RD_WBCNT_M  ((DPORT_PRO_CPUFLASH_RD_WBCNT_V)<<(DPORT_PRO_CPUFLASH_RD_WBCNT_S))
+#define DPORT_PRO_CPUFLASH_RD_WBCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RD_WBCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_RD_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x580)
+/* DPORT_PRO_CPUSRAM_RD_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_RD_WBCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RD_WBCNT_M  ((DPORT_PRO_CPUSRAM_RD_WBCNT_V)<<(DPORT_PRO_CPUSRAM_RD_WBCNT_S))
+#define DPORT_PRO_CPUSRAM_RD_WBCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RD_WBCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_WR_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x584)
+/* DPORT_PRO_CPUSRAM_WR_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_WR_WBCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WR_WBCNT_M  ((DPORT_PRO_CPUSRAM_WR_WBCNT_V)<<(DPORT_PRO_CPUSRAM_WR_WBCNT_S))
+#define DPORT_PRO_CPUSRAM_WR_WBCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WR_WBCNT_S  0
+
+#define DPORT_PRO_CACHE_FLASH_RD_CNT_REG          (DR_REG_DPORT_BASE + 0x588)
+/* DPORT_PRO_CPUFLASH_RDCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUFLASH_RDCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RDCNT_M  ((DPORT_PRO_CPUFLASH_RDCNT_V)<<(DPORT_PRO_CPUFLASH_RDCNT_S))
+#define DPORT_PRO_CPUFLASH_RDCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUFLASH_RDCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_RD_CNT_REG          (DR_REG_DPORT_BASE + 0x58C)
+/* DPORT_PRO_CPUSRAM_RDCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_RDCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RDCNT_M  ((DPORT_PRO_CPUSRAM_RDCNT_V)<<(DPORT_PRO_CPUSRAM_RDCNT_S))
+#define DPORT_PRO_CPUSRAM_RDCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_RDCNT_S  0
+
+#define DPORT_PRO_CACHE_SRAM_WR_CNT_REG          (DR_REG_DPORT_BASE + 0x590)
+/* DPORT_PRO_CPUSRAM_WRCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_PRO_CPUSRAM_WRCNT  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WRCNT_M  ((DPORT_PRO_CPUSRAM_WRCNT_V)<<(DPORT_PRO_CPUSRAM_WRCNT_S))
+#define DPORT_PRO_CPUSRAM_WRCNT_V  0xFFFFFFFF
+#define DPORT_PRO_CPUSRAM_WRCNT_S  0
+
+#define DPORT_PRO_CACHE_ACCESS_CNT_CLR_REG          (DR_REG_DPORT_BASE + 0x594)
+/* DPORT_PRO_CACHE_CNT_OVERFLOW : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_CNT_OVERFLOW  (BIT(1))
+#define DPORT_PRO_CACHE_CNT_OVERFLOW_M  (BIT(1))
+#define DPORT_PRO_CACHE_CNT_OVERFLOW_V  0x1
+#define DPORT_PRO_CACHE_CNT_OVERFLOW_S  1
+/* DPORT_PRO_CACHE_ACCESS_CNT_CLR : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_ACCESS_CNT_CLR  (BIT(0))
+#define DPORT_PRO_CACHE_ACCESS_CNT_CLR_M  (BIT(0))
+#define DPORT_PRO_CACHE_ACCESS_CNT_CLR_V  0x1
+#define DPORT_PRO_CACHE_ACCESS_CNT_CLR_S  0
+
+#define DPORT_APP_CACHE_FLASH_RD_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x598)
+/* DPORT_APP_CPUFLASH_RD_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUFLASH_RD_MISSCNT  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RD_MISSCNT_M  ((DPORT_APP_CPUFLASH_RD_MISSCNT_V)<<(DPORT_APP_CPUFLASH_RD_MISSCNT_S))
+#define DPORT_APP_CPUFLASH_RD_MISSCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RD_MISSCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_RD_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x59C)
+/* DPORT_APP_CPUSRAM_RD_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_RD_MISSCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RD_MISSCNT_M  ((DPORT_APP_CPUSRAM_RD_MISSCNT_V)<<(DPORT_APP_CPUSRAM_RD_MISSCNT_S))
+#define DPORT_APP_CPUSRAM_RD_MISSCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RD_MISSCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_WR_MISS_CNT_REG          (DR_REG_DPORT_BASE + 0x5A0)
+/* DPORT_APP_CPUSRAM_WR_MISSCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_WR_MISSCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WR_MISSCNT_M  ((DPORT_APP_CPUSRAM_WR_MISSCNT_V)<<(DPORT_APP_CPUSRAM_WR_MISSCNT_S))
+#define DPORT_APP_CPUSRAM_WR_MISSCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WR_MISSCNT_S  0
+
+#define DPORT_APP_CACHE_FLASH_RD_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x5A4)
+/* DPORT_APP_CPUFLASH_RD_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUFLASH_RD_WBCNT  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RD_WBCNT_M  ((DPORT_APP_CPUFLASH_RD_WBCNT_V)<<(DPORT_APP_CPUFLASH_RD_WBCNT_S))
+#define DPORT_APP_CPUFLASH_RD_WBCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RD_WBCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_RD_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x5A8)
+/* DPORT_APP_CPUSRAM_RD_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_RD_WBCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RD_WBCNT_M  ((DPORT_APP_CPUSRAM_RD_WBCNT_V)<<(DPORT_APP_CPUSRAM_RD_WBCNT_S))
+#define DPORT_APP_CPUSRAM_RD_WBCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RD_WBCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_WR_WB_CNT_REG          (DR_REG_DPORT_BASE + 0x5AC)
+/* DPORT_APP_CPUSRAM_WR_WBCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_WR_WBCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WR_WBCNT_M  ((DPORT_APP_CPUSRAM_WR_WBCNT_V)<<(DPORT_APP_CPUSRAM_WR_WBCNT_S))
+#define DPORT_APP_CPUSRAM_WR_WBCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WR_WBCNT_S  0
+
+#define DPORT_APP_CACHE_FLASH_RD_CNT_REG          (DR_REG_DPORT_BASE + 0x5B0)
+/* DPORT_APP_CPUFLASH_RDCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUFLASH_RDCNT  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RDCNT_M  ((DPORT_APP_CPUFLASH_RDCNT_V)<<(DPORT_APP_CPUFLASH_RDCNT_S))
+#define DPORT_APP_CPUFLASH_RDCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUFLASH_RDCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_RD_CNT_REG          (DR_REG_DPORT_BASE + 0x5B4)
+/* DPORT_APP_CPUSRAM_RDCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_RDCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RDCNT_M  ((DPORT_APP_CPUSRAM_RDCNT_V)<<(DPORT_APP_CPUSRAM_RDCNT_S))
+#define DPORT_APP_CPUSRAM_RDCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_RDCNT_S  0
+
+#define DPORT_APP_CACHE_SRAM_WR_CNT_REG          (DR_REG_DPORT_BASE + 0x5B8)
+/* DPORT_APP_CPUSRAM_WRCNT : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_APP_CPUSRAM_WRCNT  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WRCNT_M  ((DPORT_APP_CPUSRAM_WRCNT_V)<<(DPORT_APP_CPUSRAM_WRCNT_S))
+#define DPORT_APP_CPUSRAM_WRCNT_V  0xFFFFFFFF
+#define DPORT_APP_CPUSRAM_WRCNT_S  0
+
+#define DPORT_APP_CACHE_ACCESS_CNT_CLR_REG          (DR_REG_DPORT_BASE + 0x5BC)
+/* DPORT_APP_CACHE_CNT_OVERFLOW : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_CNT_OVERFLOW  (BIT(1))
+#define DPORT_APP_CACHE_CNT_OVERFLOW_M  (BIT(1))
+#define DPORT_APP_CACHE_CNT_OVERFLOW_V  0x1
+#define DPORT_APP_CACHE_CNT_OVERFLOW_S  1
+/* DPORT_APP_CACHE_ACCESS_CNT_CLR : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APP_CACHE_ACCESS_CNT_CLR  (BIT(0))
+#define DPORT_APP_CACHE_ACCESS_CNT_CLR_M  (BIT(0))
+#define DPORT_APP_CACHE_ACCESS_CNT_CLR_V  0x1
+#define DPORT_APP_CACHE_ACCESS_CNT_CLR_S  0
+
+#define DPORT_PRO_AD_MPU_TABLE_REG          (DR_REG_DPORT_BASE + 0x5C0)
+/* DPORT_PRO_AD_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_AD_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_PRO_AD_ACCESS_GRANT_CONFIG_M  ((DPORT_PRO_AD_ACCESS_GRANT_CONFIG_V)<<(DPORT_PRO_AD_ACCESS_GRANT_CONFIG_S))
+#define DPORT_PRO_AD_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_PRO_AD_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_APP_AD_MPU_TABLE_REG          (DR_REG_DPORT_BASE + 0x5C4)
+/* DPORT_APP_AD_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_AD_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_APP_AD_ACCESS_GRANT_CONFIG_M  ((DPORT_APP_AD_ACCESS_GRANT_CONFIG_V)<<(DPORT_APP_AD_ACCESS_GRANT_CONFIG_S))
+#define DPORT_APP_AD_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_APP_AD_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_PRO_ALNIO_MPU_TABLE_REG          (DR_REG_DPORT_BASE + 0x5C8)
+/* DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG_M  ((DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG_V)<<(DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG_S))
+#define DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_PRO_ALNIO_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_APP_ALNIO_MPU_TABLE_REG          (DR_REG_DPORT_BASE + 0x5CC)
+/* DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG_M  ((DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG_V)<<(DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG_S))
+#define DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_APP_ALNIO_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_pro_itrs_mpu_table_REG          (DR_REG_DPORT_BASE + 0x5D0)
+/* DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG_M  ((DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG_V)<<(DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG_S))
+#define DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_PRO_ITRS_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_app_itrs_mpu_table_REG          (DR_REG_DPORT_BASE + 0x5D4)
+/* DPORT_APP_ITRS_ACCESS_GRANT_CONFIG : R/W ;bitpos:[5:0] ;default: 6'b0 ; */
+/*description: */
+#define DPORT_APP_ITRS_ACCESS_GRANT_CONFIG  0x0000003F
+#define DPORT_APP_ITRS_ACCESS_GRANT_CONFIG_M  ((DPORT_APP_ITRS_ACCESS_GRANT_CONFIG_V)<<(DPORT_APP_ITRS_ACCESS_GRANT_CONFIG_S))
+#define DPORT_APP_ITRS_ACCESS_GRANT_CONFIG_V  0x3F
+#define DPORT_APP_ITRS_ACCESS_GRANT_CONFIG_S  0
+
+#define DPORT_SWITCH_ICACHE_PATH_REG          (DR_REG_DPORT_BASE + 0x5D8)
+/* DPORT_SWITCH_ICACHE_PATH : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SWITCH_ICACHE_PATH  (BIT(0))
+#define DPORT_SWITCH_ICACHE_PATH_M  (BIT(0))
+#define DPORT_SWITCH_ICACHE_PATH_V  0x1
+#define DPORT_SWITCH_ICACHE_PATH_S  0
+
+#define DPORT_BUSTOEXTMEM_ENA_REG          (DR_REG_DPORT_BASE + 0x5DC)
+/* DPORT_SPI_DMA_TX_PID : R/W ;bitpos:[18:16] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_SPI_DMA_TX_PID  0x00000007
+#define DPORT_SPI_DMA_TX_PID_M  ((DPORT_SPI_DMA_TX_PID_V)<<(DPORT_SPI_DMA_TX_PID_S))
+#define DPORT_SPI_DMA_TX_PID_V  0x7
+#define DPORT_SPI_DMA_TX_PID_S  16
+/* DPORT_SPI_DMA_RX_PID : R/W ;bitpos:[15:13] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_SPI_DMA_RX_PID  0x00000007
+#define DPORT_SPI_DMA_RX_PID_M  ((DPORT_SPI_DMA_RX_PID_V)<<(DPORT_SPI_DMA_RX_PID_S))
+#define DPORT_SPI_DMA_RX_PID_V  0x7
+#define DPORT_SPI_DMA_RX_PID_S  13
+/* DPORT_I2S1_DMA_TX_PID : R/W ;bitpos:[12:10] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_I2S1_DMA_TX_PID  0x00000007
+#define DPORT_I2S1_DMA_TX_PID_M  ((DPORT_I2S1_DMA_TX_PID_V)<<(DPORT_I2S1_DMA_TX_PID_S))
+#define DPORT_I2S1_DMA_TX_PID_V  0x7
+#define DPORT_I2S1_DMA_TX_PID_S  10
+/* DPORT_I2S1_DMA_RX_PID : R/W ;bitpos:[9:7] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_I2S1_DMA_RX_PID  0x00000007
+#define DPORT_I2S1_DMA_RX_PID_M  ((DPORT_I2S1_DMA_RX_PID_V)<<(DPORT_I2S1_DMA_RX_PID_S))
+#define DPORT_I2S1_DMA_RX_PID_V  0x7
+#define DPORT_I2S1_DMA_RX_PID_S  7
+/* DPORT_I2S0_DMA_TX_PID : R/W ;bitpos:[6:4] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_I2S0_DMA_TX_PID  0x00000007
+#define DPORT_I2S0_DMA_TX_PID_M  ((DPORT_I2S0_DMA_TX_PID_V)<<(DPORT_I2S0_DMA_TX_PID_S))
+#define DPORT_I2S0_DMA_TX_PID_V  0x7
+#define DPORT_I2S0_DMA_TX_PID_S  4
+/* DPORT_I2S0_DMA_RX_PID : R/W ;bitpos:[3:1] ;default: 3'd0 ; */
+/*description: */
+#define DPORT_I2S0_DMA_RX_PID  0x00000007
+#define DPORT_I2S0_DMA_RX_PID_M  ((DPORT_I2S0_DMA_RX_PID_V)<<(DPORT_I2S0_DMA_RX_PID_S))
+#define DPORT_I2S0_DMA_RX_PID_V  0x7
+#define DPORT_I2S0_DMA_RX_PID_S  1
+/* DPORT_BUSTOEXTMEM_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_BUSTOEXTMEM_ENA  (BIT(0))
+#define DPORT_BUSTOEXTMEM_ENA_M  (BIT(0))
+#define DPORT_BUSTOEXTMEM_ENA_V  0x1
+#define DPORT_BUSTOEXTMEM_ENA_S  0
+
 #define DPORT_DATE_REG          (DR_REG_DPORT_BASE + 0xFFC)
-/* DPORT_DATE : R/W ;bitpos:[27:0] ;default: 28'h1605190 ; */
+/* DPORT_DATE : R/W ;bitpos:[27:0] ;default: 28'h1703210 ; */
 /*description: */
 #define DPORT_DATE  0x0FFFFFFF
 #define DPORT_DATE_M  ((DPORT_DATE_V)<<(DPORT_DATE_S))
 #define DPORT_DATE_V  0xFFFFFFF
 #define DPORT_DATE_S  0
-#define DPORT_DPORT_DATE_VERSION 0x1605190
+#define DPORT_DPORT_DATE_VERSION 0x1703210
 
 /* Flash MMU table for PRO CPU */
 #define DPORT_PRO_FLASH_MMU_TABLE ((volatile uint32_t*) 0x3FF10000)
 
 /* Flash MMU table for APP CPU */
-#define DPORT_APP_FLASH_MMU_TABLE ((volatile uint32_t*) 0x3FF12000)
+#define DPORT_APP_FLASH_MMU_TABLE ((volatile uint32_t*) 0x3FF10000)
 
 #define DPORT_FLASH_MMU_TABLE_SIZE 0x100
 
 #define DPORT_FLASH_MMU_TABLE_INVALID_VAL 0x100
+
+#ifdef __cplusplus
+}
+#endif
+
+
 
 #endif /*_SOC_DPORT_REG_H_ */
 

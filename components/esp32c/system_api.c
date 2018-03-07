@@ -386,11 +386,17 @@ static void get_chip_info_esp32(esp_chip_info_t* out_info)
     if ((reg & EFUSE_RD_CHIP_VER_REV1_M) != 0) {
         out_info->revision = 1;
     }
+#ifdef CONFIG_CHIP_IS_ESP32
     if ((reg & EFUSE_RD_CHIP_VER_DIS_APP_CPU_M) == 0) {
         out_info->cores = 2;
     } else {
         out_info->cores = 1;
     }
+#else
+#ifdef CONFIG_CHIP_IS_ESP32C
+    out_info->cores = 1;
+#endif
+#endif
     out_info->features = CHIP_FEATURE_WIFI_BGN;
     if ((reg & EFUSE_RD_CHIP_VER_DIS_BT_M) == 0) {
         out_info->features |= CHIP_FEATURE_BT | CHIP_FEATURE_BLE;

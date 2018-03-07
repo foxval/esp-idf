@@ -15,6 +15,9 @@
 #define _SOC_SENS_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define SENS_SAR_READ_CTRL_REG          (DR_REG_SENS_BASE + 0x0000)
 /* SENS_SAR1_DATA_INV : R/W ;bitpos:[28] ;default: 1'd0 ; */
@@ -96,6 +99,7 @@
 #define SENS_FORCE_XPD_SAR_M  ((SENS_FORCE_XPD_SAR_V)<<(SENS_FORCE_XPD_SAR_S))
 #define SENS_FORCE_XPD_SAR_V  0x3
 #define SENS_FORCE_XPD_SAR_S  18
+/* reserved for driver to check */
 #define SENS_FORCE_XPD_SAR_SW_M (BIT1)
 #define SENS_FORCE_XPD_SAR_FSM 0 // Use FSM to control power down
 #define SENS_FORCE_XPD_SAR_PD  2 // Force power down
@@ -278,6 +282,12 @@
 #define SENS_SAR1_BIT_WIDTH_S  0
 
 #define SENS_SAR_MEM_WR_CTRL_REG          (DR_REG_SENS_BASE + 0x0030)
+/* SENS_ULP_CP_CLK_FO : R/W ;bitpos:[23] ;default: 1'd0 ; */
+/*description: ulp coprocessor clk force on*/
+#define SENS_ULP_CP_CLK_FO  (BIT(23))
+#define SENS_ULP_CP_CLK_FO_M  (BIT(23))
+#define SENS_ULP_CP_CLK_FO_V  0x1
+#define SENS_ULP_CP_CLK_FO_S  23
 /* SENS_RTC_MEM_WR_OFFST_CLR : WO ;bitpos:[22] ;default: 1'd0 ; */
 /*description: */
 #define SENS_RTC_MEM_WR_OFFST_CLR  (BIT(22))
@@ -316,12 +326,12 @@
 #define SENS_SAR2_ATTEN_S  0
 
 #define SENS_SAR_SLAVE_ADDR1_REG          (DR_REG_SENS_BASE + 0x003c)
-/* SENS_MEAS_STATUS : RO ;bitpos:[29:22] ;default: 8'h0 ; */
+/* SENS_SARADC_MEAS_STATUS : RO ;bitpos:[29:22] ;default: 8'h0 ; */
 /*description: */
-#define SENS_MEAS_STATUS  0x000000FF
-#define SENS_MEAS_STATUS_M  ((SENS_MEAS_STATUS_V)<<(SENS_MEAS_STATUS_S))
-#define SENS_MEAS_STATUS_V  0xFF
-#define SENS_MEAS_STATUS_S  22
+#define SENS_SARADC_MEAS_STATUS  0x000000FF
+#define SENS_SARADC_MEAS_STATUS_M  ((SENS_SARADC_MEAS_STATUS_V)<<(SENS_SARADC_MEAS_STATUS_S))
+#define SENS_SARADC_MEAS_STATUS_V  0xFF
+#define SENS_SARADC_MEAS_STATUS_S  22
 /* SENS_I2C_SLAVE_ADDR0 : R/W ;bitpos:[21:11] ;default: 11'h0 ; */
 /*description: */
 #define SENS_I2C_SLAVE_ADDR0  0x000007FF
@@ -402,6 +412,18 @@
 #define SENS_I2C_SLAVE_ADDR7_S  0
 
 #define SENS_SAR_TSENS_CTRL_REG          (DR_REG_SENS_BASE + 0x004c)
+/* SENS_TSENS_FORCE : R/W ;bitpos:[31] ;default: 1'b0 ; */
+/*description: 1: select saradc_reg 0: select efuse*/
+#define SENS_TSENS_FORCE  (BIT(31))
+#define SENS_TSENS_FORCE_M  (BIT(31))
+#define SENS_TSENS_FORCE_V  0x1
+#define SENS_TSENS_FORCE_S  31
+/* SENS_TSENS_DOS : R/W ;bitpos:[30:27] ;default: 4'd7 ; */
+/*description: Temperature sensor calibration bits*/
+#define SENS_TSENS_DOS  0x0000000F
+#define SENS_TSENS_DOS_M  ((SENS_TSENS_DOS_V)<<(SENS_TSENS_DOS_S))
+#define SENS_TSENS_DOS_V  0xF
+#define SENS_TSENS_DOS_S  27
 /* SENS_TSENS_DUMP_OUT : R/W ;bitpos:[26] ;default: 1'b0 ; */
 /*description: temperature sensor dump out  only active when reg_tsens_power_up_force = 1*/
 #define SENS_TSENS_DUMP_OUT  (BIT(26))
@@ -534,15 +556,15 @@
 #define SENS_XPD_HALL_FORCE_V  0x1
 #define SENS_XPD_HALL_FORCE_S  26
 /* SENS_TOUCH_OUT_1EN : R/W ;bitpos:[25] ;default: 1'b1 ; */
-/*description: 1: wakeup interrupt is generated if SET1 is "touched"  0:
- wakeup interrupt is generated only if SET1 & SET2 is both "touched"*/
+/*description: 1: wakeup interrupt is generated if SET1 is “touched”  0:
+ wakeup interrupt is generated only if SET1 & SET2 is both “touched”*/
 #define SENS_TOUCH_OUT_1EN  (BIT(25))
 #define SENS_TOUCH_OUT_1EN_M  (BIT(25))
 #define SENS_TOUCH_OUT_1EN_V  0x1
 #define SENS_TOUCH_OUT_1EN_S  25
 /* SENS_TOUCH_OUT_SEL : R/W ;bitpos:[24] ;default: 1'b0 ; */
 /*description: 1: when the counter is greater then the threshold  the touch
- pad is considered as "touched"  0: when the counter is less than the threshold  the touch pad is considered as "touched"*/
+ pad is considered as “touched”  0: when the counter is less than the threshold  the touch pad is considered as “touched”*/
 #define SENS_TOUCH_OUT_SEL  (BIT(24))
 #define SENS_TOUCH_OUT_SEL_M  (BIT(24))
 #define SENS_TOUCH_OUT_SEL_V  0x1
@@ -739,7 +761,7 @@
 #define SENS_TOUCH_MEAS_DONE_V  0x1
 #define SENS_TOUCH_MEAS_DONE_S  10
 /* SENS_TOUCH_MEAS_EN : RO ;bitpos:[9:0] ;default: 10'h0 ; */
-/*description: 10-bit register to indicate which pads are "touched"*/
+/*description: 10-bit register to indicate which pads are “touched”*/
 #define SENS_TOUCH_MEAS_EN  0x000003FF
 #define SENS_TOUCH_MEAS_EN_M  ((SENS_TOUCH_MEAS_EN_V)<<(SENS_TOUCH_MEAS_EN_S))
 #define SENS_TOUCH_MEAS_EN_V  0x3FF
@@ -748,14 +770,14 @@
 #define SENS_SAR_TOUCH_ENABLE_REG          (DR_REG_SENS_BASE + 0x008c)
 /* SENS_TOUCH_PAD_OUTEN1 : R/W ;bitpos:[29:20] ;default: 10'h3ff ; */
 /*description: Bitmap defining SET1 for generating wakeup interrupt. SET1 is
- "touched" only if at least one of touch pad in SET1 is "touched".*/
+ “touched” only if at least one of touch pad in SET1 is “touched”.*/
 #define SENS_TOUCH_PAD_OUTEN1  0x000003FF
 #define SENS_TOUCH_PAD_OUTEN1_M  ((SENS_TOUCH_PAD_OUTEN1_V)<<(SENS_TOUCH_PAD_OUTEN1_S))
 #define SENS_TOUCH_PAD_OUTEN1_V  0x3FF
 #define SENS_TOUCH_PAD_OUTEN1_S  20
 /* SENS_TOUCH_PAD_OUTEN2 : R/W ;bitpos:[19:10] ;default: 10'h3ff ; */
 /*description: Bitmap defining SET2 for generating wakeup interrupt. SET2 is
- "touched" only if at least one of touch pad in SET2 is "touched".*/
+ “touched” only if at least one of touch pad in SET2 is “touched”.*/
 #define SENS_TOUCH_PAD_OUTEN2  0x000003FF
 #define SENS_TOUCH_PAD_OUTEN2_M  ((SENS_TOUCH_PAD_OUTEN2_V)<<(SENS_TOUCH_PAD_OUTEN2_S))
 #define SENS_TOUCH_PAD_OUTEN2_V  0x3FF
@@ -767,7 +789,15 @@
 #define SENS_TOUCH_PAD_WORKEN_V  0x3FF
 #define SENS_TOUCH_PAD_WORKEN_S  0
 
-#define SENS_SAR_READ_CTRL2_REG          (DR_REG_SENS_BASE + 0x0090)
+#define SENS_SAR_TOUCH_CTRL3_REG          (DR_REG_SENS_BASE + 0x0090)
+/* SENS_TOUCH_MEAS_RAW : RO ;bitpos:[9:0] ;default: 10'h0 ; */
+/*description: touch sensor raw result*/
+#define SENS_TOUCH_MEAS_RAW  0x000003FF
+#define SENS_TOUCH_MEAS_RAW_M  ((SENS_TOUCH_MEAS_RAW_V)<<(SENS_TOUCH_MEAS_RAW_S))
+#define SENS_TOUCH_MEAS_RAW_V  0x3FF
+#define SENS_TOUCH_MEAS_RAW_S  0
+
+#define SENS_SAR_READ_CTRL2_REG          (DR_REG_SENS_BASE + 0x0094)
 /* SENS_SAR2_DATA_INV : R/W ;bitpos:[29] ;default: 1'b0 ; */
 /*description: Invert SAR ADC2 data*/
 #define SENS_SAR2_DATA_INV  (BIT(29))
@@ -819,7 +849,7 @@
 #define SENS_SAR2_CLK_DIV_V  0xFF
 #define SENS_SAR2_CLK_DIV_S  0
 
-#define SENS_SAR_MEAS_START2_REG          (DR_REG_SENS_BASE + 0x0094)
+#define SENS_SAR_MEAS_START2_REG          (DR_REG_SENS_BASE + 0x0098)
 /* SENS_SAR2_EN_PAD_FORCE : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: 1: SAR ADC2 pad enable bitmap is controlled by SW  0: SAR ADC2
  pad enable bitmap is controlled by ULP-coprocessor*/
@@ -860,7 +890,7 @@
 #define SENS_MEAS2_DATA_SAR_V  0xFFFF
 #define SENS_MEAS2_DATA_SAR_S  0
 
-#define SENS_SAR_DAC_CTRL1_REG          (DR_REG_SENS_BASE + 0x0098)
+#define SENS_SAR_DAC_CTRL1_REG          (DR_REG_SENS_BASE + 0x009c)
 /* SENS_DAC_CLK_INV : R/W ;bitpos:[25] ;default: 1'b0 ; */
 /*description: 1: invert PDAC_CLK*/
 #define SENS_DAC_CLK_INV  (BIT(25))
@@ -904,7 +934,7 @@
 #define SENS_SW_FSTEP_V  0xFFFF
 #define SENS_SW_FSTEP_S  0
 
-#define SENS_SAR_DAC_CTRL2_REG          (DR_REG_SENS_BASE + 0x009c)
+#define SENS_SAR_DAC_CTRL2_REG          (DR_REG_SENS_BASE + 0x00a0)
 /* SENS_DAC_CW_EN2 : R/W ;bitpos:[25] ;default: 1'b1 ; */
 /*description: 1: to select CW generator as source to PDAC2_DAC[7:0]  0: to
  select register reg_pdac2_dac[7:0] as source to PDAC2_DAC[7:0]*/
@@ -958,43 +988,31 @@
 #define SENS_DAC_DC1_V  0xFF
 #define SENS_DAC_DC1_S  0
 
-#define SENS_SAR_MEAS_CTRL2_REG          (DR_REG_SENS_BASE + 0x0a0)
+#define SENS_SAR_MEAS_CTRL2_REG          (DR_REG_SENS_BASE + 0x00a4)
 /* SENS_AMP_SHORT_REF_GND_FORCE : R/W ;bitpos:[18:17] ;default: 2'b0 ; */
 /*description: */
 #define SENS_AMP_SHORT_REF_GND_FORCE  0x00000003
 #define SENS_AMP_SHORT_REF_GND_FORCE_M  ((SENS_AMP_SHORT_REF_GND_FORCE_V)<<(SENS_AMP_SHORT_REF_GND_FORCE_S))
 #define SENS_AMP_SHORT_REF_GND_FORCE_V  0x3
 #define SENS_AMP_SHORT_REF_GND_FORCE_S  17
-#define SENS_AMP_SHORT_REF_GND_FORCE_FSM 0 // Use FSM to control power down
-#define SENS_AMP_SHORT_REF_GND_FORCE_PD  2 // Force power down
-#define SENS_AMP_SHORT_REF_GND_FORCE_PU  3 // Force power up
 /* SENS_AMP_SHORT_REF_FORCE : R/W ;bitpos:[16:15] ;default: 2'b0 ; */
 /*description: */
 #define SENS_AMP_SHORT_REF_FORCE  0x00000003
 #define SENS_AMP_SHORT_REF_FORCE_M  ((SENS_AMP_SHORT_REF_FORCE_V)<<(SENS_AMP_SHORT_REF_FORCE_S))
 #define SENS_AMP_SHORT_REF_FORCE_V  0x3
 #define SENS_AMP_SHORT_REF_FORCE_S  15
-#define SENS_AMP_SHORT_REF_FORCE_FSM 0 // Use FSM to control power down
-#define SENS_AMP_SHORT_REF_FORCE_PD  2 // Force power down
-#define SENS_AMP_SHORT_REF_FORCE_PU  3 // Force power up
 /* SENS_AMP_RST_FB_FORCE : R/W ;bitpos:[14:13] ;default: 2'b0 ; */
 /*description: */
 #define SENS_AMP_RST_FB_FORCE  0x00000003
 #define SENS_AMP_RST_FB_FORCE_M  ((SENS_AMP_RST_FB_FORCE_V)<<(SENS_AMP_RST_FB_FORCE_S))
 #define SENS_AMP_RST_FB_FORCE_V  0x3
 #define SENS_AMP_RST_FB_FORCE_S  13
-#define SENS_AMP_RST_FB_FORCE_FSM 0 // Use FSM to control power down
-#define SENS_AMP_RST_FB_FORCE_PD  2 // Force power down
-#define SENS_AMP_RST_FB_FORCE_PU  3 // Force power up
 /* SENS_SAR2_RSTB_FORCE : R/W ;bitpos:[12:11] ;default: 2'b0 ; */
 /*description: */
 #define SENS_SAR2_RSTB_FORCE  0x00000003
 #define SENS_SAR2_RSTB_FORCE_M  ((SENS_SAR2_RSTB_FORCE_V)<<(SENS_SAR2_RSTB_FORCE_S))
 #define SENS_SAR2_RSTB_FORCE_V  0x3
 #define SENS_SAR2_RSTB_FORCE_S  11
-#define SENS_SAR2_RSTB_FORCE_FSM 0 // Use FSM to control power down
-#define SENS_SAR2_RSTB_FORCE_PD  2 // Force power down
-#define SENS_SAR2_RSTB_FORCE_PU  3 // Force power up
 /* SENS_SAR_RSTB_FSM_IDLE : R/W ;bitpos:[10] ;default: 1'b0 ; */
 /*description: */
 #define SENS_SAR_RSTB_FSM_IDLE  (BIT(10))
@@ -1044,6 +1062,184 @@
 #define SENS_SAR1_DAC_XPD_FSM_V  0xF
 #define SENS_SAR1_DAC_XPD_FSM_S  0
 
+#define SENS_SAR_COCPU_CTRL_REG          (DR_REG_SENS_BASE + 0x00a8)
+/* SENS_COCPU_TRAP : RO ;bitpos:[28] ;default: 1'b0 ; */
+/*description: check cocpu whether in trap state*/
+#define SENS_COCPU_TRAP  (BIT(28))
+#define SENS_COCPU_TRAP_M  (BIT(28))
+#define SENS_COCPU_TRAP_V  0x1
+#define SENS_COCPU_TRAP_S  28
+/* SENS_COCPU_EOI : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: check cocpu whether in interrupt state*/
+#define SENS_COCPU_EOI  (BIT(27))
+#define SENS_COCPU_EOI_M  (BIT(27))
+#define SENS_COCPU_EOI_V  0x1
+#define SENS_COCPU_EOI_S  27
+/* SENS_COCPU_RESET_N : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: check cocpu whether in reset state*/
+#define SENS_COCPU_RESET_N  (BIT(26))
+#define SENS_COCPU_RESET_N_M  (BIT(26))
+#define SENS_COCPU_RESET_N_V  0x1
+#define SENS_COCPU_RESET_N_S  26
+/* SENS_COCPU_CLK_EN : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: check cocpu whether clk on*/
+#define SENS_COCPU_CLK_EN  (BIT(25))
+#define SENS_COCPU_CLK_EN_M  (BIT(25))
+#define SENS_COCPU_CLK_EN_V  0x1
+#define SENS_COCPU_CLK_EN_S  25
+/* SENS_COCPU_INT_TRIGGER : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: trigger cocpu register interrupt*/
+#define SENS_COCPU_INT_TRIGGER  (BIT(24))
+#define SENS_COCPU_INT_TRIGGER_M  (BIT(24))
+#define SENS_COCPU_INT_TRIGGER_V  0x1
+#define SENS_COCPU_INT_TRIGGER_S  24
+/* SENS_COCPU_DONE : R/W ;bitpos:[23] ;default: 1'b0 ; */
+/*description: done signal used by riscv to control timer.*/
+#define SENS_COCPU_DONE  (BIT(23))
+#define SENS_COCPU_DONE_M  (BIT(23))
+#define SENS_COCPU_DONE_V  0x1
+#define SENS_COCPU_DONE_S  23
+/* SENS_COCPU_DONE_FORCE : R/W ;bitpos:[22] ;default: 1'b0 ; */
+/*description: 1: select riscv done 0: select ulp done*/
+#define SENS_COCPU_DONE_FORCE  (BIT(22))
+#define SENS_COCPU_DONE_FORCE_M  (BIT(22))
+#define SENS_COCPU_DONE_FORCE_V  0x1
+#define SENS_COCPU_DONE_FORCE_S  22
+/* SENS_COCPU_SEL : R/W ;bitpos:[21] ;default: 1'b1 ; */
+/*description: 1: old ULP 0: new riscV*/
+#define SENS_COCPU_SEL  (BIT(21))
+#define SENS_COCPU_SEL_M  (BIT(21))
+#define SENS_COCPU_SEL_V  0x1
+#define SENS_COCPU_SEL_S  21
+/* SENS_COCPU_SHUT_RESET_EN : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: to reset cocpu*/
+#define SENS_COCPU_SHUT_RESET_EN  (BIT(20))
+#define SENS_COCPU_SHUT_RESET_EN_M  (BIT(20))
+#define SENS_COCPU_SHUT_RESET_EN_V  0x1
+#define SENS_COCPU_SHUT_RESET_EN_S  20
+/* SENS_COCPU_SHUT_2_CLK_DIS : R/W ;bitpos:[19:14] ;default: 6'd24 ; */
+/*description: time from shut cocpu to disable clk*/
+#define SENS_COCPU_SHUT_2_CLK_DIS  0x0000003F
+#define SENS_COCPU_SHUT_2_CLK_DIS_M  ((SENS_COCPU_SHUT_2_CLK_DIS_V)<<(SENS_COCPU_SHUT_2_CLK_DIS_S))
+#define SENS_COCPU_SHUT_2_CLK_DIS_V  0x3F
+#define SENS_COCPU_SHUT_2_CLK_DIS_S  14
+/* SENS_COCPU_SHUT : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/*description: to shut cocpu*/
+#define SENS_COCPU_SHUT  (BIT(13))
+#define SENS_COCPU_SHUT_M  (BIT(13))
+#define SENS_COCPU_SHUT_V  0x1
+#define SENS_COCPU_SHUT_S  13
+/* SENS_COCPU_START_2_INTR_EN : R/W ;bitpos:[12:7] ;default: 6'd16 ; */
+/*description: time from start cocpu to give start interrupt*/
+#define SENS_COCPU_START_2_INTR_EN  0x0000003F
+#define SENS_COCPU_START_2_INTR_EN_M  ((SENS_COCPU_START_2_INTR_EN_V)<<(SENS_COCPU_START_2_INTR_EN_S))
+#define SENS_COCPU_START_2_INTR_EN_V  0x3F
+#define SENS_COCPU_START_2_INTR_EN_S  7
+/* SENS_COCPU_START_2_RESET_DIS : R/W ;bitpos:[6:1] ;default: 6'd8 ; */
+/*description: time from start cocpu to pull down reset*/
+#define SENS_COCPU_START_2_RESET_DIS  0x0000003F
+#define SENS_COCPU_START_2_RESET_DIS_M  ((SENS_COCPU_START_2_RESET_DIS_V)<<(SENS_COCPU_START_2_RESET_DIS_S))
+#define SENS_COCPU_START_2_RESET_DIS_V  0x3F
+#define SENS_COCPU_START_2_RESET_DIS_S  1
+/* SENS_COCPU_CLK_FO : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: cocpu clk force on*/
+#define SENS_COCPU_CLK_FO  (BIT(0))
+#define SENS_COCPU_CLK_FO_M  (BIT(0))
+#define SENS_COCPU_CLK_FO_V  0x1
+#define SENS_COCPU_CLK_FO_S  0
+
+#define SENS_SAR_COCPU_INT_REG          (DR_REG_SENS_BASE + 0x00ac)
+/* SENS_COCPU_EBREAK_INT : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: int from ebreak*/
+#define SENS_COCPU_EBREAK_INT  (BIT(24))
+#define SENS_COCPU_EBREAK_INT_M  (BIT(24))
+#define SENS_COCPU_EBREAK_INT_V  0x1
+#define SENS_COCPU_EBREAK_INT_S  24
+/* SENS_COCPU_INT : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: int from register*/
+#define SENS_COCPU_INT  (BIT(23))
+#define SENS_COCPU_INT_M  (BIT(23))
+#define SENS_COCPU_INT_V  0x1
+#define SENS_COCPU_INT_S  23
+/* SENS_COCPU_START_INT : RO ;bitpos:[22] ;default: 1'b0 ; */
+/*description: int from start*/
+#define SENS_COCPU_START_INT  (BIT(22))
+#define SENS_COCPU_START_INT_M  (BIT(22))
+#define SENS_COCPU_START_INT_V  0x1
+#define SENS_COCPU_START_INT_S  22
+/* SENS_COCPU_TSENS_INT : RO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: int from tsens*/
+#define SENS_COCPU_TSENS_INT  (BIT(21))
+#define SENS_COCPU_TSENS_INT_M  (BIT(21))
+#define SENS_COCPU_TSENS_INT_V  0x1
+#define SENS_COCPU_TSENS_INT_S  21
+/* SENS_COCPU_SARADC_INT : RO ;bitpos:[20] ;default: 1'b0 ; */
+/*description: int from saradc*/
+#define SENS_COCPU_SARADC_INT  (BIT(20))
+#define SENS_COCPU_SARADC_INT_M  (BIT(20))
+#define SENS_COCPU_SARADC_INT_V  0x1
+#define SENS_COCPU_SARADC_INT_S  20
+/* SENS_COCPU_EBREAK_INT_CLR : WO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: int clear entry*/
+#define SENS_COCPU_EBREAK_INT_CLR  (BIT(14))
+#define SENS_COCPU_EBREAK_INT_CLR_M  (BIT(14))
+#define SENS_COCPU_EBREAK_INT_CLR_V  0x1
+#define SENS_COCPU_EBREAK_INT_CLR_S  14
+/* SENS_COCPU_INT_CLR : WO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define SENS_COCPU_INT_CLR  (BIT(13))
+#define SENS_COCPU_INT_CLR_M  (BIT(13))
+#define SENS_COCPU_INT_CLR_V  0x1
+#define SENS_COCPU_INT_CLR_S  13
+/* SENS_COCPU_START_INT_CLR : WO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define SENS_COCPU_START_INT_CLR  (BIT(12))
+#define SENS_COCPU_START_INT_CLR_M  (BIT(12))
+#define SENS_COCPU_START_INT_CLR_V  0x1
+#define SENS_COCPU_START_INT_CLR_S  12
+/* SENS_COCPU_TSENS_INT_CLR : WO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define SENS_COCPU_TSENS_INT_CLR  (BIT(11))
+#define SENS_COCPU_TSENS_INT_CLR_M  (BIT(11))
+#define SENS_COCPU_TSENS_INT_CLR_V  0x1
+#define SENS_COCPU_TSENS_INT_CLR_S  11
+/* SENS_COCPU_SARADC_INT_CLR : WO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define SENS_COCPU_SARADC_INT_CLR  (BIT(10))
+#define SENS_COCPU_SARADC_INT_CLR_M  (BIT(10))
+#define SENS_COCPU_SARADC_INT_CLR_V  0x1
+#define SENS_COCPU_SARADC_INT_CLR_S  10
+/* SENS_COCPU_EBREAK_INT_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: int enable entry*/
+#define SENS_COCPU_EBREAK_INT_ENA  (BIT(4))
+#define SENS_COCPU_EBREAK_INT_ENA_M  (BIT(4))
+#define SENS_COCPU_EBREAK_INT_ENA_V  0x1
+#define SENS_COCPU_EBREAK_INT_ENA_S  4
+/* SENS_COCPU_INT_ENA : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define SENS_COCPU_INT_ENA  (BIT(3))
+#define SENS_COCPU_INT_ENA_M  (BIT(3))
+#define SENS_COCPU_INT_ENA_V  0x1
+#define SENS_COCPU_INT_ENA_S  3
+/* SENS_COCPU_START_INT_ENA : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define SENS_COCPU_START_INT_ENA  (BIT(2))
+#define SENS_COCPU_START_INT_ENA_M  (BIT(2))
+#define SENS_COCPU_START_INT_ENA_V  0x1
+#define SENS_COCPU_START_INT_ENA_S  2
+/* SENS_COCPU_TSENS_INT_ENA : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/*description: */
+#define SENS_COCPU_TSENS_INT_ENA  (BIT(1))
+#define SENS_COCPU_TSENS_INT_ENA_M  (BIT(1))
+#define SENS_COCPU_TSENS_INT_ENA_V  0x1
+#define SENS_COCPU_TSENS_INT_ENA_S  1
+/* SENS_COCPU_SARADC_INT_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define SENS_COCPU_SARADC_INT_ENA  (BIT(0))
+#define SENS_COCPU_SARADC_INT_ENA_M  (BIT(0))
+#define SENS_COCPU_SARADC_INT_ENA_V  0x1
+#define SENS_COCPU_SARADC_INT_ENA_S  0
+
 #define SENS_SAR_NOUSE_REG          (DR_REG_SENS_BASE + 0x00F8)
 /* SENS_SAR_NOUSE : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
@@ -1053,13 +1249,16 @@
 #define SENS_SAR_NOUSE_S  0
 
 #define SENS_SARDATE_REG          (DR_REG_SENS_BASE + 0x00FC)
-/* SENS_SAR_DATE : R/W ;bitpos:[27:0] ;default: 28'h1605180 ; */
+/* SENS_SAR_DATE : R/W ;bitpos:[27:0] ;default: 28'h1703080 ; */
 /*description: */
 #define SENS_SAR_DATE  0x0FFFFFFF
 #define SENS_SAR_DATE_M  ((SENS_SAR_DATE_V)<<(SENS_SAR_DATE_S))
 #define SENS_SAR_DATE_V  0xFFFFFFF
 #define SENS_SAR_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

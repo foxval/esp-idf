@@ -138,12 +138,12 @@
 #define EFUSE_RD_CHIP_VER_DIS_BT_M  (BIT(1))
 #define EFUSE_RD_CHIP_VER_DIS_BT_V  0x1
 #define EFUSE_RD_CHIP_VER_DIS_BT_S  1
-/* EFUSE_RD_CHIP_VER_DIS_APP_CPU : RO ;bitpos:[0] ;default: 1'b0 ; */
+/* EFUSE_RD_SOFT_DISABLE_JTAG : RO ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_RD_CHIP_VER_DIS_APP_CPU  (BIT(0))
-#define EFUSE_RD_CHIP_VER_DIS_APP_CPU_M  (BIT(0))
-#define EFUSE_RD_CHIP_VER_DIS_APP_CPU_V  0x1
-#define EFUSE_RD_CHIP_VER_DIS_APP_CPU_S  0
+#define EFUSE_RD_SOFT_DISABLE_JTAG  (BIT(0))
+#define EFUSE_RD_SOFT_DISABLE_JTAG_M  (BIT(0))
+#define EFUSE_RD_SOFT_DISABLE_JTAG_V  0x1
+#define EFUSE_RD_SOFT_DISABLE_JTAG_S  0
 
 #define EFUSE_BLK0_RDATA4_REG          (DR_REG_EFUSE_BASE + 0x010)
 /* EFUSE_RD_SDIO_FORCE : RO ;bitpos:[16] ;default: 1'b0 ; */
@@ -205,12 +205,18 @@
 #define EFUSE_RD_FLASH_CRYPT_CONFIG_M  ((EFUSE_RD_FLASH_CRYPT_CONFIG_V)<<(EFUSE_RD_FLASH_CRYPT_CONFIG_S))
 #define EFUSE_RD_FLASH_CRYPT_CONFIG_V  0xF
 #define EFUSE_RD_FLASH_CRYPT_CONFIG_S  28
-/* EFUSE_RD_INST_CONFIG : RO ;bitpos:[27:20] ;default: 8'b0 ; */
+/* EFUSE_RD_RESERVE_USE1 : RO ;bitpos:[27:24] ;default: 4'b0 ; */
 /*description: */
-#define EFUSE_RD_INST_CONFIG  0x000000FF
-#define EFUSE_RD_INST_CONFIG_M  ((EFUSE_RD_INST_CONFIG_V)<<(EFUSE_RD_INST_CONFIG_S))
-#define EFUSE_RD_INST_CONFIG_V  0xFF
-#define EFUSE_RD_INST_CONFIG_S  20
+#define EFUSE_RD_RESERVE_USE1  0x0000000F
+#define EFUSE_RD_RESERVE_USE1_M  ((EFUSE_RD_RESERVE_USE1_V)<<(EFUSE_RD_RESERVE_USE1_S))
+#define EFUSE_RD_RESERVE_USE1_V  0xF
+#define EFUSE_RD_RESERVE_USE1_S  24
+/* EFUSE_RD_TSENS_DOS : RO ;bitpos:[23:20] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RD_TSENS_DOS  0x0000000F
+#define EFUSE_RD_TSENS_DOS_M  ((EFUSE_RD_TSENS_DOS_V)<<(EFUSE_RD_TSENS_DOS_S))
+#define EFUSE_RD_TSENS_DOS_V  0xF
+#define EFUSE_RD_TSENS_DOS_S  20
 /* EFUSE_RD_SPI_PAD_CONFIG_CS0 : RO ;bitpos:[19:15] ;default: 5'b0 ; */
 /*description: read for SPI_pad_config_cs0*/
 #define EFUSE_RD_SPI_PAD_CONFIG_CS0  0x0000001F
@@ -261,12 +267,12 @@
 #define EFUSE_RD_DISABLE_DL_ENCRYPT_M  (BIT(7))
 #define EFUSE_RD_DISABLE_DL_ENCRYPT_V  0x1
 #define EFUSE_RD_DISABLE_DL_ENCRYPT_S  7
-/* EFUSE_RD_DISABLE_JTAG : RO ;bitpos:[6] ;default: 1'b0 ; */
-/*description: read for JTAG_disable*/
-#define EFUSE_RD_DISABLE_JTAG  (BIT(6))
-#define EFUSE_RD_DISABLE_JTAG_M  (BIT(6))
-#define EFUSE_RD_DISABLE_JTAG_V  0x1
-#define EFUSE_RD_DISABLE_JTAG_S  6
+/* EFUSE_RD_HARD_DISABLE_JTAG : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_RD_HARD_DISABLE_JTAG  (BIT(6))
+#define EFUSE_RD_HARD_DISABLE_JTAG_M  (BIT(6))
+#define EFUSE_RD_HARD_DISABLE_JTAG_V  0x1
+#define EFUSE_RD_HARD_DISABLE_JTAG_S  6
 /* EFUSE_RD_ABS_DONE_1 : RO ;bitpos:[5] ;default: 1'b0 ; */
 /*description: read for abstract_done_1*/
 #define EFUSE_RD_ABS_DONE_1  (BIT(5))
@@ -335,12 +341,14 @@
 #define EFUSE_WIFI_MAC_CRC_HIGH_S  0
 
 #define EFUSE_BLK0_WDATA3_REG          (DR_REG_EFUSE_BASE + 0x028)
-/* EFUSE_CHIP_VER_REV1 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/* EFUSE_CHIP_VER_REV1 : R/W ;bitpos:[16] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_CHIP_VER_REV1  (BIT(15))
 #define EFUSE_CHIP_VER_REV1_M  ((EFUSE_CHIP_VER_REV1_V)<<(EFUSE_CHIP_VER_REV1_S))
 #define EFUSE_CHIP_VER_REV1_V  0x1
 #define EFUSE_CHIP_VER_REV1_S  15
+
+/* reserved for driver to check */
 /* EFUSE_BLK3_PART_RESERVE : R/W ; bitpos:[14] ; default: 1'b0; */
 /*description: If set, this bit indicates that BLOCK3[143:96] is reserved for internal use*/
 #define EFUSE_BLK3_PART_RESERVE  (BIT(14))
@@ -360,6 +368,13 @@
 #define EFUSE_CHIP_CPU_FREQ_LOW_V  0x1
 #define EFUSE_CHIP_CPU_FREQ_LOW_S  12
 /* EFUSE_CHIP_VER_PKG : R/W ;bitpos:[11:9] ;default: 3'b0 ; */
+/* EFUSE_CHIP_VER_RESERVE : R/W ;bitpos:[15:12] ;default: 3'b0 ; */
+/*description: */
+#define EFUSE_CHIP_VER_RESERVE  0x00000007
+#define EFUSE_CHIP_VER_RESERVE_M  ((EFUSE_CHIP_VER_RESERVE_V)<<(EFUSE_CHIP_VER_RESERVE_S))
+#define EFUSE_CHIP_VER_RESERVE_V  0x7
+#define EFUSE_CHIP_VER_RESERVE_S  12
+/* EFUSE_CHIP_VER : R/W ;bitpos:[11:9] ;default: 3'b0 ; */
 /*description: */
 #define EFUSE_CHIP_VER_PKG  0x00000007
 #define EFUSE_CHIP_VER_PKG_M  ((EFUSE_CHIP_VER_PKG_V)<<(EFUSE_CHIP_VER_PKG_S))
@@ -394,12 +409,12 @@
 #define EFUSE_CHIP_VER_DIS_BT_M  (BIT(1))
 #define EFUSE_CHIP_VER_DIS_BT_V  0x1
 #define EFUSE_CHIP_VER_DIS_BT_S  1
-/* EFUSE_CHIP_VER_DIS_APP_CPU : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/* EFUSE_SOFT_DISABLE_JTAG : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_CHIP_VER_DIS_APP_CPU  (BIT(0))
-#define EFUSE_CHIP_VER_DIS_APP_CPU_M  (BIT(0))
-#define EFUSE_CHIP_VER_DIS_APP_CPU_V  0x1
-#define EFUSE_CHIP_VER_DIS_APP_CPU_S  0
+#define EFUSE_SOFT_DISABLE_JTAG  (BIT(0))
+#define EFUSE_SOFT_DISABLE_JTAG_M  (BIT(0))
+#define EFUSE_SOFT_DISABLE_JTAG_V  0x1
+#define EFUSE_SOFT_DISABLE_JTAG_S  0
 
 #define EFUSE_BLK0_WDATA4_REG          (DR_REG_EFUSE_BASE + 0x02c)
 /* EFUSE_SDIO_FORCE : R/W ;bitpos:[16] ;default: 1'b0 ; */
@@ -461,13 +476,18 @@
 #define EFUSE_FLASH_CRYPT_CONFIG_M  ((EFUSE_FLASH_CRYPT_CONFIG_V)<<(EFUSE_FLASH_CRYPT_CONFIG_S))
 #define EFUSE_FLASH_CRYPT_CONFIG_V  0xF
 #define EFUSE_FLASH_CRYPT_CONFIG_S  28
-/* EFUSE_INST_CONFIG : R/W ;bitpos:[27:20] ;default: 8'b0 ; */
+/* EFUSE_RESERVE_USE1 : R/W ;bitpos:[27:24] ;default: 4'b0 ; */
 /*description: */
-#define EFUSE_INST_CONFIG  0x000000FF
-#define EFUSE_INST_CONFIG_M  ((EFUSE_INST_CONFIG_V)<<(EFUSE_INST_CONFIG_S))
-#define EFUSE_INST_CONFIG_V  0xFF
-#define EFUSE_INST_CONFIG_S  20
-/* EFUSE_SPI_PAD_CONFIG_CS0 : R/W ;bitpos:[19:15] ;default: 5'b0 ; */
+#define EFUSE_RESERVE_USE1  0x0000000F
+#define EFUSE_RESERVE_USE1_M  ((EFUSE_RESERVE_USE1_V)<<(EFUSE_RESERVE_USE1_S))
+#define EFUSE_RESERVE_USE1_V  0xF
+#define EFUSE_RESERVE_USE1_S  24
+/* EFUSE_TSENS_DOS : R/W ;bitpos:[23:20] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_TSENS_DOS  0x0000000F
+#define EFUSE_TSENS_DOS_M  ((EFUSE_TSENS_DOS_V)<<(EFUSE_TSENS_DOS_S))
+#define EFUSE_TSENS_DOS_V  0xF
+#define EFUSE_TSENS_DOS_S  20
 /*description: program for SPI_pad_config_cs0*/
 #define EFUSE_SPI_PAD_CONFIG_CS0  0x0000001F
 #define EFUSE_SPI_PAD_CONFIG_CS0_M  ((EFUSE_SPI_PAD_CONFIG_CS0_V)<<(EFUSE_SPI_PAD_CONFIG_CS0_S))
@@ -517,12 +537,12 @@
 #define EFUSE_DISABLE_DL_ENCRYPT_M  (BIT(7))
 #define EFUSE_DISABLE_DL_ENCRYPT_V  0x1
 #define EFUSE_DISABLE_DL_ENCRYPT_S  7
-/* EFUSE_DISABLE_JTAG : R/W ;bitpos:[6] ;default: 1'b0 ; */
-/*description: program for JTAG_disable*/
-#define EFUSE_DISABLE_JTAG  (BIT(6))
-#define EFUSE_DISABLE_JTAG_M  (BIT(6))
-#define EFUSE_DISABLE_JTAG_V  0x1
-#define EFUSE_DISABLE_JTAG_S  6
+/* EFUSE_HARD_DISABLE_JTAG : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_HARD_DISABLE_JTAG  (BIT(6))
+#define EFUSE_HARD_DISABLE_JTAG_M  (BIT(6))
+#define EFUSE_HARD_DISABLE_JTAG_V  0x1
+#define EFUSE_HARD_DISABLE_JTAG_S  6
 /* EFUSE_ABS_DONE_1 : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: program for abstract_done_1*/
 #define EFUSE_ABS_DONE_1  (BIT(5))
@@ -1136,8 +1156,230 @@
 #define EFUSE_DEC_WARNINGS_V  0xFFF
 #define EFUSE_DEC_WARNINGS_S  0
 
+#define EFUSE_RD_TIM_CONF_REG          (DR_REG_EFUSE_BASE + 0x120)
+/* EFUSE_READ_INIT_NUM : R/W ;bitpos:[31:24] ;default: 8'h40 ; */
+/*description: */
+#define EFUSE_READ_INIT_NUM  0x000000FF
+#define EFUSE_READ_INIT_NUM_M  ((EFUSE_READ_INIT_NUM_V)<<(EFUSE_READ_INIT_NUM_S))
+#define EFUSE_READ_INIT_NUM_V  0xFF
+#define EFUSE_READ_INIT_NUM_S  24
+/* EFUSE_TSUR_A : R/W ;bitpos:[23:16] ;default: 8'h1 ; */
+/*description: */
+#define EFUSE_TSUR_A  0x000000FF
+#define EFUSE_TSUR_A_M  ((EFUSE_TSUR_A_V)<<(EFUSE_TSUR_A_S))
+#define EFUSE_TSUR_A_V  0xFF
+#define EFUSE_TSUR_A_S  16
+/* EFUSE_TRD : R/W ;bitpos:[15:8] ;default: 8'h3 ; */
+/*description: */
+#define EFUSE_TRD  0x000000FF
+#define EFUSE_TRD_M  ((EFUSE_TRD_V)<<(EFUSE_TRD_S))
+#define EFUSE_TRD_V  0xFF
+#define EFUSE_TRD_S  8
+/* EFUSE_THR_A : R/W ;bitpos:[7:0] ;default: 8'h1 ; */
+/*description: */
+#define EFUSE_THR_A  0x000000FF
+#define EFUSE_THR_A_M  ((EFUSE_THR_A_V)<<(EFUSE_THR_A_S))
+#define EFUSE_THR_A_V  0xFF
+#define EFUSE_THR_A_S  0
+
+#define EFUSE_WR_TIM_CONF0_REG          (DR_REG_EFUSE_BASE + 0x124)
+/* EFUSE_TPGM : R/W ;bitpos:[31:16] ;default: 16'h320 ; */
+/*description: */
+#define EFUSE_TPGM  0x0000FFFF
+#define EFUSE_TPGM_M  ((EFUSE_TPGM_V)<<(EFUSE_TPGM_S))
+#define EFUSE_TPGM_V  0xFFFF
+#define EFUSE_TPGM_S  16
+/* EFUSE_TPGM_INACTIVE : R/W ;bitpos:[15:8] ;default: 8'h3 ; */
+/*description: */
+#define EFUSE_TPGM_INACTIVE  0x000000FF
+#define EFUSE_TPGM_INACTIVE_M  ((EFUSE_TPGM_INACTIVE_V)<<(EFUSE_TPGM_INACTIVE_S))
+#define EFUSE_TPGM_INACTIVE_V  0xFF
+#define EFUSE_TPGM_INACTIVE_S  8
+/* EFUSE_THP_A : R/W ;bitpos:[7:0] ;default: 8'h1 ; */
+/*description: */
+#define EFUSE_THP_A  0x000000FF
+#define EFUSE_THP_A_M  ((EFUSE_THP_A_V)<<(EFUSE_THP_A_S))
+#define EFUSE_THP_A_V  0xFF
+#define EFUSE_THP_A_S  0
+
+#define EFUSE_WR_TIM_CONF1_REG          (DR_REG_EFUSE_BASE + 0x128)
+/* EFUSE_PWR_ON_NUM : R/W ;bitpos:[23:8] ;default: 16'h7000 ; */
+/*description: */
+#define EFUSE_PWR_ON_NUM  0x0000FFFF
+#define EFUSE_PWR_ON_NUM_M  ((EFUSE_PWR_ON_NUM_V)<<(EFUSE_PWR_ON_NUM_S))
+#define EFUSE_PWR_ON_NUM_V  0xFFFF
+#define EFUSE_PWR_ON_NUM_S  8
+/* EFUSE_TSUP_A : R/W ;bitpos:[7:0] ;default: 8'h1 ; */
+/*description: */
+#define EFUSE_TSUP_A  0x000000FF
+#define EFUSE_TSUP_A_M  ((EFUSE_TSUP_A_V)<<(EFUSE_TSUP_A_S))
+#define EFUSE_TSUP_A_V  0xFF
+#define EFUSE_TSUP_A_S  0
+
+#define EFUSE_REPEAT_ERR0_REG          (DR_REG_EFUSE_BASE + 0x12c)
+/* EFUSE_KEY_STATUS_ERR : RO ;bitpos:[31] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_KEY_STATUS_ERR  (BIT(31))
+#define EFUSE_KEY_STATUS_ERR_M  (BIT(31))
+#define EFUSE_KEY_STATUS_ERR_V  0x1
+#define EFUSE_KEY_STATUS_ERR_S  31
+/* EFUSE_SDIO_DREFL_ERR : RO ;bitpos:[30:29] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_SDIO_DREFL_ERR  0x00000003
+#define EFUSE_SDIO_DREFL_ERR_M  ((EFUSE_SDIO_DREFL_ERR_V)<<(EFUSE_SDIO_DREFL_ERR_S))
+#define EFUSE_SDIO_DREFL_ERR_V  0x3
+#define EFUSE_SDIO_DREFL_ERR_S  29
+/* EFUSE_SDIO_DREFM_ERR : RO ;bitpos:[28:27] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_SDIO_DREFM_ERR  0x00000003
+#define EFUSE_SDIO_DREFM_ERR_M  ((EFUSE_SDIO_DREFM_ERR_V)<<(EFUSE_SDIO_DREFM_ERR_S))
+#define EFUSE_SDIO_DREFM_ERR_V  0x3
+#define EFUSE_SDIO_DREFM_ERR_S  27
+/* EFUSE_SDIO_DREFH_ERR : RO ;bitpos:[26:25] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_SDIO_DREFH_ERR  0x00000003
+#define EFUSE_SDIO_DREFH_ERR_M  ((EFUSE_SDIO_DREFH_ERR_V)<<(EFUSE_SDIO_DREFH_ERR_S))
+#define EFUSE_SDIO_DREFH_ERR_V  0x3
+#define EFUSE_SDIO_DREFH_ERR_S  25
+/* EFUSE_CK8M_FREQ_ERR : RO ;bitpos:[24:17] ;default: 8'b0 ; */
+/*description: */
+#define EFUSE_CK8M_FREQ_ERR  0x000000FF
+#define EFUSE_CK8M_FREQ_ERR_M  ((EFUSE_CK8M_FREQ_ERR_V)<<(EFUSE_CK8M_FREQ_ERR_S))
+#define EFUSE_CK8M_FREQ_ERR_V  0xFF
+#define EFUSE_CK8M_FREQ_ERR_S  17
+/* EFUSE_CHIP_VER_RESERVE_ERR : RO ;bitpos:[16:4] ;default: 13'b0 ; */
+/*description: */
+#define EFUSE_CHIP_VER_RESERVE_ERR  0x00001FFF
+#define EFUSE_CHIP_VER_RESERVE_ERR_M  ((EFUSE_CHIP_VER_RESERVE_ERR_V)<<(EFUSE_CHIP_VER_RESERVE_ERR_S))
+#define EFUSE_CHIP_VER_RESERVE_ERR_V  0x1FFF
+#define EFUSE_CHIP_VER_RESERVE_ERR_S  4
+/* EFUSE_RD_DIS_ERR : RO ;bitpos:[3:0] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RD_DIS_ERR  0x0000000F
+#define EFUSE_RD_DIS_ERR_M  ((EFUSE_RD_DIS_ERR_V)<<(EFUSE_RD_DIS_ERR_S))
+#define EFUSE_RD_DIS_ERR_V  0xF
+#define EFUSE_RD_DIS_ERR_S  0
+
+#define EFUSE_REPEAT_ERR1_REG          (DR_REG_EFUSE_BASE + 0x130)
+/* EFUSE_RESERVE_USE1_ERR : RO ;bitpos:[31:28] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RESERVE_USE1_ERR  0x0000000F
+#define EFUSE_RESERVE_USE1_ERR_M  ((EFUSE_RESERVE_USE1_ERR_V)<<(EFUSE_RESERVE_USE1_ERR_S))
+#define EFUSE_RESERVE_USE1_ERR_V  0xF
+#define EFUSE_RESERVE_USE1_ERR_S  28
+/* EFUSE_TSENS_DOS_ERR : RO ;bitpos:[27:24] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_TSENS_DOS_ERR  0x0000000F
+#define EFUSE_TSENS_DOS_ERR_M  ((EFUSE_TSENS_DOS_ERR_V)<<(EFUSE_TSENS_DOS_ERR_S))
+#define EFUSE_TSENS_DOS_ERR_V  0xF
+#define EFUSE_TSENS_DOS_ERR_S  24
+/* EFUSE_FLASH_CRYPT_CONFIG_ERR : RO ;bitpos:[23:20] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_FLASH_CRYPT_CONFIG_ERR  0x0000000F
+#define EFUSE_FLASH_CRYPT_CONFIG_ERR_M  ((EFUSE_FLASH_CRYPT_CONFIG_ERR_V)<<(EFUSE_FLASH_CRYPT_CONFIG_ERR_S))
+#define EFUSE_FLASH_CRYPT_CONFIG_ERR_V  0xF
+#define EFUSE_FLASH_CRYPT_CONFIG_ERR_S  20
+/* EFUSE_SPI_PAD_CONFIG_ERR : RO ;bitpos:[19:0] ;default: 20'b0 ; */
+/*description: */
+#define EFUSE_SPI_PAD_CONFIG_ERR  0x000FFFFF
+#define EFUSE_SPI_PAD_CONFIG_ERR_M  ((EFUSE_SPI_PAD_CONFIG_ERR_V)<<(EFUSE_SPI_PAD_CONFIG_ERR_S))
+#define EFUSE_SPI_PAD_CONFIG_ERR_V  0xFFFFF
+#define EFUSE_SPI_PAD_CONFIG_ERR_S  0
+
+#define EFUSE_REPEAT_ERR2_REG          (DR_REG_EFUSE_BASE + 0x134)
+/* EFUSE_SDIO_FORCE_ERR : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_SDIO_FORCE_ERR  (BIT(14))
+#define EFUSE_SDIO_FORCE_ERR_M  (BIT(14))
+#define EFUSE_SDIO_FORCE_ERR_V  0x1
+#define EFUSE_SDIO_FORCE_ERR_S  14
+/* EFUSE_SDIO_TIEH_ERR : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_SDIO_TIEH_ERR  (BIT(13))
+#define EFUSE_SDIO_TIEH_ERR_M  (BIT(13))
+#define EFUSE_SDIO_TIEH_ERR_V  0x1
+#define EFUSE_SDIO_TIEH_ERR_S  13
+/* EFUSE_XPD_SDIO_ERR : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_XPD_SDIO_ERR  (BIT(12))
+#define EFUSE_XPD_SDIO_ERR_M  (BIT(12))
+#define EFUSE_XPD_SDIO_ERR_V  0x1
+#define EFUSE_XPD_SDIO_ERR_S  12
+/* EFUSE_CHIP_VER_DIS_CACHE_ERR : RO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_CHIP_VER_DIS_CACHE_ERR  (BIT(11))
+#define EFUSE_CHIP_VER_DIS_CACHE_ERR_M  (BIT(11))
+#define EFUSE_CHIP_VER_DIS_CACHE_ERR_V  0x1
+#define EFUSE_CHIP_VER_DIS_CACHE_ERR_S  11
+/* EFUSE_CHIP_VER_32PAD_ERR : RO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_CHIP_VER_32PAD_ERR  (BIT(10))
+#define EFUSE_CHIP_VER_32PAD_ERR_M  (BIT(10))
+#define EFUSE_CHIP_VER_32PAD_ERR_V  0x1
+#define EFUSE_CHIP_VER_32PAD_ERR_S  10
+/* EFUSE_CHIP_VER_DIS_BT_ERR : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_CHIP_VER_DIS_BT_ERR  (BIT(9))
+#define EFUSE_CHIP_VER_DIS_BT_ERR_M  (BIT(9))
+#define EFUSE_CHIP_VER_DIS_BT_ERR_V  0x1
+#define EFUSE_CHIP_VER_DIS_BT_ERR_S  9
+/* EFUSE_SOFT_DISABLE_JTAG_ERR : RO ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_SOFT_DISABLE_JTAG_ERR  (BIT(8))
+#define EFUSE_SOFT_DISABLE_JTAG_ERR_M  (BIT(8))
+#define EFUSE_SOFT_DISABLE_JTAG_ERR_V  0x1
+#define EFUSE_SOFT_DISABLE_JTAG_ERR_S  8
+/* EFUSE_DIG_RESERVE_ERR : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_DIG_RESERVE_ERR  (BIT(7))
+#define EFUSE_DIG_RESERVE_ERR_M  (BIT(7))
+#define EFUSE_DIG_RESERVE_ERR_V  0x1
+#define EFUSE_DIG_RESERVE_ERR_S  7
+/* EFUSE_DISABLE_SDIO_HOST_ERR : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_DISABLE_SDIO_HOST_ERR  (BIT(6))
+#define EFUSE_DISABLE_SDIO_HOST_ERR_M  (BIT(6))
+#define EFUSE_DISABLE_SDIO_HOST_ERR_V  0x1
+#define EFUSE_DISABLE_SDIO_HOST_ERR_S  6
+/* EFUSE_DISABLE_DL_CACHE_ERR : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_DISABLE_DL_CACHE_ERR  (BIT(5))
+#define EFUSE_DISABLE_DL_CACHE_ERR_M  (BIT(5))
+#define EFUSE_DISABLE_DL_CACHE_ERR_V  0x1
+#define EFUSE_DISABLE_DL_CACHE_ERR_S  5
+/* EFUSE_DISABLE_DL_DECRYPT_ERR : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_DISABLE_DL_DECRYPT_ERR  (BIT(4))
+#define EFUSE_DISABLE_DL_DECRYPT_ERR_M  (BIT(4))
+#define EFUSE_DISABLE_DL_DECRYPT_ERR_V  0x1
+#define EFUSE_DISABLE_DL_DECRYPT_ERR_S  4
+/* EFUSE_DISABLE_DL_ENCRYPT_ERR : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_DISABLE_DL_ENCRYPT_ERR  (BIT(3))
+#define EFUSE_DISABLE_DL_ENCRYPT_ERR_M  (BIT(3))
+#define EFUSE_DISABLE_DL_ENCRYPT_ERR_V  0x1
+#define EFUSE_DISABLE_DL_ENCRYPT_ERR_S  3
+/* EFUSE_HARD_DISABLE_JTAG_ERR : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_HARD_DISABLE_JTAG_ERR  (BIT(2))
+#define EFUSE_HARD_DISABLE_JTAG_ERR_M  (BIT(2))
+#define EFUSE_HARD_DISABLE_JTAG_ERR_V  0x1
+#define EFUSE_HARD_DISABLE_JTAG_ERR_S  2
+/* EFUSE_ABS_DONE_1_ERR : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_ABS_DONE_1_ERR  (BIT(1))
+#define EFUSE_ABS_DONE_1_ERR_M  (BIT(1))
+#define EFUSE_ABS_DONE_1_ERR_V  0x1
+#define EFUSE_ABS_DONE_1_ERR_S  1
+/* EFUSE_ABS_DONE_0_ERR : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_ABS_DONE_0_ERR  (BIT(0))
+#define EFUSE_ABS_DONE_0_ERR_M  (BIT(0))
+#define EFUSE_ABS_DONE_0_ERR_V  0x1
+#define EFUSE_ABS_DONE_0_ERR_S  0
+
 #define EFUSE_DATE_REG          (DR_REG_EFUSE_BASE + 0x1FC)
-/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h16042600 ; */
+/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h17030100 ; */
 /*description: */
 #define EFUSE_DATE  0xFFFFFFFF
 #define EFUSE_DATE_M  ((EFUSE_DATE_V)<<(EFUSE_DATE_S))

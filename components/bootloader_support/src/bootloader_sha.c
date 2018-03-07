@@ -65,6 +65,20 @@ static const size_t BLOCK_WORDS = (64/sizeof(uint32_t));
 // Words in final SHA256 digest
 static const size_t DIGEST_WORDS = (32/sizeof(uint32_t));
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+void ets_sha_enable()
+{
+    DPORT_REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
+    DPORT_REG_CLR_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
+}
+
+void ets_sha_disable()
+{
+    DPORT_REG_SET_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
+    DPORT_REG_CLR_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
+}
+#endif
+
 bootloader_sha256_handle_t bootloader_sha256_start()
 {
     // Enable SHA hardware

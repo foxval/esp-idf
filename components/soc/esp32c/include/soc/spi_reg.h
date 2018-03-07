@@ -11,13 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef __SPI_REG_H__
-#define __SPI_REG_H__
+#ifndef _SOC_SPI_REG_H_
+#define _SOC_SPI_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define REG_SPI_BASE(i)     (DR_REG_SPI1_BASE + (((i)>1) ? (((i)* 0x1000) + 0x20000) : (((~(i)) & 1)* 0x1000 )))
-
 #define SPI_CMD_REG(i)          (REG_SPI_BASE(i) + 0x0)
 /* SPI_FLASH_READ : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: Read flash enable. Read flash operation will be triggered when
@@ -69,14 +71,14 @@
 #define SPI_FLASH_PP_V  0x1
 #define SPI_FLASH_PP_S  25
 /* SPI_FLASH_SE : R/W ;bitpos:[24] ;default: 1'b0 ; */
-/*description: Sector erase enable. A 4KB sector is erased via SPI command 20H. Sector erase operation will be triggered
+/*description: Sector erase enable(4KB). Sector erase operation will be triggered
  when the bit is set. The bit will be cleared once the operation done.1: enable 0: disable.*/
 #define SPI_FLASH_SE  (BIT(24))
 #define SPI_FLASH_SE_M  (BIT(24))
 #define SPI_FLASH_SE_V  0x1
 #define SPI_FLASH_SE_S  24
 /* SPI_FLASH_BE : R/W ;bitpos:[23] ;default: 1'b0 ; */
-/*description: Block erase enable. A 64KB block is erased via SPI command D8H.  Block erase operation will be triggered
+/*description: Block erase enable(32KB) .  Block erase operation will be triggered
  when the bit is set. The bit will be cleared once the operation done.1: enable 0: disable.*/
 #define SPI_FLASH_BE  (BIT(23))
 #define SPI_FLASH_BE_M  (BIT(23))
@@ -133,8 +135,12 @@
 #define SPI_FLASH_PER_S  16
 
 #define SPI_ADDR_REG(i)          (REG_SPI_BASE(i) + 0x4)
-//The CSV actually is wrong here. It indicates that the lower 8 bits of this register are reserved. This is not true,
-//all 32 bits of SPI_ADDR_REG are usable/used.
+/* SPI_USR_ADDR_VALUE : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: [31:8]:address to slave [7:0]:Reserved.*/
+#define SPI_USR_ADDR_VALUE  0xFFFFFFFF
+#define SPI_USR_ADDR_VALUE_M  ((SPI_USR_ADDR_VALUE_V)<<(SPI_USR_ADDR_VALUE_S))
+#define SPI_USR_ADDR_VALUE_V  0xFFFFFFFF
+#define SPI_USR_ADDR_VALUE_S  0
 
 #define SPI_CTRL_REG(i)          (REG_SPI_BASE(i) + 0x8)
 /* SPI_WR_BIT_ORDER : R/W ;bitpos:[26] ;default: 1'b0 ; */
@@ -182,8 +188,26 @@
 #define SPI_FREAD_QUAD_M  (BIT(20))
 #define SPI_FREAD_QUAD_V  0x1
 #define SPI_FREAD_QUAD_S  20
+/* SPI_D_POL : R/W ;bitpos:[19] ;default: 1'b1 ; */
+/*description: The bit is used to set MOSI line polarity  1: high 0  low*/
+#define SPI_D_POL  (BIT(19))
+#define SPI_D_POL_M  (BIT(19))
+#define SPI_D_POL_V  0x1
+#define SPI_D_POL_S  19
+/* SPI_Q_POL : R/W ;bitpos:[18] ;default: 1'b1 ; */
+/*description: The bit is used to set MISO line polarity  1: high 0  low*/
+#define SPI_Q_POL  (BIT(18))
+#define SPI_Q_POL_M  (BIT(18))
+#define SPI_Q_POL_V  0x1
+#define SPI_Q_POL_S  18
+/* SPI_FLASH_SUSPENDING : RO ;bitpos:[17] ;default: 1'h0 ; */
+/*description: The status of flash suspend*/
+#define SPI_FLASH_SUSPENDING  (BIT(17))
+#define SPI_FLASH_SUSPENDING_M  (BIT(17))
+#define SPI_FLASH_SUSPENDING_V  0x1
+#define SPI_FLASH_SUSPENDING_S  17
 /* SPI_RESANDRES : R/W ;bitpos:[15] ;default: 1'b1 ; */
-/*description: The Device ID is read out to SPI_RD_STATUS register, this bit
+/*description: The Device ID is read out to SPI_RD_STATUS register   this bit
  combine with spi_flash_res bit. 1: enable 0: disable.*/
 #define SPI_RESANDRES  (BIT(15))
 #define SPI_RESANDRES_M  (BIT(15))
@@ -215,17 +239,53 @@
 #define SPI_TX_CRC_EN_M  (BIT(11))
 #define SPI_TX_CRC_EN_V  0x1
 #define SPI_TX_CRC_EN_S  11
-/* SPI_FCS_CRC_EN : R/W ;bitpos:[10] ;default: 1'b1 ; */
+/* SPI_FCS_CRC_EN : R/W ;bitpos:[10] ;default: 1'b0 ; */
 /*description: For SPI1  initialize crc32 module before writing encrypted data
  to flash. Active low.*/
 #define SPI_FCS_CRC_EN  (BIT(10))
 #define SPI_FCS_CRC_EN_M  (BIT(10))
 #define SPI_FCS_CRC_EN_V  0x1
 #define SPI_FCS_CRC_EN_S  10
+/* SPI_FCMD_OCT : R/W ;bitpos:[9] ;default: 1'b0 ; */
+/*description: Apply 8 signals during command phase  1:enable 0: disable*/
+#define SPI_FCMD_OCT  (BIT(9))
+#define SPI_FCMD_OCT_M  (BIT(9))
+#define SPI_FCMD_OCT_V  0x1
+#define SPI_FCMD_OCT_S  9
+/* SPI_FCMD_QUAD : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: Apply 4 signals during command phase  1:enable 0: disable*/
+#define SPI_FCMD_QUAD  (BIT(8))
+#define SPI_FCMD_QUAD_M  (BIT(8))
+#define SPI_FCMD_QUAD_V  0x1
+#define SPI_FCMD_QUAD_S  8
+/* SPI_FCMD_DUAL : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: Apply 2 signals during command phase  1:enable 0: disable*/
+#define SPI_FCMD_DUAL  (BIT(7))
+#define SPI_FCMD_DUAL_M  (BIT(7))
+#define SPI_FCMD_DUAL_V  0x1
+#define SPI_FCMD_DUAL_S  7
+/* SPI_FADDR_OCT : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: Apply 8 signals during address phase  1:enable 0: disable*/
+#define SPI_FADDR_OCT  (BIT(6))
+#define SPI_FADDR_OCT_M  (BIT(6))
+#define SPI_FADDR_OCT_V  0x1
+#define SPI_FADDR_OCT_S  6
+/* SPI_FDIN_OCT : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: Apply 8 signals during read-data phase  1:enable 0: disable*/
+#define SPI_FDIN_OCT  (BIT(5))
+#define SPI_FDIN_OCT_M  (BIT(5))
+#define SPI_FDIN_OCT_V  0x1
+#define SPI_FDIN_OCT_S  5
+/* SPI_FDOUT_OCT : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: Apply 8 signals during write-data phase  1:enable 0: disable*/
+#define SPI_FDOUT_OCT  (BIT(4))
+#define SPI_FDOUT_OCT_M  (BIT(4))
+#define SPI_FDOUT_OCT_V  0x1
+#define SPI_FDOUT_OCT_S  4
 
 #define SPI_CTRL1_REG(i)          (REG_SPI_BASE(i) + 0xC)
 /* SPI_CS_HOLD_DELAY : R/W ;bitpos:[31:28] ;default: 4'h5 ; */
-/*description: SPI cs signal is delayed by spi clock cycles*/
+/*description: SPI cs signal is delayed by spi clock cycles.*/
 #define SPI_CS_HOLD_DELAY  0x0000000F
 #define SPI_CS_HOLD_DELAY_M  ((SPI_CS_HOLD_DELAY_V)<<(SPI_CS_HOLD_DELAY_S))
 #define SPI_CS_HOLD_DELAY_V  0xF
@@ -236,22 +296,29 @@
 #define SPI_CS_HOLD_DELAY_RES_M  ((SPI_CS_HOLD_DELAY_RES_V)<<(SPI_CS_HOLD_DELAY_RES_S))
 #define SPI_CS_HOLD_DELAY_RES_V  0xFFF
 #define SPI_CS_HOLD_DELAY_RES_S  16
+/* SPI_CLK_MODE : R/W ;bitpos:[15:14] ;default: 2'h0 ; */
+/*description: SPI clock mode bits. 0: SPI clock is off when CS inactive  1:
+ SPI clock is delayed one cycle after CS inactive  2: SPI clock is delayed two cycles after CS inactive  3: SPI clock is alwasy on.*/
+#define SPI_CLK_MODE  0x00000003
+#define SPI_CLK_MODE_M  ((SPI_CLK_MODE_V)<<(SPI_CLK_MODE_S))
+#define SPI_CLK_MODE_V  0x3
+#define SPI_CLK_MODE_S  14
 
 #define SPI_RD_STATUS_REG(i)          (REG_SPI_BASE(i) + 0x10)
 /* SPI_STATUS_EXT : R/W ;bitpos:[31:24] ;default: 8'h00 ; */
-/*description: In the slave mode,it is the status for master to read out.*/
+/*description: In the slave mode  it is the status for master to read out.*/
 #define SPI_STATUS_EXT  0x000000FF
 #define SPI_STATUS_EXT_M  ((SPI_STATUS_EXT_V)<<(SPI_STATUS_EXT_S))
 #define SPI_STATUS_EXT_V  0xFF
 #define SPI_STATUS_EXT_S  24
 /* SPI_WB_MODE : R/W ;bitpos:[23:16] ;default: 8'h00 ; */
-/*description: Mode bits in the flash fast read mode, it is combined with spi_fastrd_mode bit.*/
+/*description: Mode bits in the flash fast read mode   it is combined with spi_fastrd_mode bit.*/
 #define SPI_WB_MODE  0x000000FF
 #define SPI_WB_MODE_M  ((SPI_WB_MODE_V)<<(SPI_WB_MODE_S))
 #define SPI_WB_MODE_V  0xFF
 #define SPI_WB_MODE_S  16
 /* SPI_STATUS : R/W ;bitpos:[15:0] ;default: 16'b0 ; */
-/*description: In the slave mode, it is the status for master to read out.*/
+/*description: In the slave mode  it is the status for master to read out.*/
 #define SPI_STATUS  0x0000FFFF
 #define SPI_STATUS_M  ((SPI_STATUS_V)<<(SPI_STATUS_S))
 #define SPI_STATUS_V  0xFFFF
@@ -298,27 +365,27 @@
 #define SPI_MISO_DELAY_MODE_V  0x3
 #define SPI_MISO_DELAY_MODE_S  16
 /* SPI_CK_OUT_HIGH_MODE : R/W ;bitpos:[15:12] ;default: 4'h0 ; */
-/*description: modify spi clock duty ratio when the value is lager than 8,
- the bits are combined with spi_clkcnt_N bits and spi_clkcnt_H bits.*/
+/*description: modify spi clock duty ratio when the value is lager than 8  the
+ bits are combined with spi_clkcnt_N bits and spi_clkcnt_H bits.*/
 #define SPI_CK_OUT_HIGH_MODE  0x0000000F
 #define SPI_CK_OUT_HIGH_MODE_M  ((SPI_CK_OUT_HIGH_MODE_V)<<(SPI_CK_OUT_HIGH_MODE_S))
 #define SPI_CK_OUT_HIGH_MODE_V  0xF
 #define SPI_CK_OUT_HIGH_MODE_S  12
 /* SPI_CK_OUT_LOW_MODE : R/W ;bitpos:[11:8] ;default: 4'h0 ; */
-/*description: modify spi clock duty ratio when the value is lager than 8,
- the bits are combined with spi_clkcnt_N bits and spi_clkcnt_L bits.*/
+/*description: modify spi clock duty ratio when the value is lager than 8  the
+ bits are combined with spi_clkcnt_N bits and spi_clkcnt_L bits.*/
 #define SPI_CK_OUT_LOW_MODE  0x0000000F
 #define SPI_CK_OUT_LOW_MODE_M  ((SPI_CK_OUT_LOW_MODE_V)<<(SPI_CK_OUT_LOW_MODE_S))
 #define SPI_CK_OUT_LOW_MODE_V  0xF
 #define SPI_CK_OUT_LOW_MODE_S  8
 /* SPI_HOLD_TIME : R/W ;bitpos:[7:4] ;default: 4'h1 ; */
-/*description: delay cycles of cs pin by spi clock, this bits combined with spi_cs_hold bit.*/
+/*description: delay cycles of cs pin by spi clock  this bits combined with spi_cs_hold bit.*/
 #define SPI_HOLD_TIME  0x0000000F
 #define SPI_HOLD_TIME_M  ((SPI_HOLD_TIME_V)<<(SPI_HOLD_TIME_S))
 #define SPI_HOLD_TIME_V  0xF
 #define SPI_HOLD_TIME_S  4
 /* SPI_SETUP_TIME : R/W ;bitpos:[3:0] ;default: 4'h1 ; */
-/*description: (cycles-1) of ¡°prepare¡± phase by spi clock, this bits combined
+/*description: (cycles-1) of prepare phase by spi clock  this bits combined
  with spi_cs_setup bit.*/
 #define SPI_SETUP_TIME  0x0000000F
 #define SPI_SETUP_TIME_M  ((SPI_SETUP_TIME_V)<<(SPI_SETUP_TIME_S))
@@ -512,13 +579,13 @@
 #define SPI_CK_I_EDGE_V  0x1
 #define SPI_CK_I_EDGE_S  6
 /* SPI_CS_SETUP : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: spi cs is enable when spi is in ¡°prepare¡± phase. 1: enable 0: disable.*/
+/*description: spi cs is enable when spi is in  prepare  phase. 1: enable 0: disable.*/
 #define SPI_CS_SETUP  (BIT(5))
 #define SPI_CS_SETUP_M  (BIT(5))
 #define SPI_CS_SETUP_V  0x1
 #define SPI_CS_SETUP_S  5
 /* SPI_CS_HOLD : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: spi cs keep low when spi is in ¡°done¡± phase. 1: enable 0: disable.*/
+/*description: spi cs keep low when spi is in  done  phase. 1: enable 0: disable.*/
 #define SPI_CS_HOLD  (BIT(4))
 #define SPI_CS_HOLD_M  (BIT(4))
 #define SPI_CS_HOLD_V  0x1
@@ -597,19 +664,25 @@
 #define SPI_CK_IDLE_EDGE_M  (BIT(29))
 #define SPI_CK_IDLE_EDGE_V  0x1
 #define SPI_CK_IDLE_EDGE_S  29
-/* SPI_MASTER_CK_SEL : R/W ;bitpos:[13:11] ;default: 3'b0 ; */
+/* SPI_SUB_PIN : R/W ;bitpos:[28] ;default: 1'b0 ; */
+/*description: For SPI0  SRAM and flash work with separate PINs.*/
+#define SPI_SUB_PIN  (BIT(28))
+#define SPI_SUB_PIN_M  (BIT(28))
+#define SPI_SUB_PIN_V  0x1
+#define SPI_SUB_PIN_S  28
+/* SPI_MASTER_CK_SEL : R/W ;bitpos:[15:11] ;default: 5'b0 ; */
 /*description: In the master mode  spi cs line is enable as spi clk  it is combined
  with spi_cs0_dis spi_cs1_dis spi_cs2_dis.*/
-#define SPI_MASTER_CK_SEL  0x00000007
+#define SPI_MASTER_CK_SEL  0x0000001F
 #define SPI_MASTER_CK_SEL_M  ((SPI_MASTER_CK_SEL_V)<<(SPI_MASTER_CK_SEL_S))
-#define SPI_MASTER_CK_SEL_V  0x07
+#define SPI_MASTER_CK_SEL_V  0x1F
 #define SPI_MASTER_CK_SEL_S  11
-/* SPI_MASTER_CS_POL : R/W ;bitpos:[8:6] ;default: 3'b0 ; */
+/* SPI_MASTER_CS_POL : R/W ;bitpos:[10:6] ;default: 5'b0 ; */
 /*description: In the master mode  the bits are the polarity of spi cs line
   the value is equivalent to spi_cs ^ spi_master_cs_pol.*/
-#define SPI_MASTER_CS_POL  0x00000007
+#define SPI_MASTER_CS_POL  0x0000001F
 #define SPI_MASTER_CS_POL_M  ((SPI_MASTER_CS_POL_V)<<(SPI_MASTER_CS_POL_S))
-#define SPI_MASTER_CS_POL_V  0x7
+#define SPI_MASTER_CS_POL_V  0x1F
 #define SPI_MASTER_CS_POL_S  6
 /* SPI_CK_DIS : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: 1: spi clk out disable  0: spi clk out enable*/
@@ -618,19 +691,19 @@
 #define SPI_CK_DIS_V  0x1
 #define SPI_CK_DIS_S  5
 /* SPI_CS2_DIS : R/W ;bitpos:[2] ;default: 1'b1 ; */
-/*description: SPI CS2 pin enable, 1: disable CS2, 0: spi_cs2 signal is from/to CS2 pin*/
+/*description: SPI CS2 pin enable  1: disable CS2  0: spi_cs2 signal is from/to CS2 pin*/
 #define SPI_CS2_DIS  (BIT(2))
 #define SPI_CS2_DIS_M  (BIT(2))
 #define SPI_CS2_DIS_V  0x1
 #define SPI_CS2_DIS_S  2
 /* SPI_CS1_DIS : R/W ;bitpos:[1] ;default: 1'b1 ; */
-/*description: SPI CS1 pin enable, 1: disable CS1, 0: spi_cs1 signal is from/to CS1 pin*/
+/*description: SPI CS1 pin enable  1: disable CS1  0: spi_cs1 signal is from/to CS1 pin*/
 #define SPI_CS1_DIS  (BIT(1))
 #define SPI_CS1_DIS_M  (BIT(1))
 #define SPI_CS1_DIS_V  0x1
 #define SPI_CS1_DIS_S  1
 /* SPI_CS0_DIS : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: SPI CS0 pin enable, 1: disable CS0, 0: spi_cs0 signal is from/to CS0 pin*/
+/*description: SPI CS0 pin enable  1: disable CS0  0: spi_cs0 signal is from/to CS0 pin*/
 #define SPI_CS0_DIS  (BIT(0))
 #define SPI_CS0_DIS_M  (BIT(0))
 #define SPI_CS0_DIS_V  0x1
@@ -638,13 +711,13 @@
 
 #define SPI_SLAVE_REG(i)          (REG_SPI_BASE(i) + 0x38)
 /* SPI_SYNC_RESET : R/W ;bitpos:[31] ;default: 1'b0 ; */
-/*description: Software reset enable, reset the spi clock line cs line and data lines.*/
+/*description: Software reset enable  reset the spi clock line cs line and data lines.*/
 #define SPI_SYNC_RESET  (BIT(31))
 #define SPI_SYNC_RESET_M  (BIT(31))
 #define SPI_SYNC_RESET_V  0x1
 #define SPI_SYNC_RESET_S  31
 /* SPI_SLAVE_MODE : R/W ;bitpos:[30] ;default: 1'b0 ; */
-/*description: 1: slave mode 0: master mode.*/
+/*description: Set SPI work mode. 1: slave mode 0: master mode.*/
 #define SPI_SLAVE_MODE  (BIT(30))
 #define SPI_SLAVE_MODE_M  (BIT(30))
 #define SPI_SLAVE_MODE_V  0x1
@@ -662,15 +735,14 @@
 #define SPI_SLV_WR_RD_STA_EN_V  0x1
 #define SPI_SLV_WR_RD_STA_EN_S  28
 /* SPI_SLV_CMD_DEFINE : R/W ;bitpos:[27] ;default: 1'b0 ; */
-/*description: 1: slave mode commands are defined in SPI_SLAVE3.  0: slave mode
- commands are fixed as: 1: write-status 2: write-buffer and 3: read-buffer.*/
+/*description: 1: slave mode commands are defined in SPI_SLAVE3. 0: slave mode
+ commands are fixed as 1:  write-status  4: read-status  2: write-buffer and 3: read-buffer.*/
 #define SPI_SLV_CMD_DEFINE  (BIT(27))
 #define SPI_SLV_CMD_DEFINE_M  (BIT(27))
 #define SPI_SLV_CMD_DEFINE_V  0x1
 #define SPI_SLV_CMD_DEFINE_S  27
 /* SPI_TRANS_CNT : RO ;bitpos:[26:23] ;default: 4'b0 ; */
-/*description: The operations counter in both the master mode and the slave
- mode. 4: read-status*/
+/*description: The operations counter in both the master mode and the slave mode.*/
 #define SPI_TRANS_CNT  0x0000000F
 #define SPI_TRANS_CNT_M  ((SPI_TRANS_CNT_V)<<(SPI_TRANS_CNT_S))
 #define SPI_TRANS_CNT_V  0xF
@@ -901,6 +973,12 @@
 #define SPI_CACHE_REQ_EN_S  0
 
 #define SPI_CACHE_SCTRL_REG(i)          (REG_SPI_BASE(i) + 0x54)
+/* SPI_USR_SRAM_OCT : R/W ;bitpos:[29] ;default: 1'b0 ; */
+/*description: For SPI0  In the spi sram mode  spi octal I/O mode enable  1: enable  0:disable*/
+#define SPI_USR_SRAM_OCT  (BIT(29))
+#define SPI_USR_SRAM_OCT_M  (BIT(29))
+#define SPI_USR_SRAM_OCT_V  0x1
+#define SPI_USR_SRAM_OCT_S  29
 /* SPI_CACHE_SRAM_USR_WCMD : R/W ;bitpos:[28] ;default: 1'b1 ; */
 /*description: For SPI0  In the spi sram mode cache write sram for user define command*/
 #define SPI_CACHE_SRAM_USR_WCMD  (BIT(28))
@@ -959,8 +1037,20 @@
 #define SPI_USR_SRAM_DIO_M  (BIT(1))
 #define SPI_USR_SRAM_DIO_V  0x1
 #define SPI_USR_SRAM_DIO_S  1
+/* SPI_CACHE_USR_SCMD_4BYTE : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define SPI_CACHE_USR_SCMD_4BYTE  (BIT(0))
+#define SPI_CACHE_USR_SCMD_4BYTE_M  (BIT(0))
+#define SPI_CACHE_USR_SCMD_4BYTE_V  0x1
+#define SPI_CACHE_USR_SCMD_4BYTE_S  0
 
 #define SPI_SRAM_CMD_REG(i)          (REG_SPI_BASE(i) + 0x58)
+/* SPI_SWB_MODE : R/W ;bitpos:[12:5] ;default: 8'b0 ; */
+/*description: */
+#define SPI_SWB_MODE  0x000000FF
+#define SPI_SWB_MODE_M  ((SPI_SWB_MODE_V)<<(SPI_SWB_MODE_S))
+#define SPI_SWB_MODE_V  0xFF
+#define SPI_SWB_MODE_S  5
 /* SPI_SRAM_RSTIO : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: For SPI0 SRAM IO mode reset enable. SRAM IO mode reset operation
  will be triggered when the bit is set. The bit will be cleared once the operation done*/
@@ -1160,6 +1250,62 @@
 #define SPI_TX_CRC_DATA_V  0xFFFFFFFF
 #define SPI_TX_CRC_DATA_S  0
 
+#define SPI_SRAM_CLK_REG(i)          (REG_SPI_BASE(i) + 0xC4)
+/* SPI_SCLK_EQU_SYSCLK : R/W ;bitpos:[31] ;default: 1'b1 ; */
+/*description: For SPI0 SRAM interface  1: spi_clk is eqaul to system 0: spi_clk
+ is divided from system clock.*/
+#define SPI_SCLK_EQU_SYSCLK  (BIT(31))
+#define SPI_SCLK_EQU_SYSCLK_M  (BIT(31))
+#define SPI_SCLK_EQU_SYSCLK_V  0x1
+#define SPI_SCLK_EQU_SYSCLK_S  31
+/* SPI_SCLKDIV_PRE : R/W ;bitpos:[30:18] ;default: 13'b0 ; */
+/*description: For SPI0 SRAM interface  it is pre-divider of spi_clk.*/
+#define SPI_SCLKDIV_PRE  0x00001FFF
+#define SPI_SCLKDIV_PRE_M  ((SPI_SCLKDIV_PRE_V)<<(SPI_SCLKDIV_PRE_S))
+#define SPI_SCLKDIV_PRE_V  0x1FFF
+#define SPI_SCLKDIV_PRE_S  18
+/* SPI_SCLKCNT_N : R/W ;bitpos:[17:12] ;default: 6'h3 ; */
+/*description: For SPI0 SRAM interface  it is the divider of spi_clk. So spi_clk
+ frequency is system/(spi_clkdiv_pre+1)/(spi_clkcnt_N+1)*/
+#define SPI_SCLKCNT_N  0x0000003F
+#define SPI_SCLKCNT_N_M  ((SPI_SCLKCNT_N_V)<<(SPI_SCLKCNT_N_S))
+#define SPI_SCLKCNT_N_V  0x3F
+#define SPI_SCLKCNT_N_S  12
+/* SPI_SCLKCNT_H : R/W ;bitpos:[11:6] ;default: 6'h1 ; */
+/*description: For SPI0 SRAM interface  it must be floor((spi_clkcnt_N+1)/2-1).
+ In the slave mode it must be 0.*/
+#define SPI_SCLKCNT_H  0x0000003F
+#define SPI_SCLKCNT_H_M  ((SPI_SCLKCNT_H_V)<<(SPI_SCLKCNT_H_S))
+#define SPI_SCLKCNT_H_V  0x3F
+#define SPI_SCLKCNT_H_S  6
+/* SPI_SCLKCNT_L : R/W ;bitpos:[5:0] ;default: 6'h3 ; */
+/*description: For SPI0 SRAM interface  it must be equal to spi_clkcnt_N. In
+ the slave mode it must be 0.*/
+#define SPI_SCLKCNT_L  0x0000003F
+#define SPI_SCLKCNT_L_M  ((SPI_SCLKCNT_L_V)<<(SPI_SCLKCNT_L_S))
+#define SPI_SCLKCNT_L_V  0x3F
+#define SPI_SCLKCNT_L_S  0
+
+#define SPI_FLASH_SUS_REG(i)          (REG_SPI_BASE(i) + 0xC8)
+/* SPI_FLASH_PES_COMMAND : R/W ;bitpos:[31:24] ;default: 8'h75 ; */
+/*description: Program/Erase suspend command.*/
+#define SPI_FLASH_PES_COMMAND  0x000000FF
+#define SPI_FLASH_PES_COMMAND_M  ((SPI_FLASH_PES_COMMAND_V)<<(SPI_FLASH_PES_COMMAND_S))
+#define SPI_FLASH_PES_COMMAND_V  0xFF
+#define SPI_FLASH_PES_COMMAND_S  24
+/* SPI_FLASH_PER_COMMAND : R/W ;bitpos:[23:16] ;default: 8'h7a ; */
+/*description: Program/Erase resume command.*/
+#define SPI_FLASH_PER_COMMAND  0x000000FF
+#define SPI_FLASH_PER_COMMAND_M  ((SPI_FLASH_PER_COMMAND_V)<<(SPI_FLASH_PER_COMMAND_S))
+#define SPI_FLASH_PER_COMMAND_V  0xFF
+#define SPI_FLASH_PER_COMMAND_S  16
+/* SPI_FLASH_TSUS : R/W ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: PES command is delayed tsus cycle based on apb clock.*/
+#define SPI_FLASH_TSUS  0x0000FFFF
+#define SPI_FLASH_TSUS_M  ((SPI_FLASH_TSUS_V)<<(SPI_FLASH_TSUS_S))
+#define SPI_FLASH_TSUS_V  0xFFFF
+#define SPI_FLASH_TSUS_S  0
+
 #define SPI_EXT0_REG(i)          (REG_SPI_BASE(i) + 0xF0)
 /* SPI_T_PP_ENA : R/W ;bitpos:[31] ;default: 1'b1 ; */
 /*description: page program delay enable.*/
@@ -1187,13 +1333,13 @@
 #define SPI_T_ERASE_ENA_M  (BIT(31))
 #define SPI_T_ERASE_ENA_V  0x1
 #define SPI_T_ERASE_ENA_S  31
-/* SPI_T_ERASE_SHIFT : R/W ;bitpos:[19:16] ;default: 4'd15 ; */
+/* SPI_T_ERASE_SHIFT : R/W ;bitpos:[19:16] ;default: 4'd10 ; */
 /*description: erase flash delay time shift.*/
 #define SPI_T_ERASE_SHIFT  0x0000000F
 #define SPI_T_ERASE_SHIFT_M  ((SPI_T_ERASE_SHIFT_V)<<(SPI_T_ERASE_SHIFT_S))
 #define SPI_T_ERASE_SHIFT_V  0xF
 #define SPI_T_ERASE_SHIFT_S  16
-/* SPI_T_ERASE_TIME : R/W ;bitpos:[11:0] ;default: 12'd0 ; */
+/* SPI_T_ERASE_TIME : R/W ;bitpos:[11:0] ;default: 12'd80 ; */
 /*description: erase flash delay time by system clock.*/
 #define SPI_T_ERASE_TIME  0x00000FFF
 #define SPI_T_ERASE_TIME_M  ((SPI_T_ERASE_TIME_V)<<(SPI_T_ERASE_TIME_S))
@@ -1211,7 +1357,7 @@
 #define SPI_EXT3_REG(i)          (REG_SPI_BASE(i) + 0xFC)
 /* SPI_INT_HOLD_ENA : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: This register is for two SPI masters to share the same cs clock
- and data signals. The bits of one SPI are set  if the other SPI is busy  the SPI will be hold. 1(3): hold at ¡°idle¡± phase 2: hold at ¡°prepare¡± phase.*/
+ and data signals. The bits of one SPI are set  if the other SPI is busy  the SPI will be hold. 1(3): hold at  idle  phase 2: hold at  prepare  phase.*/
 #define SPI_INT_HOLD_ENA  0x00000003
 #define SPI_INT_HOLD_ENA_M  ((SPI_INT_HOLD_ENA_V)<<(SPI_INT_HOLD_ENA_S))
 #define SPI_INT_HOLD_ENA_V  0x3
@@ -1262,7 +1408,8 @@
 #define SPI_OUT_EOF_MODE_V  0x1
 #define SPI_OUT_EOF_MODE_S  9
 /* SPI_OUT_AUTO_WRBACK : R/W ;bitpos:[8] ;default: 1'b0 ; */
-/*description: when the link is empty   jump to next automatically.*/
+/*description: when the bit is set  DMA continue to use the next inlink node
+ when the length of inlink is 0.*/
 #define SPI_OUT_AUTO_WRBACK  (BIT(8))
 #define SPI_OUT_AUTO_WRBACK_M  (BIT(8))
 #define SPI_OUT_AUTO_WRBACK_V  0x1
@@ -1280,13 +1427,13 @@
 #define SPI_IN_LOOP_TEST_V  0x1
 #define SPI_IN_LOOP_TEST_S  6
 /* SPI_AHBM_RST : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: reset spi dma ahb master.*/
+/*description: Reset spi dma ahb master.*/
 #define SPI_AHBM_RST  (BIT(5))
 #define SPI_AHBM_RST_M  (BIT(5))
 #define SPI_AHBM_RST_V  0x1
 #define SPI_AHBM_RST_S  5
 /* SPI_AHBM_FIFO_RST : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: reset spi dma ahb master fifo pointer.*/
+/*description: Reset spi dma ahb master fifo pointer.*/
 #define SPI_AHBM_FIFO_RST  (BIT(4))
 #define SPI_AHBM_FIFO_RST_M  (BIT(4))
 #define SPI_AHBM_FIFO_RST_V  0x1
@@ -1350,8 +1497,8 @@
 #define SPI_INLINK_STOP_V  0x1
 #define SPI_INLINK_STOP_S  28
 /* SPI_INLINK_AUTO_RET : R/W ;bitpos:[20] ;default: 1'b0 ; */
-/*description: when the bit is set  inlink descriptor returns to the next descriptor
- while a packet is wrong*/
+/*description: when the bit is set  the inlink descriptor returns to the first
+ link node when a packet is error.*/
 #define SPI_INLINK_AUTO_RET  (BIT(20))
 #define SPI_INLINK_AUTO_RET_M  (BIT(20))
 #define SPI_INLINK_AUTO_RET_V  0x1
@@ -1681,33 +1828,96 @@
 #define SPI_DMA_OUTLINK_DSCR_BF1_V  0xFFFFFFFF
 #define SPI_DMA_OUTLINK_DSCR_BF1_S  0
 
-#define SPI_DMA_RSTATUS_REG(i)          (REG_SPI_BASE(i) + 0x148)
-/* SPI_DMA_OUT_STATUS : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: spi dma read data from memory status.*/
-#define SPI_DMA_OUT_STATUS  0xFFFFFFFF
-#define SPI_DMA_OUT_STATUS_M  ((SPI_DMA_OUT_STATUS_V)<<(SPI_DMA_OUT_STATUS_S))
-#define SPI_DMA_OUT_STATUS_V  0xFFFFFFFF
-#define SPI_DMA_OUT_STATUS_S  0
+#define SPI_DMA_OUTSTATUS_REG(i)          (REG_SPI_BASE(i) + 0x148)
+/* SPI_DMA_OUTFIFO_EMPTY : RO ;bitpos:[31] ;default: 1'b1 ; */
+/*description: SPI dma outfifo is empty.*/
+#define SPI_DMA_OUTFIFO_EMPTY  (BIT(31))
+#define SPI_DMA_OUTFIFO_EMPTY_M  (BIT(31))
+#define SPI_DMA_OUTFIFO_EMPTY_V  0x1
+#define SPI_DMA_OUTFIFO_EMPTY_S  31
+/* SPI_DMA_OUTFIFO_FULL : RO ;bitpos:[30] ;default: 1'b0 ; */
+/*description: SPI dma outfifo is full.*/
+#define SPI_DMA_OUTFIFO_FULL  (BIT(30))
+#define SPI_DMA_OUTFIFO_FULL_M  (BIT(30))
+#define SPI_DMA_OUTFIFO_FULL_V  0x1
+#define SPI_DMA_OUTFIFO_FULL_S  30
+/* SPI_DMA_OUTFIFO_CNT : RO ;bitpos:[29:23] ;default: 7'b0 ; */
+/*description: The remains of SPI dma outfifo data.*/
+#define SPI_DMA_OUTFIFO_CNT  0x0000007F
+#define SPI_DMA_OUTFIFO_CNT_M  ((SPI_DMA_OUTFIFO_CNT_V)<<(SPI_DMA_OUTFIFO_CNT_S))
+#define SPI_DMA_OUTFIFO_CNT_V  0x7F
+#define SPI_DMA_OUTFIFO_CNT_S  23
+/* SPI_DMA_OUT_STATE : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: SPI dma out data state.*/
+#define SPI_DMA_OUT_STATE  0x00000007
+#define SPI_DMA_OUT_STATE_M  ((SPI_DMA_OUT_STATE_V)<<(SPI_DMA_OUT_STATE_S))
+#define SPI_DMA_OUT_STATE_V  0x7
+#define SPI_DMA_OUT_STATE_S  20
+/* SPI_DMA_OUTDSCR_STATE : RO ;bitpos:[19:18] ;default: 2'b0 ; */
+/*description: SPI dma out descriptor state.*/
+#define SPI_DMA_OUTDSCR_STATE  0x00000003
+#define SPI_DMA_OUTDSCR_STATE_M  ((SPI_DMA_OUTDSCR_STATE_V)<<(SPI_DMA_OUTDSCR_STATE_S))
+#define SPI_DMA_OUTDSCR_STATE_V  0x3
+#define SPI_DMA_OUTDSCR_STATE_S  18
+/* SPI_DMA_OUTDSCR_ADDR : RO ;bitpos:[17:0] ;default: 18'b0 ; */
+/*description: SPI dma out descriptor address.*/
+#define SPI_DMA_OUTDSCR_ADDR  0x0003FFFF
+#define SPI_DMA_OUTDSCR_ADDR_M  ((SPI_DMA_OUTDSCR_ADDR_V)<<(SPI_DMA_OUTDSCR_ADDR_S))
+#define SPI_DMA_OUTDSCR_ADDR_V  0x3FFFF
+#define SPI_DMA_OUTDSCR_ADDR_S  0
 
-#define SPI_DMA_TSTATUS_REG(i)          (REG_SPI_BASE(i) + 0x14C)
-/* SPI_DMA_IN_STATUS : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: spi dma write data to memory status.*/
-#define SPI_DMA_IN_STATUS  0xFFFFFFFF
-#define SPI_DMA_IN_STATUS_M  ((SPI_DMA_IN_STATUS_V)<<(SPI_DMA_IN_STATUS_S))
-#define SPI_DMA_IN_STATUS_V  0xFFFFFFFF
-#define SPI_DMA_IN_STATUS_S  0
+#define SPI_DMA_INSTATUS_REG(i)          (REG_SPI_BASE(i) + 0x14C)
+/* SPI_DMA_INFIFO_EMPTY : RO ;bitpos:[31] ;default: 1'b1 ; */
+/*description: SPI dma infifo is empty.*/
+#define SPI_DMA_INFIFO_EMPTY  (BIT(31))
+#define SPI_DMA_INFIFO_EMPTY_M  (BIT(31))
+#define SPI_DMA_INFIFO_EMPTY_V  0x1
+#define SPI_DMA_INFIFO_EMPTY_S  31
+/* SPI_DMA_INFIFO_FULL : RO ;bitpos:[30] ;default: 1'b0 ; */
+/*description: SPI dma infifo is full.*/
+#define SPI_DMA_INFIFO_FULL  (BIT(30))
+#define SPI_DMA_INFIFO_FULL_M  (BIT(30))
+#define SPI_DMA_INFIFO_FULL_V  0x1
+#define SPI_DMA_INFIFO_FULL_S  30
+/* SPI_DMA_INFIFO_CNT : RO ;bitpos:[29:23] ;default: 7'b0 ; */
+/*description: The remains of SPI dma infifo data.*/
+#define SPI_DMA_INFIFO_CNT  0x0000007F
+#define SPI_DMA_INFIFO_CNT_M  ((SPI_DMA_INFIFO_CNT_V)<<(SPI_DMA_INFIFO_CNT_S))
+#define SPI_DMA_INFIFO_CNT_V  0x7F
+#define SPI_DMA_INFIFO_CNT_S  23
+/* SPI_DMA_IN_STATE : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: SPI dma in data state.*/
+#define SPI_DMA_IN_STATE  0x00000007
+#define SPI_DMA_IN_STATE_M  ((SPI_DMA_IN_STATE_V)<<(SPI_DMA_IN_STATE_S))
+#define SPI_DMA_IN_STATE_V  0x7
+#define SPI_DMA_IN_STATE_S  20
+/* SPI_DMA_INDSCR_STATE : RO ;bitpos:[19:18] ;default: 2'b0 ; */
+/*description: SPI dma in descriptor state.*/
+#define SPI_DMA_INDSCR_STATE  0x00000003
+#define SPI_DMA_INDSCR_STATE_M  ((SPI_DMA_INDSCR_STATE_V)<<(SPI_DMA_INDSCR_STATE_S))
+#define SPI_DMA_INDSCR_STATE_V  0x3
+#define SPI_DMA_INDSCR_STATE_S  18
+/* SPI_DMA_INDSCR_ADDR : RO ;bitpos:[17:0] ;default: 18'b0 ; */
+/*description: SPI dma in descriptor address.*/
+#define SPI_DMA_INDSCR_ADDR  0x0003FFFF
+#define SPI_DMA_INDSCR_ADDR_M  ((SPI_DMA_INDSCR_ADDR_V)<<(SPI_DMA_INDSCR_ADDR_S))
+#define SPI_DMA_INDSCR_ADDR_V  0x3FFFF
+#define SPI_DMA_INDSCR_ADDR_S  0
 
 #define SPI_DATE_REG(i)          (REG_SPI_BASE(i) + 0x3FC)
-/* SPI_DATE : RO ;bitpos:[27:0] ;default: 32'h1604270 ; */
+/* SPI_DATE : RO ;bitpos:[27:0] ;default: 32'h1702100 ; */
 /*description: SPI register version.*/
 #define SPI_DATE  0x0FFFFFFF
 #define SPI_DATE_M  ((SPI_DATE_V)<<(SPI_DATE_S))
 #define SPI_DATE_V  0xFFFFFFF
 #define SPI_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 
-#endif /*__SPI_REG_H__ */
+#endif /*_SOC_SPI_REG_H_ */
 
 

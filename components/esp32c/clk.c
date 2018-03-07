@@ -44,7 +44,9 @@ static void select_rtc_slow_clk(rtc_slow_freq_t slow_clk);
 
 // g_ticks_us defined in ROMs for PRO and APP CPU
 extern uint32_t g_ticks_per_us_pro;
+#if !CONFIG_FREERTOS_UNICORE
 extern uint32_t g_ticks_per_us_app;
+#endif //!CONFIG_FREERTOS_UNICORE
 
 static const char* TAG = "clk";
 
@@ -121,7 +123,9 @@ void IRAM_ATTR ets_update_cpu_frequency(uint32_t ticks_per_us)
 {
     /* Update scale factors used by ets_delay_us */
     g_ticks_per_us_pro = ticks_per_us;
+#if !CONFIG_FREERTOS_UNICORE
     g_ticks_per_us_app = ticks_per_us;
+#endif //!CONFIG_FREERTOS_UNICORE
 }
 
 static void select_rtc_slow_clk(rtc_slow_freq_t slow_clk)

@@ -198,6 +198,20 @@ void esp_sha_unlock_engine(esp_sha_type sha_type)
     _lock_release(&engine->lock);
 }
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+void ets_sha_enable()
+{
+    DPORT_REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
+    DPORT_REG_CLR_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
+}
+
+void ets_sha_disable()
+{
+    DPORT_REG_SET_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
+    DPORT_REG_CLR_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
+}
+#endif
+
 void esp_sha_wait_idle(void)
 {
     while(1) {

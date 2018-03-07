@@ -89,13 +89,19 @@ esp_err_t bootloader_init()
     /* completely reset MMU for both CPUs
        (in case serial bootloader was running) */
     Cache_Read_Disable(0);
+#if !CONFIG_FREERTOS_UNICORE
     Cache_Read_Disable(1);
+#endif
     Cache_Flush(0);
+#if !CONFIG_FREERTOS_UNICORE
     Cache_Flush(1);
+#endif
     mmu_init(0);
+#if !CONFIG_FREERTOS_UNICORE
     DPORT_REG_SET_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MMU_IA_CLR);
     mmu_init(1);
     DPORT_REG_CLR_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MMU_IA_CLR);
+#endif
     /* (above steps probably unnecessary for most serial bootloader
        usage, all that's absolutely needed is that we unmask DROM0
        cache on the following two lines - normal ROM boot exits with
@@ -107,7 +113,9 @@ esp_err_t bootloader_init()
        necessary to work around a hardware bug.
     */
     DPORT_REG_CLR_BIT(DPORT_PRO_CACHE_CTRL1_REG, DPORT_PRO_CACHE_MASK_DROM0);
+#if !CONFIG_FREERTOS_UNICORE
     DPORT_REG_CLR_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DROM0);
+#endif
 
     if(bootloader_main() != ESP_OK){
         return ESP_FAIL;
@@ -443,9 +451,17 @@ static void uart_console_configure(void)
 
 static void wdt_reset_cpu0_info_enable(void)
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     //We do not reset core1 info here because it didn't work before cpu1 was up. So we put it into call_start_cpu1.
     DPORT_REG_SET_BIT(DPORT_PRO_CPU_RECORD_CTRL_REG, DPORT_PRO_CPU_PDEBUG_ENABLE | DPORT_PRO_CPU_RECORD_ENABLE);
     DPORT_REG_CLR_BIT(DPORT_PRO_CPU_RECORD_CTRL_REG, DPORT_PRO_CPU_RECORD_ENABLE);
+#else
+#include "soc/assist_debug_reg.h"
+    DPORT_REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_ASSIST_DEBUG);
+    DPORT_REG_CLR_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_ASSIST_DEBUG);
+    REG_WRITE(ASSIST_DEBUG_PRO_PDEBUGENABLE, 1);
+    REG_WRITE(ASSIST_DEBUG_PRO_RCD_RECORDING, 1);
+#endif
 }
 
 static void wdt_reset_info_dump(int cpu)
@@ -454,6 +470,7 @@ static void wdt_reset_info_dump(int cpu)
              lsstat = 0, lsaddr = 0, lsdata = 0, dstat = 0;
     const char *cpu_name = cpu ? "APP" : "PRO";
 
+#ifdef CONFIG_CHIP_IS_ESP32
     if (cpu == 0) {
         stat    = DPORT_REG_READ(DPORT_PRO_CPU_RECORD_STATUS_REG);
         pid     = DPORT_REG_READ(DPORT_PRO_CPU_RECORD_PID_REG);
@@ -466,6 +483,7 @@ static void wdt_reset_info_dump(int cpu)
         lsdata  = DPORT_REG_READ(DPORT_PRO_CPU_RECORD_PDEBUGLS0DATA_REG);
 
     } else {
+#if !CONFIG_FREERTOS_UNICORE
         stat    = DPORT_REG_READ(DPORT_APP_CPU_RECORD_STATUS_REG);
         pid     = DPORT_REG_READ(DPORT_APP_CPU_RECORD_PID_REG);
         inst    = DPORT_REG_READ(DPORT_APP_CPU_RECORD_PDEBUGINST_REG);
@@ -475,7 +493,24 @@ static void wdt_reset_info_dump(int cpu)
         lsstat  = DPORT_REG_READ(DPORT_APP_CPU_RECORD_PDEBUGLS0STAT_REG);
         lsaddr  = DPORT_REG_READ(DPORT_APP_CPU_RECORD_PDEBUGLS0ADDR_REG);
         lsdata  = DPORT_REG_READ(DPORT_APP_CPU_RECORD_PDEBUGLS0DATA_REG);
+#else
+        ESP_LOGE(TAG, "WDT reset info: &s CPU not support!\n", cpu_name);
+        return;
+#endif
     }
+
+#else
+        stat    = 0xdeadbeef;
+        pid     = REG_READ(ASSIST_DEBUG_PRO_RCD_PID);
+        inst    = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGINST);
+        dstat   = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGSTATUS);
+        data    = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGDATA);
+        pc      = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGPC);
+        lsstat  = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGLS0STAT);
+        lsaddr  = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGLS0ADDR);
+        lsdata  = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGLS0DATA);
+#endif/* CONFIG_CHIP_IS_ESP32 */
+
     if (DPORT_RECORD_PDEBUGINST_SZ(inst) == 0 &&
         DPORT_RECORD_PDEBUGSTATUS_BBCAUSE(dstat) == DPORT_RECORD_PDEBUGSTATUS_BBCAUSE_WAITI) {
         ESP_LOGW(TAG, "WDT reset info: %s CPU PC=0x%x (waiti mode)", cpu_name, pc);
@@ -513,7 +548,9 @@ static void wdt_reset_check(void)
     if (wdt_rst) {
         // if reset by WDT dump info from trace port
         wdt_reset_info_dump(0);
+#ifdef CONFIG_CHIP_IS_ESP32
         wdt_reset_info_dump(1);
+#endif
     }
     wdt_reset_cpu0_info_enable();
 }

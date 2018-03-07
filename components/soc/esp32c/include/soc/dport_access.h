@@ -61,6 +61,7 @@ extern "C" {
 // Write value to DPORT register (does not require protecting)
 #define DPORT_REG_WRITE(_r, _v)   _DPORT_REG_WRITE((_r), (_v))
 
+#ifdef CONFIG_CHIP_IS_ESP32
 /**
  * @brief Read value from register, SMP-safe version.
  *
@@ -112,6 +113,11 @@ static inline uint32_t IRAM_ATTR DPORT_SEQUENCE_REG_READ(uint32_t reg)
     return esp_dport_access_sequence_reg_read(reg);
 #endif
 }
+#else
+//esp32c do not has this bug, and esp32c is single core chip
+#define DPORT_REG_READ(_r)    _DPORT_REG_READ(_r)
+#define DPORT_SEQUENCE_REG_READ(_r)    _DPORT_REG_READ(_r)
+#endif
 
 //get bit or get bits from register
 #define DPORT_REG_GET_BIT(_r, _b)  (DPORT_REG_READ(_r) & (_b))
@@ -155,6 +161,7 @@ static inline uint32_t IRAM_ATTR DPORT_SEQUENCE_REG_READ(uint32_t reg)
 #define _DPORT_REG_SET_BIT(_r, _b)  _DPORT_REG_WRITE((_r), (_DPORT_REG_READ(_r)|(_b)))
 #define _DPORT_REG_CLR_BIT(_r, _b)  _DPORT_REG_WRITE((_r), (_DPORT_REG_READ(_r) & (~(_b))))
 
+#ifdef CONFIG_CHIP_IS_ESP32
 /**
  * @brief Read value from register, SMP-safe version.
  *
@@ -172,6 +179,10 @@ static inline uint32_t IRAM_ATTR DPORT_READ_PERI_REG(uint32_t reg)
     return esp_dport_access_reg_read(reg);
 #endif
 }
+#else
+//esp32c do not has this bug, and esp32c is single core chip
+#define DPORT_READ_PERI_REG(addr)       _DPORT_READ_PERI_REG(addr)
+#endif
 
 //write value to register
 #define DPORT_WRITE_PERI_REG(addr, val) _DPORT_WRITE_PERI_REG((addr), (val))

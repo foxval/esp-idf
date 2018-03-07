@@ -18,7 +18,7 @@ LINKER_SCRIPTS := \
 	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.ld \
 	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.spiram_incompatible_fns.ld \
 	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.peripherals.ld \
-	esp32.bootloader.rom.ld
+	$(CHIP_NAME).bootloader.rom.ld
 
 ifndef CONFIG_SPI_FLASH_ROM_DRIVER_PATCH
 LINKER_SCRIPTS += $(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.spiflash.ld

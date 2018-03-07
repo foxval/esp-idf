@@ -245,7 +245,9 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
         esp_spiram_writeback_cache();
 #endif
         Cache_Flush(0);
+#ifndef CONFIG_FREERTOS_UNICORE
         Cache_Flush(1);
+#endif
     }
 
     spi_flash_enable_interrupts_caches_and_other_cpu();

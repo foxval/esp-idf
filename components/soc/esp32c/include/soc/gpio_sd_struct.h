@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_GPIO_SD_STRUCT_H_
 #define _SOC_GPIO_SD_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -21,9 +20,9 @@ extern "C" {
 typedef volatile struct {
     union {
         struct {
-            uint32_t duty:        8;
-            uint32_t prescale:    8;
-            uint32_t reserved16: 16;
+            uint32_t duty:         8;
+            uint32_t prescale:     8;
+            uint32_t reserved16:  16;
         };
         uint32_t val;
     } channel[8];
@@ -36,7 +35,8 @@ typedef volatile struct {
     } cg;
     union {
         struct {
-            uint32_t reserved0: 31;
+            uint32_t reserved0: 30;
+            uint32_t sd_clk_en:  1;
             uint32_t spi_swap:   1;
         };
         uint32_t val;
@@ -50,7 +50,6 @@ typedef volatile struct {
     } version;
 } gpio_sd_dev_t;
 extern gpio_sd_dev_t SIGMADELTA;
-
 #ifdef __cplusplus
 }
 #endif

@@ -14,6 +14,10 @@
 #ifndef _SOC_GPIO_SD_REG_H_
 #define _SOC_GPIO_SD_REG_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define GPIO_SIGMADELTA0_REG          (DR_REG_GPIO_SD_BASE + 0x0000)
 /* GPIO_SD0_PRESCALE : R/W ;bitpos:[15:8] ;default: 8'hff ; */
@@ -142,16 +146,24 @@
 #define GPIO_SPI_SWAP_M  (BIT(31))
 #define GPIO_SPI_SWAP_V  0x1
 #define GPIO_SPI_SWAP_S  31
+/* GPIO_SD_CLK_EN : R/W ;bitpos:[30] ;default: 1'd0 ; */
+/*description: */
+#define GPIO_SD_FUNC_CLK_EN  (BIT(30))
+#define GPIO_SD_FUNC_CLK_EN_M  (BIT(30))
+#define GPIO_SD_FUNC_CLK_EN_V  0x1
+#define GPIO_SD_FUNC_CLK_EN_S  30
 
 #define GPIO_SIGMADELTA_VERSION_REG          (DR_REG_GPIO_SD_BASE + 0x0028)
-/* GPIO_SD_DATE : R/W ;bitpos:[27:0] ;default: 28'h1506190 ; */
+/* GPIO_SD_DATE : R/W ;bitpos:[27:0] ;default: 28'h1704130 ; */
 /*description: */
 #define GPIO_SD_DATE  0x0FFFFFFF
 #define GPIO_SD_DATE_M  ((GPIO_SD_DATE_V)<<(GPIO_SD_DATE_S))
 #define GPIO_SD_DATE_V  0xFFFFFFF
 #define GPIO_SD_DATE_S  0
-#define SIGMADELTA_GPIO_SD_DATE_VERSION 0x1506190
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

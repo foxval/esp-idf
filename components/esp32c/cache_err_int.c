@@ -51,6 +51,7 @@ void esp_cache_err_int_init()
     // interrupt is connected to PRO CPU and invalid access happens on the APP
     // CPU.
 
+#ifdef CONFIG_CHIP_IS_ESP32
     if (core_id == PRO_CPU_NUM) {
         DPORT_SET_PERI_REG_MASK(DPORT_CACHE_IA_INT_EN_REG,
             DPORT_CACHE_IA_INT_PRO_OPPOSITE |
@@ -68,12 +69,22 @@ void esp_cache_err_int_init()
             DPORT_CACHE_IA_INT_APP_IRAM0 |
             DPORT_CACHE_IA_INT_APP_IRAM1);
     }
+#else
+    DPORT_SET_PERI_REG_MASK(DPORT_PRO_CACHE_IA_INT_EN_REG,
+        DPORT_CACHE_IA_INT_PRO_OPPOSITE |
+        DPORT_CACHE_IA_INT_PRO_DRAM1 |
+        DPORT_CACHE_IA_INT_PRO_DROM0 |
+        DPORT_CACHE_IA_INT_PRO_IROM0 |
+        DPORT_CACHE_IA_INT_PRO_IRAM0 |
+        DPORT_CACHE_IA_INT_PRO_IRAM1);
+#endif
     ESP_INTR_ENABLE(ETS_CACHEERR_INUM);
 }
 
 int IRAM_ATTR esp_cache_err_get_cpuid()
 {
     esp_dport_access_int_pause();
+#ifdef CONFIG_CHIP_IS_ESP32
     const uint32_t pro_mask =
             DPORT_PRO_CPU_DISABLED_CACHE_IA_DRAM1 |
             DPORT_PRO_CPU_DISABLED_CACHE_IA_DROM0 |
@@ -97,5 +108,9 @@ int IRAM_ATTR esp_cache_err_get_cpuid()
     if (DPORT_GET_PERI_REG_MASK(DPORT_APP_DCACHE_DBUG3_REG, app_mask)) {
         return APP_CPU_NUM;
     }
+#else
+    //FIXME: ESP32C only have one core, what about the new chips?
+    return PRO_CPU_NUM;
+#endif
     return -1;
 }

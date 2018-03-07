@@ -48,7 +48,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #include "esp_eth.h"
+#endif
 #include "tcpip_adapter.h"
 
 /* Define those to better describe your network interface. */
@@ -83,8 +85,10 @@ ethernet_low_level_init(struct netif *netif)
 #endif
 #endif
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #ifndef CONFIG_EMAC_L2_TO_L3_RX_BUF_MODE
   netif->l2_buffer_free_notify = esp_eth_free_rx_buf;
+#endif
 #endif
 }
 
@@ -130,12 +134,21 @@ ethernet_low_level_output(struct netif *netif, struct pbuf *p)
     }
   }
 
+#ifdef CONFIG_CHIP_IS_ESP32
   return esp_eth_tx(q->payload, pbuf_x_len);
 #else
+  return ERR_IF;
+#endif
+
+#else
+#ifdef CONFIG_CHIP_IS_ESP32
   for(q = p; q != NULL; q = q->next) {
     return esp_emac_tx(q->payload, q->len);
   }
   return ERR_OK;
+#else
+  return ERR_IF;
+#endif
 #endif
 }
 
@@ -161,10 +174,12 @@ ethernetif_input(struct netif *netif, void *buffer, uint16_t len)
   struct pbuf *p;
 
   if(buffer== NULL || !netif_is_up(netif)) {
+#ifdef CONFIG_CHIP_IS_ESP32
 #ifndef CONFIG_EMAC_L2_TO_L3_RX_BUF_MODE
     if (buffer) {
       esp_eth_free_rx_buf(buffer);
     }
+#endif
 #endif
     return;
   }
@@ -186,7 +201,9 @@ if (netif->input(p, netif) != ERR_OK) {
 #else
   p = pbuf_alloc(PBUF_RAW, len, PBUF_REF);
   if (p == NULL){
+#ifdef CONFIG_CHIP_IS_ESP32
     esp_eth_free_rx_buf(buffer);
+#endif
     return;
   }
   p->payload = buffer;

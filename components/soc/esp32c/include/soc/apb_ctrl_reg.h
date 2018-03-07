@@ -14,6 +14,10 @@
 #ifndef _SOC_APB_CTRL_REG_H_
 #define _SOC_APB_CTRL_REG_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define APB_CTRL_SYSCLK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x0)
 /* APB_CTRL_QUICK_CLK_CHNG : R/W ;bitpos:[13] ;default: 1'b1 ; */
@@ -155,6 +159,24 @@
 #define APB_CTRL_SARADC_START_FORCE_S  0
 
 #define APB_CTRL_APB_SARADC_CTRL2_REG          (DR_REG_APB_CTRL_BASE + 0x14)
+/* APB_CTRL_SARADC_TIMER_EN : R/W ;bitpos:[20] ;default: 1'd0 ; */
+/*description: to enable saradc timer trigger*/
+#define APB_CTRL_SARADC_TIMER_EN  (BIT(20))
+#define APB_CTRL_SARADC_TIMER_EN_M  (BIT(20))
+#define APB_CTRL_SARADC_TIMER_EN_V  0x1
+#define APB_CTRL_SARADC_TIMER_EN_S  20
+/* APB_CTRL_SARADC_TIMER_TARGET : R/W ;bitpos:[19:12] ;default: 8'd10 ; */
+/*description: to set saradc timer target*/
+#define APB_CTRL_SARADC_TIMER_TARGET  0x000000FF
+#define APB_CTRL_SARADC_TIMER_TARGET_M  ((APB_CTRL_SARADC_TIMER_TARGET_V)<<(APB_CTRL_SARADC_TIMER_TARGET_S))
+#define APB_CTRL_SARADC_TIMER_TARGET_V  0xFF
+#define APB_CTRL_SARADC_TIMER_TARGET_S  12
+/* APB_CTRL_SARADC_TIMER_SEL : R/W ;bitpos:[11] ;default: 1'd0 ; */
+/*description: 1: select saradc timer 0: i2s_ws trigger*/
+#define APB_CTRL_SARADC_TIMER_SEL  (BIT(11))
+#define APB_CTRL_SARADC_TIMER_SEL_M  (BIT(11))
+#define APB_CTRL_SARADC_TIMER_SEL_V  0x1
+#define APB_CTRL_SARADC_TIMER_SEL_S  11
 /* APB_CTRL_SARADC_SAR2_INV : R/W ;bitpos:[10] ;default: 1'd0 ; */
 /*description: 1: data to DIG ADC2 CTRL is inverted  otherwise not*/
 #define APB_CTRL_SARADC_SAR2_INV  (BIT(10))
@@ -279,13 +301,16 @@
 #define APB_CTRL_APLL_TICK_NUM_S  0
 
 #define APB_CTRL_DATE_REG          (DR_REG_APB_CTRL_BASE + 0x7C)
-/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h16042000 ; */
+/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h1704131 ; */
 /*description: */
 #define APB_CTRL_DATE  0xFFFFFFFF
 #define APB_CTRL_DATE_M  ((APB_CTRL_DATE_V)<<(APB_CTRL_DATE_S))
 #define APB_CTRL_DATE_V  0xFFFFFFFF
 #define APB_CTRL_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

@@ -1,4 +1,5 @@
 menu Ethernet
+    depends on CHIP_IS_ESP32
 
 config DMA_RX_BUF_NUM
     int "Number of DMA RX buffers"

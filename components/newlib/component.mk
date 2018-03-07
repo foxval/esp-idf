@@ -6,9 +6,17 @@ LIBM_PATH := $(COMPONENT_PATH)/lib/libm-psram-workaround.a
 else
 
 ifdef CONFIG_NEWLIB_NANO_FORMAT
+ifdef CONFIG_CHIP_IS_ESP32
 LIBC_PATH := $(COMPONENT_PATH)/lib/libc_nano.a
+else # esp32c do not have a nano lib by now
+LIBC_PATH := $(COMPONENT_PATH)/lib/libc_esp32c.a
+endif
 else
+ifdef CONFIG_CHIP_IS_ESP32
 LIBC_PATH := $(COMPONENT_PATH)/lib/libc.a
+else
+LIBC_PATH := $(COMPONENT_PATH)/lib/libc_esp32c.a
+endif
 endif  # CONFIG_NEWLIB_NANO_FORMAT
 
 LIBM_PATH := $(COMPONENT_PATH)/lib/libm.a
