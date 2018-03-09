@@ -93,30 +93,25 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFDA000, 0x2000, 0, 0}, //pool 10-13, mmu page 13
     { 0x3FFDC000, 0x2000, 0, 0}, //pool 10-13, mmu page 14
     { 0x3FFDE000, 0x2000, 0, 0}, //pool 10-13, mmu page 15
-    { 0x3FFE0000, 0x4000, 1, 0x400BC000}, //pool 9 blk 1
-    { 0x3FFE4000, 0x4000, 1, 0x400B8000}, //pool 9 blk 0
-    { 0x3FFE8000, 0x8000, 1, 0x400B0000}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x3FFF0000, 0x8000, 1, 0x400A8000}, //pool 7 <- can be used for MAC dump
-    { 0x3FFF8000, 0x4000, 1, 0x400A4000}, //pool 6 blk 1 <- can be used as trace memory
-    { 0x3FFFC000, 0x4000, 1, 0x400A0000}, //pool 6 blk 0 <- can be used as trace memory
+    { 0x3FFE0000, 0x4000, 1, 0x400AC000}, //pool 9 blk 1
+    { 0x3FFE4000, 0x4000, 1, 0x400A8000}, //pool 9 blk 0
+    { 0x3FFE8000, 0x8000, 1, 0x400A0000}, //pool 8 <- can be remapped to ROM, used for MAC dump
+    { 0x3FFF0000, 0x8000, 1, 0x40098000}, //pool 7 <- can be used for MAC dump
+    { 0x3FFF8000, 0x4000, 1, 0x40094000}, //pool 6 blk 1 <- can be used as trace memory
+    { 0x3FFFC000, 0x4000, 1, 0x40090000}, //pool 6 blk 0 <- can be used as trace memory
     { 0x40070000, 0x8000, 2, 0}, //pool 0
-    { 0x40078000, 0x8000, 2, 0}, //pool 1
-    { 0x40080000, 0x2000, 2, 0}, //pool 2-5, mmu page 0
-    { 0x40082000, 0x2000, 2, 0}, //pool 2-5, mmu page 1
-    { 0x40084000, 0x2000, 2, 0}, //pool 2-5, mmu page 2
-    { 0x40086000, 0x2000, 2, 0}, //pool 2-5, mmu page 3
-    { 0x40088000, 0x2000, 2, 0}, //pool 2-5, mmu page 4
-    { 0x4008A000, 0x2000, 2, 0}, //pool 2-5, mmu page 5
-    { 0x4008C000, 0x2000, 2, 0}, //pool 2-5, mmu page 6
-    { 0x4008E000, 0x2000, 2, 0}, //pool 2-5, mmu page 7
-    { 0x40090000, 0x2000, 2, 0}, //pool 2-5, mmu page 8
-    { 0x40092000, 0x2000, 2, 0}, //pool 2-5, mmu page 9
-    { 0x40094000, 0x2000, 2, 0}, //pool 2-5, mmu page 10
-    { 0x40096000, 0x2000, 2, 0}, //pool 2-5, mmu page 11
-    { 0x40098000, 0x2000, 2, 0}, //pool 2-5, mmu page 12
-    { 0x4009A000, 0x2000, 2, 0}, //pool 2-5, mmu page 13
-    { 0x4009C000, 0x2000, 2, 0}, //pool 2-5, mmu page 14
-    { 0x4009E000, 0x2000, 2, 0}, //pool 2-5, mmu page 15
+    { 0x40078000, 0x2000, 2, 0}, //pool 2-4, mmu page 0 
+    { 0x4007A000, 0x2000, 2, 0}, //pool 2-4, mmu page 1
+    { 0x4007C000, 0x2000, 2, 0}, //pool 2-4, mmu page 2
+    { 0x4007E000, 0x2000, 2, 0}, //pool 2-4, mmu page 3
+    { 0x40080000, 0x2000, 2, 0}, //pool 2-4, mmu page 4
+    { 0x40082000, 0x2000, 2, 0}, //pool 2-4, mmu page 5
+    { 0x40084000, 0x2000, 2, 0}, //pool 2-4, mmu page 6
+    { 0x40086000, 0x2000, 2, 0}, //pool 2-4, mmu page 7
+    { 0x40088000, 0x2000, 2, 0}, //pool 2-4, mmu page 8
+    { 0x4008A000, 0x2000, 2, 0}, //pool 2-4, mmu page 9
+    { 0x4008C000, 0x2000, 2, 0}, //pool 2-4, mmu page 10
+    { 0x4008E000, 0x2000, 2, 0}, //pool 2-4, mmu page 11
 };
 
 const size_t soc_memory_region_count = sizeof(soc_memory_regions)/sizeof(soc_memory_region_t);
@@ -151,9 +146,9 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 
 #if CONFIG_BT_ENABLED
     { 0x3ffb0000, 0x3ffc0000 }, //Reserve BT hardware shared memory & BT data region
-    { 0x3ffae000, 0x3ffaff10 }, //Reserve ROM data region, inc region needed for BT ROM routines
+    { 0x3ffae000, 0x3ffb0000 }, //Reserve ROM data region, inc region needed for BT ROM routines
 #else
-    { 0x3ffae000, 0x3ffae6e0 }, //Reserve ROM data region
+    { 0x3ffae000, 0x3ffb0000 }, //Reserve ROM data region
 #endif
 
 #if CONFIG_MEMMAP_TRACEMEM

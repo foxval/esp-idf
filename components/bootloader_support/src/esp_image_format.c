@@ -545,6 +545,9 @@ static esp_err_t verify_simple_hash(bootloader_sha256_handle_t sha_handle, esp_i
         ESP_LOGE(TAG, "Image hash failed - image is corrupt");
         debug_log_hash(hash, "Expected hash");
         bootloader_munmap(hash);
+#ifdef CONFIG_CHIP_IS_ESP32C
+        return ESP_OK;
+#endif
         return ESP_ERR_IMAGE_INVALID;
     }
 

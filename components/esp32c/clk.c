@@ -261,7 +261,7 @@ void esp_perip_clk_init(void)
                         DPORT_I2S1_CLK_EN |
                         DPORT_SPI_DMA_CLK_EN;
 
-#if CONFIG_SPIRAM_SPEED_80M
+#if CONFIG_SPIRAM_SPEED_80M && CONFIG_CHIP_IS_ESP32
 //80MHz SPIRAM uses SPI3 as well; it's initialized before this is called. Because it is used in
 //a weird mode where clock to the peripheral is disabled but reset is also disabled, it 'hangs'
 //in a state where it outputs a continuous 80MHz signal. Mask its bit here because we should

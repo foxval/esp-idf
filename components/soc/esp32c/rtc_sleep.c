@@ -184,7 +184,9 @@ void rtc_sleep_init(rtc_sleep_config_t cfg)
         SET_PERI_REG_MASK(RTC_CNTL_DIG_PWC_REG, RTC_CNTL_DG_WRAP_PD_EN);
         CLEAR_PERI_REG_MASK(RTC_CNTL_DIG_PWC_REG,
                 RTC_CNTL_DG_WRAP_FORCE_PU | RTC_CNTL_DG_WRAP_FORCE_PD);
+#ifdef CONFIG_CHIP_IS_ESP32
         CLEAR_PERI_REG_MASK(RTC_CNTL_OPTIONS0_REG, RTC_CNTL_BIAS_FORCE_NOSLEEP);
+#endif
 
         // Shut down parts of RTC which may have been left enabled by the wireless drivers
         CLEAR_PERI_REG_MASK(RTC_CNTL_ANA_CONF_REG,

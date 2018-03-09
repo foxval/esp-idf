@@ -116,10 +116,17 @@ static void rtc_clk_32k_enable_internal(int dac, int dres, int dbias)
     CLEAR_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG,
             RTC_IO_X32P_RDE | RTC_IO_X32P_RUE | RTC_IO_X32N_RUE |
             RTC_IO_X32N_RDE | RTC_IO_X32N_MUX_SEL | RTC_IO_X32P_MUX_SEL);
+#ifdef CONFIG_CHIP_IS_ESP32
     REG_SET_FIELD(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_DAC_XTAL_32K, dac);
     REG_SET_FIELD(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_DRES_XTAL_32K, dres);
     REG_SET_FIELD(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_DBIAS_XTAL_32K, dbias);
     SET_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_XPD_XTAL_32K);
+#else
+    REG_SET_FIELD(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_DAC_XTAL_32K, dac);
+    REG_SET_FIELD(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_DRES_XTAL_32K, dres);
+    REG_SET_FIELD(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_DBIAS_XTAL_32K, dbias);
+    SET_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_XPD_XTAL_32K);
+#endif
 }
 
 void rtc_clk_32k_enable(bool enable)
@@ -127,7 +134,11 @@ void rtc_clk_32k_enable(bool enable)
     if (enable) {
         rtc_clk_32k_enable_internal(XTAL_32K_DAC_VAL, XTAL_32K_DRES_VAL, XTAL_32K_DBIAS_VAL);
     } else {
+#ifdef CONFIG_CHIP_IS_ESP32
         CLEAR_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_XPD_XTAL_32K);
+#else
+        CLEAR_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_XPD_XTAL_32K);
+#endif
     }
 }
 
@@ -158,7 +169,11 @@ void rtc_clk_32k_bootstrap(uint32_t cycle)
         gpio_output_set_high(0, 0, 0, mask_32 | mask_33); // disable pins
     }
 
+#ifdef CONFIG_CHIP_IS_ESP32
     CLEAR_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_XPD_XTAL_32K);
+#else
+    CLEAR_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_XPD_XTAL_32K);
+#endif
     SET_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_X32P_RUE | RTC_IO_X32N_RDE);
     ets_delay_us(XTAL_32K_BOOTSTRAP_TIME_US);
 
@@ -168,7 +183,11 @@ void rtc_clk_32k_bootstrap(uint32_t cycle)
 
 bool rtc_clk_32k_enabled()
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     return GET_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_XPD_XTAL_32K) != 0;
+#else
+    return GET_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_XPD_XTAL_32K) != 0;
+#endif
 }
 
 void rtc_clk_8m_enable(bool clk_8m_en, bool d256_en)
@@ -275,6 +294,7 @@ rtc_fast_freq_t rtc_clk_fast_freq_get()
     return REG_GET_FIELD(RTC_CNTL_CLK_CONF_REG, RTC_CNTL_FAST_CLK_RTC_SEL);
 }
 
+#ifdef CONFIG_CHIP_IS_ESP32
 void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
 {
     uint8_t div_ref;
@@ -377,6 +397,109 @@ void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
             DELAY_PLL_ENABLE_WITH_150K : DELAY_PLL_ENABLE_WITH_32K;
     ets_delay_us(delay_pll_en);
 }
+#else
+void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
+{
+    uint8_t div_ref;
+    uint8_t div7_0;
+    uint8_t dr1;
+    uint8_t dr3;
+    uint8_t dchgp;
+    uint8_t dcur;
+
+    if (cpu_freq != RTC_CPU_FREQ_240M) {
+        /* Configure 320M PLL */
+        switch (xtal_freq) {
+            case RTC_XTAL_FREQ_40M:
+                div_ref = 0;
+                div7_0 = 4;
+                dr1 = 0;
+                dr3 = 0;
+                dchgp =5;
+                dcur = 4;
+                break;
+            case RTC_XTAL_FREQ_26M:
+                div_ref = 12;
+                div7_0 = 156;
+                dr1 = 3;
+                dr3 = 3;
+                dchgp = 4;
+                dcur = 1;
+                break;
+            case RTC_XTAL_FREQ_24M:
+                div_ref = 11;
+                div7_0 = 156;
+                dr1 = 3;
+                dr3 = 3;
+                dchgp = 4;
+                dcur = 1;
+                break;
+            default:
+                div_ref = 0;
+                div7_0 = 4;
+                dr1 = 0;
+                dr3 = 0;
+                dchgp =5;
+                dcur = 4;
+                break;
+        }
+        I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_MODE_HF, 0);
+        I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_DIV_ADC, 2);
+    } else {
+        /* Raise the voltage */
+        REG_SET_FIELD(RTC_CNTL_REG, RTC_CNTL_DIG_DBIAS_WAK, RTC_CNTL_DBIAS_1V25);
+        ets_delay_us(DELAY_PLL_DBIAS_RAISE);
+        /* Configure 480M PLL */
+        switch (xtal_freq) {
+            case RTC_XTAL_FREQ_40M:
+                div_ref = 0;
+                div7_0 = 8;
+                dr1 = 0;
+                dr3 = 0;
+                dchgp =5;
+                dcur = 5;
+                break;
+            case RTC_XTAL_FREQ_26M:
+                div_ref = 12;
+                div7_0 = 236;
+                dr1 = 3;
+                dr3 = 3;
+                dchgp = 0;
+                dcur = 2;
+                break;
+            case RTC_XTAL_FREQ_24M:
+                div_ref = 11;
+                div7_0 = 236;
+                dr1 = 3;
+                dr3 = 3;
+                dchgp = 0;
+                dcur = 2;
+                break;
+            default:
+                div_ref = 0;
+                div7_0 = 8;
+                dr1 = 0;
+                dr3 = 0;
+                dchgp = 5;
+                dcur = 5;
+                break;
+        }
+        I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_MODE_HF, 1);
+        I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_DIV_ADC, 2);
+    }
+
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_DCUR, dcur);
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_DR1, dr1);
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_DR3, dr3);
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_DCHGP, dchgp);
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_DIV_7_0, div7_0);
+    I2C_WRITEREG_MASK_RTC(I2C_BBPLL, I2C_BBPLL_OC_REF_DIV, div_ref);
+
+    uint32_t delay_pll_en = (rtc_clk_slow_freq_get() == RTC_SLOW_FREQ_RTC) ?
+            DELAY_PLL_ENABLE_WITH_150K : DELAY_PLL_ENABLE_WITH_32K;
+    ets_delay_us(delay_pll_en);
+}
+#endif
 
 /**
  * Switch to XTAL frequency. Does not disable the PLL.
@@ -414,14 +537,23 @@ static void rtc_clk_cpu_freq_to_pll(rtc_cpu_freq_t cpu_freq)
 
     if (cpu_freq == RTC_CPU_FREQ_80M) {
         REG_SET_FIELD(RTC_CNTL_REG, RTC_CNTL_DIG_DBIAS_WAK, DIG_DBIAS_80M_160M);
+#ifdef CONFIG_CHIP_IS_ESP32C
+        DPORT_REG_CLR_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
         DPORT_REG_WRITE(DPORT_CPU_PER_CONF_REG, 0);
         freq = 80;
     } else if (cpu_freq == RTC_CPU_FREQ_160M) {
         REG_SET_FIELD(RTC_CNTL_REG, RTC_CNTL_DIG_DBIAS_WAK, DIG_DBIAS_80M_160M);
+#ifdef CONFIG_CHIP_IS_ESP32C
+        DPORT_REG_CLR_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
         DPORT_REG_WRITE(DPORT_CPU_PER_CONF_REG, 1);
         freq = 160;
     } else if (cpu_freq == RTC_CPU_FREQ_240M) {
         REG_SET_FIELD(RTC_CNTL_REG, RTC_CNTL_DIG_DBIAS_WAK, DIG_DBIAS_240M);
+#ifdef CONFIG_CHIP_IS_ESP32C
+        DPORT_REG_SET_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
         DPORT_REG_WRITE(DPORT_CPU_PER_CONF_REG, 2);
         freq = 240;
     }
@@ -460,6 +592,9 @@ void rtc_clk_cpu_freq_set(rtc_cpu_freq_t cpu_freq)
      */
     rtc_clk_wait_for_slow_cycle();
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+    DPORT_REG_CLR_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
     DPORT_REG_SET_FIELD(DPORT_CPU_PER_CONF_REG, DPORT_CPUPERIOD_SEL, 0);
     SET_PERI_REG_MASK(RTC_CNTL_OPTIONS0_REG,
             RTC_CNTL_BB_I2C_FORCE_PD | RTC_CNTL_BBPLL_FORCE_PD |
@@ -470,8 +605,10 @@ void rtc_clk_cpu_freq_set(rtc_cpu_freq_t cpu_freq)
     /* is APLL under force power down? */
     uint32_t apll_fpd = REG_GET_FIELD(RTC_CNTL_ANA_CONF_REG, RTC_CNTL_PLLA_FORCE_PD);
     if (apll_fpd) {
+#ifdef CONFIG_CHIP_IS_ESP32
         /* then also power down the internal I2C bus */
         SET_PERI_REG_MASK(RTC_CNTL_OPTIONS0_REG, RTC_CNTL_BIAS_I2C_FORCE_PD);
+#endif
     }
     /* now switch to the desired frequency */
     if (cpu_freq == RTC_CPU_FREQ_XTAL) {
@@ -490,14 +627,23 @@ void rtc_clk_cpu_freq_set(rtc_cpu_freq_t cpu_freq)
                 RTC_CNTL_BBPLL_FORCE_PD | RTC_CNTL_BBPLL_I2C_FORCE_PD);
         rtc_clk_bbpll_set(xtal_freq, cpu_freq);
         if (cpu_freq == RTC_CPU_FREQ_80M) {
+#ifdef CONFIG_CHIP_IS_ESP32C
+            DPORT_REG_CLR_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
             DPORT_REG_SET_FIELD(DPORT_CPU_PER_CONF_REG, DPORT_CPUPERIOD_SEL, 0);
             ets_update_cpu_frequency(80);
             s_cur_pll = RTC_PLL_320M;
         } else if (cpu_freq == RTC_CPU_FREQ_160M) {
+#ifdef CONFIG_CHIP_IS_ESP32C
+            DPORT_REG_CLR_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
             DPORT_REG_SET_FIELD(DPORT_CPU_PER_CONF_REG, DPORT_CPUPERIOD_SEL, 1);
             ets_update_cpu_frequency(160);
             s_cur_pll = RTC_PLL_320M;
         } else if (cpu_freq == RTC_CPU_FREQ_240M) {
+#ifdef CONFIG_CHIP_IS_ESP32C
+            DPORT_REG_SET_BIT(DPORT_CPU_PER_CONF_REG, DPORT_PLL_FREQ_SEL);
+#endif
             DPORT_REG_SET_FIELD(DPORT_CPU_PER_CONF_REG, DPORT_CPUPERIOD_SEL, 2);
             ets_update_cpu_frequency(240);
             s_cur_pll = RTC_PLL_480M;
@@ -683,6 +829,12 @@ void rtc_clk_init(rtc_clk_config_t cfg)
     if (REG_GET_FIELD(RTC_CNTL_CLK_CONF_REG, RTC_CNTL_SOC_CLK_SEL) == RTC_CNTL_SOC_CLK_SEL_PLL) {
         rtc_clk_cpu_freq_set(RTC_CPU_FREQ_XTAL);
     }
+
+#ifdef CONFIG_CHIP_IS_ESP32C
+    CLEAR_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_ANA_CLK_DIV_VLD);
+    REG_SET_FIELD(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_ANA_CLK_DIV, 0);
+    SET_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_ANA_CLK_DIV_VLD);
+#endif
 
     /* Set tuning parameters for 8M and 150k clocks.
      * Note: this doesn't attempt to set the clocks to precise frequencies.

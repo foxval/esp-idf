@@ -258,8 +258,13 @@ static inline unsigned portENTER_CRITICAL_NESTED() {
 
 //Because the ROM routines don't necessarily handle a stack in external RAM correctly, we force
 //the stack memory to always be internal.
+#ifdef CONFIG_CHIP_IS_ESP32
 #define pvPortMallocTcbMem(size) heap_caps_malloc(size, MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
 #define pvPortMallocStackMem(size)  heap_caps_malloc(size, MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT)
+#else
+#define pvPortMallocTcbMem(size) malloc(size)
+#define pvPortMallocStackMem(size)  malloc(size)
+#endif
 
 //xTaskCreateStatic uses these functions to check incoming memory.
 #define portVALID_TCB_MEM(ptr) (esp_ptr_internal(ptr) && esp_ptr_byte_accessible(ptr))

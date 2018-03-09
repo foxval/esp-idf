@@ -131,7 +131,7 @@ esp_err_t esp_spiram_add_to_heapalloc()
     ESP_EARLY_LOGI(TAG, "Adding pool of %dK of external SPI memory to heap allocator", CONFIG_SPIRAM_SIZE/1024);
     //Add entire external RAM region to heap allocator. Heap allocator knows the capabilities of this type of memory, so there's
     //no need to explicitly specify them.
-    return heap_caps_add_region((intptr_t)SOC_EXTRAM_DATA_LOW, (intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE-1);
+    return heap_caps_add_region((intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_INSTRUCTION_SIZE, (intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE -1);
 }
 
 
@@ -157,9 +157,13 @@ size_t esp_spiram_get_size()
 */
 void IRAM_ATTR esp_spiram_writeback_cache() 
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     int x;
     volatile int i=0;
     volatile uint8_t *psram=(volatile uint8_t*)SOC_EXTRAM_DATA_LOW;
+#else
+    extern void Cache_WriteBack_Addr(int cpu_no, uint32_t addr, uint32_t size);
+#endif
     int cache_was_disabled=0;
 
     if (!spiram_inited) return;
@@ -177,6 +181,7 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     }
 #endif
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #if CONFIG_FREERTOS_UNICORE
     for (x=0; x<1024*64; x+=32) {
         i+=psram[x];
@@ -190,6 +195,12 @@ void IRAM_ATTR esp_spiram_writeback_cache()
         i+=psram[x];
         i+=psram[x+(1024*1024*2)+(1024*64)]; //address picked to also clear cache of app cpu in low/high mode
     }
+#endif
+#else
+    Cache_WriteBack_Addr(0, 0x3f800000, 0x400000);
+#ifndef CONFIG_FREERTOS_UNICORE
+    Cache_WriteBack_Addr(1, 0x3f800000, 0x400000);
+#endif
 #endif
 
     if (cache_was_disabled&(1<<0)) {
