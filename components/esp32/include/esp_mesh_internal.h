@@ -55,7 +55,7 @@ typedef struct {
 /**
  * @brief     set mesh softAP beacon interval
  *
- * @param     interval  beacon interval(ms)
+ * @param     interval_ms  beacon interval(ms)
  *
  * @return
  *    - ESP_OK
@@ -65,8 +65,6 @@ esp_err_t esp_mesh_set_beacon_interval(int interval_ms);
 
 /**
  * @brief     get mesh softAP beacon interval
- *
- * @param     void
  *
  * @return    beacon interval(ms)
  *
@@ -134,6 +132,26 @@ esp_err_t esp_mesh_print_txQ_waiting(void);
  *    - ESP_FAIL
  */
 esp_err_t esp_mesh_print_rxQ_waiting(void);
+
+/**
+ * @brief     set passive scan time
+ *
+ * @param     interval_ms  passive scan time(ms)
+ *
+ * @return
+ *    - ESP_OK
+ *    - ESP_FAIL
+ *    - ESP_ERR_ARGUMENT
+ */
+esp_err_t esp_mesh_set_passive_scan_time(int time_ms);
+
+/**
+ * @brief     get passive scan time
+ *
+ * @return    interval_ms  passive scan time(ms)
+ */
+int esp_mesh_get_passive_scan_time(void);
+
 
 #ifdef __cplusplus
 }

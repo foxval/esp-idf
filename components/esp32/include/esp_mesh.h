@@ -167,6 +167,10 @@ typedef enum {
     MESH_EVENT_ROOT_SWITCH_ACK,         /**< root switch acknowledgment responds the above request sent from current root */
     MESH_EVENT_ROOT_GOT_IP,             /**< root obtains the IP address. It is posted by LwIP stack automatically */
     MESH_EVENT_ROOT_LOST_IP,            /**< root loses the IP address. It is posted by LwIP stack automatically */
+    MESH_EVENT_ROOT_ASKED_YIELD,        /**< root is asked yield by a more powerful existed root. if self organized is disabled
+                                             and this device is specified to be a root by users, users should set a new parent
+                                             for this device. if self organized is enabled, this device will find a new parent
+                                             by itself, users could ignore this event. */
     MESH_EVENT_MAX,
 } mesh_event_id_t;
 
@@ -207,6 +211,19 @@ typedef enum {
     MESH_VOTE_REASON_CHILD_INITIATED,       /**< vote is initiated by children */
 } mesh_vote_reason_t;
 
+/**
+ * @brief mesh disconnect reason code
+ */
+typedef enum {
+    MESH_REASON_CYCLIC = 100,      /**< cyclic is detected */
+    MESH_REASON_PARENT_IDLE,       /**< parent is idle */
+    MESH_REASON_LEAF,              /**< the connected node is changed to a leaf */
+    MESH_REASON_DIFF_ID,           /**< in different mesh ID */
+    MESH_REASON_ROOTS,             /**< root conflicts is detected */
+    MESH_REASON_PARENT_STOPPED,    /**< parent has stopped the mesh */
+    MESH_REASON_SCAN_FAIL,         /**< scan fail */
+} mesh_disconnect_reason_t;
+
 /*******************************************************
  *                Structures
  *******************************************************/
@@ -237,8 +254,8 @@ typedef struct {
  * @brief parent connected information
  */
 typedef struct {
-    uint8_t self_layer;                     /**< layer */
     system_event_sta_connected_t connected; /**< parent information, same as WiFi event SYSTEM_EVENT_STA_CONNECTED does */
+    uint8_t self_layer;                     /**< layer */
 } mesh_event_connected_t;
 
 /**
@@ -306,6 +323,15 @@ typedef struct {
 } mesh_event_root_switch_req_t;
 
 /**
+ * @brief other powerful root address
+ */
+typedef struct {
+    int8_t rssi;           /**< rssi with router */
+    uint16_t capacity;     /**< the number of nodes in its network */
+    uint8_t addr[6];       /**< other powerful root address */
+} mesh_event_root_conflict_t;
+
+/**
  * @brief mesh event information
  */
 typedef union {
@@ -324,6 +350,7 @@ typedef union {
     mesh_event_root_got_ip_t got_ip;                       /**< root obtains IP address */
     mesh_event_root_address_t root_addr;                   /**< root address */
     mesh_event_root_switch_req_t switch_req;               /**< root switch request */
+    mesh_event_root_conflict_t root_conflict;              /**< other powerful root */
 } mesh_event_info_t;
 
 /**
@@ -1006,6 +1033,35 @@ esp_err_t esp_mesh_set_xon_qsize(int qsize);
  * @return    qsize
  */
 int esp_mesh_get_xon_qsize(void);
+
+/**
+ * @brief     set parent
+ *
+ * @attention This API should be called between esp_mesh_init() and esp_mesh_start().
+ *
+ * @param     parent  make sure parent channel matches the channel set by esp_mesh_set_config()
+ * @param     my_type  MESH_ROOT, MESH_NODE or MESH_LEAF
+ * @param     my_layer  my_layer <= max layer
+ *
+ * @return
+ *    - ESP_OK
+ *    - ESP_FAIL
+ *    - ESP_ERR_NOT_CONFIG
+ *    - ESP_ERR_ARGUMENT
+ */
+esp_err_t esp_mesh_set_parent(wifi_config_t *parent, mesh_type_t my_type, int my_layer);
+
+/**
+ * @brief     set if allow more than one root existing in one network
+ *
+ * @param     allowed  allow or not
+ *
+ * @return
+ *    - ESP_OK
+ *    - ESP_WIFI_ERR_NOT_INIT
+ *    - ESP_WIFI_ERR_NOT_START
+ */
+esp_err_t esp_mesh_set_root_conflicts(const bool allowed);
 
 #ifdef __cplusplus
 }

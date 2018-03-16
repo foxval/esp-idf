@@ -4317,7 +4317,7 @@ esp_err_t mdns_service_add(const char * instance, const char * service, const ch
 
     uint8_t i = 0;
     while (_mdns_get_service_item(service, proto) == NULL && i++ < 200) {
-        vTaskDelay(1);
+        vTaskDelay(1 * portTICK_PERIOD_MS);
     }
     if (i >= 200) {
         return ESP_FAIL;
