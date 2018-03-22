@@ -102,7 +102,6 @@ extern "C" {
 /**
  * @brief mesh error code definition
  */
-#define MESH_FAIL                         (ESP_FAIL)
 #define ESP_ERR_MESH_WIFI_NOT_START       (ESP_ERR_MESH_BASE + 1)    /**< WiFi isn't started */
 #define ESP_ERR_MESH_NOT_INIT             (ESP_ERR_MESH_BASE + 2)    /**< mesh isn't initialized */
 #define ESP_ERR_MESH_NOT_CONFIG           (ESP_ERR_MESH_BASE + 3)    /**< mesh isn't configured */
@@ -167,7 +166,7 @@ typedef enum {
     MESH_EVENT_ROOT_SWITCH_ACK,         /**< root switch acknowledgment responds the above request sent from current root */
     MESH_EVENT_ROOT_GOT_IP,             /**< root obtains the IP address. It is posted by LwIP stack automatically */
     MESH_EVENT_ROOT_LOST_IP,            /**< root loses the IP address. It is posted by LwIP stack automatically */
-    MESH_EVENT_ROOT_ASKED_YIELD,        /**< root is asked yield by a more powerful existed root. if self organized is disabled
+    MESH_EVENT_ROOT_ASKED_YIELD,        /**< root is asked yield by a more powerful existing root. If self organized is disabled
                                              and this device is specified to be a root by users, users should set a new parent
                                              for this device. if self organized is enabled, this device will find a new parent
                                              by itself, users could ignore this event. */
@@ -273,7 +272,7 @@ typedef struct {
 } mesh_event_layer_change_t;
 
 /**
- * @brief to DS(distribute system) state
+ * @brief the reachability of root to a DS(distribute system)
  */
 typedef enum {
     MESH_TODS_UNREACHABLE,    /**< root isn't able to access outside IP network */
@@ -403,7 +402,7 @@ typedef struct {
 typedef struct {
     uint8_t password[64];      /**< mesh softAP password */
     uint8_t max_connection;    /**< max number of stations allowed to connect in, max 10 */
-} mesh_map_cfg_t;
+} mesh_ap_cfg_t;
 
 /**
  * @brief mesh initialization configuration
@@ -413,7 +412,7 @@ typedef struct {
     mesh_event_cb_t event_cb;                   /**< mesh event callback */
     mesh_addr_t mesh_id;                        /**< mesh network identification */
     mesh_router_t router;                       /**< router configuration */
-    mesh_map_cfg_t map;                         /**< map configuration */
+    mesh_ap_cfg_t mesh_ap;                      /**< mesh softAP configuration */
     const mesh_crypto_funcs_t *crypto_funcs;    /**< crypto functions */
 } mesh_cfg_t;
 
@@ -523,6 +522,8 @@ esp_err_t esp_mesh_stop(void);
  * @brief     send a packet over the mesh network
  *            Send a packet to any node in the mesh network.
  *            Send a packet to outside of the mesh network.
+ *
+ * @attention This API is not reentrant.
  *
  * @param     to  the address of the final destination of the packet
  *            (1)if the packet is to root, just set "to" to NULL and set flag to zero.
@@ -638,12 +639,12 @@ esp_err_t esp_mesh_recv_toDS(mesh_addr_t *from, mesh_addr_t *to,
  *            Use MESH_INIT_CONFIG_DEFAULT() to initialize the default values, mesh vendor IE is encrypted by default.
  *            mesh network is established on a fixed channel(1-14).
  *            mesh event callback is mandatory.
- *            mesh ID is mesh network identification. Generally, nodes in same mesh ID could communicate with each other.
+ *            mesh ID is an identifier of an MBSS. Nodes with the same mesh ID can communicate with each other.
  *            Regarding to the router configuration, if the router is hidden, BSSID field is mandatory.
  *            If BSSID field isn't set and there exists more than one router with same SSID, there is a risk that more
  *            roots than one connected with different BSSID will appear. It means more than one mesh network is established
  *            with the same mesh ID.
- *            Root conflict function could eliminate redundant roots connected  with same BSSID, but couldn't handle roots
+ *            Root conflict function could eliminate redundant roots connected with the same BSSID, but couldn't handle roots
  *            connected with different BSSID. Because users might have such requirements of setting up routers with same SSID
  *            for the future replacement. But in that case, if the above situations happen, please make sure applications
  *            implement forward functions on root to guarantee nodes in different mesh network could communicate with each other.
@@ -774,7 +775,7 @@ int esp_mesh_get_max_layer(void);
  *    - ESP_ERR_MESH_ARGUMENT
  *    - ESP_ERR_MESH_NOT_ALLOWED
  */
-esp_err_t esp_mesh_set_map_password(const uint8_t *pwd, const int len);
+esp_err_t esp_mesh_set_ap_password(const uint8_t *pwd, const int len);
 
 /**
  * @brief     set mesh softAP authentication mode value
@@ -788,7 +789,7 @@ esp_err_t esp_mesh_set_map_password(const uint8_t *pwd, const int len);
  *    - ESP_ERR_MESH_ARGUMENT
  *    - ESP_ERR_MESH_NOT_ALLOWED
  */
-esp_err_t esp_mesh_set_map_authmode(const wifi_auth_mode_t authmode);
+esp_err_t esp_mesh_set_ap_authmode(const wifi_auth_mode_t authmode);
 
 /**
  * @brief     get mesh softAP authentication mode
@@ -796,7 +797,7 @@ esp_err_t esp_mesh_set_map_authmode(const wifi_auth_mode_t authmode);
  * @return    authentication mode
  *
  */
-wifi_auth_mode_t esp_mesh_get_map_authmode(void);
+wifi_auth_mode_t esp_mesh_get_ap_authmode(void);
 
 /**
  * @brief     set mesh softAP max connection value
@@ -809,7 +810,7 @@ wifi_auth_mode_t esp_mesh_get_map_authmode(void);
  *    - ESP_OK
  *    - ESP_ERR_MESH_ARGUMENT
  */
-esp_err_t esp_mesh_set_map_connections(const int connections);
+esp_err_t esp_mesh_set_ap_connections(const int connections);
 
 /**
  * @brief     get mesh softAP max connection configuration
@@ -817,7 +818,7 @@ esp_err_t esp_mesh_set_map_connections(const int connections);
  * @return    the number of max connections
  *
  */
-int esp_mesh_get_map_connections(void);
+int esp_mesh_get_ap_connections(void);
 
 /**
  * @brief     get current layer value over the mesh network
@@ -933,18 +934,20 @@ float esp_mesh_get_vote_percentage(void);
  *    - ESP_OK
  *    - ESP_FAIL
  */
-esp_err_t esp_mesh_set_map_assoc_expire(const int seconds);
+esp_err_t esp_mesh_set_ap_assoc_expire(const int seconds);
 
 /**
  * @brief     get mesh softAP associate expired time
  *
  * @return    seconds
  */
-int esp_mesh_get_map_assoc_expire(void);
+int esp_mesh_get_ap_assoc_expire(void);
 
 /**
  * @brief     get total number of nodes over the mesh network(including root)
  *
+ * @attention The returned value might be incorrect when the network is changing.
+ **
  * @return    total number of nodes(including root)
  */
 int esp_mesh_get_total_node_num(void);

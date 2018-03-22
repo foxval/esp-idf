@@ -342,9 +342,9 @@ void app_main(void)
     /*  mesh initialization */
     ESP_ERROR_CHECK(esp_mesh_init());
     ESP_ERROR_CHECK(esp_mesh_set_max_layer(MESH_MAX_LAYER));
-    ESP_ERROR_CHECK(esp_mesh_set_map_authmode(MESH_MAP_AUTHMODE));
+    ESP_ERROR_CHECK(esp_mesh_set_ap_authmode(MESH_MAP_AUTHMODE));
     ESP_ERROR_CHECK(esp_mesh_set_vote_percentage(1));
-    ESP_ERROR_CHECK(esp_mesh_set_map_assoc_expire(10));
+    ESP_ERROR_CHECK(esp_mesh_set_ap_assoc_expire(10));
     mesh_cfg_t cfg = MESH_INIT_CONFIG_DEFAULT();
     /* mesh ID */
     memcpy((uint8_t *) &cfg.mesh_id, MESH_ID, 6);
@@ -358,8 +358,8 @@ void app_main(void)
     memcpy((uint8_t *) &cfg.router.password, MESH_ROUTER_PASSWD,
            strlen(MESH_ROUTER_PASSWD));
     /* map */
-    cfg.map.max_connection = MESH_MAP_CONNECTIONS;
-    memcpy((uint8_t *) &cfg.map.password, MESH_MAP_PASSWD,
+    cfg.mesh_ap.max_connection = MESH_MAP_CONNECTIONS;
+    memcpy((uint8_t *) &cfg.mesh_ap.password, MESH_MAP_PASSWD,
            strlen(MESH_MAP_PASSWD));
     ESP_ERROR_CHECK(esp_mesh_set_config(&cfg));
     /* mesh start */
