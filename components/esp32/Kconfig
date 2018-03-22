@@ -20,13 +20,6 @@ config ESP32_DEFAULT_CPU_FREQ_MHZ
     default 160 if ESP32_DEFAULT_CPU_FREQ_160
     default 240 if ESP32_DEFAULT_CPU_FREQ_240
 
-config MEMMAP_SMP
-    bool "Reserve memory for two cores"
-    default "y"
-    help
-        The ESP32 contains two cores. If you plan to only use one, you can disable this item
-        to save some memory. (ToDo: Make this automatically depend on unicore support)
-
 config SPIRAM_SUPPORT
     bool "Support for external, SPI-connected RAM"
     default "n"
@@ -44,6 +37,15 @@ config SPIRAM_BOOT_INIT
         If this is enabled, the SPI RAM will be enabled during initial boot. Unless you
         have specific requirements, you'll want to leave this enabled so memory allocated
         during boot-up can also be placed in SPI RAM.
+
+config SPIRAM_IGNORE_NOTFOUND
+    bool "Ignore PSRAM when not found"
+    default "n"
+    depends on SPIRAM_BOOT_INIT
+    help
+        Normally, if psram initialization is enabled during compile time but not found at runtime, it
+        is seen as an error making the ESP32 panic. If this is enabled, the ESP32 will keep on
+        running but will not add the (non-existing) RAM to any allocator.
 
 choice SPIRAM_USE
     prompt "SPI RAM access method"
@@ -100,6 +102,7 @@ endchoice
 config SPIRAM_MEMTEST
     bool "Run memory test on SPI RAM initialization"
     default "y"
+    depends on SPIRAM_BOOT_INIT
     help
         Runs a rudimentary memory test on initialization. Aborts when memory test fails. Disable this for
         slightly faster startop.
@@ -187,7 +190,7 @@ config ESP32_TRAX
 config ESP32_TRAX_TWOBANKS
     bool "Reserve memory for tracing both pro as well as app cpu execution"
     default "n"
-    depends on ESP32_TRAX && MEMMAP_SMP
+    depends on ESP32_TRAX && !FREERTOS_UNICORE
     select MEMMAP_TRACEMEM_TWOBANKS
     help
         The ESP32 contains a feature which allows you to trace the execution path the processor
@@ -281,7 +284,7 @@ config SYSTEM_EVENT_QUEUE_SIZE
 
 config SYSTEM_EVENT_TASK_STACK_SIZE
     int "Event loop task stack size"
-    default 2048
+    default 2304
     help
         Config system event task stack size in different application.
 
@@ -696,6 +699,16 @@ config ESP32_RTC_CLK_CAL_CYCLES
 
         - 150000 Hz if internal RC oscillator is used as clock source
         - 32768 Hz if the 32k crystal oscillator is used
+
+config ESP32_RTC_XTAL_BOOTSTRAP_CYCLES
+    int "Bootstrap cycles for external 32kHz crystal"
+    default 100
+    range 0 32768
+    help
+        To reduce the startup time of an external RTC crystal, 
+        we bootstrap it with a 32kHz square wave for a fixed number of cycles. 
+        Setting 0 will disable bootstrapping (if disabled, the crystal may take 
+        longer to start up or fail to oscillate under some conditions).
 
 config ESP32_DEEP_SLEEP_WAKEUP_DELAY
     int "Extra delay in deep sleep wake stub (in us)"

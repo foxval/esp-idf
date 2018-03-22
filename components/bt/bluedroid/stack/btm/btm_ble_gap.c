@@ -2990,6 +2990,8 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
     UINT8               data_len;
 #if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
     BOOLEAN             match = FALSE;
+    BD_ADDR             temp_bda;
+    UINT8               temp_addr_type = 0;
 #endif
 
     /* Only process the results if the inquiry is still active */
@@ -3008,6 +3010,9 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
         //BTM_TRACE_ERROR("btm_ble_process_adv_pkt:bda= %0x:%0x:%0x:%0x:%0x:%0x\n",
         //                              bda[0],bda[1],bda[2],bda[3],bda[4],bda[5]);
 #if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
+        temp_addr_type = addr_type;
+        memcpy(temp_bda, bda, BD_ADDR_LEN);
+        
         /* map address to security record */
         match = btm_identity_addr_to_random_pseudo(bda, &addr_type, FALSE);
 
@@ -3018,8 +3023,16 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
             btm_ble_resolve_random_addr(bda, btm_ble_resolve_random_addr_on_adv, p_data);
         } else
 #endif
-            btm_ble_process_adv_pkt_cont(bda, addr_type, evt_type, p);
-
+        btm_ble_process_adv_pkt_cont(bda, addr_type, evt_type, p);
+#if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
+        //save current adv addr information if p_dev_rec!= NULL
+        tBTM_SEC_DEV_REC *p_dev_rec = btm_find_dev (bda);
+        if(p_dev_rec) {
+            p_dev_rec->ble.current_addr_type = temp_addr_type;
+            memcpy(p_dev_rec->ble.current_addr, temp_bda, BD_ADDR_LEN);
+            p_dev_rec->ble.current_addr_valid = true;
+        }
+#endif
         STREAM_TO_UINT8(data_len, p);
 
         /* Advance to the next event data_len + rssi byte */
@@ -3594,10 +3607,12 @@ void btm_ble_write_adv_enable_complete(UINT8 *p)
         }else {
             p_cb->state = BTM_BLE_ADVERTISING;
             (*p_cb->p_adv_cb)(status);
+            p_cb->p_adv_cb = NULL;
         }
     } else if (p_cb->p_stop_adv_cb && p_cb->adv_mode == BTM_BLE_ADV_DISABLE) {
         p_cb->state = BTM_BLE_STOP_ADV;
         (*p_cb->p_stop_adv_cb)(status);
+        p_cb->p_stop_adv_cb = NULL;
     }else {
         // p_cb->p_adv_cb is NULL or p_cb->p_stop_adv_cb is NULL
         if (p_cb->adv_mode == BTM_BLE_ADV_ENABLE) {
