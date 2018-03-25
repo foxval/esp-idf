@@ -14,7 +14,11 @@ PYTHON ?= $(call dequote,$(CONFIG_PYTHON))
 # to invoke esptool.py (with or without serial port args)
 #
 ESPTOOLPY_SRC := $(COMPONENT_PATH)/esptool/esptool.py
+ifdef CONFIG_CHIP_IS_ESP32C
+ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32c
+else
 ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32
+endif
 ESPTOOLPY_SERIAL := $(ESPTOOLPY) --port $(ESPPORT) --baud $(ESPBAUD) --before $(CONFIG_ESPTOOLPY_BEFORE) --after $(CONFIG_ESPTOOLPY_AFTER)
 
 # Supporting esptool command line tools
