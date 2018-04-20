@@ -44,8 +44,19 @@ choice CHIP_FAMILY
 config CHIP_IS_ESP32
     bool "esp32"
 config CHIP_IS_ESP32C
-    bool "esp32c"
+    bool "chip7.2.2"
 endchoice
+
+choice HARDWARE_INSTANCE
+    prompt "Hardware Instance"
+    default HARDWARE_IS_CHIP
+    help
+       Esp-idf support FPGA to functional test.
+config HARDWARE_IS_CHIP
+    bool "chip"
+config HARDWARE_IS_FPGA
+    bool "fpga"
+endchoice 
 
 endmenu
 

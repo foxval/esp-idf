@@ -16,6 +16,7 @@
 #include "soc/soc.h"
 #include "soc/rtc.h"
 #include "soc/rtc_cntl_reg.h"
+#include "soc/apb_ctrl_reg.h"
 #include "soc/dport_reg.h"
 #include "soc/rtc.h"
 #include "soc/i2s_reg.h"

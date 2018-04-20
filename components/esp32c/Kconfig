@@ -7,16 +7,23 @@ choice ESP32_DEFAULT_CPU_FREQ_MHZ
     help
         CPU frequency to be set on application startup.
 
+config ESP32_DEFAULT_CPU_FREQ_40
+    depends on HARDWARE_IS_FPGA
+    bool "40 MHz"
 config ESP32_DEFAULT_CPU_FREQ_80
+    depends on HARDWARE_IS_CHIP
     bool "80 MHz"
 config ESP32_DEFAULT_CPU_FREQ_160
+    depends on HARDWARE_IS_CHIP
     bool "160 MHz"
 config ESP32_DEFAULT_CPU_FREQ_240
+    depends on HARDWARE_IS_CHIP
     bool "240 MHz"
 endchoice
 
 config ESP32_DEFAULT_CPU_FREQ_MHZ
     int
+    default 40 if ESP32_DEFAULT_CPU_FREQ_40
     default 80 if ESP32_DEFAULT_CPU_FREQ_80
     default 160 if ESP32_DEFAULT_CPU_FREQ_160
     default 240 if ESP32_DEFAULT_CPU_FREQ_240

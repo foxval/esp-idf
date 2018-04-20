@@ -250,9 +250,15 @@ void IRAM_ATTR spi_flash_enable_interrupts_caches_no_os()
  * Cache_Flush before Cache_Read_Enable, even if cached data was not modified.
  */
 
-static const uint32_t cache_mask  = DPORT_APP_CACHE_MASK_OPSDRAM | DPORT_APP_CACHE_MASK_DROM0 |
-        DPORT_APP_CACHE_MASK_DRAM1 | DPORT_APP_CACHE_MASK_IROM0 |
-        DPORT_APP_CACHE_MASK_IRAM1 | DPORT_APP_CACHE_MASK_IRAM0;
+#ifdef CONFIG_CHIP_IS_ESP32
+static const uint32_t cache_mask  = DPORT_PRO_CACHE_MASK_OPSDRAM | DPORT_PRO_CACHE_MASK_DROM0 |
+        DPORT_PRO_CACHE_MASK_DRAM1 | DPORT_PRO_CACHE_MASK_IROM0 |
+        DPORT_PRO_CACHE_MASK_IRAM1 | DPORT_PRO_CACHE_MASK_IRAM0;
+#else
+static const uint32_t cache_mask  = DPORT_PRO_ICACHE_MASK_OPSDRAM | DPORT_PRO_ICACHE_MASK_DROM0 |
+        /*DPORT_PRO_ICACHE_MASK_DRAM1 |*/ DPORT_PRO_ICACHE_MASK_IROM0 |
+        DPORT_PRO_ICACHE_MASK_IRAM1 | DPORT_PRO_ICACHE_MASK_IRAM0;
+#endif
 
 static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_state)
 {
@@ -272,7 +278,9 @@ static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_st
         DPORT_REG_SET_BIT(DPORT_PRO_CACHE_CTRL1_REG, cache_mask);
         DPORT_REG_SET_BIT(DPORT_PRO_CACHE_IA_INT_EN_REG, DPORT_PRO_CACHE_INT_CLR);
 #endif
-    } else {
+    }
+#ifndef CONFIG_FREERTOS_UNICORE
+      else {
         ret |= DPORT_GET_PERI_REG_BITS2(DPORT_APP_CACHE_CTRL1_REG, cache_mask, 0);
 #ifdef CONFIG_CHIP_IS_ESP32
         while (DPORT_GET_PERI_REG_BITS2(DPORT_APP_DCACHE_DBUG0_REG, DPORT_APP_CACHE_STATE, DPORT_APP_CACHE_STATE_S) != 1) {
@@ -288,6 +296,7 @@ static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_st
         DPORT_REG_SET_BIT(DPORT_APP_CACHE_IA_INT_EN_REG, DPORT_APP_CACHE_INT_CLR);
 #endif
     }
+#endif
     *saved_state = ret;
 }
 
@@ -299,13 +308,16 @@ static void IRAM_ATTR spi_flash_restore_cache(uint32_t cpuid, uint32_t saved_sta
 #endif
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 1, DPORT_PRO_CACHE_ENABLE_S);
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL1_REG, cache_mask, saved_state, 0);
-    } else {
+    }
+#if !CONFIG_FREERTOS_UNICORE
+      else {
 #ifndef CONFIG_CHIP_IS_ESP32
         DPORT_REG_CLR_BIT(DPORT_APP_CACHE_IA_INT_EN_REG, DPORT_APP_CACHE_INT_CLR);
 #endif
         DPORT_SET_PERI_REG_BITS(DPORT_APP_CACHE_CTRL_REG, 1, 1, DPORT_APP_CACHE_ENABLE_S);
         DPORT_SET_PERI_REG_BITS(DPORT_APP_CACHE_CTRL1_REG, cache_mask, saved_state, 0);
     }
+#endif
 }
 
 

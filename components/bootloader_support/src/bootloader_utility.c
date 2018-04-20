@@ -378,7 +378,9 @@ static void load_image(const esp_image_metadata_t* image_data)
 #endif
 
     ESP_LOGI(TAG, "Disabling RNG early entropy source...");
+#ifndef CONFIG_HARDWARE_IS_FPGA
     bootloader_random_disable();
+#endif
 
     // copy loaded segments to RAM, set up caches for mapped segments, and start application
     unpack_load_app(image_data);
@@ -460,9 +462,16 @@ static void set_cache_and_start_app(
     ESP_LOGV(TAG, "rc=%d", rc );
     rc = cache_flash_mmu_set( 1, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
+#ifdef CONFIG_CHIP_IS_ESP32
     DPORT_REG_CLR_BIT( DPORT_PRO_CACHE_CTRL1_REG, (DPORT_PRO_CACHE_MASK_IRAM0) | (DPORT_PRO_CACHE_MASK_IRAM1 & 0) | (DPORT_PRO_CACHE_MASK_IROM0 & 0) | DPORT_PRO_CACHE_MASK_DROM0 | DPORT_PRO_CACHE_MASK_DRAM1 );
 #if !CONFIG_FREERTOS_UNICORE
     DPORT_REG_CLR_BIT( DPORT_APP_CACHE_CTRL1_REG, (DPORT_APP_CACHE_MASK_IRAM0) | (DPORT_APP_CACHE_MASK_IRAM1 & 0) | (DPORT_APP_CACHE_MASK_IROM0 & 0) | DPORT_APP_CACHE_MASK_DROM0 | DPORT_APP_CACHE_MASK_DRAM1 );
+#endif
+#else
+    DPORT_REG_CLR_BIT( DPORT_PRO_ICACHE_CTRL1_REG, (DPORT_PRO_ICACHE_MASK_IRAM0) | (DPORT_PRO_ICACHE_MASK_IRAM1 & 0) | (DPORT_PRO_ICACHE_MASK_IROM0 & 0) | DPORT_PRO_ICACHE_MASK_DROM0 );
+#if !CONFIG_FREERTOS_UNICORE
+    DPORT_REG_CLR_BIT( DPORT_APP_ICACHE_CTRL1_REG, (DPORT_APP_ICACHE_MASK_IRAM0) | (DPORT_APP_ICACHE_MASK_IRAM1 & 0) | (DPORT_APP_ICACHE_MASK_IROM0 & 0) | DPORT_APP_ICACHE_MASK_DROM0 );
+#endif
 #endif
     Cache_Read_Enable( 0 );
 

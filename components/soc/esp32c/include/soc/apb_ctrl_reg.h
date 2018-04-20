@@ -20,12 +20,17 @@ extern "C" {
 #endif
 #include "soc.h"
 #define APB_CTRL_SYSCLK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x0)
-/* APB_CTRL_QUICK_CLK_CHNG : R/W ;bitpos:[13] ;default: 1'b1 ; */
+/* APB_CTRL_SOC_CLK_SEL : R/W ;bitpos:[15:14] ;default: 2'd0 ; */
 /*description: */
-#define APB_CTRL_QUICK_CLK_CHNG  (BIT(13))
-#define APB_CTRL_QUICK_CLK_CHNG_M  (BIT(13))
-#define APB_CTRL_QUICK_CLK_CHNG_V  0x1
-#define APB_CTRL_QUICK_CLK_CHNG_S  13
+#define APB_CTRL_SOC_CLK_SEL  0x00000003
+#define APB_CTRL_SOC_CLK_SEL_M  ((APB_CTRL_SOC_CLK_SEL_V)<<(APB_CTRL_SOC_CLK_SEL_S))
+#define APB_CTRL_SOC_CLK_SEL_V  0x3
+#define APB_CTRL_SOC_CLK_SEL_S  14
+#define APB_CTRL_SOC_CLK_SEL_XTL    0
+#define APB_CTRL_SOC_CLK_SEL_PLL    1
+#define APB_CTRL_SOC_CLK_SEL_8M     2
+#define APB_CTRL_SOC_CLK_SEL_APLL   3
+
 /* APB_CTRL_RST_TICK_CNT : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: */
 #define APB_CTRL_RST_TICK_CNT  (BIT(12))
@@ -51,29 +56,25 @@ extern "C" {
 #define APB_CTRL_PRE_DIV_CNT_V  0x3FF
 #define APB_CTRL_PRE_DIV_CNT_S  0
 
-#define APB_CTRL_XTAL_TICK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x4)
+#define APB_CTRL_TICK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x4)
+/* APB_CTRL_TICK_ENABLE : R/W ;bitpos:[16] ;default: 1'd1 ; */
+/*description: */
+#define APB_CTRL_TICK_ENABLE  (BIT(16))
+#define APB_CTRL_TICK_ENABLE_M  (BIT(16))
+#define APB_CTRL_TICK_ENABLE_V  0x1
+#define APB_CTRL_TICK_ENABLE_S  16
+/* APB_CTRL_CK8M_TICK_NUM : R/W ;bitpos:[15:8] ;default: 8'd7 ; */
+/*description: */
+#define APB_CTRL_CK8M_TICK_NUM  0x000000FF
+#define APB_CTRL_CK8M_TICK_NUM_M  ((APB_CTRL_CK8M_TICK_NUM_V)<<(APB_CTRL_CK8M_TICK_NUM_S))
+#define APB_CTRL_CK8M_TICK_NUM_V  0xFF
+#define APB_CTRL_CK8M_TICK_NUM_S  8
 /* APB_CTRL_XTAL_TICK_NUM : R/W ;bitpos:[7:0] ;default: 8'd39 ; */
 /*description: */
 #define APB_CTRL_XTAL_TICK_NUM  0x000000FF
 #define APB_CTRL_XTAL_TICK_NUM_M  ((APB_CTRL_XTAL_TICK_NUM_V)<<(APB_CTRL_XTAL_TICK_NUM_S))
 #define APB_CTRL_XTAL_TICK_NUM_V  0xFF
 #define APB_CTRL_XTAL_TICK_NUM_S  0
-
-#define APB_CTRL_PLL_TICK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x8)
-/* APB_CTRL_PLL_TICK_NUM : R/W ;bitpos:[7:0] ;default: 8'd79 ; */
-/*description: */
-#define APB_CTRL_PLL_TICK_NUM  0x000000FF
-#define APB_CTRL_PLL_TICK_NUM_M  ((APB_CTRL_PLL_TICK_NUM_V)<<(APB_CTRL_PLL_TICK_NUM_S))
-#define APB_CTRL_PLL_TICK_NUM_V  0xFF
-#define APB_CTRL_PLL_TICK_NUM_S  0
-
-#define APB_CTRL_CK8M_TICK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0xC)
-/* APB_CTRL_CK8M_TICK_NUM : R/W ;bitpos:[7:0] ;default: 8'd11 ; */
-/*description: */
-#define APB_CTRL_CK8M_TICK_NUM  0x000000FF
-#define APB_CTRL_CK8M_TICK_NUM_M  ((APB_CTRL_CK8M_TICK_NUM_V)<<(APB_CTRL_CK8M_TICK_NUM_S))
-#define APB_CTRL_CK8M_TICK_NUM_V  0xFF
-#define APB_CTRL_CK8M_TICK_NUM_S  0
 
 #define APB_CTRL_APB_SARADC_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x10)
 /* APB_CTRL_SARADC_DATA_TO_I2S : R/W ;bitpos:[26] ;default: 1'b0 ; */
@@ -292,16 +293,90 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_PATT_TAB4_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_PATT_TAB4_S  0
 
-#define APB_CTRL_APLL_TICK_CONF_REG          (DR_REG_APB_CTRL_BASE + 0x3C)
-/* APB_CTRL_APLL_TICK_NUM : R/W ;bitpos:[7:0] ;default: 8'd99 ; */
+#define APB_CTRL_CLK_OUT_EN_REG          (DR_REG_APB_CTRL_BASE + 0x40)
+/* APB_CTRL_CLK_XTAL_OEN : R/W ;bitpos:[10] ;default: 1'b1 ; */
 /*description: */
-#define APB_CTRL_APLL_TICK_NUM  0x000000FF
-#define APB_CTRL_APLL_TICK_NUM_M  ((APB_CTRL_APLL_TICK_NUM_V)<<(APB_CTRL_APLL_TICK_NUM_S))
-#define APB_CTRL_APLL_TICK_NUM_V  0xFF
-#define APB_CTRL_APLL_TICK_NUM_S  0
+#define APB_CTRL_CLK_XTAL_OEN  (BIT(10))
+#define APB_CTRL_CLK_XTAL_OEN_M  (BIT(10))
+#define APB_CTRL_CLK_XTAL_OEN_V  0x1
+#define APB_CTRL_CLK_XTAL_OEN_S  10
+/* APB_CTRL_CLK40X_BB_OEN : R/W ;bitpos:[9] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK40X_BB_OEN  (BIT(9))
+#define APB_CTRL_CLK40X_BB_OEN_M  (BIT(9))
+#define APB_CTRL_CLK40X_BB_OEN_V  0x1
+#define APB_CTRL_CLK40X_BB_OEN_S  9
+/* APB_CTRL_CLK_DAC_CPU_OEN : R/W ;bitpos:[8] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK_DAC_CPU_OEN  (BIT(8))
+#define APB_CTRL_CLK_DAC_CPU_OEN_M  (BIT(8))
+#define APB_CTRL_CLK_DAC_CPU_OEN_V  0x1
+#define APB_CTRL_CLK_DAC_CPU_OEN_S  8
+/* APB_CTRL_CLK_ADC_INF_OEN : R/W ;bitpos:[7] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK_ADC_INF_OEN  (BIT(7))
+#define APB_CTRL_CLK_ADC_INF_OEN_M  (BIT(7))
+#define APB_CTRL_CLK_ADC_INF_OEN_V  0x1
+#define APB_CTRL_CLK_ADC_INF_OEN_S  7
+/* APB_CTRL_CLK_320M_OEN : R/W ;bitpos:[6] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK_320M_OEN  (BIT(6))
+#define APB_CTRL_CLK_320M_OEN_M  (BIT(6))
+#define APB_CTRL_CLK_320M_OEN_V  0x1
+#define APB_CTRL_CLK_320M_OEN_S  6
+/* APB_CTRL_CLK160_OEN : R/W ;bitpos:[5] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK160_OEN  (BIT(5))
+#define APB_CTRL_CLK160_OEN_M  (BIT(5))
+#define APB_CTRL_CLK160_OEN_V  0x1
+#define APB_CTRL_CLK160_OEN_S  5
+/* APB_CTRL_CLK80_OEN : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK80_OEN  (BIT(4))
+#define APB_CTRL_CLK80_OEN_M  (BIT(4))
+#define APB_CTRL_CLK80_OEN_V  0x1
+#define APB_CTRL_CLK80_OEN_S  4
+/* APB_CTRL_CLK_BB_OEN : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK_BB_OEN  (BIT(3))
+#define APB_CTRL_CLK_BB_OEN_M  (BIT(3))
+#define APB_CTRL_CLK_BB_OEN_V  0x1
+#define APB_CTRL_CLK_BB_OEN_S  3
+/* APB_CTRL_CLK44_OEN : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK44_OEN  (BIT(2))
+#define APB_CTRL_CLK44_OEN_M  (BIT(2))
+#define APB_CTRL_CLK44_OEN_V  0x1
+#define APB_CTRL_CLK44_OEN_S  2
+/* APB_CTRL_CLK22_OEN : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK22_OEN  (BIT(1))
+#define APB_CTRL_CLK22_OEN_M  (BIT(1))
+#define APB_CTRL_CLK22_OEN_V  0x1
+#define APB_CTRL_CLK22_OEN_S  1
+/* APB_CTRL_CLK20_OEN : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_CLK20_OEN  (BIT(0))
+#define APB_CTRL_CLK20_OEN_M  (BIT(0))
+#define APB_CTRL_CLK20_OEN_V  0x1
+#define APB_CTRL_CLK20_OEN_S  0
+
+#define APB_CTRL_HOST_INF_SEL_REG          (DR_REG_APB_CTRL_BASE + 0x44)
+/* APB_CTRL_LINK_DEVICE_SEL : R/W ;bitpos:[15:8] ;default: 8'h0 ; */
+/*description: */
+#define APB_CTRL_LINK_DEVICE_SEL  0x000000FF
+#define APB_CTRL_LINK_DEVICE_SEL_M  ((APB_CTRL_LINK_DEVICE_SEL_V)<<(APB_CTRL_LINK_DEVICE_SEL_S))
+#define APB_CTRL_LINK_DEVICE_SEL_V  0xFF
+#define APB_CTRL_LINK_DEVICE_SEL_S  8
+/* APB_CTRL_PERI_IO_SWAP : R/W ;bitpos:[7:0] ;default: 8'h0 ; */
+/*description: */
+#define APB_CTRL_PERI_IO_SWAP  0x000000FF
+#define APB_CTRL_PERI_IO_SWAP_M  ((APB_CTRL_PERI_IO_SWAP_V)<<(APB_CTRL_PERI_IO_SWAP_S))
+#define APB_CTRL_PERI_IO_SWAP_V  0xFF
+#define APB_CTRL_PERI_IO_SWAP_S  0
 
 #define APB_CTRL_DATE_REG          (DR_REG_APB_CTRL_BASE + 0x7C)
-/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h1704131 ; */
+/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h17122500 ; */
 /*description: */
 #define APB_CTRL_DATE  0xFFFFFFFF
 #define APB_CTRL_DATE_M  ((APB_CTRL_DATE_V)<<(APB_CTRL_DATE_S))

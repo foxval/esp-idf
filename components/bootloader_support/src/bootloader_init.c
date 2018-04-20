@@ -112,9 +112,16 @@ esp_err_t bootloader_init()
        The lines which manipulate DPORT_APP_CACHE_MMU_IA_CLR bit are
        necessary to work around a hardware bug.
     */
+#ifdef CONFIG_CHIP_IS_ESP32
     DPORT_REG_CLR_BIT(DPORT_PRO_CACHE_CTRL1_REG, DPORT_PRO_CACHE_MASK_DROM0);
 #if !CONFIG_FREERTOS_UNICORE
     DPORT_REG_CLR_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DROM0);
+#endif
+#else
+    DPORT_REG_CLR_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_DROM0);
+#if !CONFIG_FREERTOS_UNICORE
+    DPORT_REG_CLR_BIT(DPORT_APP_ICACHE_CTRL1_REG, DPORT_APP_ICACHE_MASK_DROM0);
+#endif
 #endif
 
     if(bootloader_main() != ESP_OK){
@@ -148,7 +155,9 @@ static esp_err_t bootloader_main()
     ESP_LOGI(TAG, "ESP-IDF %s 2nd stage bootloader", IDF_VER);
 
     ESP_LOGI(TAG, "compile time " __TIME__ );
+#if !CONFIG_FREERTOS_UNICORE
     ets_set_appcpu_boot_addr(0);
+#endif
 
     /* disable watch dog here */
     REG_CLR_BIT( RTC_CNTL_WDTCONFIG0_REG, RTC_CNTL_WDT_FLASHBOOT_MOD_EN );

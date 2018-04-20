@@ -30,6 +30,7 @@
 #include "rom/cache.h"
 #include "soc/io_mux_reg.h"
 #include "soc/dport_reg.h"
+#include "soc/apb_ctrl_reg.h"
 #include "soc/gpio_sig_map.h"
 #include "soc/efuse_reg.h"
 #include "driver/gpio.h"
@@ -189,12 +190,12 @@ static void IRAM_ATTR psram_cmd_recv_start(psram_spi_num_t spi_num, uint32_t* pR
 
     //Wait for SPI0 to idle
     while ( READ_PERI_REG(SPI_EXT2_REG(0)) != 0);
-    DPORT_SET_PERI_REG_MASK(DPORT_HOST_INF_SEL_REG, 1 << 14);
+    SET_PERI_REG_MASK(APB_CTRL_HOST_INF_SEL_REG, 1 << 14);
 
     // Start send data
     SET_PERI_REG_MASK(SPI_CMD_REG(spi_num), SPI_USR);
     while ((READ_PERI_REG(SPI_CMD_REG(spi_num)) & SPI_USR));
-    DPORT_CLEAR_PERI_REG_MASK(DPORT_HOST_INF_SEL_REG, 1 << 14);
+    CLEAR_PERI_REG_MASK(APB_CTRL_HOST_INF_SEL_REG, 1 << 14);
 
     //recover spi mode
     SET_PERI_REG_BITS(SPI_USER_REG(spi_num), (pRxData?SPI_FWRITE_DUAL_M:0xf), mode_backup, SPI_FWRITE_DUAL_S);
@@ -740,8 +741,8 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             psram_clock_set(0, 1);
 #endif
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_USR_RD_SRAM_DUMMY_M);   //enable cache read dummy
-            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_DUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
-                    SPI_SRAM_DUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
+            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_RDUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
+                    SPI_SRAM_RDUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_CACHE_SRAM_USR_RCMD_M); //enable user mode for cache read command
             break;
         case PSRAM_CACHE_F80M_S40M:
@@ -752,8 +753,8 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             psram_clock_set(0, 2);
 #endif
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_USR_RD_SRAM_DUMMY_M); //enable cache read dummy
-            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_DUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
-                    SPI_SRAM_DUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
+            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_RDUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
+                    SPI_SRAM_RDUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_CACHE_SRAM_USR_RCMD_M); //enable user mode for cache read command
             break;
         case PSRAM_CACHE_F40M_S40M:
@@ -765,8 +766,8 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             psram_clock_set(0, 2);
 #endif
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_USR_RD_SRAM_DUMMY_M); //enable cache read dummy
-            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_DUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
-                    SPI_SRAM_DUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
+            SET_PERI_REG_BITS(SPI_CACHE_SCTRL_REG(0), SPI_SRAM_RDUMMY_CYCLELEN_V, PSRAM_FAST_READ_DUMMY + extra_dummy,
+                    SPI_SRAM_RDUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
             SET_PERI_REG_MASK(SPI_CACHE_SCTRL_REG(0), SPI_CACHE_SRAM_USR_RCMD_M); //enable user mode for cache read command
             break;
     }
@@ -813,6 +814,7 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             break;
     }
 
+#if !CONFIG_FREERTOS_UNICORE
     DPORT_CLEAR_PERI_REG_MASK(DPORT_PRO_CACHE_CTRL_REG, DPORT_PRO_DRAM_HL|DPORT_PRO_DRAM_SPLIT);
     DPORT_CLEAR_PERI_REG_MASK(DPORT_APP_CACHE_CTRL_REG, DPORT_APP_DRAM_HL|DPORT_APP_DRAM_SPLIT);
     if (vaddrmode == PSRAM_VADDR_MODE_LOWHIGH) {
@@ -822,13 +824,17 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
         DPORT_SET_PERI_REG_MASK(DPORT_PRO_CACHE_CTRL_REG, DPORT_PRO_DRAM_SPLIT);
         DPORT_SET_PERI_REG_MASK(DPORT_APP_CACHE_CTRL_REG, DPORT_APP_DRAM_SPLIT);
     }
+#endif
 
     DPORT_CLEAR_PERI_REG_MASK(DPORT_PRO_CACHE_CTRL1_REG, DPORT_PRO_CACHE_MASK_DRAM1|DPORT_PRO_CACHE_MASK_OPSDRAM); //use Dram1 to visit ext sram.
     //cache page mode : 1 -->16k  4 -->2k  0-->32k,(accord with the settings in cache_sram_mmu_set)
     DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL1_REG, DPORT_PRO_CMMU_SRAM_PAGE_MODE, 0, DPORT_PRO_CMMU_SRAM_PAGE_MODE_S);
+    DPORT_SET_PERI_REG_MASK(DPORT_PRO_CACHE_CTRL_REG, DPORT_PRO_CACHE_ENABLE);
+#if !CONFIG_FREERTOS_UNICORE
     DPORT_CLEAR_PERI_REG_MASK(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DRAM1|DPORT_APP_CACHE_MASK_OPSDRAM); //use Dram1 to visit ext sram.
     //cache page mode : 1 -->16k  4 -->2k  0-->32k,(accord with the settings in cache_sram_mmu_set)
     DPORT_SET_PERI_REG_BITS(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CMMU_SRAM_PAGE_MODE, 0, DPORT_APP_CMMU_SRAM_PAGE_MODE_S);
+#endif
 
     CLEAR_PERI_REG_MASK(SPI_PIN_REG(0), SPI_CS1_DIS_M); //ENABLE SPI0 CS1 TO PSRAM(CS0--FLASH; CS1--SRAM)
 

@@ -48,12 +48,14 @@ void bootloader_clock_configure()
     }
 #endif
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
     rtc_clk_config_t clk_cfg = RTC_CLK_CONFIG_DEFAULT();
     clk_cfg.xtal_freq = CONFIG_ESP32_XTAL_FREQ;
     clk_cfg.cpu_freq = cpu_freq;
     clk_cfg.slow_freq = rtc_clk_slow_freq_get();
     clk_cfg.fast_freq = rtc_clk_fast_freq_get();
     rtc_clk_init(clk_cfg);
+#endif
     /* As a slight optimization, if 32k XTAL was enabled in sdkconfig, we enable
      * it here. Usually it needs some time to start up, so we amortize at least
      * part of the start up time by enabling 32k XTAL early.

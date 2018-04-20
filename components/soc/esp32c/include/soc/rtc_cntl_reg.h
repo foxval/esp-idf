@@ -241,9 +241,6 @@ extern "C" {
 #define RTC_CNTL_TIME_VALID_V  0x1
 #define RTC_CNTL_TIME_VALID_S  30
 
-/* frequency of RTC slow clock, Hz */
-#define RTC_CTNL_SLOWCLK_FREQ   150000
-
 #define RTC_CNTL_TIME0_REG          (DR_REG_RTCCNTL_BASE + 0x10)
 /* RTC_CNTL_TIME_LO : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: RTC timer low 32 bits*/
@@ -268,13 +265,13 @@ extern "C" {
 #define RTC_CNTL_SLEEP_EN_V  0x1
 #define RTC_CNTL_SLEEP_EN_S  31
 /* RTC_CNTL_SLP_REJECT : R/W ;bitpos:[30] ;default: 1'd0 ; */
-/*description: sleep reject bit*/
+/*description: leep reject bit*/
 #define RTC_CNTL_SLP_REJECT  (BIT(30))
 #define RTC_CNTL_SLP_REJECT_M  (BIT(30))
 #define RTC_CNTL_SLP_REJECT_V  0x1
 #define RTC_CNTL_SLP_REJECT_S  30
 /* RTC_CNTL_SLP_WAKEUP : R/W ;bitpos:[29] ;default: 1'd0 ; */
-/*description: sleep wakeup bit*/
+/*description: leep wakeup bit*/
 #define RTC_CNTL_SLP_WAKEUP  (BIT(29))
 #define RTC_CNTL_SLP_WAKEUP_M  (BIT(29))
 #define RTC_CNTL_SLP_WAKEUP_V  0x1
@@ -285,6 +282,18 @@ extern "C" {
 #define RTC_CNTL_SDIO_ACTIVE_IND_M  (BIT(28))
 #define RTC_CNTL_SDIO_ACTIVE_IND_V  0x1
 #define RTC_CNTL_SDIO_ACTIVE_IND_S  28
+/* RTC_CNTL_ULP_CP_GPIO_WAKEUP_CLR : WO ;bitpos:[26] ;default: 1'd0 ; */
+/*description: ULP-coprocessor wakeup by GPIO state clear*/
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_CLR  (BIT(26))
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_CLR_M  (BIT(26))
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_CLR_V  0x1
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_CLR_S  26
+/* RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA : R/W ;bitpos:[25] ;default: 1'd0 ; */
+/*description: ULP-coprocessor wakeup by GPIO enable*/
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA  (BIT(25))
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_M  (BIT(25))
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_V  0x1
+#define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_S  25
 /* RTC_CNTL_ULP_CP_SLP_TIMER_EN : R/W ;bitpos:[24] ;default: 1'd0 ; */
 /*description: ULP-coprocessor timer enable bit*/
 #define RTC_CNTL_ULP_CP_SLP_TIMER_EN  (BIT(24))
@@ -485,7 +494,7 @@ extern "C" {
 
 #define RTC_CNTL_ANA_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x34)
 /* RTC_CNTL_PLL_I2C_PU : R/W ;bitpos:[31] ;default: 1'd0 ; */
-/*description: 1: PLL_I2C power up   otherwise power down*/
+/*description: */
 #define RTC_CNTL_PLL_I2C_PU  (BIT(31))
 #define RTC_CNTL_PLL_I2C_PU_M  (BIT(31))
 #define RTC_CNTL_PLL_I2C_PU_V  0x1
@@ -592,6 +601,12 @@ extern "C" {
 #define RTC_CNTL_WAKEUP_CAUSE_S  0
 
 #define RTC_CNTL_INT_ENA_REG          (DR_REG_RTCCNTL_BASE + 0x40)
+/* RTC_CNTL_SARADC2_INT_ENA : R/W ;bitpos:[12] ;default: 1'b0 ; */
+/*description: enable saradc2 interrupt*/
+#define RTC_CNTL_SARADC2_INT_ENA  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_ENA_M  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_ENA_V  0x1
+#define RTC_CNTL_SARADC2_INT_ENA_S  12
 /* RTC_CNTL_COCPU_INT_ENA : R/W ;bitpos:[11] ;default: 1'b0 ; */
 /*description: enable riscV cocpu interrupt*/
 #define RTC_CNTL_COCPU_INT_ENA  (BIT(11))
@@ -604,12 +619,12 @@ extern "C" {
 #define RTC_CNTL_TSENS_INT_ENA_M  (BIT(10))
 #define RTC_CNTL_TSENS_INT_ENA_V  0x1
 #define RTC_CNTL_TSENS_INT_ENA_S  10
-/* RTC_CNTL_SARADC_INT_ENA : R/W ;bitpos:[9] ;default: 1'b0 ; */
-/*description: enable saradc interrupt*/
-#define RTC_CNTL_SARADC_INT_ENA  (BIT(9))
-#define RTC_CNTL_SARADC_INT_ENA_M  (BIT(9))
-#define RTC_CNTL_SARADC_INT_ENA_V  0x1
-#define RTC_CNTL_SARADC_INT_ENA_S  9
+/* RTC_CNTL_SARADC1_INT_ENA : R/W ;bitpos:[9] ;default: 1'b0 ; */
+/*description: enable saradc1 interrupt*/
+#define RTC_CNTL_SARADC1_INT_ENA  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_ENA_M  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_ENA_V  0x1
+#define RTC_CNTL_SARADC1_INT_ENA_S  9
 /* RTC_CNTL_MAIN_TIMER_INT_ENA : R/W ;bitpos:[8] ;default: 1'b0 ; */
 /*description: enable RTC main timer interrupt*/
 #define RTC_CNTL_MAIN_TIMER_INT_ENA  (BIT(8))
@@ -666,6 +681,12 @@ extern "C" {
 #define RTC_CNTL_SLP_WAKEUP_INT_ENA_S  0
 
 #define RTC_CNTL_INT_RAW_REG          (DR_REG_RTCCNTL_BASE + 0x44)
+/* RTC_CNTL_SARADC2_INT_RAW : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: saradc2 interrupt raw*/
+#define RTC_CNTL_SARADC2_INT_RAW  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_RAW_M  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_RAW_V  0x1
+#define RTC_CNTL_SARADC2_INT_RAW_S  12
 /* RTC_CNTL_COCPU_INT_RAW : RO ;bitpos:[11] ;default: 1'b0 ; */
 /*description: riscV cocpu interrupt raw*/
 #define RTC_CNTL_COCPU_INT_RAW  (BIT(11))
@@ -678,12 +699,12 @@ extern "C" {
 #define RTC_CNTL_TSENS_INT_RAW_M  (BIT(10))
 #define RTC_CNTL_TSENS_INT_RAW_V  0x1
 #define RTC_CNTL_TSENS_INT_RAW_S  10
-/* RTC_CNTL_SARADC_INT_RAW : RO ;bitpos:[9] ;default: 1'b0 ; */
-/*description: saradc interrupt raw*/
-#define RTC_CNTL_SARADC_INT_RAW  (BIT(9))
-#define RTC_CNTL_SARADC_INT_RAW_M  (BIT(9))
-#define RTC_CNTL_SARADC_INT_RAW_V  0x1
-#define RTC_CNTL_SARADC_INT_RAW_S  9
+/* RTC_CNTL_SARADC1_INT_RAW : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: saradc1 interrupt raw*/
+#define RTC_CNTL_SARADC1_INT_RAW  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_RAW_M  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_RAW_V  0x1
+#define RTC_CNTL_SARADC1_INT_RAW_S  9
 /* RTC_CNTL_MAIN_TIMER_INT_RAW : RO ;bitpos:[8] ;default: 1'b0 ; */
 /*description: RTC main timer interrupt raw*/
 #define RTC_CNTL_MAIN_TIMER_INT_RAW  (BIT(8))
@@ -740,6 +761,12 @@ extern "C" {
 #define RTC_CNTL_SLP_WAKEUP_INT_RAW_S  0
 
 #define RTC_CNTL_INT_ST_REG          (DR_REG_RTCCNTL_BASE + 0x48)
+/* RTC_CNTL_SARADC2_INT_ST : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: saradc2 interrupt state*/
+#define RTC_CNTL_SARADC2_INT_ST  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_ST_M  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_ST_V  0x1
+#define RTC_CNTL_SARADC2_INT_ST_S  12
 /* RTC_CNTL_COCPU_INT_ST : RO ;bitpos:[11] ;default: 1'b0 ; */
 /*description: riscV cocpu interrupt state*/
 #define RTC_CNTL_COCPU_INT_ST  (BIT(11))
@@ -752,12 +779,12 @@ extern "C" {
 #define RTC_CNTL_TSENS_INT_ST_M  (BIT(10))
 #define RTC_CNTL_TSENS_INT_ST_V  0x1
 #define RTC_CNTL_TSENS_INT_ST_S  10
-/* RTC_CNTL_SARADC_INT_ST : RO ;bitpos:[9] ;default: 1'b0 ; */
-/*description: saradc interrupt state*/
-#define RTC_CNTL_SARADC_INT_ST  (BIT(9))
-#define RTC_CNTL_SARADC_INT_ST_M  (BIT(9))
-#define RTC_CNTL_SARADC_INT_ST_V  0x1
-#define RTC_CNTL_SARADC_INT_ST_S  9
+/* RTC_CNTL_SARADC1_INT_ST : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: saradc1 interrupt state*/
+#define RTC_CNTL_SARADC1_INT_ST  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_ST_M  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_ST_V  0x1
+#define RTC_CNTL_SARADC1_INT_ST_S  9
 /* RTC_CNTL_MAIN_TIMER_INT_ST : RO ;bitpos:[8] ;default: 1'b0 ; */
 /*description: RTC main timer interrupt state*/
 #define RTC_CNTL_MAIN_TIMER_INT_ST  (BIT(8))
@@ -814,6 +841,12 @@ extern "C" {
 #define RTC_CNTL_SLP_WAKEUP_INT_ST_S  0
 
 #define RTC_CNTL_INT_CLR_REG          (DR_REG_RTCCNTL_BASE + 0x4c)
+/* RTC_CNTL_SARADC2_INT_CLR : WO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: Clear saradc2 interrupt state*/
+#define RTC_CNTL_SARADC2_INT_CLR  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_CLR_M  (BIT(12))
+#define RTC_CNTL_SARADC2_INT_CLR_V  0x1
+#define RTC_CNTL_SARADC2_INT_CLR_S  12
 /* RTC_CNTL_COCPU_INT_CLR : WO ;bitpos:[11] ;default: 1'b0 ; */
 /*description: Clear riscV cocpu interrupt state*/
 #define RTC_CNTL_COCPU_INT_CLR  (BIT(11))
@@ -826,12 +859,12 @@ extern "C" {
 #define RTC_CNTL_TSENS_INT_CLR_M  (BIT(10))
 #define RTC_CNTL_TSENS_INT_CLR_V  0x1
 #define RTC_CNTL_TSENS_INT_CLR_S  10
-/* RTC_CNTL_SARADC_INT_CLR : WO ;bitpos:[9] ;default: 1'b0 ; */
-/*description: Clear saradc interrupt state*/
-#define RTC_CNTL_SARADC_INT_CLR  (BIT(9))
-#define RTC_CNTL_SARADC_INT_CLR_M  (BIT(9))
-#define RTC_CNTL_SARADC_INT_CLR_V  0x1
-#define RTC_CNTL_SARADC_INT_CLR_S  9
+/* RTC_CNTL_SARADC1_INT_CLR : WO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: Clear saradc1 interrupt state*/
+#define RTC_CNTL_SARADC1_INT_CLR  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_CLR_M  (BIT(9))
+#define RTC_CNTL_SARADC1_INT_CLR_V  0x1
+#define RTC_CNTL_SARADC1_INT_CLR_S  9
 /* RTC_CNTL_MAIN_TIMER_INT_CLR : WO ;bitpos:[8] ;default: 1'b0 ; */
 /*description: Clear RTC main timer interrupt state*/
 #define RTC_CNTL_MAIN_TIMER_INT_CLR  (BIT(8))
@@ -889,7 +922,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE0_REG          (DR_REG_RTCCNTL_BASE + 0x50)
 /* RTC_CNTL_SCRATCH0 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH0  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH0_M  ((RTC_CNTL_SCRATCH0_V)<<(RTC_CNTL_SCRATCH0_S))
 #define RTC_CNTL_SCRATCH0_V  0xFFFFFFFF
@@ -897,7 +930,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE1_REG          (DR_REG_RTCCNTL_BASE + 0x54)
 /* RTC_CNTL_SCRATCH1 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH1  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH1_M  ((RTC_CNTL_SCRATCH1_V)<<(RTC_CNTL_SCRATCH1_S))
 #define RTC_CNTL_SCRATCH1_V  0xFFFFFFFF
@@ -905,7 +938,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE2_REG          (DR_REG_RTCCNTL_BASE + 0x58)
 /* RTC_CNTL_SCRATCH2 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH2  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH2_M  ((RTC_CNTL_SCRATCH2_V)<<(RTC_CNTL_SCRATCH2_S))
 #define RTC_CNTL_SCRATCH2_V  0xFFFFFFFF
@@ -913,7 +946,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE3_REG          (DR_REG_RTCCNTL_BASE + 0x5c)
 /* RTC_CNTL_SCRATCH3 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH3  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH3_M  ((RTC_CNTL_SCRATCH3_V)<<(RTC_CNTL_SCRATCH3_S))
 #define RTC_CNTL_SCRATCH3_V  0xFFFFFFFF
@@ -921,7 +954,7 @@ extern "C" {
 
 #define RTC_CNTL_EXT_XTL_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x60)
 /* RTC_CNTL_XTL_EXT_CTR_EN : R/W ;bitpos:[31] ;default: 1'b0 ; */
-/*description: enable control XTAL by external pads*/
+/*description: */
 #define RTC_CNTL_XTL_EXT_CTR_EN  (BIT(31))
 #define RTC_CNTL_XTL_EXT_CTR_EN_M  (BIT(31))
 #define RTC_CNTL_XTL_EXT_CTR_EN_V  0x1
@@ -935,7 +968,7 @@ extern "C" {
 
 #define RTC_CNTL_EXT_WAKEUP_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x64)
 /* RTC_CNTL_EXT_WAKEUP1_LV : R/W ;bitpos:[31] ;default: 1'b0 ; */
-/*description: 0: external wakeup at low level  1: external wakeup at high level*/
+/*description: */
 #define RTC_CNTL_EXT_WAKEUP1_LV  (BIT(31))
 #define RTC_CNTL_EXT_WAKEUP1_LV_M  (BIT(31))
 #define RTC_CNTL_EXT_WAKEUP1_LV_V  0x1
@@ -949,7 +982,7 @@ extern "C" {
 
 #define RTC_CNTL_SLP_REJECT_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x68)
 /* RTC_CNTL_REJECT_CAUSE : RO ;bitpos:[31:28] ;default: 4'b0 ; */
-/*description: sleep reject cause*/
+/*description: */
 #define RTC_CNTL_REJECT_CAUSE  0x0000000F
 #define RTC_CNTL_REJECT_CAUSE_M  ((RTC_CNTL_REJECT_CAUSE_V)<<(RTC_CNTL_REJECT_CAUSE_S))
 #define RTC_CNTL_REJECT_CAUSE_V  0xF
@@ -981,7 +1014,7 @@ extern "C" {
 
 #define RTC_CNTL_CPU_PERIOD_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x6c)
 /* RTC_CNTL_CPUPERIOD_SEL : R/W ;bitpos:[31:30] ;default: 2'b00 ; */
-/*description: CPU period sel*/
+/*description: */
 #define RTC_CNTL_CPUPERIOD_SEL  0x00000003
 #define RTC_CNTL_CPUPERIOD_SEL_M  ((RTC_CNTL_CPUPERIOD_SEL_V)<<(RTC_CNTL_CPUPERIOD_SEL_S))
 #define RTC_CNTL_CPUPERIOD_SEL_V  0x3
@@ -1003,7 +1036,7 @@ extern "C" {
 
 #define RTC_CNTL_CLK_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x74)
 /* RTC_CNTL_ANA_CLK_RTC_SEL : R/W ;bitpos:[31:30] ;default: 2'd0 ; */
-/*description: slow_clk_rtc sel. 0: SLOW_CK  1: CK_XTAL_32K  2: CK8M_D256_OUT*/
+/*description: */
 #define RTC_CNTL_ANA_CLK_RTC_SEL  0x00000003
 #define RTC_CNTL_ANA_CLK_RTC_SEL_M  ((RTC_CNTL_ANA_CLK_RTC_SEL_V)<<(RTC_CNTL_ANA_CLK_RTC_SEL_S))
 #define RTC_CNTL_ANA_CLK_RTC_SEL_V  0x3
@@ -1014,16 +1047,6 @@ extern "C" {
 #define RTC_CNTL_FAST_CLK_RTC_SEL_M  (BIT(29))
 #define RTC_CNTL_FAST_CLK_RTC_SEL_V  0x1
 #define RTC_CNTL_FAST_CLK_RTC_SEL_S  29
-/* RTC_CNTL_SOC_CLK_SEL : R/W ;bitpos:[28:27] ;default: 2'd0 ; */
-/*description: SOC clock sel. 0: XTAL  1: PLL  2: CK8M  3: APLL*/
-#define RTC_CNTL_SOC_CLK_SEL  0x00000003
-#define RTC_CNTL_SOC_CLK_SEL_M  ((RTC_CNTL_SOC_CLK_SEL_V)<<(RTC_CNTL_SOC_CLK_SEL_S))
-#define RTC_CNTL_SOC_CLK_SEL_V  0x3
-#define RTC_CNTL_SOC_CLK_SEL_S  27
-#define RTC_CNTL_SOC_CLK_SEL_XTL    0
-#define RTC_CNTL_SOC_CLK_SEL_PLL    1
-#define RTC_CNTL_SOC_CLK_SEL_8M     2
-#define RTC_CNTL_SOC_CLK_SEL_APLL   3
 /* RTC_CNTL_CK8M_FORCE_PU : R/W ;bitpos:[26] ;default: 1'd0 ; */
 /*description: CK8M force power up*/
 #define RTC_CNTL_CK8M_FORCE_PU  (BIT(26))
@@ -1061,12 +1084,6 @@ extern "C" {
 #define RTC_CNTL_CK8M_DIV_SEL_M  ((RTC_CNTL_CK8M_DIV_SEL_V)<<(RTC_CNTL_CK8M_DIV_SEL_S))
 #define RTC_CNTL_CK8M_DIV_SEL_V  0x7
 #define RTC_CNTL_CK8M_DIV_SEL_S  12
-/* RTC_CNTL_CK8M_DFREQ_FORCE : R/W ;bitpos:[11] ;default: 1'd0 ; */
-/*description: */
-#define RTC_CNTL_CK8M_DFREQ_FORCE  (BIT(11))
-#define RTC_CNTL_CK8M_DFREQ_FORCE_M  (BIT(11))
-#define RTC_CNTL_CK8M_DFREQ_FORCE_V  0x1
-#define RTC_CNTL_CK8M_DFREQ_FORCE_S  11
 /* RTC_CNTL_DIG_CLK8M_EN : R/W ;bitpos:[10] ;default: 1'd0 ; */
 /*description: enable CK8M for digital core (no relationship with RTC core)*/
 #define RTC_CNTL_DIG_CLK8M_EN  (BIT(10))
@@ -1112,53 +1129,59 @@ extern "C" {
 #define RTC_CNTL_CK8M_DIV_SEL_VLD_S  3
 
 #define RTC_CNTL_SLOW_CLK_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x78)
-/* RTC_CNTL_ANA_CLK_DIV : R/W ;bitpos:[31:24] ;default: 8'd0 ; */
+/* RTC_CNTL_SLOW_CLK_NEXT_EDGE : R/W ;bitpos:[31] ;default: 1'b0 ; */
+/*description: */
+#define RTC_CNTL_SLOW_CLK_NEXT_EDGE  (BIT(31))
+#define RTC_CNTL_SLOW_CLK_NEXT_EDGE_M  (BIT(31))
+#define RTC_CNTL_SLOW_CLK_NEXT_EDGE_V  0x1
+#define RTC_CNTL_SLOW_CLK_NEXT_EDGE_S  31
+/* RTC_CNTL_ANA_CLK_DIV : R/W ;bitpos:[30:23] ;default: 8'd0 ; */
 /*description: */
 #define RTC_CNTL_ANA_CLK_DIV  0x000000FF
 #define RTC_CNTL_ANA_CLK_DIV_M  ((RTC_CNTL_ANA_CLK_DIV_V)<<(RTC_CNTL_ANA_CLK_DIV_S))
 #define RTC_CNTL_ANA_CLK_DIV_V  0xFF
-#define RTC_CNTL_ANA_CLK_DIV_S  24
-/* RTC_CNTL_ANA_CLK_DIV_VLD : R/W ;bitpos:[23] ;default: 1'b1 ; */
+#define RTC_CNTL_ANA_CLK_DIV_S  23
+/* RTC_CNTL_ANA_CLK_DIV_VLD : R/W ;bitpos:[22] ;default: 1'b1 ; */
 /*description: used to sync div bus. clear vld before set reg_rtc_ana_clk_div
   then set vld to actually switch the clk*/
-#define RTC_CNTL_ANA_CLK_DIV_VLD  (BIT(23))
-#define RTC_CNTL_ANA_CLK_DIV_VLD_M  (BIT(23))
+#define RTC_CNTL_ANA_CLK_DIV_VLD  (BIT(22))
+#define RTC_CNTL_ANA_CLK_DIV_VLD_M  (BIT(22))
 #define RTC_CNTL_ANA_CLK_DIV_VLD_V  0x1
-#define RTC_CNTL_ANA_CLK_DIV_VLD_S  23
-/* RTC_CNTL_XTAL32K_GPIO_SEL : R/W ;bitpos:[22] ;default: 1'b0 ; */
+#define RTC_CNTL_ANA_CLK_DIV_VLD_S  22
+/* RTC_CNTL_XTAL32K_GPIO_SEL : R/W ;bitpos:[21] ;default: 1'b0 ; */
 /*description: XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
-#define RTC_CNTL_XTAL32K_GPIO_SEL  (BIT(22))
-#define RTC_CNTL_XTAL32K_GPIO_SEL_M  (BIT(22))
+#define RTC_CNTL_XTAL32K_GPIO_SEL  (BIT(21))
+#define RTC_CNTL_XTAL32K_GPIO_SEL_M  (BIT(21))
 #define RTC_CNTL_XTAL32K_GPIO_SEL_V  0x1
-#define RTC_CNTL_XTAL32K_GPIO_SEL_S  22
-/* RTC_CNTL_DAC_XTAL_32K : R/W ;bitpos:[21:20] ;default: 2'b01 ; */
+#define RTC_CNTL_XTAL32K_GPIO_SEL_S  21
+/* RTC_CNTL_DAC_XTAL_32K : R/W ;bitpos:[20:19] ;default: 2'b01 ; */
 /*description: DAC_XTAL_32K*/
 #define RTC_CNTL_DAC_XTAL_32K  0x00000003
 #define RTC_CNTL_DAC_XTAL_32K_M  ((RTC_CNTL_DAC_XTAL_32K_V)<<(RTC_CNTL_DAC_XTAL_32K_S))
 #define RTC_CNTL_DAC_XTAL_32K_V  0x3
-#define RTC_CNTL_DAC_XTAL_32K_S  20
-/* RTC_CNTL_XPD_XTAL_32K : R/W ;bitpos:[19] ;default: 1'd0 ; */
+#define RTC_CNTL_DAC_XTAL_32K_S  19
+/* RTC_CNTL_XPD_XTAL_32K : R/W ;bitpos:[18] ;default: 1'd0 ; */
 /*description: XPD_XTAL_32K*/
-#define RTC_CNTL_XPD_XTAL_32K  (BIT(19))
-#define RTC_CNTL_XPD_XTAL_32K_M  (BIT(19))
+#define RTC_CNTL_XPD_XTAL_32K  (BIT(18))
+#define RTC_CNTL_XPD_XTAL_32K_M  (BIT(18))
 #define RTC_CNTL_XPD_XTAL_32K_V  0x1
-#define RTC_CNTL_XPD_XTAL_32K_S  19
-/* RTC_CNTL_DRES_XTAL_32K : R/W ;bitpos:[18:17] ;default: 2'b10 ; */
+#define RTC_CNTL_XPD_XTAL_32K_S  18
+/* RTC_CNTL_DRES_XTAL_32K : R/W ;bitpos:[17:16] ;default: 2'b10 ; */
 /*description: DRES_XTAL_32K*/
 #define RTC_CNTL_DRES_XTAL_32K  0x00000003
 #define RTC_CNTL_DRES_XTAL_32K_M  ((RTC_CNTL_DRES_XTAL_32K_V)<<(RTC_CNTL_DRES_XTAL_32K_S))
 #define RTC_CNTL_DRES_XTAL_32K_V  0x3
-#define RTC_CNTL_DRES_XTAL_32K_S  17
-/* RTC_CNTL_DBIAS_XTAL_32K : R/W ;bitpos:[16:15] ;default: 2'b00 ; */
+#define RTC_CNTL_DRES_XTAL_32K_S  16
+/* RTC_CNTL_DBIAS_XTAL_32K : R/W ;bitpos:[15:14] ;default: 2'b00 ; */
 /*description: DBIAS_XTAL_32K*/
 #define RTC_CNTL_DBIAS_XTAL_32K  0x00000003
 #define RTC_CNTL_DBIAS_XTAL_32K_M  ((RTC_CNTL_DBIAS_XTAL_32K_V)<<(RTC_CNTL_DBIAS_XTAL_32K_S))
 #define RTC_CNTL_DBIAS_XTAL_32K_V  0x3
-#define RTC_CNTL_DBIAS_XTAL_32K_S  15
+#define RTC_CNTL_DBIAS_XTAL_32K_S  14
 
 #define RTC_CNTL_SDIO_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x7c)
 /* RTC_CNTL_XPD_SDIO_REG : R/W ;bitpos:[31] ;default: 1'd0 ; */
-/*description: SW option for XPD_SDIO_REG. Only active when reg_sdio_force = 1*/
+/*description: */
 #define RTC_CNTL_XPD_SDIO_REG  (BIT(31))
 #define RTC_CNTL_XPD_SDIO_REG_M  (BIT(31))
 #define RTC_CNTL_XPD_SDIO_REG_V  0x1
@@ -1208,7 +1231,7 @@ extern "C" {
 
 #define RTC_CNTL_BIAS_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x80)
 /* RTC_CNTL_RST_BIAS_I2C : R/W ;bitpos:[31] ;default: 1'd0 ; */
-/*description: RST_BIAS_I2C*/
+/*description: */
 #define RTC_CNTL_RST_BIAS_I2C  (BIT(31))
 #define RTC_CNTL_RST_BIAS_I2C_M  (BIT(31))
 #define RTC_CNTL_RST_BIAS_I2C_V  0x1
@@ -1253,19 +1276,19 @@ extern "C" {
 #define RTC_CNTL_DBG_ATTEN_DEFAULT  3
 
 #define RTC_CNTL_REG          (DR_REG_RTCCNTL_BASE + 0x84)
-/* RTC_CNTL_FORCE_PU : R/W ;bitpos:[31] ;default: 1'd1 ; */
-/*description: RTC_REG force power up*/
-#define RTC_CNTL_FORCE_PU  (BIT(31))
-#define RTC_CNTL_FORCE_PU_M  (BIT(31))
-#define RTC_CNTL_FORCE_PU_V  0x1
-#define RTC_CNTL_FORCE_PU_S  31
-/* RTC_CNTL_FORCE_PD : R/W ;bitpos:[30] ;default: 1'd0 ; */
+/* RTC_CNTL_REGULATOR_FORCE_PU : R/W ;bitpos:[31] ;default: 1'd1 ; */
+/*description: */
+#define RTC_CNTL_REGULATOR_FORCE_PU  (BIT(31))
+#define RTC_CNTL_REGULATOR_FORCE_PU_M  (BIT(31))
+#define RTC_CNTL_REGULATOR_FORCE_PU_V  0x1
+#define RTC_CNTL_REGULATOR_FORCE_PU_S  31
+/* RTC_CNTL_REGULATOR_FORCE_PD : R/W ;bitpos:[30] ;default: 1'd0 ; */
 /*description: RTC_REG force power down (for RTC_REG power down means decrease
  the voltage to 0.8v or lower )*/
-#define RTC_CNTL_FORCE_PD  (BIT(30))
-#define RTC_CNTL_FORCE_PD_M  (BIT(30))
-#define RTC_CNTL_FORCE_PD_V  0x1
-#define RTC_CNTL_FORCE_PD_S  30
+#define RTC_CNTL_REGULATOR_FORCE_PD  (BIT(30))
+#define RTC_CNTL_REGULATOR_FORCE_PD_M  (BIT(30))
+#define RTC_CNTL_REGULATOR_FORCE_PD_V  0x1
+#define RTC_CNTL_REGULATOR_FORCE_PD_S  30
 /* RTC_CNTL_DBOOST_FORCE_PU : R/W ;bitpos:[29] ;default: 1'd1 ; */
 /*description: RTC_DBOOST force power up*/
 #define RTC_CNTL_DBOOST_FORCE_PU  (BIT(29))
@@ -1284,6 +1307,19 @@ extern "C" {
 #define RTC_CNTL_DBIAS_WAK_M  ((RTC_CNTL_DBIAS_WAK_V)<<(RTC_CNTL_DBIAS_WAK_S))
 #define RTC_CNTL_DBIAS_WAK_V  0x7
 #define RTC_CNTL_DBIAS_WAK_S  25
+/* Approximate mapping of voltages to RTC_CNTL_DBIAS_WAK, RTC_CNTL_DBIAS_SLP,
+ * RTC_CNTL_DIG_DBIAS_WAK, RTC_CNTL_DIG_DBIAS_SLP values.
+ * Valid if RTC_CNTL_DBG_ATTEN is 0.
+ */
+#define RTC_CNTL_DBIAS_0V90 0
+#define RTC_CNTL_DBIAS_0V95 1
+#define RTC_CNTL_DBIAS_1V00 2
+#define RTC_CNTL_DBIAS_1V05 3
+#define RTC_CNTL_DBIAS_1V10 4
+#define RTC_CNTL_DBIAS_1V15 5
+#define RTC_CNTL_DBIAS_1V20 6
+#define RTC_CNTL_DBIAS_1V25 7
+
 /* RTC_CNTL_DBIAS_SLP : R/W ;bitpos:[24:22] ;default: 3'd4 ; */
 /*description: RTC_DBIAS during sleep*/
 #define RTC_CNTL_DBIAS_SLP  0x00000007
@@ -1309,25 +1345,6 @@ extern "C" {
 #define RTC_CNTL_DIG_DBIAS_SLP_M  ((RTC_CNTL_DIG_DBIAS_SLP_V)<<(RTC_CNTL_DIG_DBIAS_SLP_S))
 #define RTC_CNTL_DIG_DBIAS_SLP_V  0x7
 #define RTC_CNTL_DIG_DBIAS_SLP_S  8
-/* RTC_CNTL_SCK_DCAP_FORCE : R/W ;bitpos:[7] ;default: 1'd0 ; */
-/*description: N/A*/
-#define RTC_CNTL_SCK_DCAP_FORCE  (BIT(7))
-#define RTC_CNTL_SCK_DCAP_FORCE_M  (BIT(7))
-#define RTC_CNTL_SCK_DCAP_FORCE_V  0x1
-#define RTC_CNTL_SCK_DCAP_FORCE_S  7
-
-/* Approximate mapping of voltages to RTC_CNTL_DBIAS_WAK, RTC_CNTL_DBIAS_SLP,
- * RTC_CNTL_DIG_DBIAS_WAK, RTC_CNTL_DIG_DBIAS_SLP values.
- * Valid if RTC_CNTL_DBG_ATTEN is 0.
- */
-#define RTC_CNTL_DBIAS_0V90 0
-#define RTC_CNTL_DBIAS_0V95 1
-#define RTC_CNTL_DBIAS_1V00 2
-#define RTC_CNTL_DBIAS_1V05 3
-#define RTC_CNTL_DBIAS_1V10 4
-#define RTC_CNTL_DBIAS_1V15 5
-#define RTC_CNTL_DBIAS_1V20 6
-#define RTC_CNTL_DBIAS_1V25 7
 
 #define RTC_CNTL_PWC_REG          (DR_REG_RTCCNTL_BASE + 0x88)
 /* RTC_CNTL_PAD_FORCE_HOLD : R/W ;bitpos:[27] ;default: 1'd0 ; */
@@ -1378,13 +1395,13 @@ extern "C" {
 #define RTC_CNTL_PD_EN_M  (BIT(20))
 #define RTC_CNTL_PD_EN_V  0x1
 #define RTC_CNTL_PD_EN_S  20
-/* RTC_CNTL_PWC_FORCE_PU : R/W ;bitpos:[19] ;default: 1'd0 ; */
+/* RTC_CNTL_FORCE_PU : R/W ;bitpos:[19] ;default: 1'd0 ; */
 /*description: rtc_peri force power up*/
 #define RTC_CNTL_PWC_FORCE_PU  (BIT(19))
 #define RTC_CNTL_PWC_FORCE_PU_M  (BIT(19))
 #define RTC_CNTL_PWC_FORCE_PU_V  0x1
 #define RTC_CNTL_PWC_FORCE_PU_S  19
-/* RTC_CNTL_PWC_FORCE_PD : R/W ;bitpos:[18] ;default: 1'b0 ; */
+/* RTC_CNTL_FORCE_PD : R/W ;bitpos:[18] ;default: 1'b0 ; */
 /*description: rtc_peri force power down*/
 #define RTC_CNTL_PWC_FORCE_PD  (BIT(18))
 #define RTC_CNTL_PWC_FORCE_PD_M  (BIT(18))
@@ -1499,7 +1516,6 @@ extern "C" {
 #define RTC_CNTL_FASTMEM_FORCE_NOISO_M  (BIT(0))
 #define RTC_CNTL_FASTMEM_FORCE_NOISO_V  0x1
 #define RTC_CNTL_FASTMEM_FORCE_NOISO_S  0
-
 /* Useful groups of RTC_CNTL_PWC_REG bits */
 #define RTC_CNTL_MEM_FORCE_ISO    \
     (RTC_CNTL_SLOWMEM_FORCE_ISO | RTC_CNTL_FASTMEM_FORCE_ISO)
@@ -1520,7 +1536,7 @@ extern "C" {
 
 #define RTC_CNTL_DIG_PWC_REG          (DR_REG_RTCCNTL_BASE + 0x8c)
 /* RTC_CNTL_DG_WRAP_PD_EN : R/W ;bitpos:[31] ;default: 0 ; */
-/*description: enable power down digital core in sleep*/
+/*description: */
 #define RTC_CNTL_DG_WRAP_PD_EN  (BIT(31))
 #define RTC_CNTL_DG_WRAP_PD_EN_M  (BIT(31))
 #define RTC_CNTL_DG_WRAP_PD_EN_V  0x1
@@ -1693,7 +1709,6 @@ extern "C" {
 #define RTC_CNTL_LSLP_MEM_FORCE_PD_M  (BIT(3))
 #define RTC_CNTL_LSLP_MEM_FORCE_PD_V  0x1
 #define RTC_CNTL_LSLP_MEM_FORCE_PD_S  3
-
 /* Useful groups of RTC_CNTL_DIG_PWC_REG bits */
 #define RTC_CNTL_CPU_ROM_RAM_PD_EN \
     (RTC_CNTL_INTER_RAM4_PD_EN | RTC_CNTL_INTER_RAM3_PD_EN |\
@@ -1708,9 +1723,10 @@ extern "C" {
      RTC_CNTL_INTER_RAM2_FORCE_PD | RTC_CNTL_INTER_RAM1_FORCE_PD |\
      RTC_CNTL_INTER_RAM0_FORCE_PD | RTC_CNTL_ROM0_FORCE_PD
 
+
 #define RTC_CNTL_DIG_ISO_REG          (DR_REG_RTCCNTL_BASE + 0x90)
 /* RTC_CNTL_DG_WRAP_FORCE_NOISO : R/W ;bitpos:[31] ;default: 1'd1 ; */
-/*description: digital core force no ISO*/
+/*description: */
 #define RTC_CNTL_DG_WRAP_FORCE_NOISO  (BIT(31))
 #define RTC_CNTL_DG_WRAP_FORCE_NOISO_M  (BIT(31))
 #define RTC_CNTL_DG_WRAP_FORCE_NOISO_V  0x1
@@ -1859,7 +1875,6 @@ extern "C" {
 #define RTC_CNTL_DIG_ISO_FORCE_OFF_M  (BIT(7))
 #define RTC_CNTL_DIG_ISO_FORCE_OFF_V  0x1
 #define RTC_CNTL_DIG_ISO_FORCE_OFF_S  7
-
 /* Useful groups of RTC_CNTL_DIG_ISO_REG bits */
 #define RTC_CNTL_CPU_ROM_RAM_FORCE_ISO   \
     (RTC_CNTL_INTER_RAM4_FORCE_ISO | RTC_CNTL_INTER_RAM3_FORCE_ISO |\
@@ -1870,9 +1885,10 @@ extern "C" {
      RTC_CNTL_INTER_RAM2_FORCE_NOISO | RTC_CNTL_INTER_RAM1_FORCE_NOISO |\
      RTC_CNTL_INTER_RAM0_FORCE_NOISO | RTC_CNTL_ROM0_FORCE_NOISO)
 
+
 #define RTC_CNTL_WDTCONFIG0_REG          (DR_REG_RTCCNTL_BASE + 0x94)
 /* RTC_CNTL_WDT_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
-/*description: enable RTC WDT*/
+/*description: */
 #define RTC_CNTL_WDT_EN  (BIT(31))
 #define RTC_CNTL_WDT_EN_M  (BIT(31))
 #define RTC_CNTL_WDT_EN_V  0x1
@@ -2011,7 +2027,7 @@ extern "C" {
 
 #define RTC_CNTL_TEST_MUX_REG          (DR_REG_RTCCNTL_BASE + 0xb0)
 /* RTC_CNTL_DTEST_RTC : R/W ;bitpos:[31:30] ;default: 2'd0 ; */
-/*description: DTEST_RTC*/
+/*description: */
 #define RTC_CNTL_DTEST_RTC  0x00000003
 #define RTC_CNTL_DTEST_RTC_M  ((RTC_CNTL_DTEST_RTC_V)<<(RTC_CNTL_DTEST_RTC_S))
 #define RTC_CNTL_DTEST_RTC_V  0x3
@@ -2025,8 +2041,7 @@ extern "C" {
 
 #define RTC_CNTL_SW_CPU_STALL_REG          (DR_REG_RTCCNTL_BASE + 0xb4)
 /* RTC_CNTL_SW_STALL_PROCPU_C1 : R/W ;bitpos:[31:26] ;default: 6'b0 ; */
-/*description: {reg_sw_stall_procpu_c1[5:0]   reg_sw_stall_procpu_c0[1:0]} ==
- 0x86 will stall PRO CPU*/
+/*description: */
 #define RTC_CNTL_SW_STALL_PROCPU_C1  0x0000003F
 #define RTC_CNTL_SW_STALL_PROCPU_C1_M  ((RTC_CNTL_SW_STALL_PROCPU_C1_V)<<(RTC_CNTL_SW_STALL_PROCPU_C1_S))
 #define RTC_CNTL_SW_STALL_PROCPU_C1_V  0x3F
@@ -2041,7 +2056,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE4_REG          (DR_REG_RTCCNTL_BASE + 0xb8)
 /* RTC_CNTL_SCRATCH4 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH4  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH4_M  ((RTC_CNTL_SCRATCH4_V)<<(RTC_CNTL_SCRATCH4_S))
 #define RTC_CNTL_SCRATCH4_V  0xFFFFFFFF
@@ -2049,7 +2064,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE5_REG          (DR_REG_RTCCNTL_BASE + 0xbc)
 /* RTC_CNTL_SCRATCH5 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH5  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH5_M  ((RTC_CNTL_SCRATCH5_V)<<(RTC_CNTL_SCRATCH5_S))
 #define RTC_CNTL_SCRATCH5_V  0xFFFFFFFF
@@ -2057,7 +2072,7 @@ extern "C" {
 
 #define RTC_CNTL_STORE6_REG          (DR_REG_RTCCNTL_BASE + 0xc0)
 /* RTC_CNTL_SCRATCH6 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH6  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH6_M  ((RTC_CNTL_SCRATCH6_V)<<(RTC_CNTL_SCRATCH6_S))
 #define RTC_CNTL_SCRATCH6_V  0xFFFFFFFF
@@ -2065,30 +2080,183 @@ extern "C" {
 
 #define RTC_CNTL_STORE7_REG          (DR_REG_RTCCNTL_BASE + 0xc4)
 /* RTC_CNTL_SCRATCH7 : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: 32-bit general purpose retention register*/
+/*description: */
 #define RTC_CNTL_SCRATCH7  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH7_M  ((RTC_CNTL_SCRATCH7_V)<<(RTC_CNTL_SCRATCH7_S))
 #define RTC_CNTL_SCRATCH7_V  0xFFFFFFFF
 #define RTC_CNTL_SCRATCH7_S  0
 
 #define RTC_CNTL_LOW_POWER_ST_REG          (DR_REG_RTCCNTL_BASE + 0xc8)
-/* RTC_CNTL_RDY_FOR_WAKEUP : R/0; bitpos:[19]; default: 0 */
-/*description: 1 if RTC controller is ready to execute WAKE instruction, 0 otherwise */
+/* RTC_CNTL_MAIN_STATE : RO ;bitpos:[31:28] ;default: 4'd0 ; */
+/*description: rtc main state machine status*/
+#define RTC_CNTL_MAIN_STATE  0x0000000F
+#define RTC_CNTL_MAIN_STATE_M  ((RTC_CNTL_MAIN_STATE_V)<<(RTC_CNTL_MAIN_STATE_S))
+#define RTC_CNTL_MAIN_STATE_V  0xF
+#define RTC_CNTL_MAIN_STATE_S  28
+/* RTC_CNTL_MAIN_STATE_IN_IDLE : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: rtc main state machine is in idle state*/
+#define RTC_CNTL_MAIN_STATE_IN_IDLE  (BIT(27))
+#define RTC_CNTL_MAIN_STATE_IN_IDLE_M  (BIT(27))
+#define RTC_CNTL_MAIN_STATE_IN_IDLE_V  0x1
+#define RTC_CNTL_MAIN_STATE_IN_IDLE_S  27
+/* RTC_CNTL_MAIN_STATE_IN_SLP : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: rtc main state machine is in sleep state*/
+#define RTC_CNTL_MAIN_STATE_IN_SLP  (BIT(26))
+#define RTC_CNTL_MAIN_STATE_IN_SLP_M  (BIT(26))
+#define RTC_CNTL_MAIN_STATE_IN_SLP_V  0x1
+#define RTC_CNTL_MAIN_STATE_IN_SLP_S  26
+/* RTC_CNTL_MAIN_STATE_IN_WAIT_XTL : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: rtc main state machine is in wait xtal state*/
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_XTL  (BIT(25))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_XTL_M  (BIT(25))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_XTL_V  0x1
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_XTL_S  25
+/* RTC_CNTL_MAIN_STATE_IN_WAIT_PLL : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: rtc main state machine is in wait pll state*/
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_PLL  (BIT(24))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_PLL_M  (BIT(24))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_PLL_V  0x1
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_PLL_S  24
+/* RTC_CNTL_MAIN_STATE_IN_WAIT_8M : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: rtc main state machine is in wait 8m state*/
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_8M  (BIT(23))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_8M_M  (BIT(23))
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_8M_V  0x1
+#define RTC_CNTL_MAIN_STATE_IN_WAIT_8M_S  23
+/* RTC_CNTL_IN_LOW_POWER_STATE : RO ;bitpos:[22] ;default: 1'b0 ; */
+/*description: rtc main state machine is in the states of low power*/
+#define RTC_CNTL_IN_LOW_POWER_STATE  (BIT(22))
+#define RTC_CNTL_IN_LOW_POWER_STATE_M  (BIT(22))
+#define RTC_CNTL_IN_LOW_POWER_STATE_V  0x1
+#define RTC_CNTL_IN_LOW_POWER_STATE_S  22
+/* RTC_CNTL_IN_WAKEUP_STATE : RO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: rtc main state machine is in the states of wakeup process*/
+#define RTC_CNTL_IN_WAKEUP_STATE  (BIT(21))
+#define RTC_CNTL_IN_WAKEUP_STATE_M  (BIT(21))
+#define RTC_CNTL_IN_WAKEUP_STATE_V  0x1
+#define RTC_CNTL_IN_WAKEUP_STATE_S  21
+/* RTC_CNTL_MAIN_STATE_WAIT_END : RO ;bitpos:[20] ;default: 1'b0 ; */
+/*description: rtc main state machine has been waited for some cycles*/
+#define RTC_CNTL_MAIN_STATE_WAIT_END  (BIT(20))
+#define RTC_CNTL_MAIN_STATE_WAIT_END_M  (BIT(20))
+#define RTC_CNTL_MAIN_STATE_WAIT_END_V  0x1
+#define RTC_CNTL_MAIN_STATE_WAIT_END_S  20
+/* RTC_CNTL_RDY_FOR_WAKEUP : RO ;bitpos:[19] ;default: 1'b0 ; */
+/*description: rtc is ready to receive wake up trigger from wake up source*/
 #define RTC_CNTL_RDY_FOR_WAKEUP  (BIT(19))
 #define RTC_CNTL_RDY_FOR_WAKEUP_M  (BIT(19))
 #define RTC_CNTL_RDY_FOR_WAKEUP_V  0x1
 #define RTC_CNTL_RDY_FOR_WAKEUP_S  19
+/* RTC_CNTL_MAIN_STATE_PLL_ON : RO ;bitpos:[18] ;default: 1'b0 ; */
+/*description: rtc main state machine is in states that pll should be running*/
+#define RTC_CNTL_MAIN_STATE_PLL_ON  (BIT(18))
+#define RTC_CNTL_MAIN_STATE_PLL_ON_M  (BIT(18))
+#define RTC_CNTL_MAIN_STATE_PLL_ON_V  0x1
+#define RTC_CNTL_MAIN_STATE_PLL_ON_S  18
+/* RTC_CNTL_MAIN_STATE_XTAL_ISO : RO ;bitpos:[17] ;default: 1'b0 ; */
+/*description: no use any more*/
+#define RTC_CNTL_MAIN_STATE_XTAL_ISO  (BIT(17))
+#define RTC_CNTL_MAIN_STATE_XTAL_ISO_M  (BIT(17))
+#define RTC_CNTL_MAIN_STATE_XTAL_ISO_V  0x1
+#define RTC_CNTL_MAIN_STATE_XTAL_ISO_S  17
+/* RTC_CNTL_COCPU_DONE : RO ;bitpos:[16] ;default: 1'b0 ; */
+/*description: ulp/cocpu is done*/
+#define RTC_CNTL_COCPU_DONE  (BIT(16))
+#define RTC_CNTL_COCPU_DONE_M  (BIT(16))
+#define RTC_CNTL_COCPU_DONE_V  0x1
+#define RTC_CNTL_COCPU_DONE_S  16
+/* RTC_CNTL_COCPU_SLP : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: ulp/cocpu is in sleep state*/
+#define RTC_CNTL_COCPU_SLP  (BIT(15))
+#define RTC_CNTL_COCPU_SLP_M  (BIT(15))
+#define RTC_CNTL_COCPU_SLP_V  0x1
+#define RTC_CNTL_COCPU_SLP_S  15
+/* RTC_CNTL_COCPU_STATE_SWITCH : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: ulp/cocpu is about to working. Switch rtc main state*/
+#define RTC_CNTL_COCPU_STATE_SWITCH  (BIT(14))
+#define RTC_CNTL_COCPU_STATE_SWITCH_M  (BIT(14))
+#define RTC_CNTL_COCPU_STATE_SWITCH_V  0x1
+#define RTC_CNTL_COCPU_STATE_SWITCH_S  14
+/* RTC_CNTL_COCPU_START : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: ulp/cocpu should start to work*/
+#define RTC_CNTL_COCPU_START  (BIT(13))
+#define RTC_CNTL_COCPU_START_M  (BIT(13))
+#define RTC_CNTL_COCPU_START_V  0x1
+#define RTC_CNTL_COCPU_START_S  13
+/* RTC_CNTL_TOUCH_DONE : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: touch is done*/
+#define RTC_CNTL_TOUCH_DONE  (BIT(12))
+#define RTC_CNTL_TOUCH_DONE_M  (BIT(12))
+#define RTC_CNTL_TOUCH_DONE_V  0x1
+#define RTC_CNTL_TOUCH_DONE_S  12
+/* RTC_CNTL_TOUCH_SLP : RO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: touch is in sleep state*/
+#define RTC_CNTL_TOUCH_SLP  (BIT(11))
+#define RTC_CNTL_TOUCH_SLP_M  (BIT(11))
+#define RTC_CNTL_TOUCH_SLP_V  0x1
+#define RTC_CNTL_TOUCH_SLP_S  11
+/* RTC_CNTL_TOUCH_STATE_SWITCH : RO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: touch is about to working. Switch rtc main state*/
+#define RTC_CNTL_TOUCH_STATE_SWITCH  (BIT(10))
+#define RTC_CNTL_TOUCH_STATE_SWITCH_M  (BIT(10))
+#define RTC_CNTL_TOUCH_STATE_SWITCH_V  0x1
+#define RTC_CNTL_TOUCH_STATE_SWITCH_S  10
+/* RTC_CNTL_TOUCH_START : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: touch should start to work*/
+#define RTC_CNTL_TOUCH_START  (BIT(9))
+#define RTC_CNTL_TOUCH_START_M  (BIT(9))
+#define RTC_CNTL_TOUCH_START_V  0x1
+#define RTC_CNTL_TOUCH_START_S  9
+/* RTC_CNTL_XPD_DIG : RO ;bitpos:[8] ;default: 1'b0 ; */
+/*description: digital wrap power down*/
+#define RTC_CNTL_XPD_DIG  (BIT(8))
+#define RTC_CNTL_XPD_DIG_M  (BIT(8))
+#define RTC_CNTL_XPD_DIG_V  0x1
+#define RTC_CNTL_XPD_DIG_S  8
+/* RTC_CNTL_DIG_ISO : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: digital wrap iso*/
+#define RTC_CNTL_DIG_ISO  (BIT(7))
+#define RTC_CNTL_DIG_ISO_M  (BIT(7))
+#define RTC_CNTL_DIG_ISO_V  0x1
+#define RTC_CNTL_DIG_ISO_S  7
+/* RTC_CNTL_XPD_WIFI : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: wifi wrap power down*/
+#define RTC_CNTL_XPD_WIFI  (BIT(6))
+#define RTC_CNTL_XPD_WIFI_M  (BIT(6))
+#define RTC_CNTL_XPD_WIFI_V  0x1
+#define RTC_CNTL_XPD_WIFI_S  6
+/* RTC_CNTL_WIFI_ISO : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: wifi iso*/
+#define RTC_CNTL_WIFI_ISO  (BIT(5))
+#define RTC_CNTL_WIFI_ISO_M  (BIT(5))
+#define RTC_CNTL_WIFI_ISO_V  0x1
+#define RTC_CNTL_WIFI_ISO_S  5
+/* RTC_CNTL_XPD_RTC_PERI : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: rtc peripheral power down*/
+#define RTC_CNTL_XPD_RTC_PERI  (BIT(4))
+#define RTC_CNTL_XPD_RTC_PERI_M  (BIT(4))
+#define RTC_CNTL_XPD_RTC_PERI_V  0x1
+#define RTC_CNTL_XPD_RTC_PERI_S  4
+/* RTC_CNTL_PERI_ISO : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: rtc peripheral iso*/
+#define RTC_CNTL_PERI_ISO  (BIT(3))
+#define RTC_CNTL_PERI_ISO_M  (BIT(3))
+#define RTC_CNTL_PERI_ISO_V  0x1
+#define RTC_CNTL_PERI_ISO_S  3
+/* RTC_CNTL_XPD_DIG_DCDC : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: External DCDC power down*/
+#define RTC_CNTL_XPD_DIG_DCDC  (BIT(2))
+#define RTC_CNTL_XPD_DIG_DCDC_M  (BIT(2))
+#define RTC_CNTL_XPD_DIG_DCDC_V  0x1
+#define RTC_CNTL_XPD_DIG_DCDC_S  2
+/* RTC_CNTL_XPD_ROM0 : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: rom0 power down*/
+#define RTC_CNTL_XPD_ROM0  (BIT(0))
+#define RTC_CNTL_XPD_ROM0_M  (BIT(0))
+#define RTC_CNTL_XPD_ROM0_V  0x1
+#define RTC_CNTL_XPD_ROM0_S  0
 
-/* Compatibility definition */
-#define RTC_CNTL_DIAG0_REG RTC_CNTL_LOW_POWER_ST_REG
-/* RTC_CNTL_LOW_POWER_DIAG0 : RO ;bitpos:[31:0] ;default: 0 ; */
-/*description: */
-#define RTC_CNTL_LOW_POWER_DIAG0  0xFFFFFFFF
-#define RTC_CNTL_LOW_POWER_DIAG0_M  ((RTC_CNTL_LOW_POWER_DIAG0_V)<<(RTC_CNTL_LOW_POWER_DIAG0_S))
-#define RTC_CNTL_LOW_POWER_DIAG0_V  0xFFFFFFFF
-#define RTC_CNTL_LOW_POWER_DIAG0_S  0
-
-#define RTC_CNTL_DIAG1_REG          (DR_REG_RTCCNTL_BASE + 0xcc)
+#define RTC_CNTL_DIAG0_REG          (DR_REG_RTCCNTL_BASE + 0xcc)
 /* RTC_CNTL_LOW_POWER_DIAG1 : RO ;bitpos:[31:0] ;default: 0 ; */
 /*description: */
 #define RTC_CNTL_LOW_POWER_DIAG1  0xFFFFFFFF
@@ -2206,7 +2374,15 @@ extern "C" {
 #define RTC_CNTL_ADC1_HOLD_FORCE_V  0x1
 #define RTC_CNTL_ADC1_HOLD_FORCE_S  0
 
-#define RTC_CNTL_EXT_WAKEUP1_REG          (DR_REG_RTCCNTL_BASE + 0xd4)
+#define RTC_CNTL_DIG_PAD_HOLD_REG          (DR_REG_RTCCNTL_BASE + 0xd4)
+/* RTC_CNTL_DIG_PAD_HOLD : R/W ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define RTC_CNTL_DIG_PAD_HOLD  0xFFFFFFFF
+#define RTC_CNTL_DIG_PAD_HOLD_M  ((RTC_CNTL_DIG_PAD_HOLD_V)<<(RTC_CNTL_DIG_PAD_HOLD_S))
+#define RTC_CNTL_DIG_PAD_HOLD_V  0xFFFFFFFF
+#define RTC_CNTL_DIG_PAD_HOLD_S  0
+
+#define RTC_CNTL_EXT_WAKEUP1_REG          (DR_REG_RTCCNTL_BASE + 0xd8)
 /* RTC_CNTL_EXT_WAKEUP1_STATUS_CLR : WO ;bitpos:[18] ;default: 1'd0 ; */
 /*description: clear ext wakeup1 status*/
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR  (BIT(18))
@@ -2220,7 +2396,7 @@ extern "C" {
 #define RTC_CNTL_EXT_WAKEUP1_SEL_V  0x3FFFF
 #define RTC_CNTL_EXT_WAKEUP1_SEL_S  0
 
-#define RTC_CNTL_EXT_WAKEUP1_STATUS_REG          (DR_REG_RTCCNTL_BASE + 0xd8)
+#define RTC_CNTL_EXT_WAKEUP1_STATUS_REG          (DR_REG_RTCCNTL_BASE + 0xdc)
 /* RTC_CNTL_EXT_WAKEUP1_STATUS : RO ;bitpos:[17:0] ;default: 18'd0 ; */
 /*description: ext wakeup1 status*/
 #define RTC_CNTL_EXT_WAKEUP1_STATUS  0x0003FFFF
@@ -2228,9 +2404,9 @@ extern "C" {
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_V  0x3FFFF
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_S  0
 
-#define RTC_CNTL_BROWN_OUT_REG          (DR_REG_RTCCNTL_BASE + 0xdc)
+#define RTC_CNTL_BROWN_OUT_REG          (DR_REG_RTCCNTL_BASE + 0xe0)
 /* RTC_CNTL_BROWN_OUT_DET : RO ;bitpos:[31] ;default: 1'b0 ; */
-/*description: brown out detect*/
+/*description: */
 #define RTC_CNTL_BROWN_OUT_DET  (BIT(31))
 #define RTC_CNTL_BROWN_OUT_DET_M  (BIT(31))
 #define RTC_CNTL_BROWN_OUT_DET_V  0x1
@@ -2272,38 +2448,14 @@ extern "C" {
 #define RTC_CNTL_BROWN_OUT_CLOSE_FLASH_ENA_V  0x1
 #define RTC_CNTL_BROWN_OUT_CLOSE_FLASH_ENA_S  14
 
-#define RTC_MEM_CONF            (DR_REG_RTCCNTL_BASE + 0x40 * 4)
-#define RTC_MEM_CRC_FINISH      (BIT(31))
-#define RTC_MEM_CRC_FINISH_M    (BIT(31))
-#define RTC_MEM_CRC_FINISH_V    0x1
-#define RTC_MEM_CRC_FINISH_S    (31)
-#define RTC_MEM_CRC_LEN         (0x7ff)
-#define RTC_MEM_CRC_LEN_M       ((RTC_MEM_CRC_LEN_V)<<(RTC_MEM_CRC_LEN_S))
-#define RTC_MEM_CRC_LEN_V       (0x7ff)
-#define RTC_MEM_CRC_LEN_S       (20)
-#define RTC_MEM_CRC_ADDR        (0x7ff)
-#define RTC_MEM_CRC_ADDR_M      ((RTC_MEM_CRC_ADDR_V)<<(RTC_MEM_CRC_ADDR_S))
-#define RTC_MEM_CRC_ADDR_V      (0x7ff)
-#define RTC_MEM_CRC_ADDR_S      (9)
-#define RTC_MEM_CRC_START       (BIT(8))
-#define RTC_MEM_CRC_START_M     (BIT(8))
-#define RTC_MEM_CRC_START_V     0x1
-#define RTC_MEM_CRC_START_S     (8)
-#define RTC_MEM_PID_CONF        (0xff)
-#define RTC_MEM_PID_CONF_M      (0xff)
-#define RTC_MEM_PID_CONF_V      (0xff)
-#define RTC_MEM_PID_CONF_S      (0)
-
-#define RTC_MEM_CRC_RES         (DR_REG_RTCCNTL_BASE + 0x41 * 4)
-
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x13c)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1702280 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1712080 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))
 #define RTC_CNTL_CNTL_DATE_V  0xFFFFFFF
 #define RTC_CNTL_CNTL_DATE_S  0
-#define RTC_CNTL_RTC_CNTL_DATE_VERSION 0x1702280
+#define RTC_CNTL_RTC_CNTL_DATE_VERSION 0x1712080
 
 #ifdef __cplusplus
 }

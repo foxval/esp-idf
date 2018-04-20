@@ -15,7 +15,7 @@ PYTHON ?= $(call dequote,$(CONFIG_PYTHON))
 #
 ESPTOOLPY_SRC := $(COMPONENT_PATH)/esptool/esptool.py
 ifdef CONFIG_CHIP_IS_ESP32C
-ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32c
+ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32c --no-stub
 else
 ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32
 endif

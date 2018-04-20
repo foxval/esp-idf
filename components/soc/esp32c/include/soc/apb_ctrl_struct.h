@@ -20,36 +20,27 @@ extern "C" {
 typedef volatile struct {
     union {
         struct {
-            uint32_t pre_div:       10;
-            uint32_t clk_320m_en:    1;
-            uint32_t clk_en:         1;
-            uint32_t rst_tick:       1;
-            uint32_t quick_clk_chng: 1;
-            uint32_t reserved14:    18;
+            uint32_t pre_div:     10;
+            uint32_t clk_320m_en:  1;
+            uint32_t clk_en:       1;
+            uint32_t rst_tick:     1;
+            uint32_t reserved13:   1;
+            uint32_t soc_clk_sel:  2;
+            uint32_t reserved16:  16;
         };
         uint32_t val;
     } clk_conf;
     union {
         struct {
             uint32_t xtal_tick:     8;
-            uint32_t reserved8:    24;
-        };
-        uint32_t val;
-    } xtal_tick_conf;
-    union {
-        struct {
-            uint32_t pll_tick:     8;
-            uint32_t reserved8:   24;
-        };
-        uint32_t val;
-    } pll_tick_conf;
-    union {
-        struct {
             uint32_t ck8m_tick:     8;
-            uint32_t reserved8:    24;
+            uint32_t tick_enable:   1;
+            uint32_t reserved17:   15;
         };
         uint32_t val;
-    } ck8m_tick_conf;
+    } tick_conf;
+    uint32_t reserved_8;
+    uint32_t reserved_c;
     union {
         struct {
             uint32_t start_force:              1;
@@ -99,15 +90,32 @@ typedef volatile struct {
     uint32_t saradc_sar2_patt_tab2;                 /*Item 4 ~ 7 for pattern table 2 (each item one byte)*/
     uint32_t saradc_sar2_patt_tab3;                 /*Item 8 ~ 11 for pattern table 2 (each item one byte)*/
     uint32_t saradc_sar2_patt_tab4;                 /*Item 12 ~ 15 for pattern table 2 (each item one byte)*/
+    uint32_t reserved_3c;
     union {
         struct {
-            uint32_t apll_tick:     8;
-            uint32_t reserved8:    24;
+            uint32_t clk20_oen:       1;
+            uint32_t clk22_oen:       1;
+            uint32_t clk44_oen:       1;
+            uint32_t clk_bb_oen:      1;
+            uint32_t clk80_oen:       1;
+            uint32_t clk160_oen:      1;
+            uint32_t clk_320m_oen:    1;
+            uint32_t clk_adc_inf_oen: 1;
+            uint32_t clk_dac_cpu_oen: 1;
+            uint32_t clk40x_bb_oen:   1;
+            uint32_t clk_xtal_oen:    1;
+            uint32_t reserved11:     21;
         };
         uint32_t val;
-    } apll_tick_conf;
-    uint32_t reserved_40;
-    uint32_t reserved_44;
+    } clk_out_en;
+    union {
+        struct {
+            uint32_t peri_io_swap:    8;
+            uint32_t link_device_sel: 8;
+            uint32_t reserved16:     16;
+        };
+        uint32_t val;
+    } host_inf_sel;
     uint32_t reserved_48;
     uint32_t reserved_4c;
     uint32_t reserved_50;

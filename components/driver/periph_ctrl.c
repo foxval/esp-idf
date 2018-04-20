@@ -96,8 +96,13 @@ static uint32_t get_clk_en_mask(periph_module_t periph)
             return DPORT_SPI2_CLK_EN;
         case PERIPH_VSPI_MODULE:
             return DPORT_SPI3_CLK_EN;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_SPI_DMA_MODULE:
             return DPORT_SPI_DMA_CLK_EN;
+#else
+        case PERIPH_SPI_DMA_MODULE:
+            return DPORT_SPI_DMA0_CLK_EN;
+#endif
         case PERIPH_SDMMC_MODULE:
             return DPORT_WIFI_CLK_SDIO_HOST_EN;
         case PERIPH_SDIO_SLAVE_MODULE:
@@ -168,8 +173,13 @@ static uint32_t get_rst_en_mask(periph_module_t periph)
             return DPORT_SPI2_RST;
         case PERIPH_VSPI_MODULE:
             return DPORT_SPI3_RST;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_SPI_DMA_MODULE:
             return DPORT_SPI_DMA_RST;
+#else
+        case PERIPH_SPI_DMA_MODULE:
+            return DPORT_SPI_DMA0_RST;
+#endif
         case PERIPH_SDMMC_MODULE:
             return DPORT_SDIO_HOST_RST;
         case PERIPH_SDIO_SLAVE_MODULE:

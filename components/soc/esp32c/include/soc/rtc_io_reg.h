@@ -518,10 +518,10 @@ extern "C" {
 #define RTC_IO_DEBUG_SEL0_32K_XTAL 4
 #define RTC_IO_DEBUG_SEL0_150K_OSC 5
 
+/* Digital team to check */
 #define RTC_IO_DIG_PAD_HOLD_REG          (DR_REG_RTCIO_BASE + 0x74)
-/* RTC_IO_DIG_PAD_HOLD : R/W ;bitpos:[31:0] ;default: 0 ; */
-/*description: Digital pad hold. Bit0 – U0RXD  bit1 – U0TXD  bit2 – SD_CLK
-  bit3 – SD_DATA0  bit4 – SD_DATA1  bit5 – SD_DATA2  bit6 – SD_SATA3  bit7 – SD_CMD  bit8 – GPIO5  bit9 – GPIO16  bit10 – GPIO17  bit11 – GPIO18  bit12 – GPIO19  bit13 – GPIO20  bit14 – GPIO21  bit15 – GPIO22  bit16 – GPIO23.*/
+/* RTC_IO_DIG_PAD_HOLD : R/W ;bitpos:[31:0] ;default: 1'd0 ; */
+/*description: select the digital pad hold value.*/
 #define RTC_IO_DIG_PAD_HOLD  0xFFFFFFFF
 #define RTC_IO_DIG_PAD_HOLD_M  ((RTC_IO_DIG_PAD_HOLD_V)<<(RTC_IO_DIG_PAD_HOLD_S))
 #define RTC_IO_DIG_PAD_HOLD_V  0xFFFFFFFF
@@ -1008,6 +1008,7 @@ extern "C" {
 #define RTC_IO_X32P_RUE_M  (BIT(22))
 #define RTC_IO_X32P_RUE_V  0x1
 #define RTC_IO_X32P_RUE_S  22
+/* Digital team to check */
 /* RTC_IO_DAC_XTAL_32K : R/W ;bitpos:[21:20] ;default: 2'b01 ; */
 /*description: 32K XTAL bias current DAC.*/
 #define RTC_IO_DAC_XTAL_32K  0x00000003
@@ -1092,6 +1093,7 @@ extern "C" {
 #define RTC_IO_X32P_FUN_IE_M  (BIT(5))
 #define RTC_IO_X32P_FUN_IE_V  0x1
 #define RTC_IO_X32P_FUN_IE_S  5
+/* Digital team to check */
 /* RTC_IO_DRES_XTAL_32K : R/W ;bitpos:[4:3] ;default: 2'b10 ; */
 /*description: 32K XTAL resistor bias control.*/
 #define RTC_IO_DRES_XTAL_32K  0x00000003
@@ -1974,13 +1976,13 @@ extern "C" {
 #define RTC_IO_SAR_DEBUG_BIT_SEL_S  23
 
 #define RTC_IO_DATE_REG          (DR_REG_RTCIO_BASE + 0xc8)
-/* RTC_IO_IO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1611300 ; */
+/* RTC_IO_IO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1710260 ; */
 /*description: */
 #define RTC_IO_IO_DATE  0x0FFFFFFF
 #define RTC_IO_IO_DATE_M  ((RTC_IO_IO_DATE_V)<<(RTC_IO_IO_DATE_S))
 #define RTC_IO_IO_DATE_V  0xFFFFFFF
 #define RTC_IO_IO_DATE_S  0
-#define RTC_IO_RTC_IO_DATE_VERSION 0x1611300
+#define RTC_IO_RTC_IO_DATE_VERSION 0x1710260
 
 #ifdef __cplusplus
 }

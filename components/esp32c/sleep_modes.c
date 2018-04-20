@@ -28,6 +28,7 @@
 #include "soc/cpu.h"
 #include "soc/rtc.h"
 #include "soc/rtc_cntl_reg.h"
+#include "soc/apb_ctrl_reg.h"
 #include "soc/rtc_io_reg.h"
 #include "soc/spi_reg.h"
 #include "soc/sens_reg.h"

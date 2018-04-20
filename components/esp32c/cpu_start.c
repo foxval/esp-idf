@@ -291,10 +291,13 @@ void start_cpu0_default(void)
 #endif
     trax_start_trace(TRAX_DOWNCOUNT_WORDS);
 #endif
+#ifndef CONFIG_HARDWARE_IS_FPGA
     esp_clk_init();
     esp_perip_clk_init();
+#endif
     intr_matrix_clear();
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
 #ifndef CONFIG_CONSOLE_UART_NONE
 #ifdef CONFIG_PM_ENABLE
     const int uart_clk_freq = REF_CLK_FREQ;
@@ -305,6 +308,7 @@ void start_cpu0_default(void)
 #endif // CONFIG_PM_DFS_ENABLE
     uart_div_modify(CONFIG_CONSOLE_UART_NUM, (uart_clk_freq << 4) / CONFIG_CONSOLE_UART_BAUDRATE);
 #endif // CONFIG_CONSOLE_UART_NONE
+#endif
 
 #if CONFIG_BROWNOUT_DET
     esp_brownout_init();

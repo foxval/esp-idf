@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_RTC_CNTL_STRUCT_H_
 #define _SOC_RTC_CNTL_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -81,9 +80,7 @@ typedef volatile struct {
     } time1;
     union {
         struct {
-            uint32_t reserved0:             16;
-            uint32_t saradc_int_en:          1;          /*saradc interrupt enable*/
-            uint32_t tsens_int_en:           1;          /*tsens interrupt enable*/
+            uint32_t reserved0:             18;
             uint32_t cocpu_wakeup:           1;          /*riscV cocpu wake up register*/
             uint32_t cocpu_wakeup_force_en:  1;          /*riscV cocpu force wake up*/
             uint32_t touch_wakeup_force_en:  1;          /*touch controller force wake up*/
@@ -91,7 +88,9 @@ typedef volatile struct {
             uint32_t apb2rtc_bridge_sel:     1;          /*1: APB to RTC using bridge   0: APB to RTC using sync*/
             uint32_t touch_slp_timer_en:     1;          /*touch timer enable bit*/
             uint32_t ulp_cp_slp_timer_en:    1;          /*ULP-coprocessor timer enable bit*/
-            uint32_t reserved25:             3;
+            uint32_t ulp_cp_gpio_wakeup_ena: 1;          /*ULP-coprocessor wakeup by GPIO enable*/
+            uint32_t ulp_cp_gpio_wakeup_clr: 1;          /*ULP-coprocessor wakeup by GPIO state clear*/
+            uint32_t reserved27:             1;
             uint32_t sdio_active_ind:        1;          /*SDIO active indication*/
             uint32_t slp_wakeup:             1;          /*leep wakeup bit*/
             uint32_t slp_reject:             1;          /*leep reject bit*/
@@ -199,10 +198,11 @@ typedef volatile struct {
             uint32_t rtc_touch:              1;          /*enable touch interrupt*/
             uint32_t rtc_brown_out:          1;          /*enable brown out interrupt*/
             uint32_t rtc_main_timer:         1;          /*enable RTC main timer interrupt*/
-            uint32_t rtc_saradc:             1;          /*enable saradc interrupt*/
+            uint32_t rtc_saradc1:            1;          /*enable saradc1 interrupt*/
             uint32_t rtc_tsens:              1;          /*enable tsens interrupt*/
             uint32_t rtc_cocpu:              1;          /*enable riscV cocpu interrupt*/
-            uint32_t reserved12:            20;
+            uint32_t rtc_saradc2:            1;          /*enable saradc2 interrupt*/
+            uint32_t reserved13:            19;
         };
         uint32_t val;
     } int_ena;
@@ -217,10 +217,11 @@ typedef volatile struct {
             uint32_t rtc_touch:              1;          /*touch interrupt raw*/
             uint32_t rtc_brown_out:          1;          /*brown out interrupt raw*/
             uint32_t rtc_main_timer:         1;          /*RTC main timer interrupt raw*/
-            uint32_t rtc_saradc:             1;          /*saradc interrupt raw*/
+            uint32_t rtc_saradc1:            1;          /*saradc1 interrupt raw*/
             uint32_t rtc_tsens:              1;          /*tsens interrupt raw*/
             uint32_t rtc_cocpu:              1;          /*riscV cocpu interrupt raw*/
-            uint32_t reserved12:            20;
+            uint32_t rtc_saradc2:            1;          /*saradc2 interrupt raw*/
+            uint32_t reserved13:            19;
         };
         uint32_t val;
     } int_raw;
@@ -235,10 +236,11 @@ typedef volatile struct {
             uint32_t rtc_touch:             1;           /*touch interrupt state*/
             uint32_t rtc_brown_out:         1;           /*brown out interrupt state*/
             uint32_t rtc_main_timer:        1;           /*RTC main timer interrupt state*/
-            uint32_t rtc_saradc:            1;           /*saradc interrupt state*/
+            uint32_t rtc_saradc1:           1;           /*saradc1 interrupt state*/
             uint32_t rtc_tsens:             1;           /*tsens interrupt state*/
             uint32_t rtc_cocpu:             1;           /*riscV cocpu interrupt state*/
-            uint32_t reserved12:           20;
+            uint32_t rtc_saradc2:           1;           /*saradc2 interrupt state*/
+            uint32_t reserved13:           19;
         };
         uint32_t val;
     } int_st;
@@ -253,10 +255,11 @@ typedef volatile struct {
             uint32_t rtc_touch:              1;          /*Clear touch interrupt state*/
             uint32_t rtc_brown_out:          1;          /*Clear brown out interrupt state*/
             uint32_t rtc_main_timer:         1;          /*Clear RTC main timer interrupt state*/
-            uint32_t rtc_saradc:             1;          /*Clear saradc interrupt state*/
+            uint32_t rtc_saradc1:            1;          /*Clear saradc1 interrupt state*/
             uint32_t rtc_tsens:              1;          /*Clear tsens interrupt state*/
             uint32_t rtc_cocpu:              1;          /*Clear riscV cocpu interrupt state*/
-            uint32_t reserved12:            20;
+            uint32_t rtc_saradc2:            1;          /*Clear saradc2 interrupt state*/
+            uint32_t reserved13:            19;
         };
         uint32_t val;
     } int_clr;
@@ -320,7 +323,7 @@ typedef volatile struct {
             uint32_t ck8m_dfreq:          8;             /*CK8M_DFREQ*/
             uint32_t ck8m_force_pd:       1;             /*CK8M force power down*/
             uint32_t ck8m_force_pu:       1;             /*CK8M force power up*/
-            uint32_t soc_clk_sel:         2;             /*SOC clock sel. 0: XTAL  1: PLL  2: CK8M  3: APLL*/
+            uint32_t reserved27:          2;
             uint32_t fast_clk_rtc_sel:    1;             /*fast_clk_rtc sel. 0: XTAL div 4  1: CK8M*/
             uint32_t ana_clk_rtc_sel:     2;
         };
@@ -328,14 +331,15 @@ typedef volatile struct {
     } clk_conf;
     union {
         struct {
-            uint32_t reserved0:           15;
-            uint32_t dbias_xtal_32k:       2;            /*DBIAS_XTAL_32K*/
-            uint32_t dres_xtal_32k:        2;            /*DRES_XTAL_32K*/
-            uint32_t xpd_xtal_32k:         1;            /*XPD_XTAL_32K*/
-            uint32_t dac_xtal_32k:         2;            /*DAC_XTAL_32K*/
-            uint32_t rtc_xtal32k_gpio_sel: 1;            /*XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
-            uint32_t rtc_ana_clk_div_vld:  1;            /*used to sync div bus. clear vld before set reg_rtc_ana_clk_div  then set vld to actually switch the clk*/
-            uint32_t rtc_ana_clk_div:      8;
+            uint32_t reserved0:             14;
+            uint32_t dbias_xtal_32k:         2;          /*DBIAS_XTAL_32K*/
+            uint32_t dres_xtal_32k:          2;          /*DRES_XTAL_32K*/
+            uint32_t xpd_xtal_32k:           1;          /*XPD_XTAL_32K*/
+            uint32_t dac_xtal_32k:           2;          /*DAC_XTAL_32K*/
+            uint32_t rtc_xtal32k_gpio_sel:   1;          /*XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
+            uint32_t rtc_ana_clk_div_vld:    1;          /*used to sync div bus. clear vld before set reg_rtc_ana_clk_div  then set vld to actually switch the clk*/
+            uint32_t rtc_ana_clk_div:        8;
+            uint32_t slow_clk_next_edge:     1;
         };
         uint32_t val;
     } slow_clk_conf;
@@ -368,8 +372,7 @@ typedef volatile struct {
     } bias_conf;
     union {
         struct {
-            uint32_t reserved0:           7;
-            uint32_t sck_dcap_force:      1;             /*N/A*/
+            uint32_t reserved0:           8;
             uint32_t dig_dbias_slp:       3;             /*DIG_REG_DBIAS during sleep*/
             uint32_t dig_dbias_wak:       3;             /*DIG_REG_DBIAS during wakeup*/
             uint32_t sck_dcap:            8;             /*SCK_DCAP*/
@@ -377,8 +380,8 @@ typedef volatile struct {
             uint32_t rtc_dbias_wak:       3;             /*RTC_DBIAS during wakeup*/
             uint32_t rtc_dboost_force_pd: 1;             /*RTC_DBOOST force power down*/
             uint32_t rtc_dboost_force_pu: 1;             /*RTC_DBOOST force power up*/
-            uint32_t rtc_force_pd:        1;             /*RTC_REG force power down (for RTC_REG power down means decrease the voltage to 0.8v or lower )*/
-            uint32_t rtc_force_pu:        1;
+            uint32_t rtculator_force_pd:  1;             /*RTC_REG force power down (for RTC_REG power down means decrease the voltage to 0.8v or lower )*/
+            uint32_t rtculator_force_pu:  1;
         };
         uint32_t val;
     } rtc;
@@ -533,8 +536,41 @@ typedef volatile struct {
     uint32_t store5;                                 /**/
     uint32_t store6;                                 /**/
     uint32_t store7;                                 /**/
+    union {
+        struct {
+            uint32_t xpd_rom0:                   1;      /*rom0 power down*/
+            uint32_t reserved1:                  1;
+            uint32_t xpd_dig_dcdc:               1;      /*External DCDC power down*/
+            uint32_t rtc_peri_iso:               1;      /*rtc peripheral iso*/
+            uint32_t xpd_rtc_peri:               1;      /*rtc peripheral power down*/
+            uint32_t wifi_iso:                   1;      /*wifi iso*/
+            uint32_t xpd_wifi:                   1;      /*wifi wrap power down*/
+            uint32_t dig_iso:                    1;      /*digital wrap iso*/
+            uint32_t xpd_dig:                    1;      /*digital wrap power down*/
+            uint32_t rtc_touch_start:            1;      /*touch should start to work*/
+            uint32_t rtc_touch_state_switch:     1;      /*touch is about to working. Switch rtc main state*/
+            uint32_t rtc_touch_slp:              1;      /*touch is in sleep state*/
+            uint32_t rtc_touch_done:             1;      /*touch is done*/
+            uint32_t rtc_cocpu_start:            1;      /*ulp/cocpu should start to work*/
+            uint32_t rtc_cocpu_state_switch:     1;      /*ulp/cocpu is about to working. Switch rtc main state*/
+            uint32_t rtc_cocpu_slp:              1;      /*ulp/cocpu is in sleep state*/
+            uint32_t rtc_cocpu_done:             1;      /*ulp/cocpu is done*/
+            uint32_t rtc_main_state_xtal_iso:    1;      /*no use any more*/
+            uint32_t rtc_main_state_pll_on:      1;      /*rtc main state machine is in states that pll should be running*/
+            uint32_t rtc_rdy_for_wakeup:         1;      /*rtc is ready to receive wake up trigger from wake up source*/
+            uint32_t rtc_main_state_wait_end:    1;      /*rtc main state machine has been waited for some cycles*/
+            uint32_t rtc_in_wakeup_state:        1;      /*rtc main state machine is in the states of wakeup process*/
+            uint32_t rtc_in_low_power_state:     1;      /*rtc main state machine is in the states of low power*/
+            uint32_t rtc_main_state_in_wait_8m:  1;      /*rtc main state machine is in wait 8m state*/
+            uint32_t rtc_main_state_in_wait_pll: 1;      /*rtc main state machine is in wait pll state*/
+            uint32_t rtc_main_state_in_wait_xtl: 1;      /*rtc main state machine is in wait xtal state*/
+            uint32_t rtc_main_state_in_slp:      1;      /*rtc main state machine is in sleep state*/
+            uint32_t rtc_main_state_in_idle:     1;      /*rtc main state machine is in idle state*/
+            uint32_t rtc_main_state:             4;      /*rtc main state machine status*/
+        };
+        uint32_t val;
+    } low_power_st;
     uint32_t diag0;                                  /**/
-    uint32_t diag1;                                  /**/
     union {
         struct {
             uint32_t adc1_hold_force:       1;
@@ -559,6 +595,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } hold_force;
+    uint32_t dig_pad_hold;                               /**/
     union {
         struct {
             uint32_t sel:                   18;          /*Bitmap to select RTC pads for ext wakeup1*/
@@ -587,11 +624,11 @@ typedef volatile struct {
         };
         uint32_t val;
     } brown_out;
-    uint32_t reserved_3b;
-    uint32_t reserved_3f;
-    uint32_t reserved_43;
-    uint32_t reserved_47;
-    uint32_t reserved_4b;
+    uint32_t reserved_3c;
+    uint32_t reserved_40;
+    uint32_t reserved_44;
+    uint32_t reserved_48;
+    uint32_t reserved_4c;
     union {
         struct {
             uint32_t date:      28;

@@ -82,6 +82,7 @@ static void IRAM_ATTR spi_flash_mmap_init()
     DPORT_INTERRUPT_DISABLE();
     for (int i = 0; i < REGIONS_COUNT * PAGES_PER_REGION; ++i) {
         uint32_t entry_pro = DPORT_SEQUENCE_REG_READ((uint32_t)&DPORT_PRO_FLASH_MMU_TABLE[i]);
+#if !CONFIG_FREERTOS_UNICORE
         uint32_t entry_app = DPORT_SEQUENCE_REG_READ((uint32_t)&DPORT_APP_FLASH_MMU_TABLE[i]);
 
         if (entry_pro != entry_app) {
@@ -89,11 +90,14 @@ static void IRAM_ATTR spi_flash_mmap_init()
             entry_pro = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
             DPORT_PRO_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
         }
+#endif
         if ((entry_pro & INVALID_ENTRY_VAL) == 0 && (i == 0 || i == PRO_IRAM0_FIRST_USABLE_PAGE || entry_pro != 0)) {
             s_mmap_page_refcnt[i] = 1;
         } else {
             DPORT_PRO_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
+#if !CONFIG_FREERTOS_UNICORE
             DPORT_APP_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
+#endif
         }
     }
     DPORT_INTERRUPT_RESTORE();
@@ -211,14 +215,25 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
         for (int i = start; i != start + page_count; ++i, ++pageno) {
             // sanity check: we won't reconfigure entries with non-zero reference count
             uint32_t entry_pro = DPORT_SEQUENCE_REG_READ((uint32_t)&DPORT_PRO_FLASH_MMU_TABLE[i]);
+#if !CONFIG_FREERTOS_UNICORE
             uint32_t entry_app = DPORT_SEQUENCE_REG_READ((uint32_t)&DPORT_APP_FLASH_MMU_TABLE[i]);
+#endif
             assert(s_mmap_page_refcnt[i] == 0 ||
-                    (entry_pro == pages[pageno] &&
-                     entry_app == pages[pageno]));
+                    (entry_pro == pages[pageno] 
+#if !CONFIG_FREERTOS_UNICORE
+                     && entry_app == pages[pageno]
+#endif
+                     ));
             if (s_mmap_page_refcnt[i] == 0) {
-                if (entry_pro != pages[pageno] || entry_app != pages[pageno]) {
+                if (entry_pro != pages[pageno] 
+#if !CONFIG_FREERTOS_UNICORE
+                        || entry_app != pages[pageno]
+#endif
+                        ) {
                     DPORT_PRO_FLASH_MMU_TABLE[i] = pages[pageno];
+#if !CONFIG_FREERTOS_UNICORE
                     DPORT_APP_FLASH_MMU_TABLE[i] = pages[pageno];
+#endif
                     need_flush = true;
                 }
             }
@@ -271,7 +286,9 @@ void IRAM_ATTR spi_flash_munmap(spi_flash_mmap_handle_t handle)
                 assert(s_mmap_page_refcnt[i] > 0);
                 if (--s_mmap_page_refcnt[i] == 0) {
                     DPORT_PRO_FLASH_MMU_TABLE[i] = INVALID_ENTRY_VAL;
+#if !CONFIG_FREERTOS_UNICORE
                     DPORT_APP_FLASH_MMU_TABLE[i] = INVALID_ENTRY_VAL;
+#endif
                 }
             }
             LIST_REMOVE(it, entries);

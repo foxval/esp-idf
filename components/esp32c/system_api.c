@@ -284,9 +284,11 @@ void IRAM_ATTR esp_restart_noos()
     // instruction. This would cause memory pool to be locked by arbiter
     // to the stalled CPU, preventing current CPU from accessing this pool.
     const uint32_t core_id = xPortGetCoreID();
+#if !CONFIG_FREERTOS_UNICORE
     const uint32_t other_core_id = (core_id == 0) ? 1 : 0;
     esp_cpu_reset(other_core_id);
     esp_cpu_stall(other_core_id);
+#endif
 
     // Other core is now stalled, can access DPORT registers directly
     esp_dport_access_int_abort();
@@ -306,7 +308,9 @@ void IRAM_ATTR esp_restart_noos()
 
     // Disable cache
     Cache_Read_Disable(0);
+#if !CONFIG_FREERTOS_UNICORE
     Cache_Read_Disable(1);
+#endif
 
     // 2nd stage bootloader reconfigures SPI flash signals.
     // Reset them to the defaults expected by ROM.
@@ -331,23 +335,32 @@ void IRAM_ATTR esp_restart_noos()
     DPORT_REG_WRITE(DPORT_PERIP_RST_EN_REG, 0);
 
     // Set CPU back to XTAL source, no PLL, same as hard reset
+#ifdef CONFIG_HARDWARE_IS_CHIP
     rtc_clk_cpu_freq_set(RTC_CPU_FREQ_XTAL);
+#endif
 
+#if !CONFIG_FREERTOS_UNICORE
     // Clear entry point for APP CPU
     DPORT_REG_WRITE(DPORT_APPCPU_CTRL_D_REG, 0);
+#endif
 
     // Reset CPUs
     if (core_id == 0) {
         // Running on PRO CPU: APP CPU is stalled. Can reset both CPUs.
+#if !CONFIG_FREERTOS_UNICORE
         esp_cpu_reset(1);
+#endif
         esp_cpu_reset(0);
-    } else {
+    }
+#if !CONFIG_FREERTOS_UNICORE
+      else {
         // Running on APP CPU: need to reset PRO CPU and unstall it,
         // then reset APP CPU
         esp_cpu_reset(0);
         esp_cpu_unstall(0);
         esp_cpu_reset(1);
     }
+#endif
     while(true) {
         ;
     }

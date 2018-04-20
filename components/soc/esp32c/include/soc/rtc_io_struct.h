@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_RTC_IO_STRUCT_H_
 #define _SOC_RTC_IO_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -112,7 +111,6 @@ typedef volatile struct {
         };
         uint32_t val;
     } debug_sel;
-    uint32_t dig_pad_hold;                              /*Digital pad hold. Bit0 – U0RXD  bit1 – U0TXD  bit2 – SD_CLK  bit3 – SD_DATA0  bit4 – SD_DATA1  bit5 – SD_DATA2  bit6 – SD_SATA3  bit7 – SD_CMD  bit8 – GPIO5  bit9 – GPIO16  bit10 – GPIO17  bit11 – GPIO18  bit12 – GPIO19  bit13 – GPIO20  bit14 – GPIO21  bit15 – GPIO22  bit16 – GPIO23.*/
     union {
         struct {
             uint32_t reserved0: 30;

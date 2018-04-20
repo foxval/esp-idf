@@ -267,11 +267,11 @@
 #define  APB_CLK_FREQ_ROM                            ( 26*1000000 )
 #define  CPU_CLK_FREQ_ROM                            APB_CLK_FREQ_ROM
 #define  CPU_CLK_FREQ                                APB_CLK_FREQ
-#define  APB_CLK_FREQ                                ( 80*1000000 )       //unit: Hz
+#define  APB_CLK_FREQ                                ( 40*1000000 )       //unit: Hz
 #define  REF_CLK_FREQ                                ( 1000000 )
 #define  UART_CLK_FREQ                               APB_CLK_FREQ
 #define  WDT_CLK_FREQ                                APB_CLK_FREQ
-#define  TIMER_CLK_FREQ                              (80000000>>4) //80MHz divided by 16
+#define  TIMER_CLK_FREQ                              (40000000>>4) //80MHz divided by 16
 #define  SPI_CLK_DIV                                 4
 #define  TICKS_PER_US_ROM                            26              // CPU is 80MHz
 //}}
