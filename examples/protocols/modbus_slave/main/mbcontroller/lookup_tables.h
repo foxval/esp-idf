@@ -1,0 +1,113 @@
+/************************************************************************************
+ * Filename: lookup_tables.h
+ *
+ * Notice:
+
+ *           MANUAL UPDATES TO THIS FILE WILL BE LOST.
+ *
+***************************************************************************************
+ *
+ *
+ *=====================================================================================
+ * Description:
+ *   Header file for the Modbus registers and coil lookup tables. These tables map
+ *   the registers/coils from Modbus to the appropriate location (I/O Processor or
+ *   Sensor Processor). It also defines attributes such as type and protection.
+ *
+ * External Interface Functions:
+ *   N/A
+ *
+ * Internal Functions:
+ *   N/A
+ * 
+***************************************************************************************/
+//
+#ifndef _LOOKUP_TABLES_H
+#define _LOOKUP_TABLES_H
+//
+#ifdef __cplusplus
+extern "C" {
+#endif
+  
+//#include "types.h"
+#include <stdint.h>
+#include <stddef.h>
+#include "deviceparams.h"  
+
+
+// Work Access
+#define LKUP_ACCESS_WORK_NA         0x00
+#define LKUP_ACCESS_WORK_R          0x01
+#define LKUP_ACCESS_WORK_W          0x02
+#define LKUP_ACCESS_WORK_RW         0x03
+#define LKUP_ACCESS_WORK_MASK       0x03
+
+// Service Access
+#define LKUP_ACCESS_SERV_NA         0x00
+#define LKUP_ACCESS_SERV_R          0x04
+#define LKUP_ACCESS_SERV_W          0x08
+#define LKUP_ACCESS_SERV_RW         0x0c
+#define LKUP_ACCESS_SERV_MASK       0x0c
+
+// Write Protect
+#define LKUP_ACCESS_NO_WRITE_PROTECT 0x00
+#define LKUP_ACCESS_WRITE_PROTECT    0x10
+#define LKUP_ACCESS_WRITE_PROTECT_MASK 0x10
+
+// Storage Type
+#define LKUP_ACCESS_TYPE_NV          0x20
+#define LKUP_ACCESS_TYPE_DYNAMIC     0x40
+#define LKUP_ACCESS_TYPE_STATIC      0x80
+#define LKUP_ACCESS_TYPE_NV_MASK     (0x20 + 0x80)
+
+// Parameter Type
+#define LKUP_TYPE_U8                   0
+#define LKUP_TYPE_U16                  1
+#define LKUP_TYPE_U32                  2
+#define LKUP_TYPE_FLOAT                3
+#define LKUP_TYPE_ASCII                4
+
+#define LKUP_SIZE_U8                   1
+#define LKUP_SIZE_U16                  2
+#define LKUP_SIZE_U32                  4
+#define LKUP_SIZE_FLOAT                4
+#define LKUP_SIZE_ASCII                8
+
+// Discrete Bit Masks
+#define LKUP_COIL_MASK_BIT0  (uint8_t)0x01
+#define LKUP_COIL_MASK_BIT1  (uint8_t)0x02
+#define LKUP_COIL_MASK_BIT2  (uint8_t)0x04
+#define LKUP_COIL_MASK_BIT3  (uint8_t)0x08
+#define LKUP_COIL_MASK_BIT4  (uint8_t)0x10
+#define LKUP_COIL_MASK_BIT5  (uint8_t)0x20
+#define LKUP_COIL_MASK_BIT6  (uint8_t)0x40
+#define LKUP_COIL_MASK_BIT7  (uint8_t)0x80
+
+// pointer to function which is used for handling request
+typedef uint8_t (*tCmdExecuteFuncPtr)(void* param, void* buffer);
+
+// Structure Definitions
+// {Par Offset, NV Offset, Check Func, Parameter Offset, Data Type, Data Size, Work Mode Access |
+// Service Mode Access | Write Protect}
+typedef struct
+{
+    uint16_t            offset;           // This is the Modbus address. This is the 0 based value.
+                                          // if ModbusMap Offset = 101, this will be 100.
+    uint16_t            nvAddress;        // NV parameter data offset, NULL means not save in NV
+    tCmdExecuteFuncPtr  cmdFuncPtr;       // W/R check function
+    const char*         parKey;           // The key (name) of the parameter
+    uint16_t            paramOffset;      // Parameter name (OFFSET in the parameter structure)
+    uint8_t             type;             // Float, U8, U16, U32, ASCII, etc.
+    uint8_t             size;             // Number of bytes in parameter. U8 = 1, Float = 4, ASCII size
+                                          //  depends on parameter.
+    uint8_t             access;           // Access permissions based on mode
+} tLookupRegisters;
+
+extern const tLookupRegisters g_stLookupRegisters[];
+
+#ifdef __cplusplus
+}
+#endif
+#endif // _LOOKUP_TABLES_H
+
+
