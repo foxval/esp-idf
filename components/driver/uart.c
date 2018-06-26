@@ -824,7 +824,11 @@ static void uart_rx_intr_handler_default(void *param)
             if (p_uart->rx_buffer_full_flg == false) {
                 //We have to read out all data in RX FIFO to clear the interrupt signal
                 while (buf_idx < rx_fifo_len) {
+#ifdef CONFIG_CHIP_IS_ESP32
                     p_uart->rx_data_buf[buf_idx++] = uart_reg->fifo.rw_byte;
+#else
+                    p_uart->rx_data_buf[buf_idx++] = UART_FIFO_AHB_REG(uart_num);
+#endif
                 }
                 uint8_t pat_chr = uart_reg->at_cmd_char.data;
                 int pat_num = uart_reg->at_cmd_char.char_num;

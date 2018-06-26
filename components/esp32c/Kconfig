@@ -109,10 +109,13 @@ choice SPIRAM_SPEED
                  Application code should never touch VSPI hardware in this case. The option to select
                  80MHz will only be visible if the flash SPI speed is also 80MHz. (ESPTOOLPY_FLASHFREQ_80M is true)
 
+config SPIRAM_SPEED_20M
+    bool "20MHz clock speed"
+config SPIRAM_SPEED_26M
+    bool "26MHz clock speed"
 config SPIRAM_SPEED_40M
     bool "40MHz clock speed"
 config SPIRAM_SPEED_80M
-    depends on ESPTOOLPY_FLASHFREQ_80M
     bool "80MHz clock speed"
 endchoice
 

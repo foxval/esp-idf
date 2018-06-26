@@ -112,10 +112,12 @@ static rtc_cpu_freq_t s_cur_freq = RTC_CPU_FREQ_XTAL;
 
 static void rtc_clk_32k_enable_internal(int dac, int dres, int dbias)
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     SET_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_X32N_MUX_SEL | RTC_IO_X32P_MUX_SEL);
     CLEAR_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG,
             RTC_IO_X32P_RDE | RTC_IO_X32P_RUE | RTC_IO_X32N_RUE |
             RTC_IO_X32N_RDE | RTC_IO_X32N_MUX_SEL | RTC_IO_X32P_MUX_SEL);
+#endif
 #ifdef CONFIG_CHIP_IS_ESP32
     REG_SET_FIELD(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_DAC_XTAL_32K, dac);
     REG_SET_FIELD(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_DRES_XTAL_32K, dres);
@@ -174,11 +176,13 @@ void rtc_clk_32k_bootstrap(uint32_t cycle)
 #else
     CLEAR_PERI_REG_MASK(RTC_CNTL_SLOW_CLK_CONF_REG, RTC_CNTL_XPD_XTAL_32K);
 #endif
+#ifdef CONFIG_CHIP_IS_ESP32
     SET_PERI_REG_MASK(RTC_IO_XTAL_32K_PAD_REG, RTC_IO_X32P_RUE | RTC_IO_X32N_RDE);
     ets_delay_us(XTAL_32K_BOOTSTRAP_TIME_US);
 
     rtc_clk_32k_enable_internal(XTAL_32K_BOOTSTRAP_DAC_VAL,
             XTAL_32K_BOOTSTRAP_DRES_VAL, XTAL_32K_BOOTSTRAP_DBIAS_VAL);
+#endif
 }
 
 bool rtc_clk_32k_enabled()

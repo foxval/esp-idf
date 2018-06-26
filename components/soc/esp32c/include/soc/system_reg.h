@@ -1,0 +1,923 @@
+// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#ifndef _SOC_SYSTEM_REG_H_
+#define _SOC_SYSTEM_REG_H_
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+//#include "soc.h"
+#define DPORT_ROM_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x000)
+/* DPORT_ROM_FO : R/W ;bitpos:[4:0] ;default: ~5'b0 ; */
+/*description: */
+#define DPORT_ROM_FO  0x0000001F
+#define DPORT_ROM_FO_M  ((DPORT_ROM_FO_V)<<(DPORT_ROM_FO_S))
+#define DPORT_ROM_FO_V  0x1F
+#define DPORT_ROM_FO_S  0
+
+#define DPORT_ROM_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x004)
+/* DPORT_ROM_PD : R/W ;bitpos:[4:0] ;default: 5'b0 ; */
+/*description: */
+#define DPORT_ROM_PD  0x0000001F
+#define DPORT_ROM_PD_M  ((DPORT_ROM_PD_V)<<(DPORT_ROM_PD_S))
+#define DPORT_ROM_PD_V  0x1F
+#define DPORT_ROM_PD_S  0
+
+#define DPORT_SRAM_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x008)
+/* DPORT_SRAM_FO : R/W ;bitpos:[28:0] ;default: ~29'b0 ; */
+/*description: */
+#define DPORT_SRAM_FO  0x1FFFFFFF
+#define DPORT_SRAM_FO_M  ((DPORT_SRAM_FO_V)<<(DPORT_SRAM_FO_S))
+#define DPORT_SRAM_FO_V  0x1FFFFFFF
+#define DPORT_SRAM_FO_S  0
+
+#define DPORT_SRAM_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x00C)
+/* DPORT_SRAM_PD : R/W ;bitpos:[28:0] ;default: 29'b0 ; */
+/*description: */
+#define DPORT_SRAM_PD  0x1FFFFFFF
+#define DPORT_SRAM_PD_M  ((DPORT_SRAM_PD_V)<<(DPORT_SRAM_PD_S))
+#define DPORT_SRAM_PD_V  0x1FFFFFFF
+#define DPORT_SRAM_PD_S  0
+
+#define DPORT_PERI_CLK_EN_REG          (DR_REG_SYSTEM_BASE + 0x010)
+//#define DPORT_CPU_PERI_CLK_EN_REG          (DR_REG_SYSTEM_BASE + 0x010)
+/* DPORT_CLK_EN_DEDICATED_GPIO : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_DEDICATED_GPIO  (BIT(6))
+#define DPORT_CLK_EN_DEDICATED_GPIO_M  (BIT(6))
+#define DPORT_CLK_EN_DEDICATED_GPIO_V  0x1
+#define DPORT_CLK_EN_DEDICATED_GPIO_S  6
+/* DPORT_CLK_EN_ASSIST_DEBUG : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_ASSIST_DEBUG  (BIT(5))
+#define DPORT_CLK_EN_ASSIST_DEBUG_M  (BIT(5))
+#define DPORT_CLK_EN_ASSIST_DEBUG_V  0x1
+#define DPORT_CLK_EN_ASSIST_DEBUG_S  5
+/* DPORT_CLK_EN_DIGITAL_SIGNATURE : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_DIGITAL_SIGNATURE  (BIT(4))
+#define DPORT_CLK_EN_DIGITAL_SIGNATURE_M  (BIT(4))
+#define DPORT_CLK_EN_DIGITAL_SIGNATURE_V  0x1
+#define DPORT_CLK_EN_DIGITAL_SIGNATURE_S  4
+/* DPORT_CLK_EN_SECURE_BOOT : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_SECURE_BOOT  (BIT(3))
+#define DPORT_CLK_EN_SECURE_BOOT_M  (BIT(3))
+#define DPORT_CLK_EN_SECURE_BOOT_V  0x1
+#define DPORT_CLK_EN_SECURE_BOOT_S  3
+/* DPORT_CLK_EN_RSA : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_RSA  (BIT(2))
+#define DPORT_CLK_EN_RSA_M  (BIT(2))
+#define DPORT_CLK_EN_RSA_V  0x1
+#define DPORT_CLK_EN_RSA_S  2
+/* DPORT_CLK_EN_SHA : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_SHA  (BIT(1))
+#define DPORT_CLK_EN_SHA_M  (BIT(1))
+#define DPORT_CLK_EN_SHA_V  0x1
+#define DPORT_CLK_EN_SHA_S  1
+/* DPORT_CLK_EN_AES : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CLK_EN_AES  (BIT(0))
+#define DPORT_CLK_EN_AES_M  (BIT(0))
+#define DPORT_CLK_EN_AES_V  0x1
+#define DPORT_CLK_EN_AES_S  0
+
+#define DPORT_PERI_EN_AES DPORT_CLK_EN_AES
+#define DPORT_PERI_EN_SHA DPORT_CLK_EN_SHA
+#define DPORT_PERI_EN_RSA DPORT_CLK_EN_RSA
+/* NB: Secure boot reset will hold SHA & AES in reset */
+#define DPORT_PERI_EN_SECUREBOOT DPORT_CLK_EN_SECURE_BOOT
+/* NB: Digital signature reset will hold AES & RSA in reset */
+#define DPORT_PERI_EN_DIGITAL_SIGNATURE DPORT_CLK_EN_DIGITAL_SIGNATURE
+//#define DPORT_PERI_EN_PRO_ALONE_GPIO (1<<5)
+//#define DPORT_PERI_EN_APP_ALONE_GPIO (1<<6)
+#define DPORT_PERI_EN_ASSIST_DEBUG DPORT_CLK_EN_ASSIST_DEBUG
+
+#define DPORT_PERI_RST_EN_REG          (DR_REG_SYSTEM_BASE + 0x014)
+//#define DPORT_CPU_PERI_RST_EN_REG          (DR_REG_SYSTEM_BASE + 0x014)
+/* DPORT_RST_EN_DEDICATED_GPIO : R/W ;bitpos:[6] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_DEDICATED_GPIO  (BIT(6))
+#define DPORT_RST_EN_DEDICATED_GPIO_M  (BIT(6))
+#define DPORT_RST_EN_DEDICATED_GPIO_V  0x1
+#define DPORT_RST_EN_DEDICATED_GPIO_S  6
+/* DPORT_RST_EN_ASSIST_DEBUG : R/W ;bitpos:[5] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_ASSIST_DEBUG  (BIT(5))
+#define DPORT_RST_EN_ASSIST_DEBUG_M  (BIT(5))
+#define DPORT_RST_EN_ASSIST_DEBUG_V  0x1
+#define DPORT_RST_EN_ASSIST_DEBUG_S  5
+/* DPORT_RST_EN_DIGITAL_SIGNATURE : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_DIGITAL_SIGNATURE  (BIT(4))
+#define DPORT_RST_EN_DIGITAL_SIGNATURE_M  (BIT(4))
+#define DPORT_RST_EN_DIGITAL_SIGNATURE_V  0x1
+#define DPORT_RST_EN_DIGITAL_SIGNATURE_S  4
+/* DPORT_RST_EN_SECURE_BOOT : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_SECURE_BOOT  (BIT(3))
+#define DPORT_RST_EN_SECURE_BOOT_M  (BIT(3))
+#define DPORT_RST_EN_SECURE_BOOT_V  0x1
+#define DPORT_RST_EN_SECURE_BOOT_S  3
+/* DPORT_RST_EN_RSA : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_RSA  (BIT(2))
+#define DPORT_RST_EN_RSA_M  (BIT(2))
+#define DPORT_RST_EN_RSA_V  0x1
+#define DPORT_RST_EN_RSA_S  2
+/* DPORT_RST_EN_SHA : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_SHA  (BIT(1))
+#define DPORT_RST_EN_SHA_M  (BIT(1))
+#define DPORT_RST_EN_SHA_V  0x1
+#define DPORT_RST_EN_SHA_S  1
+/* DPORT_RST_EN_AES : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RST_EN_AES  (BIT(0))
+#define DPORT_RST_EN_AES_M  (BIT(0))
+#define DPORT_RST_EN_AES_V  0x1
+#define DPORT_RST_EN_AES_S  0
+
+#define DPORT_WIFI_BB_CFG_REG          (DR_REG_SYSTEM_BASE + 0x018)
+/* DPORT_WIFI_BB_CFG : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define DPORT_WIFI_BB_CFG  0xFFFFFFFF
+#define DPORT_WIFI_BB_CFG_M  ((DPORT_WIFI_BB_CFG_V)<<(DPORT_WIFI_BB_CFG_S))
+#define DPORT_WIFI_BB_CFG_V  0xFFFFFFFF
+#define DPORT_WIFI_BB_CFG_S  0
+
+#define DPORT_WIFI_BB_CFG_2_REG          (DR_REG_SYSTEM_BASE + 0x01C)
+/* DPORT_WIFI_BB_CFG_2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define DPORT_WIFI_BB_CFG_2  0xFFFFFFFF
+#define DPORT_WIFI_BB_CFG_2_M  ((DPORT_WIFI_BB_CFG_2_V)<<(DPORT_WIFI_BB_CFG_2_S))
+#define DPORT_WIFI_BB_CFG_2_V  0xFFFFFFFF
+#define DPORT_WIFI_BB_CFG_2_S  0
+
+#define DPORT_CPU_PER_CONF_REG          (DR_REG_SYSTEM_BASE + 0x020)
+/* DPORT_CPU_WAIT_MODE_FORCE_ON : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_CPU_WAIT_MODE_FORCE_ON  (BIT(3))
+#define DPORT_CPU_WAIT_MODE_FORCE_ON_M  (BIT(3))
+#define DPORT_CPU_WAIT_MODE_FORCE_ON_V  0x1
+#define DPORT_CPU_WAIT_MODE_FORCE_ON_S  3
+/* DPORT_PLL_FREQ_SEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PLL_FREQ_SEL  (BIT(2))
+#define DPORT_PLL_FREQ_SEL_M  (BIT(2))
+#define DPORT_PLL_FREQ_SEL_V  0x1
+#define DPORT_PLL_FREQ_SEL_S  2
+/* DPORT_CPUPERIOD_SEL : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define DPORT_CPUPERIOD_SEL  0x00000003
+#define DPORT_CPUPERIOD_SEL_M  ((DPORT_CPUPERIOD_SEL_V)<<(DPORT_CPUPERIOD_SEL_S))
+#define DPORT_CPUPERIOD_SEL_V  0x3
+#define DPORT_CPUPERIOD_SEL_S  0
+
+#define DPORT_JTAG_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x024)
+/* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY  (BIT(0))
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_M  (BIT(0))
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_V  0x1
+#define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_S  0
+
+#define DPORT_MEM_PD_MASK_REG          (DR_REG_SYSTEM_BASE + 0x028)
+/* DPORT_LSLP_MEM_PD_MASK : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_LSLP_MEM_PD_MASK  (BIT(0))
+#define DPORT_LSLP_MEM_PD_MASK_M  (BIT(0))
+#define DPORT_LSLP_MEM_PD_MASK_V  0x1
+#define DPORT_LSLP_MEM_PD_MASK_S  0
+
+#define DPORT_PERIP_CLK_EN_REG          (DR_REG_SYSTEM_BASE + 0x02C)
+/* DPORT_G1SPI01_CLK_EN : R/W ;bitpos:[31] ;default: 1'h1 ; */
+/*description: */
+#define DPORT_G1SPI01_CLK_EN  (BIT(31))
+#define DPORT_G1SPI01_CLK_EN_M  (BIT(31))
+#define DPORT_G1SPI01_CLK_EN_V  0x1
+#define DPORT_G1SPI01_CLK_EN_S  31
+/* DPORT_ADC2_ARB_CLK_EN : R/W ;bitpos:[30] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_ADC2_ARB_CLK_EN  (BIT(30))
+#define DPORT_ADC2_ARB_CLK_EN_M  (BIT(30))
+#define DPORT_ADC2_ARB_CLK_EN_V  0x1
+#define DPORT_ADC2_ARB_CLK_EN_S  30
+/* DPORT_SYSTIMER_CLK_EN : R/W ;bitpos:[29] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_SYSTIMER_CLK_EN  (BIT(29))
+#define DPORT_SYSTIMER_CLK_EN_M  (BIT(29))
+#define DPORT_SYSTIMER_CLK_EN_V  0x1
+#define DPORT_SYSTIMER_CLK_EN_S  29
+/* DPORT_APB_SARADC_CLK_EN : R/W ;bitpos:[28] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_APB_SARADC_CLK_EN  (BIT(28))
+#define DPORT_APB_SARADC_CLK_EN_M  (BIT(28))
+#define DPORT_APB_SARADC_CLK_EN_V  0x1
+#define DPORT_APB_SARADC_CLK_EN_S  28
+/* DPORT_SPI_DMA1_CLK_EN : R/W ;bitpos:[27] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_SPI_DMA1_CLK_EN  (BIT(27))
+#define DPORT_SPI_DMA1_CLK_EN_M  (BIT(27))
+#define DPORT_SPI_DMA1_CLK_EN_V  0x1
+#define DPORT_SPI_DMA1_CLK_EN_S  27
+/* DPORT_PWM3_CLK_EN : R/W ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM3_CLK_EN  (BIT(26))
+#define DPORT_PWM3_CLK_EN_M  (BIT(26))
+#define DPORT_PWM3_CLK_EN_V  0x1
+#define DPORT_PWM3_CLK_EN_S  26
+/* DPORT_PWM2_CLK_EN : R/W ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM2_CLK_EN  (BIT(25))
+#define DPORT_PWM2_CLK_EN_M  (BIT(25))
+#define DPORT_PWM2_CLK_EN_V  0x1
+#define DPORT_PWM2_CLK_EN_S  25
+/* DPORT_UART_MEM_CLK_EN : R/W ;bitpos:[24] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_UART_MEM_CLK_EN  (BIT(24))
+#define DPORT_UART_MEM_CLK_EN_M  (BIT(24))
+#define DPORT_UART_MEM_CLK_EN_V  0x1
+#define DPORT_UART_MEM_CLK_EN_S  24
+/* DPORT_UART2_CLK_EN : R/W ;bitpos:[23] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_UART2_CLK_EN  (BIT(23))
+#define DPORT_UART2_CLK_EN_M  (BIT(23))
+#define DPORT_UART2_CLK_EN_V  0x1
+#define DPORT_UART2_CLK_EN_S  23
+/* DPORT_SPI_DMA0_CLK_EN : R/W ;bitpos:[22] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_SPI_DMA0_CLK_EN  (BIT(22))
+#define DPORT_SPI_DMA0_CLK_EN_M  (BIT(22))
+#define DPORT_SPI_DMA0_CLK_EN_V  0x1
+#define DPORT_SPI_DMA0_CLK_EN_S  22
+/* DPORT_I2S1_CLK_EN : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2S1_CLK_EN  (BIT(21))
+#define DPORT_I2S1_CLK_EN_M  (BIT(21))
+#define DPORT_I2S1_CLK_EN_V  0x1
+#define DPORT_I2S1_CLK_EN_S  21
+/* DPORT_PWM1_CLK_EN : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM1_CLK_EN  (BIT(20))
+#define DPORT_PWM1_CLK_EN_M  (BIT(20))
+#define DPORT_PWM1_CLK_EN_V  0x1
+#define DPORT_PWM1_CLK_EN_S  20
+/* DPORT_CAN_CLK_EN : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CAN_CLK_EN  (BIT(19))
+#define DPORT_CAN_CLK_EN_M  (BIT(19))
+#define DPORT_CAN_CLK_EN_V  0x1
+#define DPORT_CAN_CLK_EN_S  19
+/* DPORT_I2C_EXT1_CLK_EN : R/W ;bitpos:[18] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2C_EXT1_CLK_EN  (BIT(18))
+#define DPORT_I2C_EXT1_CLK_EN_M  (BIT(18))
+#define DPORT_I2C_EXT1_CLK_EN_V  0x1
+#define DPORT_I2C_EXT1_CLK_EN_S  18
+/* DPORT_PWM0_CLK_EN : R/W ;bitpos:[17] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM0_CLK_EN  (BIT(17))
+#define DPORT_PWM0_CLK_EN_M  (BIT(17))
+#define DPORT_PWM0_CLK_EN_V  0x1
+#define DPORT_PWM0_CLK_EN_S  17
+/* DPORT_SPI3_CLK_EN : R/W ;bitpos:[16] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_SPI3_CLK_EN  (BIT(16))
+#define DPORT_SPI3_CLK_EN_M  (BIT(16))
+#define DPORT_SPI3_CLK_EN_V  0x1
+#define DPORT_SPI3_CLK_EN_S  16
+/* DPORT_TIMERGROUP1_CLK_EN : R/W ;bitpos:[15] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_TIMERGROUP1_CLK_EN  (BIT(15))
+#define DPORT_TIMERGROUP1_CLK_EN_M  (BIT(15))
+#define DPORT_TIMERGROUP1_CLK_EN_V  0x1
+#define DPORT_TIMERGROUP1_CLK_EN_S  15
+/* DPORT_EFUSE_CLK_EN : R/W ;bitpos:[14] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_EFUSE_CLK_EN  (BIT(14))
+#define DPORT_EFUSE_CLK_EN_M  (BIT(14))
+#define DPORT_EFUSE_CLK_EN_V  0x1
+#define DPORT_EFUSE_CLK_EN_S  14
+/* DPORT_TIMERGROUP_CLK_EN : R/W ;bitpos:[13] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_TIMERGROUP_CLK_EN  (BIT(13))
+#define DPORT_TIMERGROUP_CLK_EN_M  (BIT(13))
+#define DPORT_TIMERGROUP_CLK_EN_V  0x1
+#define DPORT_TIMERGROUP_CLK_EN_S  13
+/* DPORT_UHCI1_CLK_EN : R/W ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UHCI1_CLK_EN  (BIT(12))
+#define DPORT_UHCI1_CLK_EN_M  (BIT(12))
+#define DPORT_UHCI1_CLK_EN_V  0x1
+#define DPORT_UHCI1_CLK_EN_S  12
+/* DPORT_LEDC_CLK_EN : R/W ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LEDC_CLK_EN  (BIT(11))
+#define DPORT_LEDC_CLK_EN_M  (BIT(11))
+#define DPORT_LEDC_CLK_EN_V  0x1
+#define DPORT_LEDC_CLK_EN_S  11
+/* DPORT_PCNT_CLK_EN : R/W ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PCNT_CLK_EN  (BIT(10))
+#define DPORT_PCNT_CLK_EN_M  (BIT(10))
+#define DPORT_PCNT_CLK_EN_V  0x1
+#define DPORT_PCNT_CLK_EN_S  10
+/* DPORT_RMT_CLK_EN : R/W ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_RMT_CLK_EN  (BIT(9))
+#define DPORT_RMT_CLK_EN_M  (BIT(9))
+#define DPORT_RMT_CLK_EN_V  0x1
+#define DPORT_RMT_CLK_EN_S  9
+/* DPORT_UHCI0_CLK_EN : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UHCI0_CLK_EN  (BIT(8))
+#define DPORT_UHCI0_CLK_EN_M  (BIT(8))
+#define DPORT_UHCI0_CLK_EN_V  0x1
+#define DPORT_UHCI0_CLK_EN_S  8
+/* DPORT_I2C_EXT0_CLK_EN : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2C_EXT0_CLK_EN  (BIT(7))
+#define DPORT_I2C_EXT0_CLK_EN_M  (BIT(7))
+#define DPORT_I2C_EXT0_CLK_EN_V  0x1
+#define DPORT_I2C_EXT0_CLK_EN_S  7
+/* DPORT_SPI2_CLK_EN : R/W ;bitpos:[6] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_SPI2_CLK_EN  (BIT(6))
+#define DPORT_SPI2_CLK_EN_M  (BIT(6))
+#define DPORT_SPI2_CLK_EN_V  0x1
+#define DPORT_SPI2_CLK_EN_S  6
+/* DPORT_UART1_CLK_EN : R/W ;bitpos:[5] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_UART1_CLK_EN  (BIT(5))
+#define DPORT_UART1_CLK_EN_M  (BIT(5))
+#define DPORT_UART1_CLK_EN_V  0x1
+#define DPORT_UART1_CLK_EN_S  5
+/* DPORT_I2S0_CLK_EN : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2S0_CLK_EN  (BIT(4))
+#define DPORT_I2S0_CLK_EN_M  (BIT(4))
+#define DPORT_I2S0_CLK_EN_V  0x1
+#define DPORT_I2S0_CLK_EN_S  4
+/* DPORT_WDG_CLK_EN : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_WDG_CLK_EN  (BIT(3))
+#define DPORT_WDG_CLK_EN_M  (BIT(3))
+#define DPORT_WDG_CLK_EN_V  0x1
+#define DPORT_WDG_CLK_EN_S  3
+/* DPORT_UART_CLK_EN : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_UART_CLK_EN  (BIT(2))
+#define DPORT_UART_CLK_EN_M  (BIT(2))
+#define DPORT_UART_CLK_EN_V  0x1
+#define DPORT_UART_CLK_EN_S  2
+/* DPORT_G0SPI01_CLK_EN : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_G0SPI01_CLK_EN  (BIT(1))
+#define DPORT_G0SPI01_CLK_EN_M  (BIT(1))
+#define DPORT_G0SPI01_CLK_EN_V  0x1
+#define DPORT_G0SPI01_CLK_EN_S  1
+/* DPORT_TIMERS_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_TIMERS_CLK_EN  (BIT(0))
+#define DPORT_TIMERS_CLK_EN_M  (BIT(0))
+#define DPORT_TIMERS_CLK_EN_V  0x1
+#define DPORT_TIMERS_CLK_EN_S  0
+
+#define DPORT_SPI01_CLK_EN DPORT_G1SPI01_CLK_EN
+#define DPORT_SPI01_RST DPORT_G1SPI01_RST
+
+#define DPORT_PERIP_RST_EN_REG          (DR_REG_SYSTEM_BASE + 0x030)
+/* DPORT_G1SPI01_RST : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/*description: */
+#define DPORT_G1SPI01_RST  (BIT(31))
+#define DPORT_G1SPI01_RST_M  (BIT(31))
+#define DPORT_G1SPI01_RST_V  0x1
+#define DPORT_G1SPI01_RST_S  31
+/* DPORT_ADC2_ARB_RST : R/W ;bitpos:[30] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_ADC2_ARB_RST  (BIT(30))
+#define DPORT_ADC2_ARB_RST_M  (BIT(30))
+#define DPORT_ADC2_ARB_RST_V  0x1
+#define DPORT_ADC2_ARB_RST_S  30
+/* DPORT_SYSTIMER_RST : R/W ;bitpos:[29] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SYSTIMER_RST  (BIT(29))
+#define DPORT_SYSTIMER_RST_M  (BIT(29))
+#define DPORT_SYSTIMER_RST_V  0x1
+#define DPORT_SYSTIMER_RST_S  29
+/* DPORT_APB_SARADC_RST : R/W ;bitpos:[28] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_APB_SARADC_RST  (BIT(28))
+#define DPORT_APB_SARADC_RST_M  (BIT(28))
+#define DPORT_APB_SARADC_RST_V  0x1
+#define DPORT_APB_SARADC_RST_S  28
+/* DPORT_SPI_DMA1_RST : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI_DMA1_RST  (BIT(27))
+#define DPORT_SPI_DMA1_RST_M  (BIT(27))
+#define DPORT_SPI_DMA1_RST_V  0x1
+#define DPORT_SPI_DMA1_RST_S  27
+/* DPORT_PWM3_RST : R/W ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM3_RST  (BIT(26))
+#define DPORT_PWM3_RST_M  (BIT(26))
+#define DPORT_PWM3_RST_V  0x1
+#define DPORT_PWM3_RST_S  26
+/* DPORT_PWM2_RST : R/W ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM2_RST  (BIT(25))
+#define DPORT_PWM2_RST_M  (BIT(25))
+#define DPORT_PWM2_RST_V  0x1
+#define DPORT_PWM2_RST_S  25
+/* DPORT_UART_MEM_RST : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UART_MEM_RST  (BIT(24))
+#define DPORT_UART_MEM_RST_M  (BIT(24))
+#define DPORT_UART_MEM_RST_V  0x1
+#define DPORT_UART_MEM_RST_S  24
+/* DPORT_UART2_RST : R/W ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UART2_RST  (BIT(23))
+#define DPORT_UART2_RST_M  (BIT(23))
+#define DPORT_UART2_RST_V  0x1
+#define DPORT_UART2_RST_S  23
+/* DPORT_SPI_DMA0_RST : R/W ;bitpos:[22] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI_DMA0_RST  (BIT(22))
+#define DPORT_SPI_DMA0_RST_M  (BIT(22))
+#define DPORT_SPI_DMA0_RST_V  0x1
+#define DPORT_SPI_DMA0_RST_S  22
+/* DPORT_I2S1_RST : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2S1_RST  (BIT(21))
+#define DPORT_I2S1_RST_M  (BIT(21))
+#define DPORT_I2S1_RST_V  0x1
+#define DPORT_I2S1_RST_S  21
+/* DPORT_PWM1_RST : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM1_RST  (BIT(20))
+#define DPORT_PWM1_RST_M  (BIT(20))
+#define DPORT_PWM1_RST_V  0x1
+#define DPORT_PWM1_RST_S  20
+/* DPORT_CAN_RST : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CAN_RST  (BIT(19))
+#define DPORT_CAN_RST_M  (BIT(19))
+#define DPORT_CAN_RST_V  0x1
+#define DPORT_CAN_RST_S  19
+/* DPORT_I2C_EXT1_RST : R/W ;bitpos:[18] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2C_EXT1_RST  (BIT(18))
+#define DPORT_I2C_EXT1_RST_M  (BIT(18))
+#define DPORT_I2C_EXT1_RST_V  0x1
+#define DPORT_I2C_EXT1_RST_S  18
+/* DPORT_PWM0_RST : R/W ;bitpos:[17] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PWM0_RST  (BIT(17))
+#define DPORT_PWM0_RST_M  (BIT(17))
+#define DPORT_PWM0_RST_V  0x1
+#define DPORT_PWM0_RST_S  17
+/* DPORT_SPI3_RST : R/W ;bitpos:[16] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI3_RST  (BIT(16))
+#define DPORT_SPI3_RST_M  (BIT(16))
+#define DPORT_SPI3_RST_V  0x1
+#define DPORT_SPI3_RST_S  16
+/* DPORT_TIMERGROUP1_RST : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_TIMERGROUP1_RST  (BIT(15))
+#define DPORT_TIMERGROUP1_RST_M  (BIT(15))
+#define DPORT_TIMERGROUP1_RST_V  0x1
+#define DPORT_TIMERGROUP1_RST_S  15
+/* DPORT_EFUSE_RST : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_EFUSE_RST  (BIT(14))
+#define DPORT_EFUSE_RST_M  (BIT(14))
+#define DPORT_EFUSE_RST_V  0x1
+#define DPORT_EFUSE_RST_S  14
+/* DPORT_TIMERGROUP_RST : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_TIMERGROUP_RST  (BIT(13))
+#define DPORT_TIMERGROUP_RST_M  (BIT(13))
+#define DPORT_TIMERGROUP_RST_V  0x1
+#define DPORT_TIMERGROUP_RST_S  13
+/* DPORT_UHCI1_RST : R/W ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UHCI1_RST  (BIT(12))
+#define DPORT_UHCI1_RST_M  (BIT(12))
+#define DPORT_UHCI1_RST_V  0x1
+#define DPORT_UHCI1_RST_S  12
+/* DPORT_LEDC_RST : R/W ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LEDC_RST  (BIT(11))
+#define DPORT_LEDC_RST_M  (BIT(11))
+#define DPORT_LEDC_RST_V  0x1
+#define DPORT_LEDC_RST_S  11
+/* DPORT_PCNT_RST : R/W ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PCNT_RST  (BIT(10))
+#define DPORT_PCNT_RST_M  (BIT(10))
+#define DPORT_PCNT_RST_V  0x1
+#define DPORT_PCNT_RST_S  10
+/* DPORT_RMT_RST : R/W ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_RMT_RST  (BIT(9))
+#define DPORT_RMT_RST_M  (BIT(9))
+#define DPORT_RMT_RST_V  0x1
+#define DPORT_RMT_RST_S  9
+/* DPORT_UHCI0_RST : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UHCI0_RST  (BIT(8))
+#define DPORT_UHCI0_RST_M  (BIT(8))
+#define DPORT_UHCI0_RST_V  0x1
+#define DPORT_UHCI0_RST_S  8
+/* DPORT_I2C_EXT0_RST : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2C_EXT0_RST  (BIT(7))
+#define DPORT_I2C_EXT0_RST_M  (BIT(7))
+#define DPORT_I2C_EXT0_RST_V  0x1
+#define DPORT_I2C_EXT0_RST_S  7
+/* DPORT_SPI2_RST : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI2_RST  (BIT(6))
+#define DPORT_SPI2_RST_M  (BIT(6))
+#define DPORT_SPI2_RST_V  0x1
+#define DPORT_SPI2_RST_S  6
+/* DPORT_UART1_RST : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UART1_RST  (BIT(5))
+#define DPORT_UART1_RST_M  (BIT(5))
+#define DPORT_UART1_RST_V  0x1
+#define DPORT_UART1_RST_S  5
+/* DPORT_I2S0_RST : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I2S0_RST  (BIT(4))
+#define DPORT_I2S0_RST_M  (BIT(4))
+#define DPORT_I2S0_RST_V  0x1
+#define DPORT_I2S0_RST_S  4
+/* DPORT_WDG_RST : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_WDG_RST  (BIT(3))
+#define DPORT_WDG_RST_M  (BIT(3))
+#define DPORT_WDG_RST_V  0x1
+#define DPORT_WDG_RST_S  3
+/* DPORT_UART_RST : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_UART_RST  (BIT(2))
+#define DPORT_UART_RST_M  (BIT(2))
+#define DPORT_UART_RST_V  0x1
+#define DPORT_UART_RST_S  2
+/* DPORT_G0SPI01_RST : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_G0SPI01_RST  (BIT(1))
+#define DPORT_G0SPI01_RST_M  (BIT(1))
+#define DPORT_G0SPI01_RST_V  0x1
+#define DPORT_G0SPI01_RST_S  1
+/* DPORT_TIMERS_RST : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_TIMERS_RST  (BIT(0))
+#define DPORT_TIMERS_RST_M  (BIT(0))
+#define DPORT_TIMERS_RST_V  0x1
+#define DPORT_TIMERS_RST_S  0
+
+#define DPORT_SLAVE_SPI_CONFIG_REG          (DR_REG_SYSTEM_BASE + 0x034)
+/* DPORT_SPI_DECRYPT_ENABLE : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI_DECRYPT_ENABLE  (BIT(1))
+#define DPORT_SPI_DECRYPT_ENABLE_M  (BIT(1))
+#define DPORT_SPI_DECRYPT_ENABLE_V  0x1
+#define DPORT_SPI_DECRYPT_ENABLE_S  1
+/* DPORT_SPI_ENCRYPT_ENABLE : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_SPI_ENCRYPT_ENABLE  (BIT(0))
+#define DPORT_SPI_ENCRYPT_ENABLE_M  (BIT(0))
+#define DPORT_SPI_ENCRYPT_ENABLE_V  0x1
+#define DPORT_SPI_ENCRYPT_ENABLE_S  0
+
+#define DPORT_WIFI_CLK_EN_REG          (DR_REG_SYSTEM_BASE + 0x038)
+/* DPORT_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
+/*description: */
+#define DPORT_WIFI_CLK_EN  0xFFFFFFFF
+#define DPORT_WIFI_CLK_EN_M  ((DPORT_WIFI_CLK_EN_V)<<(DPORT_WIFI_CLK_EN_S))
+#define DPORT_WIFI_CLK_EN_V  0xFFFFFFFF
+#define DPORT_WIFI_CLK_EN_S  0
+
+/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15 */
+#define DPORT_WIFI_CLK_WIFI_EN  0x000007cf
+#define DPORT_WIFI_CLK_WIFI_EN_M  ((DPORT_WIFI_CLK_WIFI_EN_V)<<(DPORT_WIFI_CLK_WIFI_EN_S))
+#define DPORT_WIFI_CLK_WIFI_EN_V  0x7cf
+#define DPORT_WIFI_CLK_WIFI_EN_S  0
+/* Mask for all Bluetooth clock bits - 11, 16, 17 */
+#define DPORT_WIFI_CLK_BT_EN  0x61
+#define DPORT_WIFI_CLK_BT_EN_M  ((DPORT_WIFI_CLK_BT_EN_V)<<(DPORT_WIFI_CLK_BT_EN_S))
+#define DPORT_WIFI_CLK_BT_EN_V  0x61
+#define DPORT_WIFI_CLK_BT_EN_S  11
+/* Mask for clock bits used by both WIFI and Bluetooth, bit 0, 3, 6, 7, 8, 9 */
+#define DPORT_WIFI_CLK_WIFI_BT_COMMON_M 0x000003c9
+
+/* Digital team to check */
+//bluetooth baseband bit11
+#define DPORT_BT_BASEBAND_EN  BIT(11)
+//bluetooth LC bit16 and bit17
+#define DPORT_BT_LC_EN  (BIT(16)|BIT(17))
+
+/* Remaining single bit clock masks */
+#define DPORT_WIFI_CLK_SDIOSLAVE_EN  BIT(4)
+#define DPORT_WIFI_CLK_UNUSED_BIT5  BIT(5)
+#define DPORT_WIFI_CLK_UNUSED_BIT12  BIT(12)
+#define DPORT_WIFI_CLK_SDIO_HOST_EN  BIT(13)
+#define DPORT_WIFI_CLK_EMAC_EN  BIT(14)
+#define DPORT_WIFI_CLK_RNG_EN  BIT(15)
+
+#define DPORT_CORE_RST_EN_REG         DPORT_WIFI_RST_EN_REG
+#define DPORT_WIFI_RST_EN_REG          (DR_REG_SYSTEM_BASE + 0x03C)
+/* DPORT_WIFI_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define DPORT_WIFI_RST  0xFFFFFFFF
+#define DPORT_WIFI_RST_M  ((DPORT_WIFI_RST_V)<<(DPORT_WIFI_RST_S))
+#define DPORT_WIFI_RST_V  0xFFFFFFFF
+#define DPORT_WIFI_RST_S  0
+#define DPORT_RW_BTLP_RST (BIT(10))
+#define DPORT_RW_BTMAC_RST (BIT(9))
+#define DPORT_MACPWR_RST (BIT(8))
+#define DPORT_EMAC_RST (BIT(7))
+#define DPORT_SDIO_HOST_RST (BIT(6))
+#define DPORT_SDIO_RST (BIT(5))
+#define DPORT_BTMAC_RST (BIT(4))
+#define DPORT_BT_RST (BIT(3))
+#define DPORT_MAC_RST (BIT(2))
+#define DPORT_FE_RST (BIT(1))
+#define DPORT_BB_RST (BIT(0))  
+
+
+#define DPORT_BT_LPCK_DIV_INT_REG          (DR_REG_SYSTEM_BASE + 0x040)
+/* DPORT_BTEXTWAKEUP_REQ : R/W ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_BTEXTWAKEUP_REQ  (BIT(12))
+#define DPORT_BTEXTWAKEUP_REQ_M  (BIT(12))
+#define DPORT_BTEXTWAKEUP_REQ_V  0x1
+#define DPORT_BTEXTWAKEUP_REQ_S  12
+/* DPORT_BT_LPCK_DIV_NUM : R/W ;bitpos:[11:0] ;default: 12'd255 ; */
+/*description: */
+#define DPORT_BT_LPCK_DIV_NUM  0x00000FFF
+#define DPORT_BT_LPCK_DIV_NUM_M  ((DPORT_BT_LPCK_DIV_NUM_V)<<(DPORT_BT_LPCK_DIV_NUM_S))
+#define DPORT_BT_LPCK_DIV_NUM_V  0xFFF
+#define DPORT_BT_LPCK_DIV_NUM_S  0
+
+#define DPORT_BT_LPCK_DIV_FRAC_REG          (DR_REG_SYSTEM_BASE + 0x044)
+/* DPORT_LPCLK_RTC_EN : R/W ;bitpos:[28] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LPCLK_RTC_EN  (BIT(28))
+#define DPORT_LPCLK_RTC_EN_M  (BIT(28))
+#define DPORT_LPCLK_RTC_EN_V  0x1
+#define DPORT_LPCLK_RTC_EN_S  28
+/* DPORT_LPCLK_SEL_XTAL32K : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LPCLK_SEL_XTAL32K  (BIT(27))
+#define DPORT_LPCLK_SEL_XTAL32K_M  (BIT(27))
+#define DPORT_LPCLK_SEL_XTAL32K_V  0x1
+#define DPORT_LPCLK_SEL_XTAL32K_S  27
+/* DPORT_LPCLK_SEL_XTAL : R/W ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LPCLK_SEL_XTAL  (BIT(26))
+#define DPORT_LPCLK_SEL_XTAL_M  (BIT(26))
+#define DPORT_LPCLK_SEL_XTAL_V  0x1
+#define DPORT_LPCLK_SEL_XTAL_S  26
+/* DPORT_LPCLK_SEL_8M : R/W ;bitpos:[25] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_LPCLK_SEL_8M  (BIT(25))
+#define DPORT_LPCLK_SEL_8M_M  (BIT(25))
+#define DPORT_LPCLK_SEL_8M_V  0x1
+#define DPORT_LPCLK_SEL_8M_S  25
+/* DPORT_LPCLK_SEL_RTC_SLOW : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_LPCLK_SEL_RTC_SLOW  (BIT(24))
+#define DPORT_LPCLK_SEL_RTC_SLOW_M  (BIT(24))
+#define DPORT_LPCLK_SEL_RTC_SLOW_V  0x1
+#define DPORT_LPCLK_SEL_RTC_SLOW_S  24
+/* DPORT_BT_LPCK_DIV_A : R/W ;bitpos:[23:12] ;default: 12'd1 ; */
+/*description: */
+#define DPORT_BT_LPCK_DIV_A  0x00000FFF
+#define DPORT_BT_LPCK_DIV_A_M  ((DPORT_BT_LPCK_DIV_A_V)<<(DPORT_BT_LPCK_DIV_A_S))
+#define DPORT_BT_LPCK_DIV_A_V  0xFFF
+#define DPORT_BT_LPCK_DIV_A_S  12
+/* DPORT_BT_LPCK_DIV_B : R/W ;bitpos:[11:0] ;default: 12'd1 ; */
+/*description: */
+#define DPORT_BT_LPCK_DIV_B  0x00000FFF
+#define DPORT_BT_LPCK_DIV_B_M  ((DPORT_BT_LPCK_DIV_B_V)<<(DPORT_BT_LPCK_DIV_B_S))
+#define DPORT_BT_LPCK_DIV_B_V  0xFFF
+#define DPORT_BT_LPCK_DIV_B_S  0
+
+#define DPORT_CPU_INTR_FROM_CPU_0_REG          (DR_REG_SYSTEM_BASE + 0x048)
+/* DPORT_CPU_INTR_FROM_CPU_0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CPU_INTR_FROM_CPU_0  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_0_M  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_0_V  0x1
+#define DPORT_CPU_INTR_FROM_CPU_0_S  0
+
+#define DPORT_CPU_INTR_FROM_CPU_1_REG          (DR_REG_SYSTEM_BASE + 0x04C)
+/* DPORT_CPU_INTR_FROM_CPU_1 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CPU_INTR_FROM_CPU_1  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_1_M  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_1_V  0x1
+#define DPORT_CPU_INTR_FROM_CPU_1_S  0
+
+#define DPORT_CPU_INTR_FROM_CPU_2_REG          (DR_REG_SYSTEM_BASE + 0x050)
+/* DPORT_CPU_INTR_FROM_CPU_2 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CPU_INTR_FROM_CPU_2  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_2_M  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_2_V  0x1
+#define DPORT_CPU_INTR_FROM_CPU_2_S  0
+
+#define DPORT_CPU_INTR_FROM_CPU_3_REG          (DR_REG_SYSTEM_BASE + 0x054)
+/* DPORT_CPU_INTR_FROM_CPU_3 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_CPU_INTR_FROM_CPU_3  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_3_M  (BIT(0))
+#define DPORT_CPU_INTR_FROM_CPU_3_V  0x1
+#define DPORT_CPU_INTR_FROM_CPU_3_S  0
+
+#define DPORT_RSA_PD_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x058)
+/* DPORT_RSA_MEM_PD : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_RSA_MEM_PD  (BIT(0))
+#define DPORT_RSA_MEM_PD_M  (BIT(0))
+#define DPORT_RSA_MEM_PD_V  0x1
+#define DPORT_RSA_MEM_PD_S  0
+#define DPORT_RSA_PD DPORT_RSA_MEM_PD
+
+#define DPORT_FRONT_END_MEM_PD_REG          (DR_REG_SYSTEM_BASE + 0x05C)
+/* DPORT_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_DC_MEM_FORCE_PD  (BIT(5))
+#define DPORT_DC_MEM_FORCE_PD_M  (BIT(5))
+#define DPORT_DC_MEM_FORCE_PD_V  0x1
+#define DPORT_DC_MEM_FORCE_PD_S  5
+/* DPORT_DC_MEM_FORCE_PU : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_DC_MEM_FORCE_PU  (BIT(4))
+#define DPORT_DC_MEM_FORCE_PU_M  (BIT(4))
+#define DPORT_DC_MEM_FORCE_PU_V  0x1
+#define DPORT_DC_MEM_FORCE_PU_S  4
+/* DPORT_PBUS_MEM_FORCE_PD : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PBUS_MEM_FORCE_PD  (BIT(3))
+#define DPORT_PBUS_MEM_FORCE_PD_M  (BIT(3))
+#define DPORT_PBUS_MEM_FORCE_PD_V  0x1
+#define DPORT_PBUS_MEM_FORCE_PD_S  3
+/* DPORT_PBUS_MEM_FORCE_PU : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_PBUS_MEM_FORCE_PU  (BIT(2))
+#define DPORT_PBUS_MEM_FORCE_PU_M  (BIT(2))
+#define DPORT_PBUS_MEM_FORCE_PU_V  0x1
+#define DPORT_PBUS_MEM_FORCE_PU_S  2
+/* DPORT_AGC_MEM_FORCE_PD : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_AGC_MEM_FORCE_PD  (BIT(1))
+#define DPORT_AGC_MEM_FORCE_PD_M  (BIT(1))
+#define DPORT_AGC_MEM_FORCE_PD_V  0x1
+#define DPORT_AGC_MEM_FORCE_PD_S  1
+/* DPORT_AGC_MEM_FORCE_PU : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_AGC_MEM_FORCE_PU  (BIT(0))
+#define DPORT_AGC_MEM_FORCE_PU_M  (BIT(0))
+#define DPORT_AGC_MEM_FORCE_PU_V  0x1
+#define DPORT_AGC_MEM_FORCE_PU_S  0
+
+#define DPORT_SPI_DMA_CHAN_SEL_REG          (DR_REG_SYSTEM_BASE + 0x060)
+/* DPORT_SPI3_DMA_CHAN_SEL : R/W ;bitpos:[5:4] ;default: 2'b00 ; */
+/*description: */
+#define DPORT_SPI3_DMA_CHAN_SEL  0x00000003
+#define DPORT_SPI3_DMA_CHAN_SEL_M  ((DPORT_SPI3_DMA_CHAN_SEL_V)<<(DPORT_SPI3_DMA_CHAN_SEL_S))
+#define DPORT_SPI3_DMA_CHAN_SEL_V  0x3
+#define DPORT_SPI3_DMA_CHAN_SEL_S  4
+/* DPORT_SPI2_DMA_CHAN_SEL : R/W ;bitpos:[3:2] ;default: 2'b00 ; */
+/*description: */
+#define DPORT_SPI2_DMA_CHAN_SEL  0x00000003
+#define DPORT_SPI2_DMA_CHAN_SEL_M  ((DPORT_SPI2_DMA_CHAN_SEL_V)<<(DPORT_SPI2_DMA_CHAN_SEL_S))
+#define DPORT_SPI2_DMA_CHAN_SEL_V  0x3
+#define DPORT_SPI2_DMA_CHAN_SEL_S  2
+/* DPORT_SPI1_DMA_CHAN_SEL : R/W ;bitpos:[1:0] ;default: 2'b00 ; */
+/*description: */
+#define DPORT_SPI1_DMA_CHAN_SEL  0x00000003
+#define DPORT_SPI1_DMA_CHAN_SEL_M  ((DPORT_SPI1_DMA_CHAN_SEL_V)<<(DPORT_SPI1_DMA_CHAN_SEL_S))
+#define DPORT_SPI1_DMA_CHAN_SEL_V  0x3
+#define DPORT_SPI1_DMA_CHAN_SEL_S  0
+
+#define DPORT_BUSTODPORT_ENA_REG          (DR_REG_SYSTEM_BASE + 0x064)
+/* DPORT_BUSTODPORT_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_BUSTODPORT_ENA  (BIT(0))
+#define DPORT_BUSTODPORT_ENA_M  (BIT(0))
+#define DPORT_BUSTODPORT_ENA_V  0x1
+#define DPORT_BUSTODPORT_ENA_S  0
+
+#define DPORT_ACCESS_CACHE_TAG_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x068)
+/* DPORT_PRO_DPORT_ITAG_RD_ENA : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DPORT_ITAG_RD_ENA  (BIT(3))
+#define DPORT_PRO_DPORT_ITAG_RD_ENA_M  (BIT(3))
+#define DPORT_PRO_DPORT_ITAG_RD_ENA_V  0x1
+#define DPORT_PRO_DPORT_ITAG_RD_ENA_S  3
+/* DPORT_PRO_DPORT_ITAG_WR_ENA : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DPORT_ITAG_WR_ENA  (BIT(2))
+#define DPORT_PRO_DPORT_ITAG_WR_ENA_M  (BIT(2))
+#define DPORT_PRO_DPORT_ITAG_WR_ENA_V  0x1
+#define DPORT_PRO_DPORT_ITAG_WR_ENA_S  2
+/* DPORT_PRO_DPORT_DTAG_RD_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DPORT_DTAG_RD_ENA  (BIT(1))
+#define DPORT_PRO_DPORT_DTAG_RD_ENA_M  (BIT(1))
+#define DPORT_PRO_DPORT_DTAG_RD_ENA_V  0x1
+#define DPORT_PRO_DPORT_DTAG_RD_ENA_S  1
+/* DPORT_PRO_DPORT_DTAG_WR_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DPORT_DTAG_WR_ENA  (BIT(0))
+#define DPORT_PRO_DPORT_DTAG_WR_ENA_M  (BIT(0))
+#define DPORT_PRO_DPORT_DTAG_WR_ENA_V  0x1
+#define DPORT_PRO_DPORT_DTAG_WR_ENA_S  0
+
+#define DPORT_RTC_FASTMEM_CONFIG_REG          (DR_REG_SYSTEM_BASE + 0x06C)
+/* DPORT_RTC_MEM_CRC_FINISH : RO ;bitpos:[31] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_RTC_MEM_CRC_FINISH  (BIT(31))
+#define DPORT_RTC_MEM_CRC_FINISH_M  (BIT(31))
+#define DPORT_RTC_MEM_CRC_FINISH_V  0x1
+#define DPORT_RTC_MEM_CRC_FINISH_S  31
+/* DPORT_RTC_MEM_CRC_LEN : R/W ;bitpos:[30:20] ;default: 11'h7ff ; */
+/*description: */
+#define DPORT_RTC_MEM_CRC_LEN  0x000007FF
+#define DPORT_RTC_MEM_CRC_LEN_M  ((DPORT_RTC_MEM_CRC_LEN_V)<<(DPORT_RTC_MEM_CRC_LEN_S))
+#define DPORT_RTC_MEM_CRC_LEN_V  0x7FF
+#define DPORT_RTC_MEM_CRC_LEN_S  20
+/* DPORT_RTC_MEM_CRC_ADDR : R/W ;bitpos:[19:9] ;default: 11'h0 ; */
+/*description: */
+#define DPORT_RTC_MEM_CRC_ADDR  0x000007FF
+#define DPORT_RTC_MEM_CRC_ADDR_M  ((DPORT_RTC_MEM_CRC_ADDR_V)<<(DPORT_RTC_MEM_CRC_ADDR_S))
+#define DPORT_RTC_MEM_CRC_ADDR_V  0x7FF
+#define DPORT_RTC_MEM_CRC_ADDR_S  9
+/* DPORT_RTC_MEM_CRC_START : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_RTC_MEM_CRC_START  (BIT(8))
+#define DPORT_RTC_MEM_CRC_START_M  (BIT(8))
+#define DPORT_RTC_MEM_CRC_START_V  0x1
+#define DPORT_RTC_MEM_CRC_START_S  8
+/* DPORT_PID_CONFIG : R/W ;bitpos:[7:0] ;default: 8'd1 ; */
+/*description: */
+#define DPORT_PID_CONFIG  0x000000FF
+#define DPORT_PID_CONFIG_M  ((DPORT_PID_CONFIG_V)<<(DPORT_PID_CONFIG_S))
+#define DPORT_PID_CONFIG_V  0xFF
+#define DPORT_PID_CONFIG_S  0
+
+#define DPORT_RTC_FASTMEM_CRC_REG          (DR_REG_SYSTEM_BASE + 0x070)
+/* DPORT_RTC_MEM_CRC_RES : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define DPORT_RTC_MEM_CRC_RES  0xFFFFFFFF
+#define DPORT_RTC_MEM_CRC_RES_M  ((DPORT_RTC_MEM_CRC_RES_V)<<(DPORT_RTC_MEM_CRC_RES_S))
+#define DPORT_RTC_MEM_CRC_RES_V  0xFFFFFFFF
+#define DPORT_RTC_MEM_CRC_RES_S  0
+
+#define SYSTEM_CLOCK_GATE_REG          (DR_REG_SYSTEM_BASE + 0x074)
+/* SYSTEM_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define SYSTEM_CLK_EN  (BIT(0))
+#define SYSTEM_CLK_EN_M  (BIT(0))
+#define SYSTEM_CLK_EN_V  0x1
+#define SYSTEM_CLK_EN_S  0
+
+#define SYSTEM_DATE_REG          (DR_REG_SYSTEM_BASE + 0xFFC)
+/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1805140 ; */
+/*description: */
+#define SYSTEM_DATE  0x0FFFFFFF
+#define SYSTEM_DATE_M  ((SYSTEM_DATE_V)<<(SYSTEM_DATE_S))
+#define SYSTEM_DATE_V  0xFFFFFFF
+#define SYSTEM_DATE_S  0
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+#endif /*_SOC_SYSTEM_REG_H_ */
+
+

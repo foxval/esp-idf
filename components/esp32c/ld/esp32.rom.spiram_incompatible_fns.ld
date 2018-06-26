@@ -14,3 +14,5 @@ PROVIDE ( esp_rom_spiflash_read_statushigh = SPI_read_status_high );
 PROVIDE ( esp_rom_spiflash_read_user_cmd = SPI_user_command_read );
 PROVIDE ( esp_rom_spiflash_write_encrypted_disable = SPI_Write_Encrypt_Disable);
 PROVIDE ( esp_rom_spiflash_write_encrypted_enable = SPI_Write_Encrypt_Enable );
+PROVIDE ( esp_rom_spiflash_config_clk = SPIClkConfig);
+PROVIDE ( esp_rom_spiflash_select_qio_pins = SelectSpiQIO);

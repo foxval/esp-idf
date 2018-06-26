@@ -137,7 +137,7 @@ esp_err_t IRAM_ATTR spi_flash_mmap(size_t src_addr, size_t size, spi_flash_mmap_
         return ESP_ERR_NO_MEM;
     }
     for (int i = 0; i < page_count; i++) {
-        pages[i] = phys_page+i;
+        pages[i] = (phys_page+i) | BIT(16);
     }
     ret=spi_flash_mmap_pages(pages, page_count, memory, out_ptr, out_handle);
     free(pages);

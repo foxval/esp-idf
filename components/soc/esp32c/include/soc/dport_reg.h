@@ -14,7 +14,17 @@
 #ifndef _SOC_DPORT_REG_H_
 #define _SOC_DPORT_REG_H_
 
+#if 1
+#include"extmem_reg.h"
+#include"interrupt_reg.h"
+#include"system_reg.h"
+#include "sensitive_reg.h"
+#include "soc.h"
 
+#ifndef __ASSEMBLER__
+#include "dport_access.h"
+#endif
+#else
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -2982,8 +2992,13 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#endif
+/* Flash MMU table for PRO CPU */
+#define DPORT_PRO_FLASH_MMU_TABLE ((volatile uint32_t*) 0x3FF05000)
 
+#define DPORT_FLASH_MMU_TABLE_SIZE 0x100
 
+#define DPORT_FLASH_MMU_TABLE_INVALID_VAL 0x100
 
 #endif /*_SOC_DPORT_REG_H_ */
 

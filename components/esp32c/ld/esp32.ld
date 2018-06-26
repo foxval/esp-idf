@@ -28,7 +28,7 @@ MEMORY
   are connected to the data port of the CPU and eg allow bytewise access. */
 
   /* IRAM for PRO cpu. Not sure if happy with this, this is MMU area... */
-  iram0_0_seg (RX) :                 org = 0x40080000, len = 0x18000
+  iram0_0_seg (RX) :                 org = 0x40058000, len = 0x18000
 
   /* Even though the segment name is iram, it is actually mapped to flash
   */

@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -21,6 +21,54 @@ extern "C" {
 #include "soc.h"
 #define REG_I2S_BASE( i ) ( DR_REG_I2S_BASE + ((i)*0x1E000))
 #define I2S_CONF_REG(i)          (REG_I2S_BASE(i) + 0x0008)
+/* I2S_RX_BIG_ENDIAN : R/W ;bitpos:[28] ;default: 1'b0 ; */
+/*description: */
+#define I2S_RX_BIG_ENDIAN  (BIT(28))
+#define I2S_RX_BIG_ENDIAN_M  (BIT(28))
+#define I2S_RX_BIG_ENDIAN_V  0x1
+#define I2S_RX_BIG_ENDIAN_S  28
+/* I2S_TX_BIG_ENDIAN : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define I2S_TX_BIG_ENDIAN  (BIT(27))
+#define I2S_TX_BIG_ENDIAN_M  (BIT(27))
+#define I2S_TX_BIG_ENDIAN_V  0x1
+#define I2S_TX_BIG_ENDIAN_S  27
+/* I2S_PRE_REQ_EN : R/W ;bitpos:[26] ;default: 1'b0 ; */
+/*description: set this bit to enable i2s to prepare data earlier*/
+#define I2S_PRE_REQ_EN  (BIT(26))
+#define I2S_PRE_REQ_EN_M  (BIT(26))
+#define I2S_PRE_REQ_EN_V  0x1
+#define I2S_PRE_REQ_EN_S  26
+/* I2S_RX_DMA_EQUAL : R/W ;bitpos:[25] ;default: 1'b0 ; */
+/*description: 1:data in left channel is equal to data in right channel*/
+#define I2S_RX_DMA_EQUAL  (BIT(25))
+#define I2S_RX_DMA_EQUAL_M  (BIT(25))
+#define I2S_RX_DMA_EQUAL_V  0x1
+#define I2S_RX_DMA_EQUAL_S  25
+/* I2S_TX_DMA_EQUAL : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: 1:data in left channel is equal to data in right channel*/
+#define I2S_TX_DMA_EQUAL  (BIT(24))
+#define I2S_TX_DMA_EQUAL_M  (BIT(24))
+#define I2S_TX_DMA_EQUAL_V  0x1
+#define I2S_TX_DMA_EQUAL_S  24
+/* I2S_TX_RESET_ST : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: 1: i2s_tx_reset is not ok   0: i2s_tx_reset is ok*/
+#define I2S_TX_RESET_ST  (BIT(23))
+#define I2S_TX_RESET_ST_M  (BIT(23))
+#define I2S_TX_RESET_ST_V  0x1
+#define I2S_TX_RESET_ST_S  23
+/* I2S_RX_FIFO_RESET_ST : RO ;bitpos:[22] ;default: 1'b0 ; */
+/*description: 1:i2s_rx_fifo_reset is not ok   0:i2s_rx_fifo reset is ok*/
+#define I2S_RX_FIFO_RESET_ST  (BIT(22))
+#define I2S_RX_FIFO_RESET_ST_M  (BIT(22))
+#define I2S_RX_FIFO_RESET_ST_V  0x1
+#define I2S_RX_FIFO_RESET_ST_S  22
+/* I2S_TX_FIFO_RESET_ST : RO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: 1:i2s_tx_fifo reset is not ok   0:i2s_tx_fifo_reset is ok*/
+#define I2S_TX_FIFO_RESET_ST  (BIT(21))
+#define I2S_TX_FIFO_RESET_ST_M  (BIT(21))
+#define I2S_TX_FIFO_RESET_ST_V  0x1
+#define I2S_TX_FIFO_RESET_ST_S  21
 /* I2S_SIG_LOOPBACK : R/W ;bitpos:[20] ;default: 1'b0 ; */
 /*description: Enable signal loopback mode with transmitter module and receiver
  module sharing the same WS and BCK signals.*/
@@ -29,15 +77,13 @@ extern "C" {
 #define I2S_SIG_LOOPBACK_V  0x1
 #define I2S_SIG_LOOPBACK_S  20
 /* I2S_RX_LSB_FIRST_DMA : R/W ;bitpos:[19] ;default: 1'b1 ; */
-/*description: 1:the data in DMA/APB transform from low bits 0:the data from
- DMA/APB transform from high bits*/
+/*description: 1:the data in DMA/APB transform from low bits*/
 #define I2S_RX_LSB_FIRST_DMA  (BIT(19))
 #define I2S_RX_LSB_FIRST_DMA_M  (BIT(19))
 #define I2S_RX_LSB_FIRST_DMA_V  0x1
 #define I2S_RX_LSB_FIRST_DMA_S  19
 /* I2S_TX_LSB_FIRST_DMA : R/W ;bitpos:[18] ;default: 1'b1 ; */
-/*description: 1:the data in DMA/APB transform from low bits 0:the data from
- DMA/APB transform from high bits*/
+/*description: 1:the data in DMA/APB transform from low bits*/
 #define I2S_TX_LSB_FIRST_DMA  (BIT(18))
 #define I2S_TX_LSB_FIRST_DMA_M  (BIT(18))
 #define I2S_TX_LSB_FIRST_DMA_V  0x1
@@ -126,25 +172,25 @@ extern "C" {
 #define I2S_TX_START_M  (BIT(4))
 #define I2S_TX_START_V  0x1
 #define I2S_TX_START_S  4
-/* I2S_RX_FIFO_RESET : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/* I2S_RX_FIFO_RESET : WO ;bitpos:[3] ;default: 1'b0 ; */
 /*description: Set this bit to reset rxFIFO*/
 #define I2S_RX_FIFO_RESET  (BIT(3))
 #define I2S_RX_FIFO_RESET_M  (BIT(3))
 #define I2S_RX_FIFO_RESET_V  0x1
 #define I2S_RX_FIFO_RESET_S  3
-/* I2S_TX_FIFO_RESET : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/* I2S_TX_FIFO_RESET : WO ;bitpos:[2] ;default: 1'b0 ; */
 /*description: Set this bit to reset txFIFO*/
 #define I2S_TX_FIFO_RESET  (BIT(2))
 #define I2S_TX_FIFO_RESET_M  (BIT(2))
 #define I2S_TX_FIFO_RESET_V  0x1
 #define I2S_TX_FIFO_RESET_S  2
-/* I2S_RX_RESET : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* I2S_RX_RESET : WO ;bitpos:[1] ;default: 1'b0 ; */
 /*description: Set this bit to reset receiver*/
 #define I2S_RX_RESET  (BIT(1))
 #define I2S_RX_RESET_M  (BIT(1))
 #define I2S_RX_RESET_V  0x1
 #define I2S_RX_RESET_S  1
-/* I2S_TX_RESET : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/* I2S_TX_RESET : WO ;bitpos:[0] ;default: 1'b0 ; */
 /*description: Set this bit to reset transmitter*/
 #define I2S_TX_RESET  (BIT(0))
 #define I2S_TX_RESET_M  (BIT(0))
@@ -656,6 +702,20 @@ extern "C" {
 #define I2S_TX_BCK_IN_DELAY_S  0
 
 #define I2S_FIFO_CONF_REG(i)          (REG_I2S_BASE(i) + 0x0020)
+/* I2S_TX_24MSB_EN : R/W ;bitpos:[23] ;default: 1'b0 ; */
+/*description: Only useful in tx 24bit mode. 1: the high 24 bits are effective
+ in i2s fifo   0: the low 24 bits are effective in i2s fifo*/
+#define I2S_TX_24MSB_EN  (BIT(23))
+#define I2S_TX_24MSB_EN_M  (BIT(23))
+#define I2S_TX_24MSB_EN_V  0x1
+#define I2S_TX_24MSB_EN_S  23
+/* I2S_RX_24MSB_EN : R/W ;bitpos:[22] ;default: 1'b0 ; */
+/*description: Only useful in rx 24bit mode. 1: the high 24 bits are effective
+ in i2s fifo   0: the low 24 bits are effective in i2s fifo*/
+#define I2S_RX_24MSB_EN  (BIT(22))
+#define I2S_RX_24MSB_EN_M  (BIT(22))
+#define I2S_RX_24MSB_EN_V  0x1
+#define I2S_RX_24MSB_EN_S  22
 /* I2S_RX_FIFO_SYNC : R/W ;bitpos:[21] ;default: 1'b0 ; */
 /*description: force write back rx data to memory*/
 #define I2S_RX_FIFO_SYNC  (BIT(21))
@@ -1006,20 +1066,80 @@ extern "C" {
 #define I2S_INFIFO_RDATA_S  0
 
 #define I2S_LC_STATE0_REG(i)          (REG_I2S_BASE(i) + 0x006C)
-/* I2S_LC_STATE0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* I2S_OUT_EMPTY : RO ;bitpos:[31] ;default: 1'h0 ; */
 /*description: DMA transmitter status register*/
-#define I2S_LC_STATE0  0xFFFFFFFF
-#define I2S_LC_STATE0_M  ((I2S_LC_STATE0_V)<<(I2S_LC_STATE0_S))
-#define I2S_LC_STATE0_V  0xFFFFFFFF
-#define I2S_LC_STATE0_S  0
+#define I2S_OUT_EMPTY  (BIT(31))
+#define I2S_OUT_EMPTY_M  (BIT(31))
+#define I2S_OUT_EMPTY_V  0x1
+#define I2S_OUT_EMPTY_S  31
+/* I2S_OUT_FULL : RO ;bitpos:[30] ;default: 1'b0 ; */
+/*description: */
+#define I2S_OUT_FULL  (BIT(30))
+#define I2S_OUT_FULL_M  (BIT(30))
+#define I2S_OUT_FULL_V  0x1
+#define I2S_OUT_FULL_S  30
+/* I2S_OUTFIFO_CNT : RO ;bitpos:[29:23] ;default: 7'b0 ; */
+/*description: */
+#define I2S_OUTFIFO_CNT  0x0000007F
+#define I2S_OUTFIFO_CNT_M  ((I2S_OUTFIFO_CNT_V)<<(I2S_OUTFIFO_CNT_S))
+#define I2S_OUTFIFO_CNT_V  0x7F
+#define I2S_OUTFIFO_CNT_S  23
+/* I2S_OUT_STATE : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define I2S_OUT_STATE  0x00000007
+#define I2S_OUT_STATE_M  ((I2S_OUT_STATE_V)<<(I2S_OUT_STATE_S))
+#define I2S_OUT_STATE_V  0x7
+#define I2S_OUT_STATE_S  20
+/* I2S_OUT_DSCR_STATE : RO ;bitpos:[19:18] ;default: 2'b0 ; */
+/*description: */
+#define I2S_OUT_DSCR_STATE  0x00000003
+#define I2S_OUT_DSCR_STATE_M  ((I2S_OUT_DSCR_STATE_V)<<(I2S_OUT_DSCR_STATE_S))
+#define I2S_OUT_DSCR_STATE_V  0x3
+#define I2S_OUT_DSCR_STATE_S  18
+/* I2S_OUTLINK_DSCR_ADDR : RO ;bitpos:[17:0] ;default: 18'h0 ; */
+/*description: */
+#define I2S_OUTLINK_DSCR_ADDR  0x0003FFFF
+#define I2S_OUTLINK_DSCR_ADDR_M  ((I2S_OUTLINK_DSCR_ADDR_V)<<(I2S_OUTLINK_DSCR_ADDR_S))
+#define I2S_OUTLINK_DSCR_ADDR_V  0x3FFFF
+#define I2S_OUTLINK_DSCR_ADDR_S  0
 
 #define I2S_LC_STATE1_REG(i)          (REG_I2S_BASE(i) + 0x0070)
-/* I2S_LC_STATE1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* I2S_IN_EMPTY : RO ;bitpos:[31] ;default: 1'h0 ; */
 /*description: DMA receiver status register*/
-#define I2S_LC_STATE1  0xFFFFFFFF
-#define I2S_LC_STATE1_M  ((I2S_LC_STATE1_V)<<(I2S_LC_STATE1_S))
-#define I2S_LC_STATE1_V  0xFFFFFFFF
-#define I2S_LC_STATE1_S  0
+#define I2S_IN_EMPTY  (BIT(31))
+#define I2S_IN_EMPTY_M  (BIT(31))
+#define I2S_IN_EMPTY_V  0x1
+#define I2S_IN_EMPTY_S  31
+/* I2S_IN_FULL : RO ;bitpos:[30] ;default: 1'b0 ; */
+/*description: */
+#define I2S_IN_FULL  (BIT(30))
+#define I2S_IN_FULL_M  (BIT(30))
+#define I2S_IN_FULL_V  0x1
+#define I2S_IN_FULL_S  30
+/* I2S_INFIFO_CNT_DEBUG : RO ;bitpos:[29:23] ;default: 7'b0 ; */
+/*description: */
+#define I2S_INFIFO_CNT_DEBUG  0x0000007F
+#define I2S_INFIFO_CNT_DEBUG_M  ((I2S_INFIFO_CNT_DEBUG_V)<<(I2S_INFIFO_CNT_DEBUG_S))
+#define I2S_INFIFO_CNT_DEBUG_V  0x7F
+#define I2S_INFIFO_CNT_DEBUG_S  23
+/* I2S_IN_STATE : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define I2S_IN_STATE  0x00000007
+#define I2S_IN_STATE_M  ((I2S_IN_STATE_V)<<(I2S_IN_STATE_S))
+#define I2S_IN_STATE_V  0x7
+#define I2S_IN_STATE_S  20
+/* I2S_IN_DSCR_STATE : RO ;bitpos:[19:18] ;default: 2'b0 ; */
+/*description: */
+#define I2S_IN_DSCR_STATE  0x00000003
+#define I2S_IN_DSCR_STATE_M  ((I2S_IN_DSCR_STATE_V)<<(I2S_IN_DSCR_STATE_S))
+#define I2S_IN_DSCR_STATE_V  0x3
+#define I2S_IN_DSCR_STATE_S  18
+/* I2S_INLINK_DSCR_ADDR : RO ;bitpos:[17:0] ;default: 18'h0 ; */
+/*description: */
+#define I2S_INLINK_DSCR_ADDR  0x0003FFFF
+#define I2S_INLINK_DSCR_ADDR_M  ((I2S_INLINK_DSCR_ADDR_V)<<(I2S_INLINK_DSCR_ADDR_S))
+#define I2S_INLINK_DSCR_ADDR_V  0x3FFFF
+#define I2S_INLINK_DSCR_ADDR_S  0
 
 #define I2S_LC_HUNG_CONF_REG(i)          (REG_I2S_BASE(i) + 0x0074)
 /* I2S_LC_FIFO_TIMEOUT_ENA : R/W ;bitpos:[11] ;default: 1'b1 ; */
@@ -1331,13 +1451,19 @@ extern "C" {
 #define I2S_FIFO_FORCE_PD_S  0
 
 #define I2S_CONF2_REG(i)          (REG_I2S_BASE(i) + 0x00a8)
+/* I2S_CAM_SYNC_FIFO_RESET_ST : RO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define I2S_CAM_SYNC_FIFO_RESET_ST  (BIT(10))
+#define I2S_CAM_SYNC_FIFO_RESET_ST_M  (BIT(10))
+#define I2S_CAM_SYNC_FIFO_RESET_ST_V  0x1
+#define I2S_CAM_SYNC_FIFO_RESET_ST_S  10
 /* I2S_CAM_CLK_LOOPBACK : R/W ;bitpos:[9] ;default: 1'b0 ; */
 /*description: Set this bit to loopback cam_clk from i2s_rx*/
 #define I2S_CAM_CLK_LOOPBACK  (BIT(9))
 #define I2S_CAM_CLK_LOOPBACK_M  (BIT(9))
 #define I2S_CAM_CLK_LOOPBACK_V  0x1
 #define I2S_CAM_CLK_LOOPBACK_S  9
-/* I2S_CAM_SYNC_FIFO_RESET : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/* I2S_CAM_SYNC_FIFO_RESET : WO ;bitpos:[8] ;default: 1'b0 ; */
 /*description: Set this bit to reset cam_sync_fifo*/
 #define I2S_CAM_SYNC_FIFO_RESET  (BIT(8))
 #define I2S_CAM_SYNC_FIFO_RESET_M  (BIT(8))
@@ -1394,12 +1520,14 @@ extern "C" {
 #define I2S_CAMERA_EN_S  0
 
 #define I2S_CLKM_CONF_REG(i)          (REG_I2S_BASE(i) + 0x00ac)
-/* I2S_CLKA_ENA : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/* I2S_CLK_SEL : R/W ;bitpos:[22:21] ;default: 2'b0 ; */
 /*description: Set this bit to enable clk_apll*/
-#define I2S_CLKA_ENA  (BIT(21))
-#define I2S_CLKA_ENA_M  (BIT(21))
-#define I2S_CLKA_ENA_V  0x1
-#define I2S_CLKA_ENA_S  21
+#define I2S_CLK_SEL  0x00000003
+#define I2S_CLK_SEL_M  ((I2S_CLK_SEL_V)<<(I2S_CLK_SEL_S))
+#define I2S_CLK_SEL_V  0x3
+#define I2S_CLK_SEL_S  21
+#define I2S_CLK_AUDIO_PLL 1
+#define I2S_CLK_160M_PLL
 /* I2S_CLK_EN : R/W ;bitpos:[20] ;default: 1'b0 ; */
 /*description: Set this bit to enable clk gate*/
 #define I2S_CLK_EN  (BIT(20))
@@ -1453,20 +1581,19 @@ extern "C" {
 
 #define I2S_PDM_CONF_REG(i)          (REG_I2S_BASE(i) + 0x00b4)
 /* I2S_RX_PDM_WAY_MODE : R/W ;bitpos:[31:30] ;default: 2'h0 ; */
-/*description: 0/1 pdm rx use one-way  2/3 pdm rx use two-way*/
+/*description: 0/1 pdm rx use one-way*/
 #define I2S_RX_PDM_WAY_MODE  0x00000003
 #define I2S_RX_PDM_WAY_MODE_M  ((I2S_RX_PDM_WAY_MODE_V)<<(I2S_RX_PDM_WAY_MODE_S))
 #define I2S_RX_PDM_WAY_MODE_V  0x3
 #define I2S_RX_PDM_WAY_MODE_S  30
 /* I2S_TX_PDM_WAY_MODE : R/W ;bitpos:[29:28] ;default: 2'b0 ; */
-/*description: 0/1 pdm rx use one-way  2/3 pdm tx use two-way*/
+/*description: 0/1 pdm rx use one-way*/
 #define I2S_TX_PDM_WAY_MODE  0x00000003
 #define I2S_TX_PDM_WAY_MODE_M  ((I2S_TX_PDM_WAY_MODE_V)<<(I2S_TX_PDM_WAY_MODE_S))
 #define I2S_TX_PDM_WAY_MODE_V  0x3
 #define I2S_TX_PDM_WAY_MODE_S  28
 /* I2S_TX_PDM_CHAN_MOD : R/W ;bitpos:[27:26] ;default: 2'h0 ; */
-/*description: pdm tx channel mode 0/3: standard mode  1: right channel output
-  2: left channel output*/
+/*description: pdm tx channel mode*/
 #define I2S_TX_PDM_CHAN_MOD  0x00000003
 #define I2S_TX_PDM_CHAN_MOD_M  ((I2S_TX_PDM_CHAN_MOD_V)<<(I2S_TX_PDM_CHAN_MOD_S))
 #define I2S_TX_PDM_CHAN_MOD_V  0x3
@@ -1564,18 +1691,6 @@ extern "C" {
 #define I2S_TX_PDM_FS_S  0
 
 #define I2S_STATE_REG(i)          (REG_I2S_BASE(i) + 0x00bc)
-/* I2S_RX_FIFO_RESET_BACK : RO ;bitpos:[2] ;default: 1'b1 ; */
-/*description: 1: i2s_rx_fifo_reset async ok*/
-#define I2S_RX_FIFO_RESET_BACK  (BIT(2))
-#define I2S_RX_FIFO_RESET_BACK_M  (BIT(2))
-#define I2S_RX_FIFO_RESET_BACK_V  0x1
-#define I2S_RX_FIFO_RESET_BACK_S  2
-/* I2S_TX_FIFO_RESET_BACK : RO ;bitpos:[1] ;default: 1'b1 ; */
-/*description: 1: i2s_tx_fifo_reset async ok*/
-#define I2S_TX_FIFO_RESET_BACK  (BIT(1))
-#define I2S_TX_FIFO_RESET_BACK_M  (BIT(1))
-#define I2S_TX_FIFO_RESET_BACK_V  0x1
-#define I2S_TX_FIFO_RESET_BACK_S  1
 /* I2S_TX_IDLE : RO ;bitpos:[0] ;default: 1'b1 ; */
 /*description: 1: i2s_tx is idle state*/
 #define I2S_TX_IDLE  (BIT(0))
@@ -1584,7 +1699,7 @@ extern "C" {
 #define I2S_TX_IDLE_S  0
 
 #define I2S_DATE_REG(i)          (REG_I2S_BASE(i) + 0x00fc)
-/* I2S_I2SDATE : R/W ;bitpos:[31:0] ;default: 32'h1701220 ; */
+/* I2S_I2SDATE : R/W ;bitpos:[31:0] ;default: 32'h18022300 ; */
 /*description: */
 #define I2S_I2SDATE  0xFFFFFFFF
 #define I2S_I2SDATE_M  ((I2S_I2SDATE_V)<<(I2S_I2SDATE_S))

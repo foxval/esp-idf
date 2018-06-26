@@ -54,7 +54,7 @@ static const char* TAG = "spiram";
 #elif CONFIG_SPIRAM_SPEED_80M && CONFIG_ESPTOOLPY_FLASHFREQ_80M
 #define PSRAM_SPEED PSRAM_CACHE_F80M_S80M
 #else
-#error "FLASH speed can only be equal to or higher than SRAM speed while SRAM is enabled!"
+#define PSRAM_SPEED PSRAM_CACHE_F20M_S20M
 #endif
 
 
@@ -116,7 +116,7 @@ esp_err_t esp_spiram_init()
 
     ESP_EARLY_LOGI(TAG, "SPI RAM mode: %s", PSRAM_SPEED == PSRAM_CACHE_F40M_S40M ? "flash 40m sram 40m" : \
                                           PSRAM_SPEED == PSRAM_CACHE_F80M_S40M ? "flash 80m sram 40m" : \
-                                          PSRAM_SPEED == PSRAM_CACHE_F80M_S80M ? "flash 80m sram 80m" : "ERROR");
+                                          PSRAM_SPEED == PSRAM_CACHE_F80M_S80M ? "flash 80m sram 80m" : "flash 20m sram 20m");
     ESP_EARLY_LOGI(TAG, "PSRAM initialized, cache is in %s mode.", \
                                           (PSRAM_MODE==PSRAM_VADDR_MODE_EVENODD)?"even/odd (2-core)": \
                                           (PSRAM_MODE==PSRAM_VADDR_MODE_LOWHIGH)?"low/high (2-core)": \
@@ -171,10 +171,18 @@ void IRAM_ATTR esp_spiram_writeback_cache()
 
     //We need cache enabled for this to work. Re-enable it if needed; make sure we 
     //disable it again on exit as well.
+#ifdef CONFIG_CHIP_IS_ESP32
     if (DPORT_REG_GET_BIT(DPORT_PRO_CACHE_CTRL_REG, DPORT_PRO_CACHE_ENABLE)==0) {
         cache_was_disabled|=(1<<0);
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 1, DPORT_PRO_CACHE_ENABLE_S);
     }
+#else
+    if (DPORT_REG_GET_BIT(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_ENABLE)==0) {
+        cache_was_disabled|=(1<<0);
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_DCACHE_CTRL_REG, 1, 1, DPORT_PRO_DCACHE_ENABLE_S);
+    }
+
+#endif
 #ifndef CONFIG_FREERTOS_UNICORE
     if (DPORT_REG_GET_BIT(DPORT_APP_CACHE_CTRL_REG, DPORT_APP_CACHE_ENABLE)==0) {
         cache_was_disabled|=(1<<1);
@@ -209,8 +217,10 @@ void IRAM_ATTR esp_spiram_writeback_cache()
         while (DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_DBUG0_REG, DPORT_PRO_CACHE_STATE, DPORT_PRO_CACHE_STATE_S) != 1) ;
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 0, DPORT_PRO_CACHE_ENABLE_S);
 #else
+#ifdef DPORT_CODE_COMPLETE
         while (DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_DBUG2_REG, DPORT_PRO_CACHE_STATE, DPORT_PRO_CACHE_STATE_S) != 1) ;
-        DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 0, DPORT_PRO_CACHE_ENABLE_S);
+#endif
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_DCACHE_CTRL_REG, 1, 0, DPORT_PRO_DCACHE_ENABLE_S);
 #endif
     }
 #ifndef CONFIG_FREERTOS_UNICORE

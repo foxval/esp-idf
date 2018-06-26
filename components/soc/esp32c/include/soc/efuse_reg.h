@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,16 +15,19 @@
 #define _SOC_EFUSE_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define EFUSE_BLK0_RDATA0_REG          (DR_REG_EFUSE_BASE + 0x000)
 /* EFUSE_RD_FLASH_CRYPT_CNT : RO ;bitpos:[27:20] ;default: 8'b0 ; */
-/*description: read for flash_crypt_cnt*/
+/*description: */
 #define EFUSE_RD_FLASH_CRYPT_CNT  0x000000FF
 #define EFUSE_RD_FLASH_CRYPT_CNT_M  ((EFUSE_RD_FLASH_CRYPT_CNT_V)<<(EFUSE_RD_FLASH_CRYPT_CNT_S))
 #define EFUSE_RD_FLASH_CRYPT_CNT_V  0xFF
 #define EFUSE_RD_FLASH_CRYPT_CNT_S  20
 /* EFUSE_RD_EFUSE_RD_DIS : RO ;bitpos:[19:16] ;default: 4'b0 ; */
-/*description: read for efuse_rd_disable*/
+/*description: */
 #define EFUSE_RD_EFUSE_RD_DIS  0x0000000F
 #define EFUSE_RD_EFUSE_RD_DIS_M  ((EFUSE_RD_EFUSE_RD_DIS_V)<<(EFUSE_RD_EFUSE_RD_DIS_S))
 #define EFUSE_RD_EFUSE_RD_DIS_V  0xF
@@ -40,7 +43,7 @@
 #define EFUSE_RD_DIS_BLK0_PARTIAL (1<<19)
 
 /* EFUSE_RD_EFUSE_WR_DIS : RO ;bitpos:[15:0] ;default: 16'b0 ; */
-/*description: read for efuse_wr_disable*/
+/*description: */
 #define EFUSE_RD_EFUSE_WR_DIS  0x0000FFFF
 #define EFUSE_RD_EFUSE_WR_DIS_M  ((EFUSE_RD_EFUSE_WR_DIS_V)<<(EFUSE_RD_EFUSE_WR_DIS_S))
 #define EFUSE_RD_EFUSE_WR_DIS_V  0xFFFF
@@ -64,7 +67,7 @@
 
 #define EFUSE_BLK0_RDATA1_REG          (DR_REG_EFUSE_BASE + 0x004)
 /* EFUSE_RD_WIFI_MAC_CRC_LOW : RO ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: read for low 32bit WIFI_MAC_Address*/
+/*description: */
 #define EFUSE_RD_WIFI_MAC_CRC_LOW  0xFFFFFFFF
 #define EFUSE_RD_WIFI_MAC_CRC_LOW_M  ((EFUSE_RD_WIFI_MAC_CRC_LOW_V)<<(EFUSE_RD_WIFI_MAC_CRC_LOW_S))
 #define EFUSE_RD_WIFI_MAC_CRC_LOW_V  0xFFFFFFFF
@@ -72,7 +75,7 @@
 
 #define EFUSE_BLK0_RDATA2_REG          (DR_REG_EFUSE_BASE + 0x008)
 /* EFUSE_RD_WIFI_MAC_CRC_HIGH : RO ;bitpos:[23:0] ;default: 24'b0 ; */
-/*description: read for high 24bit WIFI_MAC_Address*/
+/*description: */
 #define EFUSE_RD_WIFI_MAC_CRC_HIGH  0x00FFFFFF
 #define EFUSE_RD_WIFI_MAC_CRC_HIGH_M  ((EFUSE_RD_WIFI_MAC_CRC_HIGH_V)<<(EFUSE_RD_WIFI_MAC_CRC_HIGH_S))
 #define EFUSE_RD_WIFI_MAC_CRC_HIGH_V  0xFFFFFF
@@ -147,19 +150,19 @@
 
 #define EFUSE_BLK0_RDATA4_REG          (DR_REG_EFUSE_BASE + 0x010)
 /* EFUSE_RD_SDIO_FORCE : RO ;bitpos:[16] ;default: 1'b0 ; */
-/*description: read for sdio_force*/
+/*description: */
 #define EFUSE_RD_SDIO_FORCE  (BIT(16))
 #define EFUSE_RD_SDIO_FORCE_M  (BIT(16))
 #define EFUSE_RD_SDIO_FORCE_V  0x1
 #define EFUSE_RD_SDIO_FORCE_S  16
 /* EFUSE_RD_SDIO_TIEH : RO ;bitpos:[15] ;default: 1'b0 ; */
-/*description: read for SDIO_TIEH*/
+/*description: */
 #define EFUSE_RD_SDIO_TIEH  (BIT(15))
 #define EFUSE_RD_SDIO_TIEH_M  (BIT(15))
 #define EFUSE_RD_SDIO_TIEH_V  0x1
 #define EFUSE_RD_SDIO_TIEH_S  15
 /* EFUSE_RD_XPD_SDIO_REG : RO ;bitpos:[14] ;default: 1'b0 ; */
-/*description: read for XPD_SDIO_REG*/
+/*description: */
 #define EFUSE_RD_XPD_SDIO_REG  (BIT(14))
 #define EFUSE_RD_XPD_SDIO_REG_M  (BIT(14))
 #define EFUSE_RD_XPD_SDIO_REG_V  0x1
@@ -200,7 +203,7 @@
 
 #define EFUSE_BLK0_RDATA5_REG          (DR_REG_EFUSE_BASE + 0x014)
 /* EFUSE_RD_FLASH_CRYPT_CONFIG : RO ;bitpos:[31:28] ;default: 4'b0 ; */
-/*description: read for flash_crypt_config*/
+/*description: */
 #define EFUSE_RD_FLASH_CRYPT_CONFIG  0x0000000F
 #define EFUSE_RD_FLASH_CRYPT_CONFIG_M  ((EFUSE_RD_FLASH_CRYPT_CONFIG_V)<<(EFUSE_RD_FLASH_CRYPT_CONFIG_S))
 #define EFUSE_RD_FLASH_CRYPT_CONFIG_V  0xF
@@ -244,25 +247,25 @@
 
 #define EFUSE_BLK0_RDATA6_REG          (DR_REG_EFUSE_BASE + 0x018)
 /* EFUSE_RD_KEY_STATUS : RO ;bitpos:[10] ;default: 1'b0 ; */
-/*description: read for key_status*/
+/*description: */
 #define EFUSE_RD_KEY_STATUS  (BIT(10))
 #define EFUSE_RD_KEY_STATUS_M  (BIT(10))
 #define EFUSE_RD_KEY_STATUS_V  0x1
 #define EFUSE_RD_KEY_STATUS_S  10
 /* EFUSE_RD_DISABLE_DL_CACHE : RO ;bitpos:[9] ;default: 1'b0 ; */
-/*description: read for download_dis_cache*/
+/*description: */
 #define EFUSE_RD_DISABLE_DL_CACHE  (BIT(9))
 #define EFUSE_RD_DISABLE_DL_CACHE_M  (BIT(9))
 #define EFUSE_RD_DISABLE_DL_CACHE_V  0x1
 #define EFUSE_RD_DISABLE_DL_CACHE_S  9
 /* EFUSE_RD_DISABLE_DL_DECRYPT : RO ;bitpos:[8] ;default: 1'b0 ; */
-/*description: read for download_dis_decrypt*/
+/*description: */
 #define EFUSE_RD_DISABLE_DL_DECRYPT  (BIT(8))
 #define EFUSE_RD_DISABLE_DL_DECRYPT_M  (BIT(8))
 #define EFUSE_RD_DISABLE_DL_DECRYPT_V  0x1
 #define EFUSE_RD_DISABLE_DL_DECRYPT_S  8
 /* EFUSE_RD_DISABLE_DL_ENCRYPT : RO ;bitpos:[7] ;default: 1'b0 ; */
-/*description: read for download_dis_encrypt*/
+/*description: */
 #define EFUSE_RD_DISABLE_DL_ENCRYPT  (BIT(7))
 #define EFUSE_RD_DISABLE_DL_ENCRYPT_M  (BIT(7))
 #define EFUSE_RD_DISABLE_DL_ENCRYPT_V  0x1
@@ -274,13 +277,13 @@
 #define EFUSE_RD_HARD_DISABLE_JTAG_V  0x1
 #define EFUSE_RD_HARD_DISABLE_JTAG_S  6
 /* EFUSE_RD_ABS_DONE_1 : RO ;bitpos:[5] ;default: 1'b0 ; */
-/*description: read for abstract_done_1*/
+/*description: */
 #define EFUSE_RD_ABS_DONE_1  (BIT(5))
 #define EFUSE_RD_ABS_DONE_1_M  (BIT(5))
 #define EFUSE_RD_ABS_DONE_1_V  0x1
 #define EFUSE_RD_ABS_DONE_1_S  5
 /* EFUSE_RD_ABS_DONE_0 : RO ;bitpos:[4] ;default: 1'b0 ; */
-/*description: read for abstract_done_0*/
+/*description: */
 #define EFUSE_RD_ABS_DONE_0  (BIT(4))
 #define EFUSE_RD_ABS_DONE_0_M  (BIT(4))
 #define EFUSE_RD_ABS_DONE_0_V  0x1
@@ -298,7 +301,7 @@
 #define EFUSE_RD_CONSOLE_DEBUG_DISABLE_V  0x1
 #define EFUSE_RD_CONSOLE_DEBUG_DISABLE_S  2
 /* EFUSE_RD_CODING_SCHEME : RO ;bitpos:[1:0] ;default: 2'b0 ; */
-/*description: read for coding_scheme*/
+/*description: */
 #define EFUSE_RD_CODING_SCHEME  0x00000003
 #define EFUSE_RD_CODING_SCHEME_M  ((EFUSE_RD_CODING_SCHEME_V)<<(EFUSE_RD_CODING_SCHEME_S))
 #define EFUSE_RD_CODING_SCHEME_V  0x3
@@ -306,19 +309,19 @@
 
 #define EFUSE_BLK0_WDATA0_REG          (DR_REG_EFUSE_BASE + 0x01c)
 /* EFUSE_FLASH_CRYPT_CNT : R/W ;bitpos:[27:20] ;default: 8'b0 ; */
-/*description: program for flash_crypt_cnt*/
+/*description: */
 #define EFUSE_FLASH_CRYPT_CNT  0x000000FF
 #define EFUSE_FLASH_CRYPT_CNT_M  ((EFUSE_FLASH_CRYPT_CNT_V)<<(EFUSE_FLASH_CRYPT_CNT_S))
 #define EFUSE_FLASH_CRYPT_CNT_V  0xFF
 #define EFUSE_FLASH_CRYPT_CNT_S  20
 /* EFUSE_RD_DIS : R/W ;bitpos:[19:16] ;default: 4'b0 ; */
-/*description: program for efuse_rd_disable*/
+/*description: */
 #define EFUSE_RD_DIS  0x0000000F
 #define EFUSE_RD_DIS_M  ((EFUSE_RD_DIS_V)<<(EFUSE_RD_DIS_S))
 #define EFUSE_RD_DIS_V  0xF
 #define EFUSE_RD_DIS_S  16
 /* EFUSE_WR_DIS : R/W ;bitpos:[15:0] ;default: 16'b0 ; */
-/*description: program for efuse_wr_disable*/
+/*description: */
 #define EFUSE_WR_DIS  0x0000FFFF
 #define EFUSE_WR_DIS_M  ((EFUSE_WR_DIS_V)<<(EFUSE_WR_DIS_S))
 #define EFUSE_WR_DIS_V  0xFFFF
@@ -326,7 +329,7 @@
 
 #define EFUSE_BLK0_WDATA1_REG          (DR_REG_EFUSE_BASE + 0x020)
 /* EFUSE_WIFI_MAC_CRC_LOW : R/W ;bitpos:[31:0] ;default: 32'b0 ; */
-/*description: program for low 32bit WIFI_MAC_Address*/
+/*description: */
 #define EFUSE_WIFI_MAC_CRC_LOW  0xFFFFFFFF
 #define EFUSE_WIFI_MAC_CRC_LOW_M  ((EFUSE_WIFI_MAC_CRC_LOW_V)<<(EFUSE_WIFI_MAC_CRC_LOW_S))
 #define EFUSE_WIFI_MAC_CRC_LOW_V  0xFFFFFFFF
@@ -334,14 +337,14 @@
 
 #define EFUSE_BLK0_WDATA2_REG          (DR_REG_EFUSE_BASE + 0x024)
 /* EFUSE_WIFI_MAC_CRC_HIGH : R/W ;bitpos:[23:0] ;default: 24'b0 ; */
-/*description: program for high 24bit WIFI_MAC_Address*/
+/*description: */
 #define EFUSE_WIFI_MAC_CRC_HIGH  0x00FFFFFF
 #define EFUSE_WIFI_MAC_CRC_HIGH_M  ((EFUSE_WIFI_MAC_CRC_HIGH_V)<<(EFUSE_WIFI_MAC_CRC_HIGH_S))
 #define EFUSE_WIFI_MAC_CRC_HIGH_V  0xFFFFFF
 #define EFUSE_WIFI_MAC_CRC_HIGH_S  0
 
 #define EFUSE_BLK0_WDATA3_REG          (DR_REG_EFUSE_BASE + 0x028)
-/* EFUSE_CHIP_VER_REV1 : R/W ;bitpos:[16] ;default: 1'b0 ; */
+/* EFUSE_CHIP_VER_RESERVE : R/W ;bitpos:[16:4] ;default: 13'b0 ; */
 /*description: */
 #define EFUSE_CHIP_VER_REV1  (BIT(15))
 #define EFUSE_CHIP_VER_REV1_M  ((EFUSE_CHIP_VER_REV1_V)<<(EFUSE_CHIP_VER_REV1_S))
@@ -418,19 +421,19 @@
 
 #define EFUSE_BLK0_WDATA4_REG          (DR_REG_EFUSE_BASE + 0x02c)
 /* EFUSE_SDIO_FORCE : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: program for sdio_force*/
+/*description: */
 #define EFUSE_SDIO_FORCE  (BIT(16))
 #define EFUSE_SDIO_FORCE_M  (BIT(16))
 #define EFUSE_SDIO_FORCE_V  0x1
 #define EFUSE_SDIO_FORCE_S  16
 /* EFUSE_SDIO_TIEH : R/W ;bitpos:[15] ;default: 1'b0 ; */
-/*description: program for SDIO_TIEH*/
+/*description: */
 #define EFUSE_SDIO_TIEH  (BIT(15))
 #define EFUSE_SDIO_TIEH_M  (BIT(15))
 #define EFUSE_SDIO_TIEH_V  0x1
 #define EFUSE_SDIO_TIEH_S  15
 /* EFUSE_XPD_SDIO_REG : R/W ;bitpos:[14] ;default: 1'b0 ; */
-/*description: program for XPD_SDIO_REG*/
+/*description: */
 #define EFUSE_XPD_SDIO_REG  (BIT(14))
 #define EFUSE_XPD_SDIO_REG_M  (BIT(14))
 #define EFUSE_XPD_SDIO_REG_V  0x1
@@ -471,7 +474,7 @@
 
 #define EFUSE_BLK0_WDATA5_REG          (DR_REG_EFUSE_BASE + 0x030)
 /* EFUSE_FLASH_CRYPT_CONFIG : R/W ;bitpos:[31:28] ;default: 4'b0 ; */
-/*description: program for flash_crypt_config*/
+/*description: */
 #define EFUSE_FLASH_CRYPT_CONFIG  0x0000000F
 #define EFUSE_FLASH_CRYPT_CONFIG_M  ((EFUSE_FLASH_CRYPT_CONFIG_V)<<(EFUSE_FLASH_CRYPT_CONFIG_S))
 #define EFUSE_FLASH_CRYPT_CONFIG_V  0xF
@@ -514,25 +517,25 @@
 
 #define EFUSE_BLK0_WDATA6_REG          (DR_REG_EFUSE_BASE + 0x034)
 /* EFUSE_KEY_STATUS : R/W ;bitpos:[10] ;default: 1'b0 ; */
-/*description: program for key_status*/
+/*description: */
 #define EFUSE_KEY_STATUS  (BIT(10))
 #define EFUSE_KEY_STATUS_M  (BIT(10))
 #define EFUSE_KEY_STATUS_V  0x1
 #define EFUSE_KEY_STATUS_S  10
 /* EFUSE_DISABLE_DL_CACHE : R/W ;bitpos:[9] ;default: 1'b0 ; */
-/*description: program for download_dis_cache*/
+/*description: */
 #define EFUSE_DISABLE_DL_CACHE  (BIT(9))
 #define EFUSE_DISABLE_DL_CACHE_M  (BIT(9))
 #define EFUSE_DISABLE_DL_CACHE_V  0x1
 #define EFUSE_DISABLE_DL_CACHE_S  9
 /* EFUSE_DISABLE_DL_DECRYPT : R/W ;bitpos:[8] ;default: 1'b0 ; */
-/*description: program for download_dis_decrypt*/
+/*description: */
 #define EFUSE_DISABLE_DL_DECRYPT  (BIT(8))
 #define EFUSE_DISABLE_DL_DECRYPT_M  (BIT(8))
 #define EFUSE_DISABLE_DL_DECRYPT_V  0x1
 #define EFUSE_DISABLE_DL_DECRYPT_S  8
 /* EFUSE_DISABLE_DL_ENCRYPT : R/W ;bitpos:[7] ;default: 1'b0 ; */
-/*description: program for download_dis_encrypt*/
+/*description: */
 #define EFUSE_DISABLE_DL_ENCRYPT  (BIT(7))
 #define EFUSE_DISABLE_DL_ENCRYPT_M  (BIT(7))
 #define EFUSE_DISABLE_DL_ENCRYPT_V  0x1
@@ -544,13 +547,13 @@
 #define EFUSE_HARD_DISABLE_JTAG_V  0x1
 #define EFUSE_HARD_DISABLE_JTAG_S  6
 /* EFUSE_ABS_DONE_1 : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: program for abstract_done_1*/
+/*description: */
 #define EFUSE_ABS_DONE_1  (BIT(5))
 #define EFUSE_ABS_DONE_1_M  (BIT(5))
 #define EFUSE_ABS_DONE_1_V  0x1
 #define EFUSE_ABS_DONE_1_S  5
 /* EFUSE_ABS_DONE_0 : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: program for abstract_done_0*/
+/*description: */
 #define EFUSE_ABS_DONE_0  (BIT(4))
 #define EFUSE_ABS_DONE_0_M  (BIT(4))
 #define EFUSE_ABS_DONE_0_V  0x1
@@ -568,7 +571,7 @@
 #define EFUSE_CONSOLE_DEBUG_DISABLE_V  0x1
 #define EFUSE_CONSOLE_DEBUG_DISABLE_S  2
 /* EFUSE_CODING_SCHEME : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
-/*description: program for coding_scheme*/
+/*description: */
 #define EFUSE_CODING_SCHEME  0x00000003
 #define EFUSE_CODING_SCHEME_M  ((EFUSE_CODING_SCHEME_V)<<(EFUSE_CODING_SCHEME_S))
 #define EFUSE_CODING_SCHEME_V  0x3
@@ -576,7 +579,7 @@
 
 #define EFUSE_BLK1_RDATA0_REG          (DR_REG_EFUSE_BASE + 0x038)
 /* EFUSE_BLK1_DOUT0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT0  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT0_M  ((EFUSE_BLK1_DOUT0_V)<<(EFUSE_BLK1_DOUT0_S))
 #define EFUSE_BLK1_DOUT0_V  0xFFFFFFFF
@@ -584,7 +587,7 @@
 
 #define EFUSE_BLK1_RDATA1_REG          (DR_REG_EFUSE_BASE + 0x03c)
 /* EFUSE_BLK1_DOUT1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT1  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT1_M  ((EFUSE_BLK1_DOUT1_V)<<(EFUSE_BLK1_DOUT1_S))
 #define EFUSE_BLK1_DOUT1_V  0xFFFFFFFF
@@ -592,7 +595,7 @@
 
 #define EFUSE_BLK1_RDATA2_REG          (DR_REG_EFUSE_BASE + 0x040)
 /* EFUSE_BLK1_DOUT2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT2  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT2_M  ((EFUSE_BLK1_DOUT2_V)<<(EFUSE_BLK1_DOUT2_S))
 #define EFUSE_BLK1_DOUT2_V  0xFFFFFFFF
@@ -600,7 +603,7 @@
 
 #define EFUSE_BLK1_RDATA3_REG          (DR_REG_EFUSE_BASE + 0x044)
 /* EFUSE_BLK1_DOUT3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT3  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT3_M  ((EFUSE_BLK1_DOUT3_V)<<(EFUSE_BLK1_DOUT3_S))
 #define EFUSE_BLK1_DOUT3_V  0xFFFFFFFF
@@ -608,7 +611,7 @@
 
 #define EFUSE_BLK1_RDATA4_REG          (DR_REG_EFUSE_BASE + 0x048)
 /* EFUSE_BLK1_DOUT4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT4  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT4_M  ((EFUSE_BLK1_DOUT4_V)<<(EFUSE_BLK1_DOUT4_S))
 #define EFUSE_BLK1_DOUT4_V  0xFFFFFFFF
@@ -616,7 +619,7 @@
 
 #define EFUSE_BLK1_RDATA5_REG          (DR_REG_EFUSE_BASE + 0x04c)
 /* EFUSE_BLK1_DOUT5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT5  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT5_M  ((EFUSE_BLK1_DOUT5_V)<<(EFUSE_BLK1_DOUT5_S))
 #define EFUSE_BLK1_DOUT5_V  0xFFFFFFFF
@@ -624,7 +627,7 @@
 
 #define EFUSE_BLK1_RDATA6_REG          (DR_REG_EFUSE_BASE + 0x050)
 /* EFUSE_BLK1_DOUT6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT6  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT6_M  ((EFUSE_BLK1_DOUT6_V)<<(EFUSE_BLK1_DOUT6_S))
 #define EFUSE_BLK1_DOUT6_V  0xFFFFFFFF
@@ -632,7 +635,7 @@
 
 #define EFUSE_BLK1_RDATA7_REG          (DR_REG_EFUSE_BASE + 0x054)
 /* EFUSE_BLK1_DOUT7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DOUT7  0xFFFFFFFF
 #define EFUSE_BLK1_DOUT7_M  ((EFUSE_BLK1_DOUT7_V)<<(EFUSE_BLK1_DOUT7_S))
 #define EFUSE_BLK1_DOUT7_V  0xFFFFFFFF
@@ -640,7 +643,7 @@
 
 #define EFUSE_BLK2_RDATA0_REG          (DR_REG_EFUSE_BASE + 0x058)
 /* EFUSE_BLK2_DOUT0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT0  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT0_M  ((EFUSE_BLK2_DOUT0_V)<<(EFUSE_BLK2_DOUT0_S))
 #define EFUSE_BLK2_DOUT0_V  0xFFFFFFFF
@@ -648,7 +651,7 @@
 
 #define EFUSE_BLK2_RDATA1_REG          (DR_REG_EFUSE_BASE + 0x05c)
 /* EFUSE_BLK2_DOUT1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT1  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT1_M  ((EFUSE_BLK2_DOUT1_V)<<(EFUSE_BLK2_DOUT1_S))
 #define EFUSE_BLK2_DOUT1_V  0xFFFFFFFF
@@ -656,7 +659,7 @@
 
 #define EFUSE_BLK2_RDATA2_REG          (DR_REG_EFUSE_BASE + 0x060)
 /* EFUSE_BLK2_DOUT2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT2  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT2_M  ((EFUSE_BLK2_DOUT2_V)<<(EFUSE_BLK2_DOUT2_S))
 #define EFUSE_BLK2_DOUT2_V  0xFFFFFFFF
@@ -664,7 +667,7 @@
 
 #define EFUSE_BLK2_RDATA3_REG          (DR_REG_EFUSE_BASE + 0x064)
 /* EFUSE_BLK2_DOUT3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT3  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT3_M  ((EFUSE_BLK2_DOUT3_V)<<(EFUSE_BLK2_DOUT3_S))
 #define EFUSE_BLK2_DOUT3_V  0xFFFFFFFF
@@ -672,7 +675,7 @@
 
 #define EFUSE_BLK2_RDATA4_REG          (DR_REG_EFUSE_BASE + 0x068)
 /* EFUSE_BLK2_DOUT4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT4  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT4_M  ((EFUSE_BLK2_DOUT4_V)<<(EFUSE_BLK2_DOUT4_S))
 #define EFUSE_BLK2_DOUT4_V  0xFFFFFFFF
@@ -680,7 +683,7 @@
 
 #define EFUSE_BLK2_RDATA5_REG          (DR_REG_EFUSE_BASE + 0x06c)
 /* EFUSE_BLK2_DOUT5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT5  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT5_M  ((EFUSE_BLK2_DOUT5_V)<<(EFUSE_BLK2_DOUT5_S))
 #define EFUSE_BLK2_DOUT5_V  0xFFFFFFFF
@@ -688,7 +691,7 @@
 
 #define EFUSE_BLK2_RDATA6_REG          (DR_REG_EFUSE_BASE + 0x070)
 /* EFUSE_BLK2_DOUT6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT6  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT6_M  ((EFUSE_BLK2_DOUT6_V)<<(EFUSE_BLK2_DOUT6_S))
 #define EFUSE_BLK2_DOUT6_V  0xFFFFFFFF
@@ -696,7 +699,7 @@
 
 #define EFUSE_BLK2_RDATA7_REG          (DR_REG_EFUSE_BASE + 0x074)
 /* EFUSE_BLK2_DOUT7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DOUT7  0xFFFFFFFF
 #define EFUSE_BLK2_DOUT7_M  ((EFUSE_BLK2_DOUT7_V)<<(EFUSE_BLK2_DOUT7_S))
 #define EFUSE_BLK2_DOUT7_V  0xFFFFFFFF
@@ -704,7 +707,7 @@
 
 #define EFUSE_BLK3_RDATA0_REG          (DR_REG_EFUSE_BASE + 0x078)
 /* EFUSE_BLK3_DOUT0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT0  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT0_M  ((EFUSE_BLK3_DOUT0_V)<<(EFUSE_BLK3_DOUT0_S))
 #define EFUSE_BLK3_DOUT0_V  0xFFFFFFFF
@@ -712,7 +715,7 @@
 
 #define EFUSE_BLK3_RDATA1_REG          (DR_REG_EFUSE_BASE + 0x07c)
 /* EFUSE_BLK3_DOUT1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT1  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT1_M  ((EFUSE_BLK3_DOUT1_V)<<(EFUSE_BLK3_DOUT1_S))
 #define EFUSE_BLK3_DOUT1_V  0xFFFFFFFF
@@ -720,7 +723,7 @@
 
 #define EFUSE_BLK3_RDATA2_REG          (DR_REG_EFUSE_BASE + 0x080)
 /* EFUSE_BLK3_DOUT2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT2  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT2_M  ((EFUSE_BLK3_DOUT2_V)<<(EFUSE_BLK3_DOUT2_S))
 #define EFUSE_BLK3_DOUT2_V  0xFFFFFFFF
@@ -730,7 +733,7 @@
  * purposes. This usage is indicated by the EFUSE_RD_BLK3_PART_RESERVE bit.*/
 #define EFUSE_BLK3_RDATA3_REG          (DR_REG_EFUSE_BASE + 0x084)
 /* EFUSE_BLK3_DOUT3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT3  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT3_M  ((EFUSE_BLK3_DOUT3_V)<<(EFUSE_BLK3_DOUT3_S))
 #define EFUSE_BLK3_DOUT3_V  0xFFFFFFFF
@@ -762,7 +765,7 @@
 
 #define EFUSE_BLK3_RDATA4_REG          (DR_REG_EFUSE_BASE + 0x088)
 /* EFUSE_BLK3_DOUT4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT4  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT4_M  ((EFUSE_BLK3_DOUT4_V)<<(EFUSE_BLK3_DOUT4_S))
 #define EFUSE_BLK3_DOUT4_V  0xFFFFFFFF
@@ -776,7 +779,7 @@
 
 #define EFUSE_BLK3_RDATA5_REG          (DR_REG_EFUSE_BASE + 0x08c)
 /* EFUSE_BLK3_DOUT5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT5  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT5_M  ((EFUSE_BLK3_DOUT5_V)<<(EFUSE_BLK3_DOUT5_S))
 #define EFUSE_BLK3_DOUT5_V  0xFFFFFFFF
@@ -784,7 +787,7 @@
 
 #define EFUSE_BLK3_RDATA6_REG          (DR_REG_EFUSE_BASE + 0x090)
 /* EFUSE_BLK3_DOUT6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT6  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT6_M  ((EFUSE_BLK3_DOUT6_V)<<(EFUSE_BLK3_DOUT6_S))
 #define EFUSE_BLK3_DOUT6_V  0xFFFFFFFF
@@ -792,7 +795,7 @@
 
 #define EFUSE_BLK3_RDATA7_REG          (DR_REG_EFUSE_BASE + 0x094)
 /* EFUSE_BLK3_DOUT7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: read for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DOUT7  0xFFFFFFFF
 #define EFUSE_BLK3_DOUT7_M  ((EFUSE_BLK3_DOUT7_V)<<(EFUSE_BLK3_DOUT7_S))
 #define EFUSE_BLK3_DOUT7_V  0xFFFFFFFF
@@ -800,7 +803,7 @@
 
 #define EFUSE_BLK1_WDATA0_REG          (DR_REG_EFUSE_BASE + 0x098)
 /* EFUSE_BLK1_DIN0 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN0  0xFFFFFFFF
 #define EFUSE_BLK1_DIN0_M  ((EFUSE_BLK1_DIN0_V)<<(EFUSE_BLK1_DIN0_S))
 #define EFUSE_BLK1_DIN0_V  0xFFFFFFFF
@@ -808,7 +811,7 @@
 
 #define EFUSE_BLK1_WDATA1_REG          (DR_REG_EFUSE_BASE + 0x09c)
 /* EFUSE_BLK1_DIN1 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN1  0xFFFFFFFF
 #define EFUSE_BLK1_DIN1_M  ((EFUSE_BLK1_DIN1_V)<<(EFUSE_BLK1_DIN1_S))
 #define EFUSE_BLK1_DIN1_V  0xFFFFFFFF
@@ -816,7 +819,7 @@
 
 #define EFUSE_BLK1_WDATA2_REG          (DR_REG_EFUSE_BASE + 0x0a0)
 /* EFUSE_BLK1_DIN2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN2  0xFFFFFFFF
 #define EFUSE_BLK1_DIN2_M  ((EFUSE_BLK1_DIN2_V)<<(EFUSE_BLK1_DIN2_S))
 #define EFUSE_BLK1_DIN2_V  0xFFFFFFFF
@@ -824,7 +827,7 @@
 
 #define EFUSE_BLK1_WDATA3_REG          (DR_REG_EFUSE_BASE + 0x0a4)
 /* EFUSE_BLK1_DIN3 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN3  0xFFFFFFFF
 #define EFUSE_BLK1_DIN3_M  ((EFUSE_BLK1_DIN3_V)<<(EFUSE_BLK1_DIN3_S))
 #define EFUSE_BLK1_DIN3_V  0xFFFFFFFF
@@ -832,7 +835,7 @@
 
 #define EFUSE_BLK1_WDATA4_REG          (DR_REG_EFUSE_BASE + 0x0a8)
 /* EFUSE_BLK1_DIN4 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN4  0xFFFFFFFF
 #define EFUSE_BLK1_DIN4_M  ((EFUSE_BLK1_DIN4_V)<<(EFUSE_BLK1_DIN4_S))
 #define EFUSE_BLK1_DIN4_V  0xFFFFFFFF
@@ -840,7 +843,7 @@
 
 #define EFUSE_BLK1_WDATA5_REG          (DR_REG_EFUSE_BASE + 0x0ac)
 /* EFUSE_BLK1_DIN5 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN5  0xFFFFFFFF
 #define EFUSE_BLK1_DIN5_M  ((EFUSE_BLK1_DIN5_V)<<(EFUSE_BLK1_DIN5_S))
 #define EFUSE_BLK1_DIN5_V  0xFFFFFFFF
@@ -848,7 +851,7 @@
 
 #define EFUSE_BLK1_WDATA6_REG          (DR_REG_EFUSE_BASE + 0x0b0)
 /* EFUSE_BLK1_DIN6 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN6  0xFFFFFFFF
 #define EFUSE_BLK1_DIN6_M  ((EFUSE_BLK1_DIN6_V)<<(EFUSE_BLK1_DIN6_S))
 #define EFUSE_BLK1_DIN6_V  0xFFFFFFFF
@@ -856,7 +859,7 @@
 
 #define EFUSE_BLK1_WDATA7_REG          (DR_REG_EFUSE_BASE + 0x0b4)
 /* EFUSE_BLK1_DIN7 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK1*/
+/*description: */
 #define EFUSE_BLK1_DIN7  0xFFFFFFFF
 #define EFUSE_BLK1_DIN7_M  ((EFUSE_BLK1_DIN7_V)<<(EFUSE_BLK1_DIN7_S))
 #define EFUSE_BLK1_DIN7_V  0xFFFFFFFF
@@ -864,7 +867,7 @@
 
 #define EFUSE_BLK2_WDATA0_REG          (DR_REG_EFUSE_BASE + 0x0b8)
 /* EFUSE_BLK2_DIN0 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN0  0xFFFFFFFF
 #define EFUSE_BLK2_DIN0_M  ((EFUSE_BLK2_DIN0_V)<<(EFUSE_BLK2_DIN0_S))
 #define EFUSE_BLK2_DIN0_V  0xFFFFFFFF
@@ -872,7 +875,7 @@
 
 #define EFUSE_BLK2_WDATA1_REG          (DR_REG_EFUSE_BASE + 0x0bc)
 /* EFUSE_BLK2_DIN1 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN1  0xFFFFFFFF
 #define EFUSE_BLK2_DIN1_M  ((EFUSE_BLK2_DIN1_V)<<(EFUSE_BLK2_DIN1_S))
 #define EFUSE_BLK2_DIN1_V  0xFFFFFFFF
@@ -880,7 +883,7 @@
 
 #define EFUSE_BLK2_WDATA2_REG          (DR_REG_EFUSE_BASE + 0x0c0)
 /* EFUSE_BLK2_DIN2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN2  0xFFFFFFFF
 #define EFUSE_BLK2_DIN2_M  ((EFUSE_BLK2_DIN2_V)<<(EFUSE_BLK2_DIN2_S))
 #define EFUSE_BLK2_DIN2_V  0xFFFFFFFF
@@ -888,7 +891,7 @@
 
 #define EFUSE_BLK2_WDATA3_REG          (DR_REG_EFUSE_BASE + 0x0c4)
 /* EFUSE_BLK2_DIN3 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN3  0xFFFFFFFF
 #define EFUSE_BLK2_DIN3_M  ((EFUSE_BLK2_DIN3_V)<<(EFUSE_BLK2_DIN3_S))
 #define EFUSE_BLK2_DIN3_V  0xFFFFFFFF
@@ -896,7 +899,7 @@
 
 #define EFUSE_BLK2_WDATA4_REG          (DR_REG_EFUSE_BASE + 0x0c8)
 /* EFUSE_BLK2_DIN4 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN4  0xFFFFFFFF
 #define EFUSE_BLK2_DIN4_M  ((EFUSE_BLK2_DIN4_V)<<(EFUSE_BLK2_DIN4_S))
 #define EFUSE_BLK2_DIN4_V  0xFFFFFFFF
@@ -904,7 +907,7 @@
 
 #define EFUSE_BLK2_WDATA5_REG          (DR_REG_EFUSE_BASE + 0x0cc)
 /* EFUSE_BLK2_DIN5 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN5  0xFFFFFFFF
 #define EFUSE_BLK2_DIN5_M  ((EFUSE_BLK2_DIN5_V)<<(EFUSE_BLK2_DIN5_S))
 #define EFUSE_BLK2_DIN5_V  0xFFFFFFFF
@@ -912,7 +915,7 @@
 
 #define EFUSE_BLK2_WDATA6_REG          (DR_REG_EFUSE_BASE + 0x0d0)
 /* EFUSE_BLK2_DIN6 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN6  0xFFFFFFFF
 #define EFUSE_BLK2_DIN6_M  ((EFUSE_BLK2_DIN6_V)<<(EFUSE_BLK2_DIN6_S))
 #define EFUSE_BLK2_DIN6_V  0xFFFFFFFF
@@ -920,7 +923,7 @@
 
 #define EFUSE_BLK2_WDATA7_REG          (DR_REG_EFUSE_BASE + 0x0d4)
 /* EFUSE_BLK2_DIN7 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK2*/
+/*description: */
 #define EFUSE_BLK2_DIN7  0xFFFFFFFF
 #define EFUSE_BLK2_DIN7_M  ((EFUSE_BLK2_DIN7_V)<<(EFUSE_BLK2_DIN7_S))
 #define EFUSE_BLK2_DIN7_V  0xFFFFFFFF
@@ -928,7 +931,7 @@
 
 #define EFUSE_BLK3_WDATA0_REG          (DR_REG_EFUSE_BASE + 0x0d8)
 /* EFUSE_BLK3_DIN0 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN0  0xFFFFFFFF
 #define EFUSE_BLK3_DIN0_M  ((EFUSE_BLK3_DIN0_V)<<(EFUSE_BLK3_DIN0_S))
 #define EFUSE_BLK3_DIN0_V  0xFFFFFFFF
@@ -936,7 +939,7 @@
 
 #define EFUSE_BLK3_WDATA1_REG          (DR_REG_EFUSE_BASE + 0x0dc)
 /* EFUSE_BLK3_DIN1 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN1  0xFFFFFFFF
 #define EFUSE_BLK3_DIN1_M  ((EFUSE_BLK3_DIN1_V)<<(EFUSE_BLK3_DIN1_S))
 #define EFUSE_BLK3_DIN1_V  0xFFFFFFFF
@@ -944,7 +947,7 @@
 
 #define EFUSE_BLK3_WDATA2_REG          (DR_REG_EFUSE_BASE + 0x0e0)
 /* EFUSE_BLK3_DIN2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN2  0xFFFFFFFF
 #define EFUSE_BLK3_DIN2_M  ((EFUSE_BLK3_DIN2_V)<<(EFUSE_BLK3_DIN2_S))
 #define EFUSE_BLK3_DIN2_V  0xFFFFFFFF
@@ -954,7 +957,7 @@
  * purposes. This usage is indicated by the EFUSE_RD_BLK3_PART_RESERVE bit.*/
 #define EFUSE_BLK3_WDATA3_REG          (DR_REG_EFUSE_BASE + 0x0e4)
 /* EFUSE_BLK3_DIN3 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN3  0xFFFFFFFF
 #define EFUSE_BLK3_DIN3_M  ((EFUSE_BLK3_DIN3_V)<<(EFUSE_BLK3_DIN3_S))
 #define EFUSE_BLK3_DIN3_V  0xFFFFFFFF
@@ -986,7 +989,7 @@
 
 #define EFUSE_BLK3_WDATA4_REG          (DR_REG_EFUSE_BASE + 0x0e8)
 /* EFUSE_BLK3_DIN4 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN4  0xFFFFFFFF
 #define EFUSE_BLK3_DIN4_M  ((EFUSE_BLK3_DIN4_V)<<(EFUSE_BLK3_DIN4_S))
 #define EFUSE_BLK3_DIN4_V  0xFFFFFFFF
@@ -1000,7 +1003,7 @@
 
 #define EFUSE_BLK3_WDATA5_REG          (DR_REG_EFUSE_BASE + 0x0ec)
 /* EFUSE_BLK3_DIN5 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN5  0xFFFFFFFF
 #define EFUSE_BLK3_DIN5_M  ((EFUSE_BLK3_DIN5_V)<<(EFUSE_BLK3_DIN5_S))
 #define EFUSE_BLK3_DIN5_V  0xFFFFFFFF
@@ -1008,7 +1011,7 @@
 
 #define EFUSE_BLK3_WDATA6_REG          (DR_REG_EFUSE_BASE + 0x0f0)
 /* EFUSE_BLK3_DIN6 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN6  0xFFFFFFFF
 #define EFUSE_BLK3_DIN6_M  ((EFUSE_BLK3_DIN6_V)<<(EFUSE_BLK3_DIN6_S))
 #define EFUSE_BLK3_DIN6_V  0xFFFFFFFF
@@ -1016,7 +1019,7 @@
 
 #define EFUSE_BLK3_WDATA7_REG          (DR_REG_EFUSE_BASE + 0x0f4)
 /* EFUSE_BLK3_DIN7 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: program for BLOCK3*/
+/*description: */
 #define EFUSE_BLK3_DIN7  0xFFFFFFFF
 #define EFUSE_BLK3_DIN7_M  ((EFUSE_BLK3_DIN7_V)<<(EFUSE_BLK3_DIN7_S))
 #define EFUSE_BLK3_DIN7_V  0xFFFFFFFF
@@ -1050,7 +1053,7 @@
 #define EFUSE_FORCE_NO_WR_RD_DIS_V  0x1
 #define EFUSE_FORCE_NO_WR_RD_DIS_S  16
 /* EFUSE_OP_CODE : R/W ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: efuse operation code*/
+/*description: */
 #define EFUSE_OP_CODE  0x0000FFFF
 #define EFUSE_OP_CODE_M  ((EFUSE_OP_CODE_V)<<(EFUSE_OP_CODE_S))
 #define EFUSE_OP_CODE_V  0xFFFF
@@ -1066,13 +1069,13 @@
 
 #define EFUSE_CMD_REG          (DR_REG_EFUSE_BASE + 0x104)
 /* EFUSE_PGM_CMD : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: command for program*/
+/*description: */
 #define EFUSE_PGM_CMD  (BIT(1))
 #define EFUSE_PGM_CMD_M  (BIT(1))
 #define EFUSE_PGM_CMD_V  0x1
 #define EFUSE_PGM_CMD_S  1
 /* EFUSE_READ_CMD : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: command for read*/
+/*description: */
 #define EFUSE_READ_CMD  (BIT(0))
 #define EFUSE_READ_CMD_M  (BIT(0))
 #define EFUSE_READ_CMD_V  0x1
@@ -1080,13 +1083,13 @@
 
 #define EFUSE_INT_RAW_REG          (DR_REG_EFUSE_BASE + 0x108)
 /* EFUSE_PGM_DONE_INT_RAW : RO ;bitpos:[1] ;default: 1'b0 ; */
-/*description: program done interrupt raw status*/
+/*description: */
 #define EFUSE_PGM_DONE_INT_RAW  (BIT(1))
 #define EFUSE_PGM_DONE_INT_RAW_M  (BIT(1))
 #define EFUSE_PGM_DONE_INT_RAW_V  0x1
 #define EFUSE_PGM_DONE_INT_RAW_S  1
 /* EFUSE_READ_DONE_INT_RAW : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: read done interrupt raw status*/
+/*description: */
 #define EFUSE_READ_DONE_INT_RAW  (BIT(0))
 #define EFUSE_READ_DONE_INT_RAW_M  (BIT(0))
 #define EFUSE_READ_DONE_INT_RAW_V  0x1
@@ -1094,13 +1097,13 @@
 
 #define EFUSE_INT_ST_REG          (DR_REG_EFUSE_BASE + 0x10c)
 /* EFUSE_PGM_DONE_INT_ST : RO ;bitpos:[1] ;default: 1'b0 ; */
-/*description: program done interrupt status*/
+/*description: */
 #define EFUSE_PGM_DONE_INT_ST  (BIT(1))
 #define EFUSE_PGM_DONE_INT_ST_M  (BIT(1))
 #define EFUSE_PGM_DONE_INT_ST_V  0x1
 #define EFUSE_PGM_DONE_INT_ST_S  1
 /* EFUSE_READ_DONE_INT_ST : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: read done interrupt status*/
+/*description: */
 #define EFUSE_READ_DONE_INT_ST  (BIT(0))
 #define EFUSE_READ_DONE_INT_ST_M  (BIT(0))
 #define EFUSE_READ_DONE_INT_ST_V  0x1
@@ -1108,13 +1111,13 @@
 
 #define EFUSE_INT_ENA_REG          (DR_REG_EFUSE_BASE + 0x110)
 /* EFUSE_PGM_DONE_INT_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: program done interrupt enable*/
+/*description: */
 #define EFUSE_PGM_DONE_INT_ENA  (BIT(1))
 #define EFUSE_PGM_DONE_INT_ENA_M  (BIT(1))
 #define EFUSE_PGM_DONE_INT_ENA_V  0x1
 #define EFUSE_PGM_DONE_INT_ENA_S  1
 /* EFUSE_READ_DONE_INT_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: read done interrupt enable*/
+/*description: */
 #define EFUSE_READ_DONE_INT_ENA  (BIT(0))
 #define EFUSE_READ_DONE_INT_ENA_M  (BIT(0))
 #define EFUSE_READ_DONE_INT_ENA_V  0x1
@@ -1122,13 +1125,13 @@
 
 #define EFUSE_INT_CLR_REG          (DR_REG_EFUSE_BASE + 0x114)
 /* EFUSE_PGM_DONE_INT_CLR : WO ;bitpos:[1] ;default: 1'b0 ; */
-/*description: program done interrupt clear*/
+/*description: */
 #define EFUSE_PGM_DONE_INT_CLR  (BIT(1))
 #define EFUSE_PGM_DONE_INT_CLR_M  (BIT(1))
 #define EFUSE_PGM_DONE_INT_CLR_V  0x1
 #define EFUSE_PGM_DONE_INT_CLR_S  1
 /* EFUSE_READ_DONE_INT_CLR : WO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: read done interrupt clear*/
+/*description: */
 #define EFUSE_READ_DONE_INT_CLR  (BIT(0))
 #define EFUSE_READ_DONE_INT_CLR_M  (BIT(0))
 #define EFUSE_READ_DONE_INT_CLR_V  0x1
@@ -1142,7 +1145,7 @@
 #define EFUSE_DAC_CLK_PAD_SEL_V  0x1
 #define EFUSE_DAC_CLK_PAD_SEL_S  8
 /* EFUSE_DAC_CLK_DIV : R/W ;bitpos:[7:0] ;default: 8'd40 ; */
-/*description: efuse timing configure*/
+/*description: */
 #define EFUSE_DAC_CLK_DIV  0x000000FF
 #define EFUSE_DAC_CLK_DIV_M  ((EFUSE_DAC_CLK_DIV_V)<<(EFUSE_DAC_CLK_DIV_S))
 #define EFUSE_DAC_CLK_DIV_V  0xFF
@@ -1150,20 +1153,20 @@
 
 #define EFUSE_DEC_STATUS_REG          (DR_REG_EFUSE_BASE + 0x11c)
 /* EFUSE_DEC_WARNINGS : RO ;bitpos:[11:0] ;default: 12'b0 ; */
-/*description: the decode result of 3/4 coding scheme has warning*/
+/*description: */
 #define EFUSE_DEC_WARNINGS  0x00000FFF
 #define EFUSE_DEC_WARNINGS_M  ((EFUSE_DEC_WARNINGS_V)<<(EFUSE_DEC_WARNINGS_S))
 #define EFUSE_DEC_WARNINGS_V  0xFFF
 #define EFUSE_DEC_WARNINGS_S  0
 
 #define EFUSE_RD_TIM_CONF_REG          (DR_REG_EFUSE_BASE + 0x120)
-/* EFUSE_READ_INIT_NUM : R/W ;bitpos:[31:24] ;default: 8'h40 ; */
+/* EFUSE_READ_INIT_NUM : R/W ;bitpos:[31:24] ;default: 8'h12 ; */
 /*description: */
 #define EFUSE_READ_INIT_NUM  0x000000FF
 #define EFUSE_READ_INIT_NUM_M  ((EFUSE_READ_INIT_NUM_V)<<(EFUSE_READ_INIT_NUM_S))
 #define EFUSE_READ_INIT_NUM_V  0xFF
 #define EFUSE_READ_INIT_NUM_S  24
-/* EFUSE_TSUR_A : R/W ;bitpos:[23:16] ;default: 8'h1 ; */
+/* EFUSE_TSUR_A : R/W ;bitpos:[23:16] ;default: 8'h0 ; */
 /*description: */
 #define EFUSE_TSUR_A  0x000000FF
 #define EFUSE_TSUR_A_M  ((EFUSE_TSUR_A_V)<<(EFUSE_TSUR_A_S))
@@ -1378,14 +1381,151 @@
 #define EFUSE_ABS_DONE_0_ERR_V  0x1
 #define EFUSE_ABS_DONE_0_ERR_S  0
 
+#define EFUSE_REPEAT_BLK1_ERR0_REG          (DR_REG_EFUSE_BASE + 0x138)
+/* EFUSE_BLK1_REPEAT_ERR0 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK1_REPEAT_ERR0  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR0_M  ((EFUSE_BLK1_REPEAT_ERR0_V)<<(EFUSE_BLK1_REPEAT_ERR0_S))
+#define EFUSE_BLK1_REPEAT_ERR0_V  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR0_S  0
+
+#define EFUSE_REPEAT_BLK1_ERR1_REG          (DR_REG_EFUSE_BASE + 0x13c)
+/* EFUSE_BLK1_REPEAT_ERR1 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK1_REPEAT_ERR1  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR1_M  ((EFUSE_BLK1_REPEAT_ERR1_V)<<(EFUSE_BLK1_REPEAT_ERR1_S))
+#define EFUSE_BLK1_REPEAT_ERR1_V  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR1_S  0
+
+#define EFUSE_REPEAT_BLK1_ERR2_REG          (DR_REG_EFUSE_BASE + 0x140)
+/* EFUSE_BLK1_REPEAT_ERR2 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK1_REPEAT_ERR2  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR2_M  ((EFUSE_BLK1_REPEAT_ERR2_V)<<(EFUSE_BLK1_REPEAT_ERR2_S))
+#define EFUSE_BLK1_REPEAT_ERR2_V  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR2_S  0
+
+#define EFUSE_REPEAT_BLK1_ERR3_REG          (DR_REG_EFUSE_BASE + 0x144)
+/* EFUSE_BLK1_REPEAT_ERR3 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK1_REPEAT_ERR3  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR3_M  ((EFUSE_BLK1_REPEAT_ERR3_V)<<(EFUSE_BLK1_REPEAT_ERR3_S))
+#define EFUSE_BLK1_REPEAT_ERR3_V  0xFFFFFFFF
+#define EFUSE_BLK1_REPEAT_ERR3_S  0
+
+#define EFUSE_REPEAT_BLK2_ERR0_REG          (DR_REG_EFUSE_BASE + 0x148)
+/* EFUSE_BLK2_REPEAT_ERR0 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK2_REPEAT_ERR0  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR0_M  ((EFUSE_BLK2_REPEAT_ERR0_V)<<(EFUSE_BLK2_REPEAT_ERR0_S))
+#define EFUSE_BLK2_REPEAT_ERR0_V  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR0_S  0
+
+#define EFUSE_REPEAT_BLK2_ERR1_REG          (DR_REG_EFUSE_BASE + 0x14c)
+/* EFUSE_BLK2_REPEAT_ERR1 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK2_REPEAT_ERR1  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR1_M  ((EFUSE_BLK2_REPEAT_ERR1_V)<<(EFUSE_BLK2_REPEAT_ERR1_S))
+#define EFUSE_BLK2_REPEAT_ERR1_V  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR1_S  0
+
+#define EFUSE_REPEAT_BLK2_ERR2_REG          (DR_REG_EFUSE_BASE + 0x150)
+/* EFUSE_BLK2_REPEAT_ERR2 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK2_REPEAT_ERR2  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR2_M  ((EFUSE_BLK2_REPEAT_ERR2_V)<<(EFUSE_BLK2_REPEAT_ERR2_S))
+#define EFUSE_BLK2_REPEAT_ERR2_V  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR2_S  0
+
+#define EFUSE_REPEAT_BLK2_ERR3_REG          (DR_REG_EFUSE_BASE + 0x154)
+/* EFUSE_BLK2_REPEAT_ERR3 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK2_REPEAT_ERR3  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR3_M  ((EFUSE_BLK2_REPEAT_ERR3_V)<<(EFUSE_BLK2_REPEAT_ERR3_S))
+#define EFUSE_BLK2_REPEAT_ERR3_V  0xFFFFFFFF
+#define EFUSE_BLK2_REPEAT_ERR3_S  0
+
+#define EFUSE_REPEAT_BLK3_ERR0_REG          (DR_REG_EFUSE_BASE + 0x158)
+/* EFUSE_BLK3_REPEAT_ERR0 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK3_REPEAT_ERR0  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR0_M  ((EFUSE_BLK3_REPEAT_ERR0_V)<<(EFUSE_BLK3_REPEAT_ERR0_S))
+#define EFUSE_BLK3_REPEAT_ERR0_V  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR0_S  0
+
+#define EFUSE_REPEAT_BLK3_ERR1_REG          (DR_REG_EFUSE_BASE + 0x15c)
+/* EFUSE_BLK3_REPEAT_ERR1 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK3_REPEAT_ERR1  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR1_M  ((EFUSE_BLK3_REPEAT_ERR1_V)<<(EFUSE_BLK3_REPEAT_ERR1_S))
+#define EFUSE_BLK3_REPEAT_ERR1_V  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR1_S  0
+
+#define EFUSE_REPEAT_BLK3_ERR2_REG          (DR_REG_EFUSE_BASE + 0x160)
+/* EFUSE_BLK3_REPEAT_ERR2 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK3_REPEAT_ERR2  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR2_M  ((EFUSE_BLK3_REPEAT_ERR2_V)<<(EFUSE_BLK3_REPEAT_ERR2_S))
+#define EFUSE_BLK3_REPEAT_ERR2_V  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR2_S  0
+
+#define EFUSE_REPEAT_BLK3_ERR3_REG          (DR_REG_EFUSE_BASE + 0x164)
+/* EFUSE_BLK3_REPEAT_ERR3 : RO ;bitpos:[31:0] ;default: 32'b0 ; */
+/*description: */
+#define EFUSE_BLK3_REPEAT_ERR3  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR3_M  ((EFUSE_BLK3_REPEAT_ERR3_V)<<(EFUSE_BLK3_REPEAT_ERR3_S))
+#define EFUSE_BLK3_REPEAT_ERR3_V  0xFFFFFFFF
+#define EFUSE_BLK3_REPEAT_ERR3_S  0
+
+#define EFUSE_RS_STATE_REG          (DR_REG_EFUSE_BASE + 0x168)
+/* EFUSE_RS_FAIL_BLK3 : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_RS_FAIL_BLK3  (BIT(14))
+#define EFUSE_RS_FAIL_BLK3_M  (BIT(14))
+#define EFUSE_RS_FAIL_BLK3_V  0x1
+#define EFUSE_RS_FAIL_BLK3_S  14
+/* EFUSE_RS_ERRORNUM_BLK3 : RO ;bitpos:[13:10] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RS_ERRORNUM_BLK3  0x0000000F
+#define EFUSE_RS_ERRORNUM_BLK3_M  ((EFUSE_RS_ERRORNUM_BLK3_V)<<(EFUSE_RS_ERRORNUM_BLK3_S))
+#define EFUSE_RS_ERRORNUM_BLK3_V  0xF
+#define EFUSE_RS_ERRORNUM_BLK3_S  10
+/* EFUSE_RS_FAIL_BLK2 : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_RS_FAIL_BLK2  (BIT(9))
+#define EFUSE_RS_FAIL_BLK2_M  (BIT(9))
+#define EFUSE_RS_FAIL_BLK2_V  0x1
+#define EFUSE_RS_FAIL_BLK2_S  9
+/* EFUSE_RS_ERRORNUM_BLK2 : RO ;bitpos:[8:5] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RS_ERRORNUM_BLK2  0x0000000F
+#define EFUSE_RS_ERRORNUM_BLK2_M  ((EFUSE_RS_ERRORNUM_BLK2_V)<<(EFUSE_RS_ERRORNUM_BLK2_S))
+#define EFUSE_RS_ERRORNUM_BLK2_V  0xF
+#define EFUSE_RS_ERRORNUM_BLK2_S  5
+/* EFUSE_RS_FAIL_BLK1 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_RS_FAIL_BLK1  (BIT(4))
+#define EFUSE_RS_FAIL_BLK1_M  (BIT(4))
+#define EFUSE_RS_FAIL_BLK1_V  0x1
+#define EFUSE_RS_FAIL_BLK1_S  4
+/* EFUSE_RS_ERRORNUM_BLK1 : RO ;bitpos:[3:0] ;default: 4'b0 ; */
+/*description: */
+#define EFUSE_RS_ERRORNUM_BLK1  0x0000000F
+#define EFUSE_RS_ERRORNUM_BLK1_M  ((EFUSE_RS_ERRORNUM_BLK1_V)<<(EFUSE_RS_ERRORNUM_BLK1_S))
+#define EFUSE_RS_ERRORNUM_BLK1_V  0xF
+#define EFUSE_RS_ERRORNUM_BLK1_S  0
+
 #define EFUSE_DATE_REG          (DR_REG_EFUSE_BASE + 0x1FC)
-/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h17030100 ; */
+/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h17081500 ; */
 /*description: */
 #define EFUSE_DATE  0xFFFFFFFF
 #define EFUSE_DATE_M  ((EFUSE_DATE_V)<<(EFUSE_DATE_S))
 #define EFUSE_DATE_V  0xFFFFFFFF
 #define EFUSE_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

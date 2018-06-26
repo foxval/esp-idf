@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -132,12 +132,12 @@ extern "C" {
 #define GPIO_SD7_IN_S  0
 
 #define GPIO_SIGMADELTA_CG_REG          (DR_REG_GPIO_SD_BASE + 0x0020)
-/* GPIO_SD_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/* GPIO_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
 /*description: */
-#define GPIO_SD_CLK_EN  (BIT(31))
-#define GPIO_SD_CLK_EN_M  (BIT(31))
-#define GPIO_SD_CLK_EN_V  0x1
-#define GPIO_SD_CLK_EN_S  31
+#define GPIO_CLK_EN  (BIT(31))
+#define GPIO_CLK_EN_M  (BIT(31))
+#define GPIO_CLK_EN_V  0x1
+#define GPIO_CLK_EN_S  31
 
 #define GPIO_SIGMADELTA_MISC_REG          (DR_REG_GPIO_SD_BASE + 0x0024)
 /* GPIO_SPI_SWAP : R/W ;bitpos:[31] ;default: 1'h0 ; */
@@ -146,15 +146,15 @@ extern "C" {
 #define GPIO_SPI_SWAP_M  (BIT(31))
 #define GPIO_SPI_SWAP_V  0x1
 #define GPIO_SPI_SWAP_S  31
-/* GPIO_SD_CLK_EN : R/W ;bitpos:[30] ;default: 1'd0 ; */
+/* GPIO_FUNCTION_CLK_EN : R/W ;bitpos:[30] ;default: 1'd0 ; */
 /*description: */
-#define GPIO_SD_FUNC_CLK_EN  (BIT(30))
-#define GPIO_SD_FUNC_CLK_EN_M  (BIT(30))
-#define GPIO_SD_FUNC_CLK_EN_V  0x1
-#define GPIO_SD_FUNC_CLK_EN_S  30
+#define GPIO_FUNCTION_CLK_EN  (BIT(30))
+#define GPIO_FUNCTION_CLK_EN_M  (BIT(30))
+#define GPIO_FUNCTION_CLK_EN_V  0x1
+#define GPIO_FUNCTION_CLK_EN_S  30
 
 #define GPIO_SIGMADELTA_VERSION_REG          (DR_REG_GPIO_SD_BASE + 0x0028)
-/* GPIO_SD_DATE : R/W ;bitpos:[27:0] ;default: 28'h1704130 ; */
+/* GPIO_SD_DATE : R/W ;bitpos:[27:0] ;default: 28'h1802260 ; */
 /*description: */
 #define GPIO_SD_DATE  0x0FFFFFFF
 #define GPIO_SD_DATE_M  ((GPIO_SD_DATE_V)<<(GPIO_SD_DATE_S))

@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -20,7 +20,7 @@ extern "C" {
 #endif
 #include "soc.h"
 #define REG_SPI_BASE(i)     (DR_REG_SPI1_BASE + (((i)>1) ? (((i)* 0x1000) + 0x20000) : (((~(i)) & 1)* 0x1000 )))
-#define SPI_CMD_REG(i)          (REG_SPI_BASE(i) + 0x0)
+#define SPI_CMD_REG(i)          (REG_SPI_BASE(i) + 0x000)
 /* SPI_FLASH_READ : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: Read flash enable. Read flash operation will be triggered when
  the bit is set. The bit will be cleared once the operation done. 1: enable 0: disable.*/
@@ -2183,7 +2183,7 @@ extern "C" {
 #define SPI_DOUT0_NUM_S  0
 
 #define SPI_DATE_REG(i)          (REG_SPI_BASE(i) + 0x3FC)
-/* SPI_DATE : RO ;bitpos:[27:0] ;default: 32'h1803131 ; */
+/* SPI_DATE : RO ;bitpos:[27:0] ;default: 32'h1805070 ; */
 /*description: SPI register version.*/
 #define SPI_DATE  0x0FFFFFFF
 #define SPI_DATE_M  ((SPI_DATE_V)<<(SPI_DATE_S))

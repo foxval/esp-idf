@@ -73,6 +73,7 @@ extern "C" {
 #define GPIO_SEL_38             ((uint64_t)(((uint64_t)1)<<38))  /*!< Pin 38 selected */
 #define GPIO_SEL_39             ((uint64_t)(((uint64_t)1)<<39))  /*!< Pin 39 selected */
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #define GPIO_PIN_REG_0          IO_MUX_GPIO0_REG
 #define GPIO_PIN_REG_1          IO_MUX_GPIO1_REG
 #define GPIO_PIN_REG_2          IO_MUX_GPIO2_REG
@@ -108,6 +109,54 @@ extern "C" {
 #define GPIO_PIN_REG_37         IO_MUX_GPIO37_REG
 #define GPIO_PIN_REG_38         IO_MUX_GPIO38_REG
 #define GPIO_PIN_REG_39         IO_MUX_GPIO39_REG
+#else
+#define GPIO_PIN_REG_0          IOMUX_REG_GPIO0
+#define GPIO_PIN_REG_1          IOMUX_REG_GPIO1
+#define GPIO_PIN_REG_2          IOMUX_REG_GPIO2
+#define GPIO_PIN_REG_3          IOMUX_REG_GPIO3
+#define GPIO_PIN_REG_4          IOMUX_REG_GPIO4
+#define GPIO_PIN_REG_5          IOMUX_REG_GPIO5
+#define GPIO_PIN_REG_6          IOMUX_REG_GPIO6
+#define GPIO_PIN_REG_7          IOMUX_REG_GPIO7
+#define GPIO_PIN_REG_8          IOMUX_REG_GPIO8
+#define GPIO_PIN_REG_9          IOMUX_REG_GPIO9
+#define GPIO_PIN_REG_10          IOMUX_REG_GPIO0
+#define GPIO_PIN_REG_11          IOMUX_REG_GPIO11
+#define GPIO_PIN_REG_12          IOMUX_REG_GPIO12
+#define GPIO_PIN_REG_13          IOMUX_REG_GPIO13
+#define GPIO_PIN_REG_14          IOMUX_REG_GPIO14
+#define GPIO_PIN_REG_15          IOMUX_REG_GPIO15
+#define GPIO_PIN_REG_16          IOMUX_REG_GPIO16
+#define GPIO_PIN_REG_17          IOMUX_REG_GPIO17
+#define GPIO_PIN_REG_18          IOMUX_REG_GPIO18
+#define GPIO_PIN_REG_19          IOMUX_REG_GPIO19
+#define GPIO_PIN_REG_20          IOMUX_REG_GPIO20
+#define GPIO_PIN_REG_21          IOMUX_REG_GPIO21
+#define GPIO_PIN_REG_22          IOMUX_REG_GPIO22
+#define GPIO_PIN_REG_23          IOMUX_REG_GPIO23
+#define GPIO_PIN_REG_24          IOMUX_REG_GPIO24
+#define GPIO_PIN_REG_25          IOMUX_REG_GPIO25
+#define GPIO_PIN_REG_26          IOMUX_REG_GPIO26
+#define GPIO_PIN_REG_27          IOMUX_REG_GPIO27
+#define GPIO_PIN_REG_28          IOMUX_REG_GPIO28
+#define GPIO_PIN_REG_29          IOMUX_REG_GPIO29
+#define GPIO_PIN_REG_30          IOMUX_REG_GPIO30
+#define GPIO_PIN_REG_31          IOMUX_REG_GPIO31
+#define GPIO_PIN_REG_32          IOMUX_REG_GPIO32
+#define GPIO_PIN_REG_33          IOMUX_REG_GPIO33
+#define GPIO_PIN_REG_34          IOMUX_REG_GPIO34
+#define GPIO_PIN_REG_35          IOMUX_REG_GPIO35
+#define GPIO_PIN_REG_36          IOMUX_REG_GPIO36
+#define GPIO_PIN_REG_37          IOMUX_REG_GPIO37
+#define GPIO_PIN_REG_38          IOMUX_REG_GPIO38
+#define GPIO_PIN_REG_39          IOMUX_REG_GPIO39
+#define GPIO_PIN_REG_40          IOMUX_REG_GPIO40
+#define GPIO_PIN_REG_41          IOMUX_REG_GPIO41
+#define GPIO_PIN_REG_42          IOMUX_REG_GPIO42
+#define GPIO_PIN_REG_43          IOMUX_REG_GPIO43
+#define GPIO_PIN_REG_44          IOMUX_REG_GPIO44
+#define GPIO_PIN_REG_45          IOMUX_REG_GPIO45
+#endif
 
 #define GPIO_APP_CPU_INTR_ENA      (BIT(0))
 #define GPIO_APP_CPU_NMI_INTR_ENA  (BIT(1))

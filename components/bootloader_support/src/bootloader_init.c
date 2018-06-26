@@ -304,14 +304,20 @@ static void vddsdio_configure()
 #endif // CONFIG_BOOTLOADER_VDDSDIO_BOOST
 }
 
-#define FLASH_CLK_IO      6
-#define FLASH_CS_IO       11
-#define FLASH_SPIQ_IO     7
-#define FLASH_SPID_IO     8
-#define FLASH_SPIWP_IO    10
-#define FLASH_SPIHD_IO    9
+#define FLASH_CLK_IO SPI_CLK_GPIO_NUM
+#define FLASH_CS_IO SPI_CS0_GPIO_NUM
+#define FLASH_SPIQ_IO SPI_Q_GPIO_NUM
+#define FLASH_SPID_IO SPI_D_GPIO_NUM
+#define FLASH_SPIWP_IO SPI_WP_GPIO_NUM
+#define FLASH_SPIHD_IO SPI_HD_GPIO_NUM
+
+#ifdef CONFIG_CHIP_IS_ESP32
 #define FLASH_IO_MATRIX_DUMMY_40M   1
 #define FLASH_IO_MATRIX_DUMMY_80M   2
+#else
+#define FLASH_IO_MATRIX_DUMMY_40M   0
+#define FLASH_IO_MATRIX_DUMMY_80M   0
+#endif
 #define FLASH_IO_DRIVE_GD_WITH_1V8PSRAM    3
 
 /*
@@ -359,6 +365,7 @@ static void IRAM_ATTR flash_gpio_configure(const esp_image_header_t* pfhdr)
     uint32_t chip_ver = REG_GET_FIELD(EFUSE_BLK0_RDATA3_REG, EFUSE_RD_CHIP_VER_PKG);
     uint32_t pkg_ver = chip_ver & 0x7;
 
+#ifdef CONFIG_CHIP_IS_ESP32
     if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32D2WDQ5) {
         // For ESP32D2WD the SPI pins are already configured
         // flash clock signal should come from IO MUX.
@@ -411,6 +418,60 @@ static void IRAM_ATTR flash_gpio_configure(const esp_image_header_t* pfhdr)
             #endif
         }
     }
+#else
+    if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32D2WDQ5) {
+        // For ESP32D2WD the SPI pins are already configured
+        // flash clock signal should come from IO MUX.
+        PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICLK_U, FUNC_SPICLK_SPICLK);
+        SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, drv, FUN_DRV_S);
+    } else if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD2) {
+        // For ESP32PICOD2 the SPI pins are already configured
+        // flash clock signal should come from IO MUX.
+        PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICLK_U, FUNC_SPICLK_SPICLK);
+        SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, drv, FUN_DRV_S);
+    } else if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD4) {
+        // For ESP32PICOD4 the SPI pins are already configured
+        // flash clock signal should come from IO MUX.
+        PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICLK_U, FUNC_SPICLK_SPICLK);
+        SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, drv, FUN_DRV_S);
+    } else {
+        const uint32_t spiconfig = ets_efuse_get_spiconfig();
+        if (spiconfig == EFUSE_SPICONFIG_SPI_DEFAULTS) {
+            gpio_matrix_out(FLASH_CS_IO, SPICS0_OUT_IDX, 0, 0);
+            gpio_matrix_out(FLASH_SPIQ_IO, SPIQ_OUT_IDX, 0, 0);
+            gpio_matrix_in(FLASH_SPIQ_IO, SPIQ_IN_IDX, 0);
+            gpio_matrix_out(FLASH_SPID_IO, SPID_OUT_IDX, 0, 0);
+            gpio_matrix_in(FLASH_SPID_IO, SPID_IN_IDX, 0);
+            gpio_matrix_out(FLASH_SPIWP_IO, SPIWP_OUT_IDX, 0, 0);
+            gpio_matrix_in(FLASH_SPIWP_IO, SPIWP_IN_IDX, 0);
+            gpio_matrix_out(FLASH_SPIHD_IO, SPIHD_OUT_IDX, 0, 0);
+            gpio_matrix_in(FLASH_SPIHD_IO, SPIHD_IN_IDX, 0);
+            //select pin function gpio
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPIHD_U, PIN_FUNC_GPIO);
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPIWP_U, PIN_FUNC_GPIO);
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICS0_U, PIN_FUNC_GPIO);
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPIQ_U, PIN_FUNC_GPIO);
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPID_U, PIN_FUNC_GPIO);
+            // flash clock signal should come from IO MUX.
+            // set drive ability for clock
+            PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICLK_U, FUNC_SPICLK_SPICLK);
+            SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, drv, FUN_DRV_S);
+
+            #if CONFIG_SPIRAM_TYPE_ESPPSRAM32
+            uint32_t flash_id = g_rom_flashchip.device_id;
+            if (flash_id == FLASH_ID_GD25LQ32C) {
+                // Set drive ability for 1.8v flash in 80Mhz.
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPIHD_U, FUN_DRV, 3, FUN_DRV_S);
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPIWP_U, FUN_DRV, 3, FUN_DRV_S);
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICS0_U, FUN_DRV, 3, FUN_DRV_S);
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, 3, FUN_DRV_S);
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPIQ_U, FUN_DRV, 3, FUN_DRV_S);
+                SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPID_U, FUN_DRV, 3, FUN_DRV_S);
+            }
+            #endif
+        }
+    }
+#endif
 }
 
 static void uart_console_configure(void)

@@ -185,7 +185,6 @@ void IRAM_ATTR call_start_cpu0()
     }
 #else
     ESP_EARLY_LOGI(TAG, "Single core mode");
-    DPORT_CLEAR_PERI_REG_MASK(DPORT_APPCPU_CTRL_B_REG, DPORT_APPCPU_CLKGATE_EN);
 #endif
 
 

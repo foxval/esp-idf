@@ -70,8 +70,11 @@
 #define SOC_EXTRAM_DATA_LOW 0x3F800000
 #define SOC_EXTRAM_DATA_HIGH 0x3FC00000
 
-
-#define DR_REG_DPORT_BASE                       0x3ff00000
+//#define DR_REG_DPORT_BASE                       0x3ff00000
+#define DR_REG_SYSTEM_BASE                      0x3ff00000
+#define DR_REG_SENSITIVE_BASE                   0x3ff01000
+#define DR_REG_INTERRUPT_BASE                   0x3ff02000
+#define DR_REG_EXTMEM_BASE                      0x3ff04000
 #define DR_REG_AES_BASE                         0x3ff01000
 #define DR_REG_RSA_BASE                         0x3ff02000
 #define DR_REG_SHA_BASE                         0x3ff03000
@@ -334,10 +337,10 @@
 #define ETS_GPIO_INTR_SOURCE                    22/**< interrupt of GPIO, level*/
 #define ETS_GPIO_NMI_SOURCE                     23/**< interrupt of GPIO, NMI*/
 #define ETS_ALONE_GPIO_INTR_SOURCE              24/**< interrupt of alone GPIO, level*/
-#define ETS_FROM_CPU_INTR0_SOURCE               25/**< interrupt0 generated from a CPU, level*/ /* Used for FreeRTOS */
-#define ETS_FROM_CPU_INTR1_SOURCE               26/**< interrupt1 generated from a CPU, level*/ /* Used for FreeRTOS */
-#define ETS_FROM_CPU_INTR2_SOURCE               27/**< interrupt2 generated from a CPU, level*/ /* Used for DPORT Access */
-#define ETS_FROM_CPU_INTR3_SOURCE               28/**< interrupt3 generated from a CPU, level*/ /* Used for DPORT Access */
+#define ETS_FROM_CPU_INTR0_SOURCE               26/**< interrupt0 generated from a CPU, level*/ /* Used for FreeRTOS */
+#define ETS_FROM_CPU_INTR1_SOURCE               27/**< interrupt1 generated from a CPU, level*/ /* Used for FreeRTOS */
+#define ETS_FROM_CPU_INTR2_SOURCE               28/**< interrupt2 generated from a CPU, level*/ /* Used for DPORT Access */
+#define ETS_FROM_CPU_INTR3_SOURCE               29/**< interrupt3 generated from a CPU, level*/ /* Used for DPORT Access */
 #define ETS_SPI0_INTR_SOURCE                    29/**< interrupt of SPI0, level, SPI0 is for Cache Access, do not use this*/
 #define ETS_SPI1_INTR_SOURCE                    30/**< interrupt of SPI1, level, SPI1 is for flash read/write, do not use this*/
 #define ETS_SPI2_INTR_SOURCE                    31/**< interrupt of SPI2, level*/

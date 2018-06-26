@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,13 +15,15 @@
 #define __UART_REG_H__
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 
 #define REG_UART_BASE( i )  (DR_REG_UART_BASE + (i) * 0x10000 + ( (i) > 1 ? 0xe000 : 0 ) )
 #define REG_UART_AHB_BASE(i)  (0x60000000 + (i) * 0x10000 + ( (i) > 1 ? 0xe000 : 0 ) )
 #define UART_FIFO_AHB_REG(i)  (REG_UART_AHB_BASE(i) + 0x0)
 #define UART_FIFO_REG(i)          (REG_UART_BASE(i) + 0x0)
-
 /* UART_RXFIFO_RD_BYTE : RO ;bitpos:[7:0] ;default: 8'b0 ; */
 /*description: This register stores one byte data  read by rx fifo.*/
 #define UART_RXFIFO_RD_BYTE  0x000000FF
@@ -808,6 +810,12 @@
 #define UART_RX_FLOW_THRHD_M  ((UART_RX_FLOW_THRHD_V)<<(UART_RX_FLOW_THRHD_S))
 #define UART_RX_FLOW_THRHD_V  0x7F
 #define UART_RX_FLOW_THRHD_S  16
+/* UART_RX_TOUT_FLOW_DIS : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define UART_RX_TOUT_FLOW_DIS  (BIT(15))
+#define UART_RX_TOUT_FLOW_DIS_M  (BIT(15))
+#define UART_RX_TOUT_FLOW_DIS_V  0x1
+#define UART_RX_TOUT_FLOW_DIS_S  15
 /* UART_TXFIFO_EMPTY_THRHD : R/W ;bitpos:[14:8] ;default: 7'h60 ; */
 /*description: when the data amount in transmitter fifo is less than its threshold
  value. it will produce txfifo_empty_int_raw interrupt. the threshold value is (tx_mem_empty_thrhd txfifo_empty_thrhd)*/
@@ -1096,33 +1104,32 @@
 #define UART_MEM_PD_S  0
 
 #define UART_MEM_TX_STATUS_REG(i)          (REG_UART_BASE(i) + 0x5c)
-/* UART_MEM_TX_STATUS : RO ;bitpos:[23:0] ;default: 24'h0 ; */
+/* UART_TX_RADDR : RO ;bitpos:[21:11] ;default: 11'h0 ; */
 /*description: */
-#define UART_MEM_TX_STATUS  0x00FFFFFF
-#define UART_MEM_TX_STATUS_M  ((UART_MEM_TX_STATUS_V)<<(UART_MEM_TX_STATUS_S))
-#define UART_MEM_TX_STATUS_V  0xFFFFFF
-#define UART_MEM_TX_STATUS_S  0
+#define UART_TX_RADDR  0x000007FF
+#define UART_TX_RADDR_M  ((UART_TX_RADDR_V)<<(UART_TX_RADDR_S))
+#define UART_TX_RADDR_V  0x7FF
+#define UART_TX_RADDR_S  11
+/* UART_APB_TX_WADDR : RO ;bitpos:[10:0] ;default: 11'h0 ; */
+/*description: */
+#define UART_APB_TX_WADDR  0x000007FF
+#define UART_APB_TX_WADDR_M  ((UART_APB_TX_WADDR_V)<<(UART_APB_TX_WADDR_S))
+#define UART_APB_TX_WADDR_V  0x7FF
+#define UART_APB_TX_WADDR_S  0
 
 #define UART_MEM_RX_STATUS_REG(i)          (REG_UART_BASE(i) + 0x60)
-/* UART_MEM_RX_STATUS : RO ;bitpos:[23:0] ;default: 24'h0 ; */
-/*description: This register stores the current uart rx mem read address
-  and rx mem write address */
-#define UART_MEM_RX_STATUS  0x00FFFFFF
-#define UART_MEM_RX_STATUS_M  ((UART_MEM_RX_STATUS_V)<<(UART_MEM_RX_STATUS_S))
-#define UART_MEM_RX_STATUS_V  0xFFFFFF
-#define UART_MEM_RX_STATUS_S  0
-/* UART_MEM_RX_RD_ADDR : RO ;bitpos:[12:2] ;default: 11'h0 ; */
-/*description: This register stores the rx mem read address */
-#define UART_MEM_RX_RD_ADDR  0x000007FF
-#define UART_MEM_RX_RD_ADDR_M ((UART_MEM_RX_RD_ADDR_V)<<(UART_MEM_RX_RD_ADDR_S))
-#define UART_MEM_RX_RD_ADDR_V (0x7FF)
-#define UART_MEM_RX_RD_ADDR_S (2)
-/* UART_MEM_RX_WR_ADDR : RO ;bitpos:[23:13] ;default: 11'h0 ; */
-/*description: This register stores the rx mem write address */
-#define UART_MEM_RX_WR_ADDR   0x000007FF
-#define UART_MEM_RX_WR_ADDR_M ((UART_MEM_RX_WR_ADDR_V)<<(UART_MEM_RX_WR_ADDR_S))
-#define UART_MEM_RX_WR_ADDR_V (0x7FF)
-#define UART_MEM_RX_WR_ADDR_S (13)
+/* UART_RX_WADDR : RO ;bitpos:[21:11] ;default: 11'h0 ; */
+/*description: */
+#define UART_RX_WADDR  0x000007FF
+#define UART_RX_WADDR_M  ((UART_RX_WADDR_V)<<(UART_RX_WADDR_S))
+#define UART_RX_WADDR_V  0x7FF
+#define UART_RX_WADDR_S  11
+/* UART_APB_RX_RADDR : RO ;bitpos:[10:0] ;default: 11'h0 ; */
+/*description: */
+#define UART_APB_RX_RADDR  0x000007FF
+#define UART_APB_RX_RADDR_M  ((UART_APB_RX_RADDR_V)<<(UART_APB_RX_RADDR_S))
+#define UART_APB_RX_RADDR_V  0x7FF
+#define UART_APB_RX_RADDR_S  0
 
 #define UART_MEM_CNT_STATUS_REG(i)          (REG_UART_BASE(i) + 0x64)
 /* UART_TX_MEM_CNT : RO ;bitpos:[5:3] ;default: 3'b0 ; */
@@ -1172,6 +1179,9 @@
 #define UART_ID_V  0xFFFFFFFF
 #define UART_ID_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

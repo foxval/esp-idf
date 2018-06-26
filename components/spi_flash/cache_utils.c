@@ -255,27 +255,33 @@ static const uint32_t cache_mask  = DPORT_PRO_CACHE_MASK_OPSDRAM | DPORT_PRO_CAC
         DPORT_PRO_CACHE_MASK_DRAM1 | DPORT_PRO_CACHE_MASK_IROM0 |
         DPORT_PRO_CACHE_MASK_IRAM1 | DPORT_PRO_CACHE_MASK_IRAM0;
 #else
-static const uint32_t cache_mask  = DPORT_PRO_ICACHE_MASK_OPSDRAM | DPORT_PRO_ICACHE_MASK_DROM0 |
-        /*DPORT_PRO_ICACHE_MASK_DRAM1 |*/ DPORT_PRO_ICACHE_MASK_IROM0 |
+static const uint32_t icache_mask  = DPORT_PRO_ICACHE_MASK_DROM0 |DPORT_PRO_ICACHE_MASK_IROM0 |
         DPORT_PRO_ICACHE_MASK_IRAM1 | DPORT_PRO_ICACHE_MASK_IRAM0;
+static const uint32_t dcache_mask  = DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DROM0;
 #endif
 
 static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_state)
 {
-    uint32_t ret = 0;
+    uint32_t ret = 0, ret2 = 0;
     if (cpuid == 0) {
-        ret |= DPORT_GET_PERI_REG_BITS2(DPORT_PRO_CACHE_CTRL1_REG, cache_mask, 0);
 #ifdef CONFIG_CHIP_IS_ESP32
+        ret |= DPORT_GET_PERI_REG_BITS2(DPORT_PRO_CACHE_CTRL1_REG, cache_mask, 0);
         while (DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_DBUG0_REG, DPORT_PRO_CACHE_STATE, DPORT_PRO_CACHE_STATE_S) != 1) {
             ;
-#else
-        while (DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_DBUG2_REG, DPORT_PRO_CACHE_STATE, DPORT_PRO_CACHE_STATE_S) != 1) {
-            ;
-#endif
         }
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 0, DPORT_PRO_CACHE_ENABLE_S);
-#ifndef CONFIG_CHIP_IS_ESP32
-        DPORT_REG_SET_BIT(DPORT_PRO_CACHE_CTRL1_REG, cache_mask);
+#else
+        ret |= DPORT_GET_PERI_REG_BITS2(DPORT_PRO_ICACHE_CTRL1_REG, icache_mask, 0);
+        ret2 |= DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_CTRL1_REG, dcache_mask, 0);
+#ifdef DPORT_CODE_COMPLETE
+        while (DPORT_GET_PERI_REG_BITS2(DPORT_PRO_DCACHE_DBUG2_REG, DPORT_PRO_CACHE_STATE, DPORT_PRO_CACHE_STATE_S) != 1) {
+            ;
+        }
+#endif
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_ICACHE_CTRL_REG, 1, 0, DPORT_PRO_ICACHE_ENABLE_S);
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_DCACHE_CTRL_REG, 1, 0, DPORT_PRO_DCACHE_ENABLE_S);
+        DPORT_REG_SET_BIT(DPORT_PRO_ICACHE_CTRL1_REG, icache_mask);
+        DPORT_REG_SET_BIT(DPORT_PRO_DCACHE_CTRL1_REG, dcache_mask);
         DPORT_REG_SET_BIT(DPORT_PRO_CACHE_IA_INT_EN_REG, DPORT_PRO_CACHE_INT_CLR);
 #endif
     }
@@ -285,11 +291,12 @@ static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_st
 #ifdef CONFIG_CHIP_IS_ESP32
         while (DPORT_GET_PERI_REG_BITS2(DPORT_APP_DCACHE_DBUG0_REG, DPORT_APP_CACHE_STATE, DPORT_APP_CACHE_STATE_S) != 1) {
             ;
+        }
 #else
         while (DPORT_GET_PERI_REG_BITS2(DPORT_APP_DCACHE_DBUG2_REG, DPORT_APP_CACHE_STATE, DPORT_APP_CACHE_STATE_S) != 1) {
             ;
-#endif
         }
+#endif
         DPORT_SET_PERI_REG_BITS(DPORT_APP_CACHE_CTRL_REG, 1, 0, DPORT_APP_CACHE_ENABLE_S);
 #ifndef CONFIG_CHIP_IS_ESP32
         DPORT_REG_SET_BIT(DPORT_APP_CACHE_CTRL1_REG, cache_mask);
@@ -298,6 +305,9 @@ static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_st
     }
 #endif
     *saved_state = ret;
+#ifndef CONFIG_CHIP_IS_ESP32
+    *(saved_state + 1) = ret2;
+#endif
 }
 
 static void IRAM_ATTR spi_flash_restore_cache(uint32_t cpuid, uint32_t saved_state)
@@ -305,9 +315,14 @@ static void IRAM_ATTR spi_flash_restore_cache(uint32_t cpuid, uint32_t saved_sta
     if (cpuid == 0) {
 #ifndef CONFIG_CHIP_IS_ESP32
         DPORT_REG_CLR_BIT(DPORT_PRO_CACHE_IA_INT_EN_REG, DPORT_PRO_CACHE_INT_CLR);
-#endif
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_ICACHE_CTRL_REG, 1, 1, DPORT_PRO_ICACHE_ENABLE_S);
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_ICACHE_CTRL1_REG, icache_mask, saved_state, 0);
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_DCACHE_CTRL_REG, 1, 1, DPORT_PRO_DCACHE_ENABLE_S);
+        DPORT_SET_PERI_REG_BITS(DPORT_PRO_DCACHE_CTRL1_REG, dcache_mask, s_flash_op_cache_state[1], 0);
+#else
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL_REG, 1, 1, DPORT_PRO_CACHE_ENABLE_S);
         DPORT_SET_PERI_REG_BITS(DPORT_PRO_CACHE_CTRL1_REG, cache_mask, saved_state, 0);
+#endif
     }
 #if !CONFIG_FREERTOS_UNICORE
       else {
@@ -323,7 +338,12 @@ static void IRAM_ATTR spi_flash_restore_cache(uint32_t cpuid, uint32_t saved_sta
 
 IRAM_ATTR bool spi_flash_cache_enabled()
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     bool result = (DPORT_REG_GET_BIT(DPORT_PRO_CACHE_CTRL_REG, DPORT_PRO_CACHE_ENABLE) != 0);
+#else
+    bool result = (DPORT_REG_GET_BIT(DPORT_PRO_ICACHE_CTRL_REG, DPORT_PRO_ICACHE_ENABLE) != 0);
+// && (DPORT_REG_GET_BIT(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_ENABLE) != 0);
+#endif
 #if portNUM_PROCESSORS == 2
     result = result && (DPORT_REG_GET_BIT(DPORT_APP_CACHE_CTRL_REG, DPORT_APP_CACHE_ENABLE) != 0);
 #endif

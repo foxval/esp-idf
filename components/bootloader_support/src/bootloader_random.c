@@ -43,12 +43,16 @@ void bootloader_fill_random(void *buffer, size_t length)
                as-is, we repeatedly read the RNG register and XOR all
                values.
             */
+#if 0
             random = REG_READ(WDEV_RND_REG);
             RSR(CCOUNT, start);
             do {
                 random ^= REG_READ(WDEV_RND_REG);
                 RSR(CCOUNT, now);
             } while(now - start < 80*32*2); /* extra factor of 2 is precautionary */
+#else
+            random = 12345678;
+#endif
 #else
             random = esp_random();
 #endif

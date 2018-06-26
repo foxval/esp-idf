@@ -30,6 +30,7 @@ static const char* TAG = "trax";
 
 int trax_enable(trax_ena_select_t which) 
 {
+#ifdef DPORT_CODE_COMPLETE
 #if !CONFIG_ESP32_TRAX
     ESP_LOGE(TAG, "Trax_enable called, but trax is disabled in menuconfig!");
     return ESP_ERR_NO_MEM;
@@ -45,6 +46,7 @@ int trax_enable(trax_ena_select_t which)
     DPORT_WRITE_PERI_REG(DPORT_PRO_TRACEMEM_ENA_REG, (which == TRAX_ENA_PRO_APP || which == TRAX_ENA_PRO_APP_SWAP || which == TRAX_ENA_PRO));
 #if !CONFIG_FREERTOS_UNICORE
     DPORT_WRITE_PERI_REG(DPORT_APP_TRACEMEM_ENA_REG, (which == TRAX_ENA_PRO_APP || which == TRAX_ENA_PRO_APP_SWAP || which == TRAX_ENA_APP));
+#endif
 #endif
     return ESP_OK;
 }

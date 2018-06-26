@@ -130,7 +130,13 @@ static void uart_tx_char(int fd, int c)
     while (uart->status.txfifo_cnt >= 127) {
         ;
     }
+
+#ifdef CONFIG_CHIP_IS_ESP32
     uart->fifo.rw_byte = c;
+#else
+    uart = (uart_dev_t*)((uint32_t)uart + (REG_UART_AHB_BASE(0) - REG_UART_BASE(0)));
+    uart->ahb_fifo.rw_byte = c;
+#endif
 }
 
 static void uart_tx_char_via_driver(int fd, int c)
@@ -145,7 +151,12 @@ static int uart_rx_char(int fd)
     if (uart->status.rxfifo_cnt == 0) {
         return NONE;
     }
+#ifdef CONFIG_CHIP_IS_ESP32
     return uart->fifo.rw_byte;
+#else
+    uart = (uart_dev_t*)((uint32_t)uart + (REG_UART_AHB_BASE(0) - REG_UART_BASE(0)));
+    return uart->ahb_fifo.rw_byte;
+#endif
 }
 
 static int uart_rx_char_via_driver(int fd)

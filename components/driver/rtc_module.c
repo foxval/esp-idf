@@ -118,6 +118,7 @@ static touch_pad_filter_t *s_touch_pad_filter = NULL;
 static uint16_t s_touch_pad_init_bit = 0x0000;
 static filter_cb_t s_filter_cb = NULL;
 
+#ifdef CONFIG_CHIP_IS_ESP32
 //Reg,Mux,Fun,IE,Up,Down,Rtc_number
 const rtc_gpio_desc_t rtc_gpio_desc[GPIO_PIN_COUNT] = {
     {RTC_IO_TOUCH_PAD1_REG, RTC_IO_TOUCH_PAD1_MUX_SEL_M, RTC_IO_TOUCH_PAD1_FUN_SEL_S, RTC_IO_TOUCH_PAD1_FUN_IE_M, RTC_IO_TOUCH_PAD1_RUE_M, RTC_IO_TOUCH_PAD1_RDE_M, RTC_IO_TOUCH_PAD1_SLP_SEL_M, RTC_IO_TOUCH_PAD1_SLP_IE_M, RTC_IO_TOUCH_PAD1_HOLD_M, RTC_CNTL_TOUCH_PAD1_HOLD_FORCE_M, RTC_IO_TOUCH_PAD1_DRV_V, RTC_IO_TOUCH_PAD1_DRV_S, RTCIO_GPIO0_CHANNEL}, //0
@@ -161,6 +162,7 @@ const rtc_gpio_desc_t rtc_gpio_desc[GPIO_PIN_COUNT] = {
     {RTC_IO_SENSOR_PADS_REG, RTC_IO_SENSE3_MUX_SEL_M, RTC_IO_SENSE3_FUN_SEL_S, RTC_IO_SENSE3_FUN_IE_M, 0, 0, RTC_IO_SENSE3_SLP_SEL_M, RTC_IO_SENSE3_SLP_IE_M, RTC_IO_SENSE1_HOLD_M, RTC_CNTL_SENSE3_HOLD_FORCE_M, 0, 0, RTCIO_GPIO38_CHANNEL},                                                       //38
     {RTC_IO_SENSOR_PADS_REG, RTC_IO_SENSE4_MUX_SEL_M, RTC_IO_SENSE4_FUN_SEL_S, RTC_IO_SENSE4_FUN_IE_M, 0, 0, RTC_IO_SENSE4_SLP_SEL_M, RTC_IO_SENSE4_SLP_IE_M, RTC_IO_SENSE1_HOLD_M, RTC_CNTL_SENSE4_HOLD_FORCE_M, 0, 0, RTCIO_GPIO39_CHANNEL},                                                      //39
 };
+#endif
 
 typedef enum {
     ADC_CTRL_RTC = 0,
@@ -419,7 +421,9 @@ void rtc_gpio_force_hold_dis_all()
     for (int gpio = 0; gpio < GPIO_PIN_COUNT; ++gpio) {
         const rtc_gpio_desc_t* desc = &rtc_gpio_desc[gpio];
         if (desc->hold_force != 0) {
+#ifdef CONFIG_CHIP_IS_ESP32
             REG_CLR_BIT(RTC_CNTL_HOLD_FORCE_REG, desc->hold_force);
+#endif
         }
     }
 }
@@ -447,13 +451,21 @@ inline static touch_pad_t touch_pad_num_wrap(touch_pad_t touch_num)
 esp_err_t touch_pad_isr_handler_register(void (*fn)(void *), void *arg, int no_use, intr_handle_t *handle_no_use)
 {
     RTC_MODULE_CHECK(fn, "Touch_Pad ISR null", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     return rtc_isr_register(fn, arg, RTC_CNTL_TOUCH_INT_ST_M);
+#else
+    return ESP_FAIL;
+#endif
 }
 
 esp_err_t touch_pad_isr_register(intr_handler_t fn, void* arg)
 {
     RTC_MODULE_CHECK(fn, "Touch_Pad ISR null", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     return rtc_isr_register(fn, arg, RTC_CNTL_TOUCH_INT_ST_M);
+#else
+    return ESP_FAIL;
+#endif
 }
 
 esp_err_t touch_pad_isr_deregister(intr_handler_t fn, void *arg)

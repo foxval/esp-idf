@@ -53,6 +53,7 @@ typedef struct {
 static void sdmmc_isr(void* arg);
 static void sdmmc_host_dma_init();
 
+#ifdef CONFIG_CHIP_IS_ESP32
 static const sdmmc_slot_info_t s_slot_info[2]  = {
     {
         .clk = PERIPHS_IO_MUX_SD_CLK_U,
@@ -87,6 +88,36 @@ static const sdmmc_slot_info_t s_slot_info[2]  = {
         .width = 4
     }
 };
+#else
+static const sdmmc_slot_info_t s_slot_info[2]  = {
+    {
+        .clk = PERIPHS_IO_MUX_GPIO36_U,
+        .cmd = PERIPHS_IO_MUX_GPIO35_U,
+        .d0 = PERIPHS_IO_MUX_GPIO37_U,
+        .d1 = PERIPHS_IO_MUX_GPIO38_U,
+        .d2 = PERIPHS_IO_MUX_GPIO33_U,
+        .d3 = PERIPHS_IO_MUX_GPIO34_U,
+        .d4 = PERIPHS_IO_MUX_MTCK_U,
+        .d5 = PERIPHS_IO_MUX_MTDO_U,
+        .d6 = PERIPHS_IO_MUX_MTDI_U,
+        .d7 = PERIPHS_IO_MUX_MTMS_U,
+        .card_detect = HOST_CARD_DETECT_N_1_IDX,
+        .write_protect = HOST_CARD_WRITE_PRT_1_IDX,
+        .width = 8
+    },
+    {
+        .clk = PERIPHS_IO_MUX_GPIO12_U,
+        .cmd = PERIPHS_IO_MUX_DAC_1_U,
+        .d0 = PERIPHS_IO_MUX_GPIO19_U,
+        .d1 = PERIPHS_IO_MUX_GPIO20_U,
+        .d2 = PERIPHS_IO_MUX_GPIO9_U,
+        .d3 = PERIPHS_IO_MUX_GPIO10_U,
+        .card_detect = HOST_CARD_DETECT_N_2_IDX,
+        .write_protect = HOST_CARD_WRITE_PRT_2_IDX,
+        .width = 4
+    }
+};
+#endif
 
 static const char* TAG = "sdmmc_periph";
 static intr_handle_t s_intr_handle;

@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -40,10 +40,18 @@ typedef volatile struct {
             uint32_t rx_mono:          1;                 /*Set this bit to enable receiver  in mono mode*/
             uint32_t tx_msb_right:     1;                 /*Set this bit to place right channel data at the MSB in the transmit FIFO.*/
             uint32_t rx_msb_right:     1;                 /*Set this bit to place right channel data at the MSB in the receive FIFO.*/
-            uint32_t tx_lsb_first_dma: 1;                 /*1:the data in DMA/APB transform from low bits 0:the data from DMA/APB transform from high bits*/
-            uint32_t rx_lsb_first_dma: 1;                 /*1:the data in DMA/APB transform from low bits 0:the data from DMA/APB transform from high bits*/
+            uint32_t tx_lsb_first_dma: 1;                 /*1:the data in DMA/APB transform from low bits*/
+            uint32_t rx_lsb_first_dma: 1;                 /*1:the data in DMA/APB transform from low bits*/
             uint32_t sig_loopback:     1;                 /*Enable signal loopback mode with transmitter module and receiver module sharing the same WS and BCK signals.*/
-            uint32_t reserved21:      11;
+            uint32_t tx_fifo_reset_st: 1;                 /*1:i2s_tx_fifo reset is not ok   0:i2s_tx_fifo_reset is ok*/
+            uint32_t rx_fifo_reset_st: 1;                 /*1:i2s_rx_fifo_reset is not ok   0:i2s_rx_fifo reset is ok*/
+            uint32_t tx_reset_st:      1;                 /*1: i2s_tx_reset is not ok   0: i2s_tx_reset is ok*/
+            uint32_t tx_dma_equal:     1;                 /*1:data in left channel is equal to data in right channel*/
+            uint32_t rx_dma_equal:     1;                 /*1:data in left channel is equal to data in right channel*/
+            uint32_t pre_req_en:       1;                 /*set this bit to enable i2s to prepare data earlier*/
+            uint32_t tx_big_endian:    1;
+            uint32_t rx_big_endian:    1;
+            uint32_t reserved29:       3;
         };
         uint32_t val;
     } conf;
@@ -169,7 +177,9 @@ typedef volatile struct {
             uint32_t tx_fifo_mod_force_en: 1;             /*The bit should always be set to 1*/
             uint32_t rx_fifo_mod_force_en: 1;             /*The bit should always be set to 1*/
             uint32_t rx_fifo_sync:         1;             /*force write back rx data to memory*/
-            uint32_t reserved22:          10;
+            uint32_t rx_24msb_en:          1;             /*Only useful in rx 24bit mode. 1: the high 24 bits are effective in i2s fifo   0: the low 24 bits are effective in i2s fifo*/
+            uint32_t tx_24msb_en:          1;             /*Only useful in tx 24bit mode. 1: the high 24 bits are effective in i2s fifo   0: the low 24 bits are effective in i2s fifo*/
+            uint32_t reserved24:           8;
         };
         uint32_t val;
     } fifo_conf;
@@ -261,8 +271,28 @@ typedef volatile struct {
         };
         uint32_t val;
     } in_fifo_pop;
-    uint32_t lc_state0;                                   /*DMA transmitter status register*/
-    uint32_t lc_state1;                                   /*DMA receiver status register*/
+    union {
+        struct {
+            uint32_t dscr_addr:        18;
+            uint32_t out_dscr_state:    2;
+            uint32_t out_state:         3;
+            uint32_t cnt:               7;
+            uint32_t out_full:          1;
+            uint32_t out_empty:         1;                /*DMA transmitter status register*/
+        };
+        uint32_t val;
+    } lc_state0;
+    union {
+        struct {
+            uint32_t dscr_addr:       18;
+            uint32_t in_dscr_state:    2;
+            uint32_t in_state:         3;
+            uint32_t cnt_debug:        7;
+            uint32_t in_full:          1;
+            uint32_t in_empty:         1;                 /*DMA receiver status register*/
+        };
+        uint32_t val;
+    } lc_state1;
     union {
         struct {
             uint32_t fifo_timeout:          8;            /*the i2s_tx_hung_int interrupt or the i2s_rx_hung_int interrupt will be triggered when fifo hung counter is equal to this value*/
@@ -377,17 +407,18 @@ typedef volatile struct {
     } pd_conf;
     union {
         struct {
-            uint32_t camera_en:           1;              /*Set this bit to enable camera mode*/
-            uint32_t lcd_tx_wrx2_en:      1;              /*LCD WR double for one datum.*/
-            uint32_t lcd_tx_sdx2_en:      1;              /*Set this bit to duplicate data pairs (Frame Form 2) in LCD mode.*/
-            uint32_t data_enable_test_en: 1;              /*for debug camera mode enable*/
-            uint32_t data_enable:         1;              /*for debug camera mode enable*/
-            uint32_t lcd_en:              1;              /*Set this bit to enable LCD mode*/
-            uint32_t ext_adc_start_en:    1;              /*Set this bit to enable the function that ADC mode is triggered by external signal.*/
-            uint32_t inter_valid_en:      1;              /*Set this bit to enable camera internal valid*/
-            uint32_t cam_sync_fifo_reset: 1;              /*Set this bit to reset cam_sync_fifo*/
-            uint32_t cam_clk_loopback:    1;              /*Set this bit to loopback cam_clk from i2s_rx*/
-            uint32_t reserved10:         22;
+            uint32_t camera_en:              1;           /*Set this bit to enable camera mode*/
+            uint32_t lcd_tx_wrx2_en:         1;           /*LCD WR double for one datum.*/
+            uint32_t lcd_tx_sdx2_en:         1;           /*Set this bit to duplicate data pairs (Frame Form 2) in LCD mode.*/
+            uint32_t data_enable_test_en:    1;           /*for debug camera mode enable*/
+            uint32_t data_enable:            1;           /*for debug camera mode enable*/
+            uint32_t lcd_en:                 1;           /*Set this bit to enable LCD mode*/
+            uint32_t ext_adc_start_en:       1;           /*Set this bit to enable the function that ADC mode is triggered by external signal.*/
+            uint32_t inter_valid_en:         1;           /*Set this bit to enable camera internal valid*/
+            uint32_t cam_sync_fifo_reset:    1;           /*Set this bit to reset cam_sync_fifo*/
+            uint32_t cam_clk_loopback:       1;           /*Set this bit to loopback cam_clk from i2s_rx*/
+            uint32_t cam_sync_fifo_reset_st: 1;
+            uint32_t reserved11:            21;
         };
         uint32_t val;
     } conf2;
@@ -397,8 +428,8 @@ typedef volatile struct {
             uint32_t clkm_div_b:   6;                     /*Fractional clock divider numerator value*/
             uint32_t clkm_div_a:   6;                     /*Fractional clock divider denominator value*/
             uint32_t clk_en:       1;                     /*Set this bit to enable clk gate*/
-            uint32_t clka_en:      1;                     /*Set this bit to enable clk_apll*/
-            uint32_t reserved22:  10;
+            uint32_t clk_sel:      2;                     /*Set this bit to enable clk_apll*/
+            uint32_t reserved23:   9;
         };
         uint32_t val;
     } clkm_conf;
@@ -426,9 +457,9 @@ typedef volatile struct {
             uint32_t tx_sigmadelta_in_shift:     2;       /*Adjust size of input signal to filter module. 0: divided by 2  1:multiplied by 1  2:multiplied by 2  3:multiplied by 4*/
             uint32_t rx_sinc_dsr_16_en:          1;       /*PDM down-sampling rate for filter group1 in receiver mode. 0: downsample rate = 64  1:downsample rate = 128*/
             uint32_t txhp_bypass:                1;       /*Set this bit to enable tx pdm hp filter bypass*/
-            uint32_t tx_chan_mod:                2;       /*pdm tx channel mode 0/3: standard mode  1: right channel output  2: left channel output*/
-            uint32_t tx_way_mode:                2;       /*0/1 pdm rx use one-way  2/3 pdm tx use two-way*/
-            uint32_t rx_way_mode:                2;       /*0/1 pdm rx use one-way  2/3 pdm rx use two-way*/
+            uint32_t tx_chan_mod:                2;       /*pdm tx channel mode*/
+            uint32_t tx_way_mode:                2;       /*0/1 pdm rx use one-way*/
+            uint32_t rx_way_mode:                2;       /*0/1 pdm rx use one-way*/
         };
         uint32_t val;
     } pdm_conf;
@@ -442,10 +473,8 @@ typedef volatile struct {
     } pdm_freq_conf;
     union {
         struct {
-            uint32_t tx_idle:            1;               /*1: i2s_tx is idle state*/
-            uint32_t tx_fifo_reset_back: 1;               /*1: i2s_tx_fifo_reset async ok*/
-            uint32_t rx_fifo_reset_back: 1;               /*1: i2s_rx_fifo_reset async ok*/
-            uint32_t reserved3:         29;
+            uint32_t tx_idle:    1;                       /*1: i2s_tx is idle state*/
+            uint32_t reserved1: 31;
         };
         uint32_t val;
     } state;

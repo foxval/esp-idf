@@ -25,7 +25,7 @@ typedef volatile struct {
             uint8_t reserved[3];
         };
         uint32_t val;
-    } fifo;
+    } ahb_fifo;
     union {
         struct {
             uint32_t rxfifo_full:      1;           /*This interrupt raw bit turns to high level when receiver receives more data than (rx_flow_thrhd_h3 rx_flow_thrhd).*/

@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -11,8 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef __TIMG_REG_H__
-#define __TIMG_REG_H__
+#ifndef _SOC_TIMG_REG_H_
+#define _SOC_TIMG_REG_H_
 
 
 #ifdef __cplusplus
@@ -29,62 +29,60 @@ extern "C" {
 #define TIMG_WDT_STG_SEL_RESET_CPU 2
 #define TIMG_WDT_STG_SEL_RESET_SYSTEM 3
 
-
-#define REG_TIMG_BASE(i)       (DR_REG_TIMERGROUP0_BASE + i*0x1000)
+#define REG_TIMG_BASE(i)              (0x3ff5F000 - (i)*0x1000)
 #define TIMG_T0CONFIG_REG(i)          (REG_TIMG_BASE(i) + 0x0000)
 /* TIMG_T0_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
-/*description: When set  timer 0 time-base counter is enabled*/
+/*description: */
 #define TIMG_T0_EN  (BIT(31))
 #define TIMG_T0_EN_M  (BIT(31))
 #define TIMG_T0_EN_V  0x1
 #define TIMG_T0_EN_S  31
 /* TIMG_T0_INCREASE : R/W ;bitpos:[30] ;default: 1'h1 ; */
-/*description: When set  timer 0 time-base counter increment. When cleared timer
- 0 time-base counter decrement.*/
+/*description: */
 #define TIMG_T0_INCREASE  (BIT(30))
 #define TIMG_T0_INCREASE_M  (BIT(30))
 #define TIMG_T0_INCREASE_V  0x1
 #define TIMG_T0_INCREASE_S  30
 /* TIMG_T0_AUTORELOAD : R/W ;bitpos:[29] ;default: 1'h1 ; */
-/*description: When set  timer 0 auto-reload at alarming is enabled*/
+/*description: */
 #define TIMG_T0_AUTORELOAD  (BIT(29))
 #define TIMG_T0_AUTORELOAD_M  (BIT(29))
 #define TIMG_T0_AUTORELOAD_V  0x1
 #define TIMG_T0_AUTORELOAD_S  29
 /* TIMG_T0_DIVIDER : R/W ;bitpos:[28:13] ;default: 16'h1 ; */
-/*description: Timer 0 clock (T0_clk) prescale value.*/
+/*description: */
 #define TIMG_T0_DIVIDER  0x0000FFFF
 #define TIMG_T0_DIVIDER_M  ((TIMG_T0_DIVIDER_V)<<(TIMG_T0_DIVIDER_S))
 #define TIMG_T0_DIVIDER_V  0xFFFF
 #define TIMG_T0_DIVIDER_S  13
 /* TIMG_T0_EDGE_INT_EN : R/W ;bitpos:[12] ;default: 1'h0 ; */
-/*description: When set  edge type interrupt will be generated during alarm*/
+/*description: */
 #define TIMG_T0_EDGE_INT_EN  (BIT(12))
 #define TIMG_T0_EDGE_INT_EN_M  (BIT(12))
 #define TIMG_T0_EDGE_INT_EN_V  0x1
 #define TIMG_T0_EDGE_INT_EN_S  12
 /* TIMG_T0_LEVEL_INT_EN : R/W ;bitpos:[11] ;default: 1'h0 ; */
-/*description: When set  level type interrupt will be generated during alarm*/
+/*description: */
 #define TIMG_T0_LEVEL_INT_EN  (BIT(11))
 #define TIMG_T0_LEVEL_INT_EN_M  (BIT(11))
 #define TIMG_T0_LEVEL_INT_EN_V  0x1
 #define TIMG_T0_LEVEL_INT_EN_S  11
 /* TIMG_T0_ALARM_EN : R/W ;bitpos:[10] ;default: 1'h0 ; */
-/*description: When set  alarm is enabled*/
+/*description: */
 #define TIMG_T0_ALARM_EN  (BIT(10))
 #define TIMG_T0_ALARM_EN_M  (BIT(10))
 #define TIMG_T0_ALARM_EN_V  0x1
 #define TIMG_T0_ALARM_EN_S  10
-/* TIMG_T0_USE_REFTICK : R/W ;bitpos:[9] ;default: 1'd0 ; */
+/* TIMG_T0_USE_XTAL : R/W ;bitpos:[9] ;default: 1'd0 ; */
 /*description: */
-#define TIMG_T0_USE_REFTICK  (BIT(9))
-#define TIMG_T0_USE_REFTICK_M  (BIT(9))
-#define TIMG_T0_USE_REFTICK_V  0x1
-#define TIMG_T0_USE_REFTICK_S  9
+#define TIMG_T0_USE_XTAL  (BIT(9))
+#define TIMG_T0_USE_XTAL_M  (BIT(9))
+#define TIMG_T0_USE_XTAL_V  0x1
+#define TIMG_T0_USE_XTAL_S  9
 
 #define TIMG_T0LO_REG(i)          (REG_TIMG_BASE(i) + 0x0004)
 /* TIMG_T0_LO : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Register to store timer 0 time-base counter current value lower 32 bits.*/
+/*description: */
 #define TIMG_T0_LO  0xFFFFFFFF
 #define TIMG_T0_LO_M  ((TIMG_T0_LO_V)<<(TIMG_T0_LO_S))
 #define TIMG_T0_LO_V  0xFFFFFFFF
@@ -92,24 +90,23 @@ extern "C" {
 
 #define TIMG_T0HI_REG(i)          (REG_TIMG_BASE(i) + 0x0008)
 /* TIMG_T0_HI : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Register to store timer 0 time-base counter current value higher 32 bits.*/
+/*description: */
 #define TIMG_T0_HI  0xFFFFFFFF
 #define TIMG_T0_HI_M  ((TIMG_T0_HI_V)<<(TIMG_T0_HI_S))
 #define TIMG_T0_HI_V  0xFFFFFFFF
 #define TIMG_T0_HI_S  0
 
 #define TIMG_T0UPDATE_REG(i)          (REG_TIMG_BASE(i) + 0x000c)
-/* TIMG_T0_UPDATE : WO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Write any value will trigger a timer 0 time-base counter value
- update (timer 0 current value will be stored in registers above)*/
-#define TIMG_T0_UPDATE  0xFFFFFFFF
-#define TIMG_T0_UPDATE_M  ((TIMG_T0_UPDATE_V)<<(TIMG_T0_UPDATE_S))
-#define TIMG_T0_UPDATE_V  0xFFFFFFFF
-#define TIMG_T0_UPDATE_S  0
+/* TIMG_T0_UPDATE : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/*description: */
+#define TIMG_T0_UPDATE  (BIT(31))
+#define TIMG_T0_UPDATE_M  (BIT(31))
+#define TIMG_T0_UPDATE_V  0x1
+#define TIMG_T0_UPDATE_S  31
 
 #define TIMG_T0ALARMLO_REG(i)          (REG_TIMG_BASE(i) + 0x0010)
 /* TIMG_T0_ALARM_LO : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Timer 0 time-base counter value lower 32 bits that will trigger the alarm*/
+/*description: */
 #define TIMG_T0_ALARM_LO  0xFFFFFFFF
 #define TIMG_T0_ALARM_LO_M  ((TIMG_T0_ALARM_LO_V)<<(TIMG_T0_ALARM_LO_S))
 #define TIMG_T0_ALARM_LO_V  0xFFFFFFFF
@@ -117,7 +114,7 @@ extern "C" {
 
 #define TIMG_T0ALARMHI_REG(i)          (REG_TIMG_BASE(i) + 0x0014)
 /* TIMG_T0_ALARM_HI : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Timer 0 time-base counter value higher 32 bits that will trigger the alarm*/
+/*description: */
 #define TIMG_T0_ALARM_HI  0xFFFFFFFF
 #define TIMG_T0_ALARM_HI_M  ((TIMG_T0_ALARM_HI_V)<<(TIMG_T0_ALARM_HI_S))
 #define TIMG_T0_ALARM_HI_V  0xFFFFFFFF
@@ -125,7 +122,7 @@ extern "C" {
 
 #define TIMG_T0LOADLO_REG(i)          (REG_TIMG_BASE(i) + 0x0018)
 /* TIMG_T0_LOAD_LO : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Lower 32 bits of the value that will load into timer 0 time-base counter*/
+/*description: */
 #define TIMG_T0_LOAD_LO  0xFFFFFFFF
 #define TIMG_T0_LOAD_LO_M  ((TIMG_T0_LOAD_LO_V)<<(TIMG_T0_LOAD_LO_S))
 #define TIMG_T0_LOAD_LO_V  0xFFFFFFFF
@@ -133,7 +130,7 @@ extern "C" {
 
 #define TIMG_T0LOADHI_REG(i)          (REG_TIMG_BASE(i) + 0x001c)
 /* TIMG_T0_LOAD_HI : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: higher 32 bits of the value that will load into timer 0 time-base counter*/
+/*description: */
 #define TIMG_T0_LOAD_HI  0xFFFFFFFF
 #define TIMG_T0_LOAD_HI_M  ((TIMG_T0_LOAD_HI_V)<<(TIMG_T0_LOAD_HI_S))
 #define TIMG_T0_LOAD_HI_V  0xFFFFFFFF
@@ -141,7 +138,7 @@ extern "C" {
 
 #define TIMG_T0LOAD_REG(i)          (REG_TIMG_BASE(i) + 0x0020)
 /* TIMG_T0_LOAD : WO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Write any value will trigger timer 0 time-base counter reload*/
+/*description: */
 #define TIMG_T0_LOAD  0xFFFFFFFF
 #define TIMG_T0_LOAD_M  ((TIMG_T0_LOAD_V)<<(TIMG_T0_LOAD_S))
 #define TIMG_T0_LOAD_V  0xFFFFFFFF
@@ -149,58 +146,57 @@ extern "C" {
 
 #define TIMG_T1CONFIG_REG(i)          (REG_TIMG_BASE(i) + 0x0024)
 /* TIMG_T1_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
-/*description: When set  timer 1 time-base counter is enabled*/
+/*description: */
 #define TIMG_T1_EN  (BIT(31))
 #define TIMG_T1_EN_M  (BIT(31))
 #define TIMG_T1_EN_V  0x1
 #define TIMG_T1_EN_S  31
 /* TIMG_T1_INCREASE : R/W ;bitpos:[30] ;default: 1'h1 ; */
-/*description: When set  timer 1 time-base counter increment. When cleared timer
- 1 time-base counter decrement.*/
+/*description: */
 #define TIMG_T1_INCREASE  (BIT(30))
 #define TIMG_T1_INCREASE_M  (BIT(30))
 #define TIMG_T1_INCREASE_V  0x1
 #define TIMG_T1_INCREASE_S  30
 /* TIMG_T1_AUTORELOAD : R/W ;bitpos:[29] ;default: 1'h1 ; */
-/*description: When set  timer 1 auto-reload at alarming is enabled*/
+/*description: */
 #define TIMG_T1_AUTORELOAD  (BIT(29))
 #define TIMG_T1_AUTORELOAD_M  (BIT(29))
 #define TIMG_T1_AUTORELOAD_V  0x1
 #define TIMG_T1_AUTORELOAD_S  29
 /* TIMG_T1_DIVIDER : R/W ;bitpos:[28:13] ;default: 16'h1 ; */
-/*description: Timer 1 clock (T1_clk) prescale value.*/
+/*description: */
 #define TIMG_T1_DIVIDER  0x0000FFFF
 #define TIMG_T1_DIVIDER_M  ((TIMG_T1_DIVIDER_V)<<(TIMG_T1_DIVIDER_S))
 #define TIMG_T1_DIVIDER_V  0xFFFF
 #define TIMG_T1_DIVIDER_S  13
 /* TIMG_T1_EDGE_INT_EN : R/W ;bitpos:[12] ;default: 1'h0 ; */
-/*description: When set  edge type interrupt will be generated during alarm*/
+/*description: */
 #define TIMG_T1_EDGE_INT_EN  (BIT(12))
 #define TIMG_T1_EDGE_INT_EN_M  (BIT(12))
 #define TIMG_T1_EDGE_INT_EN_V  0x1
 #define TIMG_T1_EDGE_INT_EN_S  12
 /* TIMG_T1_LEVEL_INT_EN : R/W ;bitpos:[11] ;default: 1'h0 ; */
-/*description: When set  level type interrupt will be generated during alarm*/
+/*description: */
 #define TIMG_T1_LEVEL_INT_EN  (BIT(11))
 #define TIMG_T1_LEVEL_INT_EN_M  (BIT(11))
 #define TIMG_T1_LEVEL_INT_EN_V  0x1
 #define TIMG_T1_LEVEL_INT_EN_S  11
 /* TIMG_T1_ALARM_EN : R/W ;bitpos:[10] ;default: 1'h0 ; */
-/*description: When set  alarm is enabled*/
+/*description: */
 #define TIMG_T1_ALARM_EN  (BIT(10))
 #define TIMG_T1_ALARM_EN_M  (BIT(10))
 #define TIMG_T1_ALARM_EN_V  0x1
 #define TIMG_T1_ALARM_EN_S  10
-/* TIMG_T1_USE_REFTICK : R/W ;bitpos:[9] ;default: 1'd0 ; */
+/* TIMG_T1_USE_XTAL : R/W ;bitpos:[9] ;default: 1'd0 ; */
 /*description: */
-#define TIMG_T1_USE_REFTICK  (BIT(9))
-#define TIMG_T1_USE_REFTICK_M  (BIT(9))
-#define TIMG_T1_USE_REFTICK_V  0x1
-#define TIMG_T1_USE_REFTICK_S  9
+#define TIMG_T1_USE_XTAL  (BIT(9))
+#define TIMG_T1_USE_XTAL_M  (BIT(9))
+#define TIMG_T1_USE_XTAL_V  0x1
+#define TIMG_T1_USE_XTAL_S  9
 
 #define TIMG_T1LO_REG(i)          (REG_TIMG_BASE(i) + 0x0028)
 /* TIMG_T1_LO : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Register to store timer 1 time-base counter current value lower 32 bits.*/
+/*description: */
 #define TIMG_T1_LO  0xFFFFFFFF
 #define TIMG_T1_LO_M  ((TIMG_T1_LO_V)<<(TIMG_T1_LO_S))
 #define TIMG_T1_LO_V  0xFFFFFFFF
@@ -208,24 +204,23 @@ extern "C" {
 
 #define TIMG_T1HI_REG(i)          (REG_TIMG_BASE(i) + 0x002c)
 /* TIMG_T1_HI : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Register to store timer 1 time-base counter current value higher 32 bits.*/
+/*description: */
 #define TIMG_T1_HI  0xFFFFFFFF
 #define TIMG_T1_HI_M  ((TIMG_T1_HI_V)<<(TIMG_T1_HI_S))
 #define TIMG_T1_HI_V  0xFFFFFFFF
 #define TIMG_T1_HI_S  0
 
 #define TIMG_T1UPDATE_REG(i)          (REG_TIMG_BASE(i) + 0x0030)
-/* TIMG_T1_UPDATE : WO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Write any value will trigger a timer 1 time-base counter value
- update (timer 1 current value will be stored in registers above)*/
-#define TIMG_T1_UPDATE  0xFFFFFFFF
-#define TIMG_T1_UPDATE_M  ((TIMG_T1_UPDATE_V)<<(TIMG_T1_UPDATE_S))
-#define TIMG_T1_UPDATE_V  0xFFFFFFFF
-#define TIMG_T1_UPDATE_S  0
+/* TIMG_T1_UPDATE : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/*description: */
+#define TIMG_T1_UPDATE  (BIT(31))
+#define TIMG_T1_UPDATE_M  (BIT(31))
+#define TIMG_T1_UPDATE_V  0x1
+#define TIMG_T1_UPDATE_S  31
 
 #define TIMG_T1ALARMLO_REG(i)          (REG_TIMG_BASE(i) + 0x0034)
 /* TIMG_T1_ALARM_LO : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Timer 1 time-base counter value lower 32 bits that will trigger the alarm*/
+/*description: */
 #define TIMG_T1_ALARM_LO  0xFFFFFFFF
 #define TIMG_T1_ALARM_LO_M  ((TIMG_T1_ALARM_LO_V)<<(TIMG_T1_ALARM_LO_S))
 #define TIMG_T1_ALARM_LO_V  0xFFFFFFFF
@@ -233,7 +228,7 @@ extern "C" {
 
 #define TIMG_T1ALARMHI_REG(i)          (REG_TIMG_BASE(i) + 0x0038)
 /* TIMG_T1_ALARM_HI : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Timer 1 time-base counter value higher 32 bits that will trigger the alarm*/
+/*description: */
 #define TIMG_T1_ALARM_HI  0xFFFFFFFF
 #define TIMG_T1_ALARM_HI_M  ((TIMG_T1_ALARM_HI_V)<<(TIMG_T1_ALARM_HI_S))
 #define TIMG_T1_ALARM_HI_V  0xFFFFFFFF
@@ -241,7 +236,7 @@ extern "C" {
 
 #define TIMG_T1LOADLO_REG(i)          (REG_TIMG_BASE(i) + 0x003c)
 /* TIMG_T1_LOAD_LO : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Lower 32 bits of the value that will load into timer 1 time-base counter*/
+/*description: */
 #define TIMG_T1_LOAD_LO  0xFFFFFFFF
 #define TIMG_T1_LOAD_LO_M  ((TIMG_T1_LOAD_LO_V)<<(TIMG_T1_LOAD_LO_S))
 #define TIMG_T1_LOAD_LO_V  0xFFFFFFFF
@@ -249,7 +244,7 @@ extern "C" {
 
 #define TIMG_T1LOADHI_REG(i)          (REG_TIMG_BASE(i) + 0x0040)
 /* TIMG_T1_LOAD_HI : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: higher 32 bits of the value that will load into timer 1 time-base counter*/
+/*description: */
 #define TIMG_T1_LOAD_HI  0xFFFFFFFF
 #define TIMG_T1_LOAD_HI_M  ((TIMG_T1_LOAD_HI_V)<<(TIMG_T1_LOAD_HI_S))
 #define TIMG_T1_LOAD_HI_V  0xFFFFFFFF
@@ -257,7 +252,7 @@ extern "C" {
 
 #define TIMG_T1LOAD_REG(i)          (REG_TIMG_BASE(i) + 0x0044)
 /* TIMG_T1_LOAD : WO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Write any value will trigger timer 1 time-base counter reload*/
+/*description: */
 #define TIMG_T1_LOAD  0xFFFFFFFF
 #define TIMG_T1_LOAD_M  ((TIMG_T1_LOAD_V)<<(TIMG_T1_LOAD_S))
 #define TIMG_T1_LOAD_V  0xFFFFFFFF
@@ -265,63 +260,61 @@ extern "C" {
 
 #define TIMG_WDTCONFIG0_REG(i)          (REG_TIMG_BASE(i) + 0x0048)
 /* TIMG_WDT_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
-/*description: When set  SWDT is enabled*/
+/*description: */
 #define TIMG_WDT_EN  (BIT(31))
 #define TIMG_WDT_EN_M  (BIT(31))
 #define TIMG_WDT_EN_V  0x1
 #define TIMG_WDT_EN_S  31
 /* TIMG_WDT_STG0 : R/W ;bitpos:[30:29] ;default: 1'd0 ; */
-/*description: Stage 0 configuration. 0: off  1: interrupt  2: reset CPU  3: reset system*/
+/*description: */
 #define TIMG_WDT_STG0  0x00000003
 #define TIMG_WDT_STG0_M  ((TIMG_WDT_STG0_V)<<(TIMG_WDT_STG0_S))
 #define TIMG_WDT_STG0_V  0x3
 #define TIMG_WDT_STG0_S  29
 /* TIMG_WDT_STG1 : R/W ;bitpos:[28:27] ;default: 1'd0 ; */
-/*description: Stage 1 configuration. 0: off  1: interrupt  2: reset CPU  3: reset system*/
+/*description: */
 #define TIMG_WDT_STG1  0x00000003
 #define TIMG_WDT_STG1_M  ((TIMG_WDT_STG1_V)<<(TIMG_WDT_STG1_S))
 #define TIMG_WDT_STG1_V  0x3
 #define TIMG_WDT_STG1_S  27
 /* TIMG_WDT_STG2 : R/W ;bitpos:[26:25] ;default: 1'd0 ; */
-/*description: Stage 2 configuration. 0: off  1: interrupt  2: reset CPU  3: reset system*/
+/*description: */
 #define TIMG_WDT_STG2  0x00000003
 #define TIMG_WDT_STG2_M  ((TIMG_WDT_STG2_V)<<(TIMG_WDT_STG2_S))
 #define TIMG_WDT_STG2_V  0x3
 #define TIMG_WDT_STG2_S  25
 /* TIMG_WDT_STG3 : R/W ;bitpos:[24:23] ;default: 1'd0 ; */
-/*description: Stage 3 configuration. 0: off  1: interrupt  2: reset CPU  3: reset system*/
+/*description: */
 #define TIMG_WDT_STG3  0x00000003
 #define TIMG_WDT_STG3_M  ((TIMG_WDT_STG3_V)<<(TIMG_WDT_STG3_S))
 #define TIMG_WDT_STG3_V  0x3
 #define TIMG_WDT_STG3_S  23
 /* TIMG_WDT_EDGE_INT_EN : R/W ;bitpos:[22] ;default: 1'h0 ; */
-/*description: When set  edge type interrupt generation is enabled*/
+/*description: */
 #define TIMG_WDT_EDGE_INT_EN  (BIT(22))
 #define TIMG_WDT_EDGE_INT_EN_M  (BIT(22))
 #define TIMG_WDT_EDGE_INT_EN_V  0x1
 #define TIMG_WDT_EDGE_INT_EN_S  22
 /* TIMG_WDT_LEVEL_INT_EN : R/W ;bitpos:[21] ;default: 1'h0 ; */
-/*description: When set  level type interrupt generation is enabled*/
+/*description: */
 #define TIMG_WDT_LEVEL_INT_EN  (BIT(21))
 #define TIMG_WDT_LEVEL_INT_EN_M  (BIT(21))
 #define TIMG_WDT_LEVEL_INT_EN_V  0x1
 #define TIMG_WDT_LEVEL_INT_EN_S  21
 /* TIMG_WDT_CPU_RESET_LENGTH : R/W ;bitpos:[20:18] ;default: 3'h1 ; */
-/*description: length of CPU reset selection. 0: 100ns  1: 200ns  2: 300ns 
- 3: 400ns  4: 500ns  5: 800ns  6: 1.6us  7: 3.2us*/
+/*description: */
 #define TIMG_WDT_CPU_RESET_LENGTH  0x00000007
 #define TIMG_WDT_CPU_RESET_LENGTH_M  ((TIMG_WDT_CPU_RESET_LENGTH_V)<<(TIMG_WDT_CPU_RESET_LENGTH_S))
 #define TIMG_WDT_CPU_RESET_LENGTH_V  0x7
 #define TIMG_WDT_CPU_RESET_LENGTH_S  18
 /* TIMG_WDT_SYS_RESET_LENGTH : R/W ;bitpos:[17:15] ;default: 3'h1 ; */
-/*description: length of system reset selection. 0: 100ns  1: 200ns  2: 300ns
-  3: 400ns  4: 500ns  5: 800ns  6: 1.6us  7: 3.2us*/
+/*description: */
 #define TIMG_WDT_SYS_RESET_LENGTH  0x00000007
 #define TIMG_WDT_SYS_RESET_LENGTH_M  ((TIMG_WDT_SYS_RESET_LENGTH_V)<<(TIMG_WDT_SYS_RESET_LENGTH_S))
 #define TIMG_WDT_SYS_RESET_LENGTH_V  0x7
 #define TIMG_WDT_SYS_RESET_LENGTH_S  15
 /* TIMG_WDT_FLASHBOOT_MOD_EN : R/W ;bitpos:[14] ;default: 1'h1 ; */
-/*description: When set  flash boot protection is enabled*/
+/*description: */
 #define TIMG_WDT_FLASHBOOT_MOD_EN  (BIT(14))
 #define TIMG_WDT_FLASHBOOT_MOD_EN_M  (BIT(14))
 #define TIMG_WDT_FLASHBOOT_MOD_EN_V  0x1
@@ -341,7 +334,7 @@ extern "C" {
 
 #define TIMG_WDTCONFIG1_REG(i)          (REG_TIMG_BASE(i) + 0x004c)
 /* TIMG_WDT_CLK_PRESCALE : R/W ;bitpos:[31:16] ;default: 16'h1 ; */
-/*description: SWDT clock prescale value. Period = 12.5ns * value stored in this register*/
+/*description: */
 #define TIMG_WDT_CLK_PRESCALE  0x0000FFFF
 #define TIMG_WDT_CLK_PRESCALE_M  ((TIMG_WDT_CLK_PRESCALE_V)<<(TIMG_WDT_CLK_PRESCALE_S))
 #define TIMG_WDT_CLK_PRESCALE_V  0xFFFF
@@ -349,7 +342,7 @@ extern "C" {
 
 #define TIMG_WDTCONFIG2_REG(i)          (REG_TIMG_BASE(i) + 0x0050)
 /* TIMG_WDT_STG0_HOLD : R/W ;bitpos:[31:0] ;default: 32'd26000000 ; */
-/*description: Stage 0 timeout value in SWDT clock cycles*/
+/*description: */
 #define TIMG_WDT_STG0_HOLD  0xFFFFFFFF
 #define TIMG_WDT_STG0_HOLD_M  ((TIMG_WDT_STG0_HOLD_V)<<(TIMG_WDT_STG0_HOLD_S))
 #define TIMG_WDT_STG0_HOLD_V  0xFFFFFFFF
@@ -357,7 +350,7 @@ extern "C" {
 
 #define TIMG_WDTCONFIG3_REG(i)          (REG_TIMG_BASE(i) + 0x0054)
 /* TIMG_WDT_STG1_HOLD : R/W ;bitpos:[31:0] ;default: 32'h7ffffff ; */
-/*description: Stage 1 timeout value in SWDT clock cycles*/
+/*description: */
 #define TIMG_WDT_STG1_HOLD  0xFFFFFFFF
 #define TIMG_WDT_STG1_HOLD_M  ((TIMG_WDT_STG1_HOLD_V)<<(TIMG_WDT_STG1_HOLD_S))
 #define TIMG_WDT_STG1_HOLD_V  0xFFFFFFFF
@@ -365,7 +358,7 @@ extern "C" {
 
 #define TIMG_WDTCONFIG4_REG(i)          (REG_TIMG_BASE(i) + 0x0058)
 /* TIMG_WDT_STG2_HOLD : R/W ;bitpos:[31:0] ;default: 32'hfffff ; */
-/*description: Stage 2 timeout value in SWDT clock cycles*/
+/*description: */
 #define TIMG_WDT_STG2_HOLD  0xFFFFFFFF
 #define TIMG_WDT_STG2_HOLD_M  ((TIMG_WDT_STG2_HOLD_V)<<(TIMG_WDT_STG2_HOLD_S))
 #define TIMG_WDT_STG2_HOLD_V  0xFFFFFFFF
@@ -373,7 +366,7 @@ extern "C" {
 
 #define TIMG_WDTCONFIG5_REG(i)          (REG_TIMG_BASE(i) + 0x005c)
 /* TIMG_WDT_STG3_HOLD : R/W ;bitpos:[31:0] ;default: 32'hfffff ; */
-/*description: Stage 3 timeout value in SWDT clock cycles*/
+/*description: */
 #define TIMG_WDT_STG3_HOLD  0xFFFFFFFF
 #define TIMG_WDT_STG3_HOLD_M  ((TIMG_WDT_STG3_HOLD_V)<<(TIMG_WDT_STG3_HOLD_S))
 #define TIMG_WDT_STG3_HOLD_V  0xFFFFFFFF
@@ -381,7 +374,7 @@ extern "C" {
 
 #define TIMG_WDTFEED_REG(i)          (REG_TIMG_BASE(i) + 0x0060)
 /* TIMG_WDT_FEED : WO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: Write any value will feed SWDT*/
+/*description: */
 #define TIMG_WDT_FEED  0xFFFFFFFF
 #define TIMG_WDT_FEED_M  ((TIMG_WDT_FEED_V)<<(TIMG_WDT_FEED_S))
 #define TIMG_WDT_FEED_V  0xFFFFFFFF
@@ -389,7 +382,7 @@ extern "C" {
 
 #define TIMG_WDTWPROTECT_REG(i)          (REG_TIMG_BASE(i) + 0x0064)
 /* TIMG_WDT_WKEY : R/W ;bitpos:[31:0] ;default: 32'h50d83aa1 ; */
-/*description: If change its value from default  then write protection is on.*/
+/*description: */
 #define TIMG_WDT_WKEY  0xFFFFFFFF
 #define TIMG_WDT_WKEY_M  ((TIMG_WDT_WKEY_V)<<(TIMG_WDT_WKEY_S))
 #define TIMG_WDT_WKEY_V  0xFFFFFFFF
@@ -583,19 +576,19 @@ extern "C" {
 #define TIMG_LACT_INT_ENA_V  0x1
 #define TIMG_LACT_INT_ENA_S  3
 /* TIMG_WDT_INT_ENA : R/W ;bitpos:[2] ;default: 1'h0 ; */
-/*description: Interrupt when an interrupt stage timeout*/
+/*description: */
 #define TIMG_WDT_INT_ENA  (BIT(2))
 #define TIMG_WDT_INT_ENA_M  (BIT(2))
 #define TIMG_WDT_INT_ENA_V  0x1
 #define TIMG_WDT_INT_ENA_S  2
 /* TIMG_T1_INT_ENA : R/W ;bitpos:[1] ;default: 1'h0 ; */
-/*description: interrupt when timer1 alarm*/
+/*description: */
 #define TIMG_T1_INT_ENA  (BIT(1))
 #define TIMG_T1_INT_ENA_M  (BIT(1))
 #define TIMG_T1_INT_ENA_V  0x1
 #define TIMG_T1_INT_ENA_S  1
 /* TIMG_T0_INT_ENA : R/W ;bitpos:[0] ;default: 1'h0 ; */
-/*description: interrupt when timer0 alarm*/
+/*description: */
 #define TIMG_T0_INT_ENA  (BIT(0))
 #define TIMG_T0_INT_ENA_M  (BIT(0))
 #define TIMG_T0_INT_ENA_V  0x1
@@ -609,19 +602,19 @@ extern "C" {
 #define TIMG_LACT_INT_RAW_V  0x1
 #define TIMG_LACT_INT_RAW_S  3
 /* TIMG_WDT_INT_RAW : RO ;bitpos:[2] ;default: 1'h0 ; */
-/*description: Interrupt when an interrupt stage timeout*/
+/*description: */
 #define TIMG_WDT_INT_RAW  (BIT(2))
 #define TIMG_WDT_INT_RAW_M  (BIT(2))
 #define TIMG_WDT_INT_RAW_V  0x1
 #define TIMG_WDT_INT_RAW_S  2
 /* TIMG_T1_INT_RAW : RO ;bitpos:[1] ;default: 1'h0 ; */
-/*description: interrupt when timer1 alarm*/
+/*description: */
 #define TIMG_T1_INT_RAW  (BIT(1))
 #define TIMG_T1_INT_RAW_M  (BIT(1))
 #define TIMG_T1_INT_RAW_V  0x1
 #define TIMG_T1_INT_RAW_S  1
 /* TIMG_T0_INT_RAW : RO ;bitpos:[0] ;default: 1'h0 ; */
-/*description: interrupt when timer0 alarm*/
+/*description: */
 #define TIMG_T0_INT_RAW  (BIT(0))
 #define TIMG_T0_INT_RAW_M  (BIT(0))
 #define TIMG_T0_INT_RAW_V  0x1
@@ -635,19 +628,19 @@ extern "C" {
 #define TIMG_LACT_INT_ST_V  0x1
 #define TIMG_LACT_INT_ST_S  3
 /* TIMG_WDT_INT_ST : RO ;bitpos:[2] ;default: 1'h0 ; */
-/*description: Interrupt when an interrupt stage timeout*/
+/*description: */
 #define TIMG_WDT_INT_ST  (BIT(2))
 #define TIMG_WDT_INT_ST_M  (BIT(2))
 #define TIMG_WDT_INT_ST_V  0x1
 #define TIMG_WDT_INT_ST_S  2
 /* TIMG_T1_INT_ST : RO ;bitpos:[1] ;default: 1'h0 ; */
-/*description: interrupt when timer1 alarm*/
+/*description: */
 #define TIMG_T1_INT_ST  (BIT(1))
 #define TIMG_T1_INT_ST_M  (BIT(1))
 #define TIMG_T1_INT_ST_V  0x1
 #define TIMG_T1_INT_ST_S  1
 /* TIMG_T0_INT_ST : RO ;bitpos:[0] ;default: 1'h0 ; */
-/*description: interrupt when timer0 alarm*/
+/*description: */
 #define TIMG_T0_INT_ST  (BIT(0))
 #define TIMG_T0_INT_ST_M  (BIT(0))
 #define TIMG_T0_INT_ST_V  0x1
@@ -661,35 +654,55 @@ extern "C" {
 #define TIMG_LACT_INT_CLR_V  0x1
 #define TIMG_LACT_INT_CLR_S  3
 /* TIMG_WDT_INT_CLR : WO ;bitpos:[2] ;default: 1'h0 ; */
-/*description: Interrupt when an interrupt stage timeout*/
+/*description: */
 #define TIMG_WDT_INT_CLR  (BIT(2))
 #define TIMG_WDT_INT_CLR_M  (BIT(2))
 #define TIMG_WDT_INT_CLR_V  0x1
 #define TIMG_WDT_INT_CLR_S  2
 /* TIMG_T1_INT_CLR : WO ;bitpos:[1] ;default: 1'h0 ; */
-/*description: interrupt when timer1 alarm*/
+/*description: */
 #define TIMG_T1_INT_CLR  (BIT(1))
 #define TIMG_T1_INT_CLR_M  (BIT(1))
 #define TIMG_T1_INT_CLR_V  0x1
 #define TIMG_T1_INT_CLR_S  1
 /* TIMG_T0_INT_CLR : WO ;bitpos:[0] ;default: 1'h0 ; */
-/*description: interrupt when timer0 alarm*/
+/*description: */
 #define TIMG_T0_INT_CLR  (BIT(0))
 #define TIMG_T0_INT_CLR_M  (BIT(0))
 #define TIMG_T0_INT_CLR_V  0x1
 #define TIMG_T0_INT_CLR_S  0
 
+#define TIMG_RTCCALICFG2_REG(i)          (REG_TIMG_BASE(i) + 0x00a8)
+/* TIMG_RTC_CALI_TIMEOUT_THRES : R/W ;bitpos:[31:7] ;default: 25'h1ffffff ; */
+/*description: timeout if cali value counts over threshold*/
+#define TIMG_RTC_CALI_TIMEOUT_THRES  0x01FFFFFF
+#define TIMG_RTC_CALI_TIMEOUT_THRES_M  ((TIMG_RTC_CALI_TIMEOUT_THRES_V)<<(TIMG_RTC_CALI_TIMEOUT_THRES_S))
+#define TIMG_RTC_CALI_TIMEOUT_THRES_V  0x1FFFFFF
+#define TIMG_RTC_CALI_TIMEOUT_THRES_S  7
+/* TIMG_RTC_CALI_TIMEOUT_RST_CNT : R/W ;bitpos:[6:3] ;default: 4'd3 ; */
+/*description: Cycles that release calibration timeout reset*/
+#define TIMG_RTC_CALI_TIMEOUT_RST_CNT  0x0000000F
+#define TIMG_RTC_CALI_TIMEOUT_RST_CNT_M  ((TIMG_RTC_CALI_TIMEOUT_RST_CNT_V)<<(TIMG_RTC_CALI_TIMEOUT_RST_CNT_S))
+#define TIMG_RTC_CALI_TIMEOUT_RST_CNT_V  0xF
+#define TIMG_RTC_CALI_TIMEOUT_RST_CNT_S  3
+/* TIMG_RTC_CALI_TIMEOUT : RO ;bitpos:[0] ;default: 1'h0 ; */
+/*description: timeout indicator*/
+#define TIMG_RTC_CALI_TIMEOUT  (BIT(0))
+#define TIMG_RTC_CALI_TIMEOUT_M  (BIT(0))
+#define TIMG_RTC_CALI_TIMEOUT_V  0x1
+#define TIMG_RTC_CALI_TIMEOUT_S  0
+
 #define TIMG_NTIMERS_DATE_REG(i)          (REG_TIMG_BASE(i) + 0x00f8)
-/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1612140 ; */
-/*description: Version of this regfile*/
+/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1711220 ; */
+/*description: */
 #define TIMG_NTIMERS_DATE  0x0FFFFFFF
 #define TIMG_NTIMERS_DATE_M  ((TIMG_NTIMERS_DATE_V)<<(TIMG_NTIMERS_DATE_S))
 #define TIMG_NTIMERS_DATE_V  0xFFFFFFF
 #define TIMG_NTIMERS_DATE_S  0
 
-#define TIMGCLK_REG(i)          (REG_TIMG_BASE(i) + 0x00fc)
+#define TIMG_CLK_REG(i)          (REG_TIMG_BASE(i) + 0x00fc)
 /* TIMG_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
-/*description: Force clock enable for this regfile*/
+/*description: */
 #define TIMG_CLK_EN  (BIT(31))
 #define TIMG_CLK_EN_M  (BIT(31))
 #define TIMG_CLK_EN_V  0x1
@@ -701,6 +714,6 @@ extern "C" {
 
 
 
-#endif /*__TIMG_REG_H__ */
+#endif /*_SOC_TIMG_REG_H_ */
 
 
