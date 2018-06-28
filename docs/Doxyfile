@@ -185,8 +185,8 @@ INPUT = \
     ../../components/esp32/include/esp_err.h \
     ### System APIs
     ../../components/esp32/include/esp_system.h
-
-
+    ### Modbus controller component header file
+    ../../components/freemodbus/modbus_controller/mbcontroller.h
 
 ## Get warnings for functions that have no documentation for their parameters or return value
 ##
