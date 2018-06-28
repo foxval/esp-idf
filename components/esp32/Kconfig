@@ -1,4 +1,5 @@
 menu "ESP32-specific"
+    depends on CHIP_IS_ESP32
 
 choice ESP32_DEFAULT_CPU_FREQ_MHZ
     prompt "CPU frequency"
@@ -28,7 +29,7 @@ config SPIRAM_SUPPORT
         main SPI flash chip.
 
 menu "SPI RAM config"
-    depends on SPIRAM_SUPPORT
+    depends on CHIP_IS_ESP32 && SPIRAM_SUPPORT
 
 config SPIRAM_BOOT_INIT
     bool "Initialize SPI RAM when booting the ESP32"
@@ -836,6 +837,7 @@ config ESP_ERR_TO_NAME_LOOKUP
 endmenu  # ESP32-Specific
 
 menu Wi-Fi
+    depends on CHIP_IS_ESP32
 
 config SW_COEXIST_ENABLE
     bool "Software controls WiFi/Bluetooth coexistence"
@@ -1028,6 +1030,7 @@ endchoice
 endmenu  # Wi-Fi
 
 menu PHY
+    depends on CHIP_IS_ESP32
 
 config ESP32_PHY_CALIBRATION_AND_DATA_STORAGE
     bool "Store phy calibration data in NVS"
@@ -1076,6 +1079,7 @@ endmenu  # PHY
 
 
 menu "Power Management"
+    depends on CHIP_IS_ESP32
 
 config PM_ENABLE
 	bool "Support for power management"

@@ -14,9 +14,6 @@ COMPONENTS := esptool_py bootloader_support log spi_flash micro-ecc soc main
 CFLAGS =
 CXXFLAGS =
 
-#We cannot include the esp32 component directly but we need its includes.
-CFLAGS += -I $(IDF_PATH)/components/esp32/include
-
 # The bootloader pseudo-component is also included in this build, for its Kconfig.projbuild to be included.
 #
 # IS_BOOTLOADER_BUILD tells the component Makefile.projbuild to be a no-op
@@ -30,3 +27,15 @@ CFLAGS += -D BOOTLOADER_BUILD=1
 CFLAGS += -I$(BUILD_DIR_BASE)/../include
 
 include $(IDF_PATH)/make/project.mk
+
+ifdef CONFIG_CHIP_IS_ESP32
+CHIP_NAME=esp32
+endif
+
+ifdef CONFIG_CHIP_IS_ESP32C
+CHIP_NAME=esp32c
+endif
+
+#We cannot include the esp32 component directly but we need its includes.
+CFLAGS += -I $(IDF_PATH)/components/$(CHIP_NAME)/include
+

@@ -33,6 +33,22 @@ config MAKE_WARN_UNDEFINED_VARIABLES
 
 endmenu  # SDK tool configuration
 
+menu "Chip Family configuration"
+
+choice CHIP_FAMILY
+    prompt "Chip Family"
+    default CHIP_IS_ESP32
+    help
+        Esp-idf support families of chips.
+        This option choose the correct component to fit the chip.
+config CHIP_IS_ESP32
+    bool "esp32"
+config CHIP_IS_ESP32C
+    bool "esp32c"
+endchoice
+
+endmenu
+
 source "$COMPONENT_KCONFIGS_PROJBUILD"
 
 source "$IDF_PATH/Kconfig.compiler"

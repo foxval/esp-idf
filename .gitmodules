@@ -2,6 +2,10 @@
 	path = components/esp32/lib
 	url = https://github.com/espressif/esp32-wifi-lib.git
 
+[submodule "components/esp32c/lib"]
+	path = components/esp32c/lib
+	url = ssh://git@gitlab.espressif.cn:27227/idf/esp32-wifi-lib.git 
+
 [submodule "components/esptool_py/esptool"]
 	path = components/esptool_py/esptool
 	url = https://github.com/espressif/esptool.git

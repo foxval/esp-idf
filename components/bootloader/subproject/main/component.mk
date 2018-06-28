@@ -5,15 +5,23 @@
 # we pull in bootloader-specific linker arguments.
 #
 
+ifdef CONFIG_CHIP_IS_ESP32
+CHIP_NAME = esp32
+endif
+
+ifdef CONFIG_CHIP_IS_ESP32C
+CHIP_NAME = esp32c
+endif
+
 LINKER_SCRIPTS := \
 	esp32.bootloader.ld \
-	$(IDF_PATH)/components/esp32/ld/esp32.rom.ld \
-	$(IDF_PATH)/components/esp32/ld/esp32.rom.spiram_incompatible_fns.ld \
-	$(IDF_PATH)/components/esp32/ld/esp32.peripherals.ld \
+	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.ld \
+	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.spiram_incompatible_fns.ld \
+	$(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.peripherals.ld \
 	esp32.bootloader.rom.ld
 
 ifndef CONFIG_SPI_FLASH_ROM_DRIVER_PATCH
-LINKER_SCRIPTS += $(IDF_PATH)/components/esp32/ld/esp32.rom.spiflash.ld
+LINKER_SCRIPTS += $(IDF_PATH)/components/$(CHIP_NAME)/ld/esp32.rom.spiflash.ld
 endif
 
 COMPONENT_ADD_LDFLAGS += -L $(COMPONENT_PATH) $(addprefix -T ,$(LINKER_SCRIPTS))

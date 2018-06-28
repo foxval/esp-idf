@@ -1,6 +1,7 @@
 #
 # Component Makefile
 #
+ifdef CONFIG_CHIP_IS_ESP32
 
 COMPONENT_SRCDIRS := . hwcrypto
 LIBS ?=
@@ -60,3 +61,6 @@ COMPONENT_EXTRA_CLEAN := esp32_out.ld
 # disable stack protection in files which are involved in initialization of that feature
 stack_check.o: CFLAGS := $(filter-out -fstack-protector%, $(CFLAGS))
 cpu_start.o: CFLAGS := $(filter-out -fstack-protector%, $(CFLAGS))
+else
+COMPONENT_CONFIG_ONLY := 1
+endif
