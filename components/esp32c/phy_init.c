@@ -137,7 +137,7 @@ extern esp_err_t wifi_osi_funcs_register(wifi_osi_funcs_t *osi_funcs);
                 _lock_release(&s_phy_rf_init_lock);
                 return ESP_FAIL;
             }
-            coex_bt_high_prio();
+            coex_pti();
         }
     }
 

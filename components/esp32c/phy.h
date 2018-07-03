@@ -57,7 +57,7 @@ void phy_set_wifi_mode_only(bool wifi_only);
  * @brief Set BT the highest priority in coexist mode.
  * @return NULL
  */
-void coex_bt_high_prio(void);
+void coex_pti(void);
 
 /**
  * @brief Shutdown PHY and RF.
