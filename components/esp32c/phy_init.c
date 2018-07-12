@@ -120,6 +120,8 @@ esp_err_t esp_phy_rf_init(const esp_phy_init_data_t* init_data, esp_phy_calibrat
             // Enable WiFi/BT common peripheral clock
             periph_module_enable(PERIPH_WIFI_BT_COMMON_MODULE);
             phy_set_wifi_mode_only(0);
+            int fpga_init(void);
+            fpga_init();
 
             if (ESP_CAL_DATA_CHECK_FAIL == register_chipv7_phy(init_data, calibration_data, mode)) {
                 ESP_LOGW(TAG, "saving new calibration data because of checksum failure, mode(%d)", mode);
@@ -137,7 +139,7 @@ extern esp_err_t wifi_osi_funcs_register(wifi_osi_funcs_t *osi_funcs);
                 _lock_release(&s_phy_rf_init_lock);
                 return ESP_FAIL;
             }
-            coex_pti();
+            //coex_pti();
         }
     }
 

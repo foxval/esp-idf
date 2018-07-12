@@ -22,6 +22,7 @@
 #include "soc/gpio_reg.h"
 
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
 void rtc_init(rtc_config_t cfg)
 {
     CLEAR_PERI_REG_MASK(RTC_CNTL_ANA_CONF_REG, RTC_CNTL_PVTMON_PU);
@@ -108,6 +109,7 @@ void rtc_init(rtc_config_t cfg)
 #endif
     }
 }
+#endif
 
 rtc_vddsdio_config_t rtc_vddsdio_get_config()
 {

@@ -292,7 +292,7 @@ static esp_err_t uart_reset_rx_fifo(uart_port_t uart_num)
 
     // we read the data out and make `fifo_len == 0 && rd_addr == wr_addr`.
     while(UART[uart_num]->status.rxfifo_cnt != 0 || (UART[uart_num]->mem_rx_status.wr_addr != UART[uart_num]->mem_rx_status.rd_addr)) {
-        READ_PERI_REG(UART_FIFO_REG(uart_num));
+        READ_PERI_REG(UART_FIFO_AHB_REG(uart_num));
     }
     return ESP_OK;
 }
@@ -827,7 +827,7 @@ static void uart_rx_intr_handler_default(void *param)
 #ifdef CONFIG_CHIP_IS_ESP32
                     p_uart->rx_data_buf[buf_idx++] = uart_reg->fifo.rw_byte;
 #else
-                    p_uart->rx_data_buf[buf_idx++] = UART_FIFO_AHB_REG(uart_num);
+                    p_uart->rx_data_buf[buf_idx++] = READ_PERI_REG(UART_FIFO_AHB_REG(uart_num));
 #endif
                 }
                 uint8_t pat_chr = uart_reg->at_cmd_char.data;

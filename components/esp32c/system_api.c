@@ -112,6 +112,7 @@ esp_err_t esp_efuse_mac_get_default(uint8_t* mac)
 {
     uint32_t mac_low;
     uint32_t mac_high;
+#ifndef CONFIG_HARDWARE_IS_FPGA
     uint8_t efuse_crc;
     uint8_t calc_crc;
 
@@ -141,6 +142,14 @@ esp_err_t esp_efuse_mac_get_default(uint8_t* mac)
             abort();
         }
     }
+#else
+    mac[0] = 0x66;
+    mac[1] = 0x66;
+    mac[2] = 0x66;
+    mac[3] = 0x66;
+    mac[4] = 0x66;
+    mac[5] = 0x66;
+#endif
     return ESP_OK;
 }
 

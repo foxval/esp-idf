@@ -151,7 +151,11 @@ static void uartIsrHdl(void *arg)
     BaseType_t xHigherPriorityTaskWoken;
     SET_PERI_REG_MASK(UART_INT_CLR_REG(0), UART_RXFIFO_FULL_INT_CLR);
     while (READ_PERI_REG(UART_STATUS_REG(0)) & (UART_RXFIFO_CNT << UART_RXFIFO_CNT_S)) {
-        c = READ_PERI_REG(UART_FIFO_REG(0));
+#ifdef CONFIG_CHIP_IS_ESP32
+    	c = READ_PERI_REG(UART_FIFO_REG(0));
+#else
+        c = READ_PERI_REG(UART_FIFO_AHB_REG(0));
+#endif
         xQueueSendFromISR(uartRxQueue, &c, &xHigherPriorityTaskWoken);
         printf("ISR: %c\n", c);
     }

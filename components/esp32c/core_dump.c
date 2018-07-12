@@ -497,7 +497,7 @@ static int esp_core_dump_uart_get_char() {
     int i;
     uint32_t reg = (READ_PERI_REG(UART_STATUS_REG(0)) >> UART_RXFIFO_CNT_S) & UART_RXFIFO_CNT;
     if (reg)
-        i = READ_PERI_REG(UART_FIFO_REG(0));
+        i = READ_PERI_REG(UART_FIFO_AHB_REG(0));
     else
         i = -1;
     return i;

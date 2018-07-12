@@ -41,11 +41,11 @@ static void tskOne(void *pvParameters)
     while (1) {
         state = 1;
         for (x = 0; x < 64; x++) {
-            WRITE_PERI_REG(UART_FIFO_REG(1), x ^ xor);
+            WRITE_PERI_REG(UART_FIFO_AHB_REG(1), x ^ xor);
         }
         for (w = 0; w < (1 << 14); w++); //delay
         state = 2;
-        test_fastbus_cp(UART_FIFO_REG(1), &res[0], 64, &dummy);
+        test_fastbus_cp(UART_FIFO_AHB_REG(1), &res[0], 64, &dummy);
         for (w = 0; w < (1 << 10); w++);    //delay
         for (x = 0; x < 255; x++) {
             ct[x] = 0;    //zero ctrs
@@ -87,10 +87,10 @@ static void tskTwo(void *pvParameters)
     while (1) {
         while (state != 1) ;
         for (x = 64; x < 128; x++) {
-            WRITE_PERI_REG(UART_FIFO_REG(1), x ^ xor);
+            WRITE_PERI_REG(UART_FIFO_AHB_REG(1), x ^ xor);
         }
         while (state != 2);
-        test_fastbus_cp2(UART_FIFO_REG(1), &res[64], 64, &dummy);
+        test_fastbus_cp2(UART_FIFO_AHB_REG(1), &res[64], 64, &dummy);
     }
 }
 
