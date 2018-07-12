@@ -290,9 +290,12 @@ void start_cpu0_default(void)
 #endif
     trax_start_trace(TRAX_DOWNCOUNT_WORDS);
 #endif
+
 #ifndef CONFIG_HARDWARE_IS_FPGA
     esp_clk_init();
     esp_perip_clk_init();
+#else
+    ets_update_cpu_frequency(CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ);
 #endif
     intr_matrix_clear();
 

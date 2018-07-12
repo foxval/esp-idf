@@ -11,7 +11,6 @@ config ESP32_DEFAULT_CPU_FREQ_40
     depends on HARDWARE_IS_FPGA
     bool "40 MHz"
 config ESP32_DEFAULT_CPU_FREQ_80
-    depends on HARDWARE_IS_CHIP
     bool "80 MHz"
 config ESP32_DEFAULT_CPU_FREQ_160
     depends on HARDWARE_IS_CHIP
