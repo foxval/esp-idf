@@ -120,7 +120,7 @@ extern "C" {
 #define GPIO_PIN_REG_7          IOMUX_REG_GPIO7
 #define GPIO_PIN_REG_8          IOMUX_REG_GPIO8
 #define GPIO_PIN_REG_9          IOMUX_REG_GPIO9
-#define GPIO_PIN_REG_10          IOMUX_REG_GPIO0
+#define GPIO_PIN_REG_10          IOMUX_REG_GPIO10
 #define GPIO_PIN_REG_11          IOMUX_REG_GPIO11
 #define GPIO_PIN_REG_12          IOMUX_REG_GPIO12
 #define GPIO_PIN_REG_13          IOMUX_REG_GPIO13
