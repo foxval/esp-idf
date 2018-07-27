@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,7 +35,15 @@ extern "C" {
 #define DPORT_PRO_MAC_NMI_MAP_V  0x1F
 #define DPORT_PRO_MAC_NMI_MAP_S  0
 
-#define DPORT_PRO_BB_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x008)
+#define DPORT_PRO_PWR_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x008)
+/* DPORT_PRO_PWR_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_PRO_PWR_INTR_MAP  0x0000001F
+#define DPORT_PRO_PWR_INTR_MAP_M  ((DPORT_PRO_PWR_INTR_MAP_V)<<(DPORT_PRO_PWR_INTR_MAP_S))
+#define DPORT_PRO_PWR_INTR_MAP_V  0x1F
+#define DPORT_PRO_PWR_INTR_MAP_S  0
+
+#define DPORT_PRO_BB_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x00C)
 /* DPORT_PRO_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BB_INT_MAP  0x0000001F
@@ -43,7 +51,7 @@ extern "C" {
 #define DPORT_PRO_BB_INT_MAP_V  0x1F
 #define DPORT_PRO_BB_INT_MAP_S  0
 
-#define DPORT_PRO_BT_MAC_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x00C)
+#define DPORT_PRO_BT_MAC_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x010)
 /* DPORT_PRO_BT_MAC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_MAC_INT_MAP  0x0000001F
@@ -51,7 +59,7 @@ extern "C" {
 #define DPORT_PRO_BT_MAC_INT_MAP_V  0x1F
 #define DPORT_PRO_BT_MAC_INT_MAP_S  0
 
-#define DPORT_PRO_BT_BB_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x010)
+#define DPORT_PRO_BT_BB_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x014)
 /* DPORT_PRO_BT_BB_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_BB_INT_MAP  0x0000001F
@@ -59,7 +67,7 @@ extern "C" {
 #define DPORT_PRO_BT_BB_INT_MAP_V  0x1F
 #define DPORT_PRO_BT_BB_INT_MAP_S  0
 
-#define DPORT_PRO_BT_BB_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x014)
+#define DPORT_PRO_BT_BB_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x018)
 /* DPORT_PRO_BT_BB_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_BT_BB_NMI_MAP  0x0000001F
@@ -67,7 +75,7 @@ extern "C" {
 #define DPORT_PRO_BT_BB_NMI_MAP_V  0x1F
 #define DPORT_PRO_BT_BB_NMI_MAP_S  0
 
-#define DPORT_PRO_RWBT_IRQ_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x018)
+#define DPORT_PRO_RWBT_IRQ_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x01C)
 /* DPORT_PRO_RWBT_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBT_IRQ_MAP  0x0000001F
@@ -75,7 +83,7 @@ extern "C" {
 #define DPORT_PRO_RWBT_IRQ_MAP_V  0x1F
 #define DPORT_PRO_RWBT_IRQ_MAP_S  0
 
-#define DPORT_PRO_RWBLE_IRQ_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x01C)
+#define DPORT_PRO_RWBLE_IRQ_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x020)
 /* DPORT_PRO_RWBLE_IRQ_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBLE_IRQ_MAP  0x0000001F
@@ -83,7 +91,7 @@ extern "C" {
 #define DPORT_PRO_RWBLE_IRQ_MAP_V  0x1F
 #define DPORT_PRO_RWBLE_IRQ_MAP_S  0
 
-#define DPORT_PRO_RWBT_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x020)
+#define DPORT_PRO_RWBT_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x024)
 /* DPORT_PRO_RWBT_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBT_NMI_MAP  0x0000001F
@@ -91,7 +99,7 @@ extern "C" {
 #define DPORT_PRO_RWBT_NMI_MAP_V  0x1F
 #define DPORT_PRO_RWBT_NMI_MAP_S  0
 
-#define DPORT_PRO_RWBLE_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x024)
+#define DPORT_PRO_RWBLE_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x028)
 /* DPORT_PRO_RWBLE_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RWBLE_NMI_MAP  0x0000001F
@@ -99,7 +107,7 @@ extern "C" {
 #define DPORT_PRO_RWBLE_NMI_MAP_V  0x1F
 #define DPORT_PRO_RWBLE_NMI_MAP_S  0
 
-#define DPORT_PRO_SLC0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x028)
+#define DPORT_PRO_SLC0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x02C)
 /* DPORT_PRO_SLC0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SLC0_INTR_MAP  0x0000001F
@@ -107,7 +115,7 @@ extern "C" {
 #define DPORT_PRO_SLC0_INTR_MAP_V  0x1F
 #define DPORT_PRO_SLC0_INTR_MAP_S  0
 
-#define DPORT_PRO_SLC1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x02C)
+#define DPORT_PRO_SLC1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x030)
 /* DPORT_PRO_SLC1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SLC1_INTR_MAP  0x0000001F
@@ -115,7 +123,7 @@ extern "C" {
 #define DPORT_PRO_SLC1_INTR_MAP_V  0x1F
 #define DPORT_PRO_SLC1_INTR_MAP_S  0
 
-#define DPORT_PRO_UHCI0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x030)
+#define DPORT_PRO_UHCI0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x034)
 /* DPORT_PRO_UHCI0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UHCI0_INTR_MAP  0x0000001F
@@ -123,7 +131,7 @@ extern "C" {
 #define DPORT_PRO_UHCI0_INTR_MAP_V  0x1F
 #define DPORT_PRO_UHCI0_INTR_MAP_S  0
 
-#define DPORT_PRO_UHCI1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x034)
+#define DPORT_PRO_UHCI1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x038)
 /* DPORT_PRO_UHCI1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UHCI1_INTR_MAP  0x0000001F
@@ -131,7 +139,7 @@ extern "C" {
 #define DPORT_PRO_UHCI1_INTR_MAP_V  0x1F
 #define DPORT_PRO_UHCI1_INTR_MAP_S  0
 
-#define DPORT_PRO_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x038)
+#define DPORT_PRO_TG_T0_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x03C)
 /* DPORT_PRO_TG_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP  0x0000001F
@@ -139,7 +147,7 @@ extern "C" {
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x03C)
+#define DPORT_PRO_TG_T1_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x040)
 /* DPORT_PRO_TG_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP  0x0000001F
@@ -147,7 +155,7 @@ extern "C" {
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x040)
+#define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x044)
 /* DPORT_PRO_TG_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP  0x0000001F
@@ -155,7 +163,7 @@ extern "C" {
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x044)
+#define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x048)
 /* DPORT_PRO_TG_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP  0x0000001F
@@ -163,7 +171,7 @@ extern "C" {
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x048)
+#define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x04C)
 /* DPORT_PRO_TG1_T0_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP  0x0000001F
@@ -171,7 +179,7 @@ extern "C" {
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T0_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x04C)
+#define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x050)
 /* DPORT_PRO_TG1_T1_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP  0x0000001F
@@ -179,7 +187,7 @@ extern "C" {
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T1_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x050)
+#define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x054)
 /* DPORT_PRO_TG1_WDT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP  0x0000001F
@@ -187,7 +195,7 @@ extern "C" {
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_WDT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x054)
+#define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x058)
 /* DPORT_PRO_TG1_LACT_LEVEL_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP  0x0000001F
@@ -195,7 +203,7 @@ extern "C" {
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_LACT_LEVEL_INT_MAP_S  0
 
-#define DPORT_PRO_GPIO_DPORT_PRO_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x058)
+#define DPORT_PRO_GPIO_DPORT_PRO_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x05C)
 /* DPORT_PRO_GPIO_DPORT_PRO_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_DPORT_PRO_MAP  0x0000001F
@@ -203,7 +211,7 @@ extern "C" {
 #define DPORT_PRO_GPIO_DPORT_PRO_MAP_V  0x1F
 #define DPORT_PRO_GPIO_DPORT_PRO_MAP_S  0
 
-#define DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x05C)
+#define DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x060)
 /* DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP  0x0000001F
@@ -211,7 +219,7 @@ extern "C" {
 #define DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP_V  0x1F
 #define DPORT_PRO_GPIO_DPORT_PRO_NMI_MAP_S  0
 
-#define DPORT_PRO_GPIO_DPORT_APP_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x060)
+#define DPORT_PRO_GPIO_DPORT_APP_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x064)
 /* DPORT_PRO_GPIO_DPORT_APP_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_DPORT_APP_MAP  0x0000001F
@@ -219,7 +227,7 @@ extern "C" {
 #define DPORT_PRO_GPIO_DPORT_APP_MAP_V  0x1F
 #define DPORT_PRO_GPIO_DPORT_APP_MAP_S  0
 
-#define DPORT_PRO_GPIO_DPORT_APP_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x064)
+#define DPORT_PRO_GPIO_DPORT_APP_NMI_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x068)
 /* DPORT_PRO_GPIO_DPORT_APP_NMI_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_GPIO_DPORT_APP_NMI_MAP  0x0000001F
@@ -227,7 +235,15 @@ extern "C" {
 #define DPORT_PRO_GPIO_DPORT_APP_NMI_MAP_V  0x1F
 #define DPORT_PRO_GPIO_DPORT_APP_NMI_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x068)
+#define DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x06C)
+/* DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
+/*description: */
+#define DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP  0x0000001F
+#define DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_M  ((DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_V)<<(DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_S))
+#define DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_V  0x1F
+#define DPORT_PRO_DEDICATED_GPIO_IN_INTR_MAP_S  0
+
+#define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x070)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP  0x0000001F
@@ -235,7 +251,7 @@ extern "C" {
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_0_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x06C)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x074)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP  0x0000001F
@@ -243,7 +259,7 @@ extern "C" {
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_1_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x070)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x078)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP  0x0000001F
@@ -251,7 +267,7 @@ extern "C" {
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_2_MAP_S  0
 
-#define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x074)
+#define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x07C)
 /* DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP  0x0000001F
@@ -259,7 +275,7 @@ extern "C" {
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_V  0x1F
 #define DPORT_PRO_CPU_INTR_FROM_CPU_3_MAP_S  0
 
-#define DPORT_PRO_G0SPI_INTR_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x078)
+#define DPORT_PRO_G0SPI_INTR_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x080)
 /* DPORT_PRO_G0SPI_INTR_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G0SPI_INTR_0_MAP  0x0000001F
@@ -267,7 +283,7 @@ extern "C" {
 #define DPORT_PRO_G0SPI_INTR_0_MAP_V  0x1F
 #define DPORT_PRO_G0SPI_INTR_0_MAP_S  0
 
-#define DPORT_PRO_G0SPI_INTR_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x07C)
+#define DPORT_PRO_G0SPI_INTR_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x084)
 /* DPORT_PRO_G0SPI_INTR_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G0SPI_INTR_1_MAP  0x0000001F
@@ -275,7 +291,7 @@ extern "C" {
 #define DPORT_PRO_G0SPI_INTR_1_MAP_V  0x1F
 #define DPORT_PRO_G0SPI_INTR_1_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x080)
+#define DPORT_PRO_SPI_INTR_2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x088)
 /* DPORT_PRO_SPI_INTR_2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_2_MAP  0x0000001F
@@ -283,7 +299,7 @@ extern "C" {
 #define DPORT_PRO_SPI_INTR_2_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_2_MAP_S  0
 
-#define DPORT_PRO_SPI_INTR_3_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x084)
+#define DPORT_PRO_SPI_INTR_3_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x08C)
 /* DPORT_PRO_SPI_INTR_3_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI_INTR_3_MAP  0x0000001F
@@ -291,7 +307,7 @@ extern "C" {
 #define DPORT_PRO_SPI_INTR_3_MAP_V  0x1F
 #define DPORT_PRO_SPI_INTR_3_MAP_S  0
 
-#define DPORT_PRO_I2S0_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x088)
+#define DPORT_PRO_I2S0_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x090)
 /* DPORT_PRO_I2S0_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2S0_INT_MAP  0x0000001F
@@ -299,7 +315,7 @@ extern "C" {
 #define DPORT_PRO_I2S0_INT_MAP_V  0x1F
 #define DPORT_PRO_I2S0_INT_MAP_S  0
 
-#define DPORT_PRO_I2S1_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x08C)
+#define DPORT_PRO_I2S1_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x094)
 /* DPORT_PRO_I2S1_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2S1_INT_MAP  0x0000001F
@@ -307,7 +323,7 @@ extern "C" {
 #define DPORT_PRO_I2S1_INT_MAP_V  0x1F
 #define DPORT_PRO_I2S1_INT_MAP_S  0
 
-#define DPORT_PRO_UART_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x090)
+#define DPORT_PRO_UART_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x098)
 /* DPORT_PRO_UART_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART_INTR_MAP  0x0000001F
@@ -315,7 +331,7 @@ extern "C" {
 #define DPORT_PRO_UART_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART_INTR_MAP_S  0
 
-#define DPORT_PRO_UART1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x094)
+#define DPORT_PRO_UART1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x09C)
 /* DPORT_PRO_UART1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART1_INTR_MAP  0x0000001F
@@ -323,7 +339,7 @@ extern "C" {
 #define DPORT_PRO_UART1_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART1_INTR_MAP_S  0
 
-#define DPORT_PRO_UART2_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x098)
+#define DPORT_PRO_UART2_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A0)
 /* DPORT_PRO_UART2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_UART2_INTR_MAP  0x0000001F
@@ -331,7 +347,7 @@ extern "C" {
 #define DPORT_PRO_UART2_INTR_MAP_V  0x1F
 #define DPORT_PRO_UART2_INTR_MAP_S  0
 
-#define DPORT_PRO_SDIO_HOST_DPORT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x09C)
+#define DPORT_PRO_SDIO_HOST_DPORT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A4)
 /* DPORT_PRO_SDIO_HOST_DPORT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SDIO_HOST_DPORT_MAP  0x0000001F
@@ -339,7 +355,7 @@ extern "C" {
 #define DPORT_PRO_SDIO_HOST_DPORT_MAP_V  0x1F
 #define DPORT_PRO_SDIO_HOST_DPORT_MAP_S  0
 
-#define DPORT_PRO_PWM0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A0)
+#define DPORT_PRO_PWM0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A8)
 /* DPORT_PRO_PWM0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM0_INTR_MAP  0x0000001F
@@ -347,7 +363,7 @@ extern "C" {
 #define DPORT_PRO_PWM0_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM0_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A4)
+#define DPORT_PRO_PWM1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0AC)
 /* DPORT_PRO_PWM1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM1_INTR_MAP  0x0000001F
@@ -355,7 +371,7 @@ extern "C" {
 #define DPORT_PRO_PWM1_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM1_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM2_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0A8)
+#define DPORT_PRO_PWM2_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B0)
 /* DPORT_PRO_PWM2_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM2_INTR_MAP  0x0000001F
@@ -363,7 +379,7 @@ extern "C" {
 #define DPORT_PRO_PWM2_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM2_INTR_MAP_S  0
 
-#define DPORT_PRO_PWM3_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0AC)
+#define DPORT_PRO_PWM3_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B4)
 /* DPORT_PRO_PWM3_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PWM3_INTR_MAP  0x0000001F
@@ -371,7 +387,7 @@ extern "C" {
 #define DPORT_PRO_PWM3_INTR_MAP_V  0x1F
 #define DPORT_PRO_PWM3_INTR_MAP_S  0
 
-#define DPORT_PRO_LEDC_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B0)
+#define DPORT_PRO_LEDC_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B8)
 /* DPORT_PRO_LEDC_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_LEDC_INT_MAP  0x0000001F
@@ -379,7 +395,7 @@ extern "C" {
 #define DPORT_PRO_LEDC_INT_MAP_V  0x1F
 #define DPORT_PRO_LEDC_INT_MAP_S  0
 
-#define DPORT_PRO_EFUSE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B4)
+#define DPORT_PRO_EFUSE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0BC)
 /* DPORT_PRO_EFUSE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_EFUSE_INT_MAP  0x0000001F
@@ -387,7 +403,7 @@ extern "C" {
 #define DPORT_PRO_EFUSE_INT_MAP_V  0x1F
 #define DPORT_PRO_EFUSE_INT_MAP_S  0
 
-#define DPORT_PRO_CAN_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0B8)
+#define DPORT_PRO_CAN_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C0)
 /* DPORT_PRO_CAN_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CAN_INT_MAP  0x0000001F
@@ -395,7 +411,7 @@ extern "C" {
 #define DPORT_PRO_CAN_INT_MAP_V  0x1F
 #define DPORT_PRO_CAN_INT_MAP_S  0
 
-#define DPORT_PRO_RTC_CORE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0BC)
+#define DPORT_PRO_RTC_CORE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C4)
 /* DPORT_PRO_RTC_CORE_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RTC_CORE_INTR_MAP  0x0000001F
@@ -403,7 +419,7 @@ extern "C" {
 #define DPORT_PRO_RTC_CORE_INTR_MAP_V  0x1F
 #define DPORT_PRO_RTC_CORE_INTR_MAP_S  0
 
-#define DPORT_PRO_RMT_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C0)
+#define DPORT_PRO_RMT_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C8)
 /* DPORT_PRO_RMT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RMT_INTR_MAP  0x0000001F
@@ -411,7 +427,7 @@ extern "C" {
 #define DPORT_PRO_RMT_INTR_MAP_V  0x1F
 #define DPORT_PRO_RMT_INTR_MAP_S  0
 
-#define DPORT_PRO_PCNT_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C4)
+#define DPORT_PRO_PCNT_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0CC)
 /* DPORT_PRO_PCNT_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PCNT_INTR_MAP  0x0000001F
@@ -419,7 +435,7 @@ extern "C" {
 #define DPORT_PRO_PCNT_INTR_MAP_V  0x1F
 #define DPORT_PRO_PCNT_INTR_MAP_S  0
 
-#define DPORT_PRO_I2C_EXT0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0C8)
+#define DPORT_PRO_I2C_EXT0_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D0)
 /* DPORT_PRO_I2C_EXT0_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2C_EXT0_INTR_MAP  0x0000001F
@@ -427,7 +443,7 @@ extern "C" {
 #define DPORT_PRO_I2C_EXT0_INTR_MAP_V  0x1F
 #define DPORT_PRO_I2C_EXT0_INTR_MAP_S  0
 
-#define DPORT_PRO_I2C_EXT1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0CC)
+#define DPORT_PRO_I2C_EXT1_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D4)
 /* DPORT_PRO_I2C_EXT1_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_I2C_EXT1_INTR_MAP  0x0000001F
@@ -435,7 +451,7 @@ extern "C" {
 #define DPORT_PRO_I2C_EXT1_INTR_MAP_V  0x1F
 #define DPORT_PRO_I2C_EXT1_INTR_MAP_S  0
 
-#define DPORT_PRO_RSA_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D0)
+#define DPORT_PRO_RSA_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D8)
 /* DPORT_PRO_RSA_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_RSA_INTR_MAP  0x0000001F
@@ -443,7 +459,7 @@ extern "C" {
 #define DPORT_PRO_RSA_INTR_MAP_V  0x1F
 #define DPORT_PRO_RSA_INTR_MAP_S  0
 
-#define DPORT_PRO_G0SPI1_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D4)
+#define DPORT_PRO_G0SPI1_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0DC)
 /* DPORT_PRO_G0SPI1_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G0SPI1_DMA_INT_MAP  0x0000001F
@@ -451,7 +467,7 @@ extern "C" {
 #define DPORT_PRO_G0SPI1_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_G0SPI1_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_SPI2_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0D8)
+#define DPORT_PRO_SPI2_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E0)
 /* DPORT_PRO_SPI2_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI2_DMA_INT_MAP  0x0000001F
@@ -459,7 +475,7 @@ extern "C" {
 #define DPORT_PRO_SPI2_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_SPI2_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_SPI3_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0DC)
+#define DPORT_PRO_SPI3_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E4)
 /* DPORT_PRO_SPI3_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SPI3_DMA_INT_MAP  0x0000001F
@@ -467,7 +483,7 @@ extern "C" {
 #define DPORT_PRO_SPI3_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_SPI3_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_WDG_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E0)
+#define DPORT_PRO_WDG_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E8)
 /* DPORT_PRO_WDG_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_WDG_INT_MAP  0x0000001F
@@ -475,7 +491,7 @@ extern "C" {
 #define DPORT_PRO_WDG_INT_MAP_V  0x1F
 #define DPORT_PRO_WDG_INT_MAP_S  0
 
-#define DPORT_PRO_TIMER_INT1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E4)
+#define DPORT_PRO_TIMER_INT1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0EC)
 /* DPORT_PRO_TIMER_INT1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TIMER_INT1_MAP  0x0000001F
@@ -483,7 +499,7 @@ extern "C" {
 #define DPORT_PRO_TIMER_INT1_MAP_V  0x1F
 #define DPORT_PRO_TIMER_INT1_MAP_S  0
 
-#define DPORT_PRO_TIMER_INT2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0E8)
+#define DPORT_PRO_TIMER_INT2_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F0)
 /* DPORT_PRO_TIMER_INT2_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TIMER_INT2_MAP  0x0000001F
@@ -491,7 +507,7 @@ extern "C" {
 #define DPORT_PRO_TIMER_INT2_MAP_V  0x1F
 #define DPORT_PRO_TIMER_INT2_MAP_S  0
 
-#define DPORT_PRO_TG_T0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0EC)
+#define DPORT_PRO_TG_T0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F4)
 /* DPORT_PRO_TG_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP  0x0000001F
@@ -499,7 +515,7 @@ extern "C" {
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_T1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F0)
+#define DPORT_PRO_TG_T1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F8)
 /* DPORT_PRO_TG_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP  0x0000001F
@@ -507,7 +523,7 @@ extern "C" {
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F4)
+#define DPORT_PRO_TG_WDT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0FC)
 /* DPORT_PRO_TG_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP  0x0000001F
@@ -515,7 +531,7 @@ extern "C" {
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0F8)
+#define DPORT_PRO_TG_LACT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x100)
 /* DPORT_PRO_TG_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP  0x0000001F
@@ -523,7 +539,7 @@ extern "C" {
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x0FC)
+#define DPORT_PRO_TG1_T0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x104)
 /* DPORT_PRO_TG1_T0_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP  0x0000001F
@@ -531,7 +547,7 @@ extern "C" {
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T0_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x100)
+#define DPORT_PRO_TG1_T1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x108)
 /* DPORT_PRO_TG1_T1_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP  0x0000001F
@@ -539,7 +555,7 @@ extern "C" {
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_T1_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x104)
+#define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x10C)
 /* DPORT_PRO_TG1_WDT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP  0x0000001F
@@ -547,7 +563,7 @@ extern "C" {
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_WDT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x108)
+#define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x110)
 /* DPORT_PRO_TG1_LACT_EDGE_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP  0x0000001F
@@ -555,7 +571,7 @@ extern "C" {
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_V  0x1F
 #define DPORT_PRO_TG1_LACT_EDGE_INT_MAP_S  0
 
-#define DPORT_PRO_CACHE_IA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x10C)
+#define DPORT_PRO_CACHE_IA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x114)
 /* DPORT_PRO_CACHE_IA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_CACHE_IA_INT_MAP  0x0000001F
@@ -563,7 +579,7 @@ extern "C" {
 #define DPORT_PRO_CACHE_IA_INT_MAP_V  0x1F
 #define DPORT_PRO_CACHE_IA_INT_MAP_S  0
 
-#define DPORT_SYSTIMER_TARGET0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x110)
+#define DPORT_SYSTIMER_TARGET0_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x118)
 /* DPORT_PRO_SYSTIMER_TARGET0_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SYSTIMER_TARGET0_INT_MAP  0x0000001F
@@ -571,7 +587,7 @@ extern "C" {
 #define DPORT_PRO_SYSTIMER_TARGET0_INT_MAP_V  0x1F
 #define DPORT_PRO_SYSTIMER_TARGET0_INT_MAP_S  0
 
-#define DPORT_SYSTIMER_TARGET1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x114)
+#define DPORT_SYSTIMER_TARGET1_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x11C)
 /* DPORT_PRO_SYSTIMER_TARGET1_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SYSTIMER_TARGET1_INT_MAP  0x0000001F
@@ -579,7 +595,7 @@ extern "C" {
 #define DPORT_PRO_SYSTIMER_TARGET1_INT_MAP_V  0x1F
 #define DPORT_PRO_SYSTIMER_TARGET1_INT_MAP_S  0
 
-#define DPORT_SYSTIMER_TARGET2_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x118)
+#define DPORT_SYSTIMER_TARGET2_EDGE_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x120)
 /* DPORT_PRO_SYSTIMER_TARGET2_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_SYSTIMER_TARGET2_INT_MAP  0x0000001F
@@ -587,7 +603,7 @@ extern "C" {
 #define DPORT_PRO_SYSTIMER_TARGET2_INT_MAP_V  0x1F
 #define DPORT_PRO_SYSTIMER_TARGET2_INT_MAP_S  0
 
-#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x11C)
+#define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x124)
 /* DPORT_PRO_ASSIST_DEBUG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_ASSIST_DEBUG_INTR_MAP  0x0000001F
@@ -595,7 +611,7 @@ extern "C" {
 #define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_V  0x1F
 #define DPORT_PRO_ASSIST_DEBUG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x120)
+#define DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x128)
 /* DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP  0x0000001F
@@ -603,7 +619,7 @@ extern "C" {
 #define DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_PRO_IRAM0_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x124)
+#define DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x12C)
 /* DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP  0x0000001F
@@ -611,7 +627,7 @@ extern "C" {
 #define DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_PRO_DRAM0_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x128)
+#define DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x130)
 /* DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP  0x0000001F
@@ -619,7 +635,7 @@ extern "C" {
 #define DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_PRO_DPORT_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x12C)
+#define DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x134)
 /* DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP  0x0000001F
@@ -627,7 +643,7 @@ extern "C" {
 #define DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_PRO_AHB_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x130)
+#define DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x138)
 /* DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP  0x0000001F
@@ -635,7 +651,7 @@ extern "C" {
 #define DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_PRO_CACHE_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x134)
+#define DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x13C)
 /* DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP  0x0000001F
@@ -643,7 +659,7 @@ extern "C" {
 #define DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_DMA_APB_I_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x138)
+#define DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x140)
 /* DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP  0x0000001F
@@ -651,7 +667,7 @@ extern "C" {
 #define DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_DMA_RX_I_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x13C)
+#define DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x144)
 /* DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP  0x0000001F
@@ -659,7 +675,7 @@ extern "C" {
 #define DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP_V  0x1F
 #define DPORT_PRO_PMS_DMA_TX_I_ILG_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_G0SPI0_REJECT_CACHE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x140)
+#define DPORT_PRO_PMS_G0SPI0_REJECT_CACHE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x148)
 /* DPORT_PRO_G0SPI0_REJECT_CACHE_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G0SPI0_REJECT_CACHE_INTR_MAP  0x0000001F
@@ -667,7 +683,7 @@ extern "C" {
 #define DPORT_PRO_G0SPI0_REJECT_CACHE_INTR_MAP_V  0x1F
 #define DPORT_PRO_G0SPI0_REJECT_CACHE_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_G0SPI1_REJECT_CPU_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x144)
+#define DPORT_PRO_PMS_G0SPI1_REJECT_CPU_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x14C)
 /* DPORT_PRO_G0SPI1_REJECT_CPU_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G0SPI1_REJECT_CPU_INTR_MAP  0x0000001F
@@ -675,7 +691,7 @@ extern "C" {
 #define DPORT_PRO_G0SPI1_REJECT_CPU_INTR_MAP_V  0x1F
 #define DPORT_PRO_G0SPI1_REJECT_CPU_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_G1SPI0_REJECT_CACHE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x148)
+#define DPORT_PRO_PMS_G1SPI0_REJECT_CACHE_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x150)
 /* DPORT_PRO_G1SPI0_REJECT_CACHE_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G1SPI0_REJECT_CACHE_INTR_MAP  0x0000001F
@@ -683,7 +699,7 @@ extern "C" {
 #define DPORT_PRO_G1SPI0_REJECT_CACHE_INTR_MAP_V  0x1F
 #define DPORT_PRO_G1SPI0_REJECT_CACHE_INTR_MAP_S  0
 
-#define DPORT_PRO_PMS_G1SPI1_REJECT_CPU_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x14C)
+#define DPORT_PRO_PMS_G1SPI1_REJECT_CPU_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x154)
 /* DPORT_PRO_G1SPI1_REJECT_CPU_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G1SPI1_REJECT_CPU_INTR_MAP  0x0000001F
@@ -691,7 +707,7 @@ extern "C" {
 #define DPORT_PRO_G1SPI1_REJECT_CPU_INTR_MAP_V  0x1F
 #define DPORT_PRO_G1SPI1_REJECT_CPU_INTR_MAP_S  0
 
-#define DPORT_PRO_G1SPI_INTR_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x150)
+#define DPORT_PRO_G1SPI_INTR_0_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x158)
 /* DPORT_PRO_G1SPI_INTR_0_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G1SPI_INTR_0_MAP  0x0000001F
@@ -699,7 +715,7 @@ extern "C" {
 #define DPORT_PRO_G1SPI_INTR_0_MAP_V  0x1F
 #define DPORT_PRO_G1SPI_INTR_0_MAP_S  0
 
-#define DPORT_PRO_G1SPI_INTR_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x154)
+#define DPORT_PRO_G1SPI_INTR_1_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x15C)
 /* DPORT_PRO_G1SPI_INTR_1_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G1SPI_INTR_1_MAP  0x0000001F
@@ -707,7 +723,7 @@ extern "C" {
 #define DPORT_PRO_G1SPI_INTR_1_MAP_V  0x1F
 #define DPORT_PRO_G1SPI_INTR_1_MAP_S  0
 
-#define DPORT_PRO_G1SPI1_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x158)
+#define DPORT_PRO_G1SPI1_DMA_INT_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x160)
 /* DPORT_PRO_G1SPI1_DMA_INT_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_G1SPI1_DMA_INT_MAP  0x0000001F
@@ -715,7 +731,7 @@ extern "C" {
 #define DPORT_PRO_G1SPI1_DMA_INT_MAP_V  0x1F
 #define DPORT_PRO_G1SPI1_DMA_INT_MAP_S  0
 
-#define DPORT_PRO_DMA_COPY_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x15C)
+#define DPORT_PRO_DMA_COPY_INTR_MAP_REG          (DR_REG_INTERRUPT_BASE + 0x164)
 /* DPORT_PRO_DMA_COPY_INTR_MAP : R/W ;bitpos:[4:0] ;default: 5'd16 ; */
 /*description: */
 #define DPORT_PRO_DMA_COPY_INTR_MAP  0x0000001F
@@ -723,7 +739,7 @@ extern "C" {
 #define DPORT_PRO_DMA_COPY_INTR_MAP_V  0x1F
 #define DPORT_PRO_DMA_COPY_INTR_MAP_S  0
 
-#define DPORT_PRO_INTR_STATUS_0_REG          (DR_REG_INTERRUPT_BASE + 0x160)
+#define DPORT_PRO_INTR_STATUS_0_REG          (DR_REG_INTERRUPT_BASE + 0x168)
 /* DPORT_PRO_INTR_STATUS_0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_0  0xFFFFFFFF
@@ -731,7 +747,7 @@ extern "C" {
 #define DPORT_PRO_INTR_STATUS_0_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_0_S  0
 
-#define DPORT_PRO_INTR_STATUS_1_REG          (DR_REG_INTERRUPT_BASE + 0x164)
+#define DPORT_PRO_INTR_STATUS_1_REG          (DR_REG_INTERRUPT_BASE + 0x16C)
 /* DPORT_PRO_INTR_STATUS_1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_1  0xFFFFFFFF
@@ -739,7 +755,7 @@ extern "C" {
 #define DPORT_PRO_INTR_STATUS_1_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_1_S  0
 
-#define DPORT_PRO_INTR_STATUS_2_REG          (DR_REG_INTERRUPT_BASE + 0x168)
+#define DPORT_PRO_INTR_STATUS_2_REG          (DR_REG_INTERRUPT_BASE + 0x170)
 /* DPORT_PRO_INTR_STATUS_2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define DPORT_PRO_INTR_STATUS_2  0xFFFFFFFF
@@ -747,7 +763,7 @@ extern "C" {
 #define DPORT_PRO_INTR_STATUS_2_V  0xFFFFFFFF
 #define DPORT_PRO_INTR_STATUS_2_S  0
 
-#define INTERRUPT_CLOCK_GATE_REG          (DR_REG_INTERRUPT_BASE + 0x16C)
+#define INTERRUPT_CLOCK_GATE_REG          (DR_REG_INTERRUPT_BASE + 0x174)
 /* INTERRUPT_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define INTERRUPT_CLK_EN  (BIT(0))
@@ -756,7 +772,7 @@ extern "C" {
 #define INTERRUPT_CLK_EN_S  0
 
 #define INTERRUPT_DATE_REG          (DR_REG_INTERRUPT_BASE + 0xFFC)
-/* INTERRUPT_DATE : R/W ;bitpos:[27:0] ;default: 28'h1805080 ; */
+/* INTERRUPT_DATE : R/W ;bitpos:[27:0] ;default: 28'h1805300 ; */
 /*description: */
 #define INTERRUPT_DATE  0x0FFFFFFF
 #define INTERRUPT_DATE_M  ((INTERRUPT_DATE_V)<<(INTERRUPT_DATE_S))

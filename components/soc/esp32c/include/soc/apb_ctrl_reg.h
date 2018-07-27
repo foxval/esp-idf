@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ extern "C" {
 #define APB_CTRL_XTAL_TICK_NUM_V  0xFF
 #define APB_CTRL_XTAL_TICK_NUM_S  0
 
-#define APB_CTRL_APB_SARADC_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x008)
+#define APB_CTRL_SARADC_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x008)
 /* APB_CTRL_SARADC_XPD_SAR_FORCE : R/W ;bitpos:[28:27] ;default: 2'd0 ; */
 /*description: force option to xpd sar blocks*/
 #define APB_CTRL_SARADC_XPD_SAR_FORCE  0x00000003
@@ -145,13 +145,6 @@ extern "C" {
 #define APB_CTRL_SARADC_WORK_MODE_M  ((APB_CTRL_SARADC_WORK_MODE_V)<<(APB_CTRL_SARADC_WORK_MODE_S))
 #define APB_CTRL_SARADC_WORK_MODE_V  0x3
 #define APB_CTRL_SARADC_WORK_MODE_S  3
-/* APB_CTRL_SARADC_SAR2_MUX : R/W ;bitpos:[2] ;default: 1'd0 ; */
-/*description: 1: SAR ADC2 is controlled by DIG ADC2 CTRL  0: SAR ADC2 is controlled
- by PWDET CTRL*/
-#define APB_CTRL_SARADC_SAR2_MUX  (BIT(2))
-#define APB_CTRL_SARADC_SAR2_MUX_M  (BIT(2))
-#define APB_CTRL_SARADC_SAR2_MUX_V  0x1
-#define APB_CTRL_SARADC_SAR2_MUX_S  2
 /* APB_CTRL_SARADC_START : R/W ;bitpos:[1] ;default: 1'd0 ; */
 /*description: */
 #define APB_CTRL_SARADC_START  (BIT(1))
@@ -165,7 +158,7 @@ extern "C" {
 #define APB_CTRL_SARADC_START_FORCE_V  0x1
 #define APB_CTRL_SARADC_START_FORCE_S  0
 
-#define APB_CTRL_APB_SARADC_CTRL2_REG          (DR_REG_APB_CTRL_BASE + 0x00C)
+#define APB_CTRL_SARADC_CTRL2_REG          (DR_REG_APB_CTRL_BASE + 0x00C)
 /* APB_CTRL_SARADC_TIMER_EN : R/W ;bitpos:[20] ;default: 1'd0 ; */
 /*description: to enable saradc timer trigger*/
 #define APB_CTRL_SARADC_TIMER_EN  (BIT(20))
@@ -209,7 +202,7 @@ extern "C" {
 #define APB_CTRL_SARADC_MEAS_NUM_LIMIT_V  0x1
 #define APB_CTRL_SARADC_MEAS_NUM_LIMIT_S  0
 
-#define APB_CTRL_APB_SARADC_FSM_REG          (DR_REG_APB_CTRL_BASE + 0x010)
+#define APB_CTRL_SARADC_FSM_REG          (DR_REG_APB_CTRL_BASE + 0x010)
 /* APB_CTRL_SARADC_SAMPLE_CYCLE : R/W ;bitpos:[31:24] ;default: 8'd2 ; */
 /*description: sample cycles*/
 #define APB_CTRL_SARADC_SAMPLE_CYCLE  0x000000FF
@@ -223,7 +216,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAMPLE_NUM_V  0xFF
 #define APB_CTRL_SARADC_SAMPLE_NUM_S  16
 
-#define APB_CTRL_APB_SARADC_FSM_WAIT_REG          (DR_REG_APB_CTRL_BASE + 0x014)
+#define APB_CTRL_SARADC_FSM_WAIT_REG          (DR_REG_APB_CTRL_BASE + 0x014)
 /* APB_CTRL_SARADC_STANDBY_WAIT : R/W ;bitpos:[23:16] ;default: 8'd255 ; */
 /*description: */
 #define APB_CTRL_SARADC_STANDBY_WAIT  0x000000FF
@@ -243,7 +236,7 @@ extern "C" {
 #define APB_CTRL_SARADC_XPD_WAIT_V  0xFF
 #define APB_CTRL_SARADC_XPD_WAIT_S  0
 
-#define APB_CTRL_APB_SARADC_SAR1_STATUS_REG          (DR_REG_APB_CTRL_BASE + 0x018)
+#define APB_CTRL_SARADC_SAR1_STATUS_REG          (DR_REG_APB_CTRL_BASE + 0x018)
 /* APB_CTRL_SARADC_SAR1_STATUS : RO ;bitpos:[31:0] ;default: 32'd0 ; */
 /*description: */
 #define APB_CTRL_SARADC_SAR1_STATUS  0xFFFFFFFF
@@ -251,7 +244,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR1_STATUS_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR1_STATUS_S  0
 
-#define APB_CTRL_APB_SARADC_SAR2_STATUS_REG          (DR_REG_APB_CTRL_BASE + 0x01C)
+#define APB_CTRL_SARADC_SAR2_STATUS_REG          (DR_REG_APB_CTRL_BASE + 0x01C)
 /* APB_CTRL_SARADC_SAR2_STATUS : RO ;bitpos:[31:0] ;default: 32'd0 ; */
 /*description: */
 #define APB_CTRL_SARADC_SAR2_STATUS  0xFFFFFFFF
@@ -259,7 +252,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_STATUS_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_STATUS_S  0
 
-#define APB_CTRL_APB_SARADC_SAR1_PATT_TAB1_REG          (DR_REG_APB_CTRL_BASE + 0x020)
+#define APB_CTRL_SARADC_SAR1_PATT_TAB1_REG          (DR_REG_APB_CTRL_BASE + 0x020)
 /* APB_CTRL_SARADC_SAR1_PATT_TAB1 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: item 0 ~ 3 for pattern table 1 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR1_PATT_TAB1  0xFFFFFFFF
@@ -267,7 +260,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR1_PATT_TAB1_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR1_PATT_TAB1_S  0
 
-#define APB_CTRL_APB_SARADC_SAR1_PATT_TAB2_REG          (DR_REG_APB_CTRL_BASE + 0x024)
+#define APB_CTRL_SARADC_SAR1_PATT_TAB2_REG          (DR_REG_APB_CTRL_BASE + 0x024)
 /* APB_CTRL_SARADC_SAR1_PATT_TAB2 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 4 ~ 7 for pattern table 1 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR1_PATT_TAB2  0xFFFFFFFF
@@ -275,7 +268,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR1_PATT_TAB2_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR1_PATT_TAB2_S  0
 
-#define APB_CTRL_APB_SARADC_SAR1_PATT_TAB3_REG          (DR_REG_APB_CTRL_BASE + 0x028)
+#define APB_CTRL_SARADC_SAR1_PATT_TAB3_REG          (DR_REG_APB_CTRL_BASE + 0x028)
 /* APB_CTRL_SARADC_SAR1_PATT_TAB3 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 8 ~ 11 for pattern table 1 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR1_PATT_TAB3  0xFFFFFFFF
@@ -283,7 +276,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR1_PATT_TAB3_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR1_PATT_TAB3_S  0
 
-#define APB_CTRL_APB_SARADC_SAR1_PATT_TAB4_REG          (DR_REG_APB_CTRL_BASE + 0x02C)
+#define APB_CTRL_SARADC_SAR1_PATT_TAB4_REG          (DR_REG_APB_CTRL_BASE + 0x02C)
 /* APB_CTRL_SARADC_SAR1_PATT_TAB4 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 12 ~ 15 for pattern table 1 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR1_PATT_TAB4  0xFFFFFFFF
@@ -291,7 +284,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR1_PATT_TAB4_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR1_PATT_TAB4_S  0
 
-#define APB_CTRL_APB_SARADC_SAR2_PATT_TAB1_REG          (DR_REG_APB_CTRL_BASE + 0x030)
+#define APB_CTRL_SARADC_SAR2_PATT_TAB1_REG          (DR_REG_APB_CTRL_BASE + 0x030)
 /* APB_CTRL_SARADC_SAR2_PATT_TAB1 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: item 0 ~ 3 for pattern table 2 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR2_PATT_TAB1  0xFFFFFFFF
@@ -299,7 +292,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_PATT_TAB1_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_PATT_TAB1_S  0
 
-#define APB_CTRL_APB_SARADC_SAR2_PATT_TAB2_REG          (DR_REG_APB_CTRL_BASE + 0x034)
+#define APB_CTRL_SARADC_SAR2_PATT_TAB2_REG          (DR_REG_APB_CTRL_BASE + 0x034)
 /* APB_CTRL_SARADC_SAR2_PATT_TAB2 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 4 ~ 7 for pattern table 2 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR2_PATT_TAB2  0xFFFFFFFF
@@ -307,7 +300,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_PATT_TAB2_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_PATT_TAB2_S  0
 
-#define APB_CTRL_APB_SARADC_SAR2_PATT_TAB3_REG          (DR_REG_APB_CTRL_BASE + 0x038)
+#define APB_CTRL_SARADC_SAR2_PATT_TAB3_REG          (DR_REG_APB_CTRL_BASE + 0x038)
 /* APB_CTRL_SARADC_SAR2_PATT_TAB3 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 8 ~ 11 for pattern table 2 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR2_PATT_TAB3  0xFFFFFFFF
@@ -315,7 +308,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_PATT_TAB3_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_PATT_TAB3_S  0
 
-#define APB_CTRL_APB_SARADC_SAR2_PATT_TAB4_REG          (DR_REG_APB_CTRL_BASE + 0x03C)
+#define APB_CTRL_SARADC_SAR2_PATT_TAB4_REG          (DR_REG_APB_CTRL_BASE + 0x03C)
 /* APB_CTRL_SARADC_SAR2_PATT_TAB4 : R/W ;bitpos:[31:0] ;default: 32'hf0f0f0f ; */
 /*description: Item 12 ~ 15 for pattern table 2 (each item one byte)*/
 #define APB_CTRL_SARADC_SAR2_PATT_TAB4  0xFFFFFFFF
@@ -323,7 +316,7 @@ extern "C" {
 #define APB_CTRL_SARADC_SAR2_PATT_TAB4_V  0xFFFFFFFF
 #define APB_CTRL_SARADC_SAR2_PATT_TAB4_S  0
 
-#define APB_CTRL_APB_ADC_ARB_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x040)
+#define APB_CTRL_ADC_ARB_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x040)
 /* APB_CTRL_ADC_ARB_FIX_PRIORITY : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: adc2 arbiter uses fixed priority*/
 #define APB_CTRL_ADC_ARB_FIX_PRIORITY  (BIT(12))
@@ -869,7 +862,7 @@ extern "C" {
 #define APB_CTRL_SRAM_ACE7_SIZE_V  0xFFFF
 #define APB_CTRL_SRAM_ACE7_SIZE_S  0
 
-#define APB_CTRL_g0spi0_pms_ctrl_REG          (DR_REG_APB_CTRL_BASE + 0x10C)
+#define APB_CTRL_G0SPI0_PMS_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x10C)
 /* APB_CTRL_G0SPI0_REJECT_CDE : RO ;bitpos:[6:2] ;default: 5'h0 ; */
 /*description: */
 #define APB_CTRL_G0SPI0_REJECT_CDE  0x0000001F
@@ -889,7 +882,7 @@ extern "C" {
 #define APB_CTRL_G0SPI0_REJECT_INT_V  0x1
 #define APB_CTRL_G0SPI0_REJECT_INT_S  0
 
-#define APB_CTRL_g0spi0_reject_addr_REG          (DR_REG_APB_CTRL_BASE + 0x110)
+#define APB_CTRL_G0SPI0_REJECT_ADDR_REG          (DR_REG_APB_CTRL_BASE + 0x110)
 /* APB_CTRL_G0SPI0_REJECT_ADDR : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define APB_CTRL_G0SPI0_REJECT_ADDR  0xFFFFFFFF
@@ -897,7 +890,7 @@ extern "C" {
 #define APB_CTRL_G0SPI0_REJECT_ADDR_V  0xFFFFFFFF
 #define APB_CTRL_G0SPI0_REJECT_ADDR_S  0
 
-#define APB_CTRL_g0spi1_pms_ctrl_REG          (DR_REG_APB_CTRL_BASE + 0x114)
+#define APB_CTRL_G0SPI1_PMS_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x114)
 /* APB_CTRL_G0SPI1_REJECT_CDE : RO ;bitpos:[6:2] ;default: 5'h0 ; */
 /*description: */
 #define APB_CTRL_G0SPI1_REJECT_CDE  0x0000001F
@@ -917,7 +910,7 @@ extern "C" {
 #define APB_CTRL_G0SPI1_REJECT_INT_V  0x1
 #define APB_CTRL_G0SPI1_REJECT_INT_S  0
 
-#define APB_CTRL_g0spi1_reject_addr_REG          (DR_REG_APB_CTRL_BASE + 0x118)
+#define APB_CTRL_G0SPI1_REJECT_ADDR_REG          (DR_REG_APB_CTRL_BASE + 0x118)
 /* APB_CTRL_G0SPI1_REJECT_ADDR : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define APB_CTRL_G0SPI1_REJECT_ADDR  0xFFFFFFFF
@@ -925,7 +918,7 @@ extern "C" {
 #define APB_CTRL_G0SPI1_REJECT_ADDR_V  0xFFFFFFFF
 #define APB_CTRL_G0SPI1_REJECT_ADDR_S  0
 
-#define APB_CTRL_g1spi0_pms_ctrl_REG          (DR_REG_APB_CTRL_BASE + 0x11C)
+#define APB_CTRL_G1SPI0_PMS_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x11C)
 /* APB_CTRL_G1SPI0_REJECT_CDE : RO ;bitpos:[6:2] ;default: 5'h0 ; */
 /*description: */
 #define APB_CTRL_G1SPI0_REJECT_CDE  0x0000001F
@@ -945,7 +938,7 @@ extern "C" {
 #define APB_CTRL_G1SPI0_REJECT_INT_V  0x1
 #define APB_CTRL_G1SPI0_REJECT_INT_S  0
 
-#define APB_CTRL_g1spi0_reject_addr_REG          (DR_REG_APB_CTRL_BASE + 0x120)
+#define APB_CTRL_G1SPI0_REJECT_ADDR_REG          (DR_REG_APB_CTRL_BASE + 0x120)
 /* APB_CTRL_G1SPI0_REJECT_ADDR : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define APB_CTRL_G1SPI0_REJECT_ADDR  0xFFFFFFFF
@@ -953,7 +946,7 @@ extern "C" {
 #define APB_CTRL_G1SPI0_REJECT_ADDR_V  0xFFFFFFFF
 #define APB_CTRL_G1SPI0_REJECT_ADDR_S  0
 
-#define APB_CTRL_g1spi1_pms_ctrl_REG          (DR_REG_APB_CTRL_BASE + 0x124)
+#define APB_CTRL_G1SPI1_PMS_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x124)
 /* APB_CTRL_G1SPI1_REJECT_CDE : RO ;bitpos:[6:2] ;default: 5'h0 ; */
 /*description: */
 #define APB_CTRL_G1SPI1_REJECT_CDE  0x0000001F
@@ -973,7 +966,7 @@ extern "C" {
 #define APB_CTRL_G1SPI1_REJECT_INT_V  0x1
 #define APB_CTRL_G1SPI1_REJECT_INT_S  0
 
-#define APB_CTRL_g1spi1_reject_addr_REG          (DR_REG_APB_CTRL_BASE + 0x128)
+#define APB_CTRL_G1SPI1_REJECT_ADDR_REG          (DR_REG_APB_CTRL_BASE + 0x128)
 /* APB_CTRL_G1SPI1_REJECT_ADDR : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define APB_CTRL_G1SPI1_REJECT_ADDR  0xFFFFFFFF
@@ -981,8 +974,16 @@ extern "C" {
 #define APB_CTRL_G1SPI1_REJECT_ADDR_V  0xFFFFFFFF
 #define APB_CTRL_G1SPI1_REJECT_ADDR_S  0
 
+#define APB_CTRL_SDIO_CTRL_REG          (DR_REG_APB_CTRL_BASE + 0x12C)
+/* APB_CTRL_SDIO_WIN_ACCESS_EN : R/W ;bitpos:[0] ;default: 1'h0 ; */
+/*description: */
+#define APB_CTRL_SDIO_WIN_ACCESS_EN  (BIT(0))
+#define APB_CTRL_SDIO_WIN_ACCESS_EN_M  (BIT(0))
+#define APB_CTRL_SDIO_WIN_ACCESS_EN_V  0x1
+#define APB_CTRL_SDIO_WIN_ACCESS_EN_S  0
+
 #define APB_CTRL_DATE_REG          (DR_REG_APB_CTRL_BASE + 0x3FC)
-/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h1804270 ; */
+/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h18053100 ; */
 /*description: */
 #define APB_CTRL_DATE  0xFFFFFFFF
 #define APB_CTRL_DATE_M  ((APB_CTRL_DATE_V)<<(APB_CTRL_DATE_S))

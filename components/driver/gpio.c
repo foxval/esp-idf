@@ -20,6 +20,8 @@
 #include "driver/gpio.h"
 #include "driver/rtc_io.h"
 #include "soc/soc.h"
+#include "soc/periph_defs.h"
+#include "soc/rtc_cntl_reg.h"
 #include "esp_log.h"
 
 static const char* GPIO_TAG = "gpio";
@@ -542,7 +544,11 @@ esp_err_t gpio_hold_en(gpio_num_t gpio_num)
     if (RTC_GPIO_IS_VALID_GPIO(gpio_num)) {
         r = rtc_gpio_hold_en(gpio_num);
     } else if (GPIO_HOLD_MASK[gpio_num]) {
+#ifdef CONFIG_CHIP_IS_ESP32
         SET_PERI_REG_MASK(RTC_IO_DIG_PAD_HOLD_REG, GPIO_HOLD_MASK[gpio_num]);
+#else
+        SET_PERI_REG_MASK(RTC_CNTL_DIG_PAD_HOLD_REG, GPIO_HOLD_MASK[gpio_num]);
+#endif
     } else {
         r = ESP_ERR_NOT_SUPPORTED;
     }
@@ -556,7 +562,11 @@ esp_err_t gpio_hold_dis(gpio_num_t gpio_num)
     if (RTC_GPIO_IS_VALID_GPIO(gpio_num)) {
         r = rtc_gpio_hold_dis(gpio_num);
     } else if (GPIO_HOLD_MASK[gpio_num]) {
+#ifdef CONFIG_CHIP_IS_ESP32
         CLEAR_PERI_REG_MASK(RTC_IO_DIG_PAD_HOLD_REG, GPIO_HOLD_MASK[gpio_num]);
+#else
+        CLEAR_PERI_REG_MASK(RTC_CNTL_DIG_PAD_HOLD_REG, GPIO_HOLD_MASK[gpio_num]);
+#endif
     } else {
         r = ESP_ERR_NOT_SUPPORTED;
     }

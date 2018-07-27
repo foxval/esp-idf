@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -2195,10 +2195,6 @@ extern "C" {
 #define RTC_IO_IO_DATE_M  ((RTC_IO_IO_DATE_V)<<(RTC_IO_IO_DATE_S))
 #define RTC_IO_IO_DATE_V  0xFFFFFFF
 #define RTC_IO_IO_DATE_S  0
-
-/* Digital team to check */
-#define RTC_IO_DIG_PAD_HOLD_REG          (DR_REG_RTCIO_BASE + 0x74)
-
 
 #ifdef __cplusplus
 }

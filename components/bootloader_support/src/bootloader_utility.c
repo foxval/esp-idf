@@ -398,7 +398,7 @@ static void unpack_load_app(const esp_image_metadata_t* data)
     // Find DROM & IROM addresses, to configure cache mappings
     for (int i = 0; i < data->image.segment_count; i++) {
         const esp_image_segment_header_t *header = &data->segments[i];
-        if (header->load_addr >= SOC_IROM_LOW && header->load_addr < SOC_IROM_HIGH) {
+        if (header->load_addr >= SOC_DROM_LOW && header->load_addr < SOC_DROM_HIGH) {
             if (drom_addr != 0) {
                 ESP_LOGE(TAG, MAP_ERR_MSG, "DROM");
             } else {
@@ -408,7 +408,7 @@ static void unpack_load_app(const esp_image_metadata_t* data)
             drom_load_addr = header->load_addr;
             drom_size = header->data_len;
         }
-        if (header->load_addr >= SOC_DROM_LOW && header->load_addr < SOC_DROM_HIGH) {
+        if (header->load_addr >= SOC_IROM_LOW && header->load_addr < SOC_IROM_HIGH) {
             if (irom_addr != 0) {
                 ESP_LOGE(TAG, MAP_ERR_MSG, "IROM");
             } else {
@@ -454,14 +454,18 @@ static void set_cache_and_start_app(
     ESP_LOGV(TAG, "d mmu set paddr=%08x vaddr=%08x size=%d n=%d", drom_addr & 0xffff0000, drom_load_addr & 0xffff0000, drom_size, drom_page_count );
     int rc = cache_flash_mmu_set( 0, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
+#if !CONFIG_FREERTOS_UNICORE
     rc = cache_flash_mmu_set( 1, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
+#endif
     uint32_t irom_page_count = (irom_size + 64*1024 - 1) / (64*1024); // round up to 64k
     ESP_LOGV(TAG, "i mmu set paddr=%08x vaddr=%08x size=%d n=%d", irom_addr & 0xffff0000, irom_load_addr & 0xffff0000, irom_size, irom_page_count );
     rc = cache_flash_mmu_set( 0, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
+#if !CONFIG_FREERTOS_UNICORE
     rc = cache_flash_mmu_set( 1, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
+#endif
 #ifdef CONFIG_CHIP_IS_ESP32
     DPORT_REG_CLR_BIT( DPORT_PRO_CACHE_CTRL1_REG, (DPORT_PRO_CACHE_MASK_IRAM0) | (DPORT_PRO_CACHE_MASK_IRAM1 & 0) | (DPORT_PRO_CACHE_MASK_IROM0 & 0) | DPORT_PRO_CACHE_MASK_DROM0 | DPORT_PRO_CACHE_MASK_DRAM1 );
 #if !CONFIG_FREERTOS_UNICORE

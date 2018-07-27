@@ -26,6 +26,7 @@
 #include "soc/dport_reg.h"
 #include "soc/io_mux_reg.h"
 #include "soc/rtc_cntl_reg.h"
+#include "soc/periph_defs.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

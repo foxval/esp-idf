@@ -29,6 +29,7 @@
 #include "soc/io_mux_reg.h"
 #include "soc/rtc_cntl_reg.h"
 #include "soc/timer_group_reg.h"
+#include "soc/periph_defs.h"
 
 #include "driver/rtc_io.h"
 
@@ -248,7 +249,7 @@ void IRAM_ATTR call_start_cpu1()
 static void intr_matrix_clear(void)
 {
     //Clear all the interrupt matrix register
-    for (int i = ETS_WIFI_MAC_INTR_SOURCE; i <= ETS_CACHE_IA_INTR_SOURCE; i++) {
+    for (int i = ETS_WIFI_MAC_INTR_SOURCE; i < ETS_MAX_INTR_SOURCE; i++) {
         intr_matrix_set(0, i, ETS_INVALID_INUM);
 #if !CONFIG_FREERTOS_UNICORE
         intr_matrix_set(1, i, ETS_INVALID_INUM);

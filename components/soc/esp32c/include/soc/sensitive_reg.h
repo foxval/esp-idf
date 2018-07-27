@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -891,7 +891,33 @@ extern "C" {
 #define DPORT_PMS_OCCUPY_PRO_TRACE_V  0x3FFFFFF
 #define DPORT_PMS_OCCUPY_PRO_TRACE_S  0
 
-#define SENSITIVE_CLOCK_GATE_REG          (DR_REG_SENSITIVE_BASE + 0x094)
+#define DPORT_CACHE_TAG_ACCESS_REG          (DR_REG_SENSITIVE_BASE + 0x094)
+/* DPORT_PRO_D_TAG_WR_ACS : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_D_TAG_WR_ACS  (BIT(3))
+#define DPORT_PRO_D_TAG_WR_ACS_M  (BIT(3))
+#define DPORT_PRO_D_TAG_WR_ACS_V  0x1
+#define DPORT_PRO_D_TAG_WR_ACS_S  3
+/* DPORT_PRO_D_TAG_RD_ACS : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_D_TAG_RD_ACS  (BIT(2))
+#define DPORT_PRO_D_TAG_RD_ACS_M  (BIT(2))
+#define DPORT_PRO_D_TAG_RD_ACS_V  0x1
+#define DPORT_PRO_D_TAG_RD_ACS_S  2
+/* DPORT_PRO_I_TAG_WR_ACS : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_I_TAG_WR_ACS  (BIT(1))
+#define DPORT_PRO_I_TAG_WR_ACS_M  (BIT(1))
+#define DPORT_PRO_I_TAG_WR_ACS_V  0x1
+#define DPORT_PRO_I_TAG_WR_ACS_S  1
+/* DPORT_PRO_I_TAG_RD_ACS : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_I_TAG_RD_ACS  (BIT(0))
+#define DPORT_PRO_I_TAG_RD_ACS_M  (BIT(0))
+#define DPORT_PRO_I_TAG_RD_ACS_V  0x1
+#define DPORT_PRO_I_TAG_RD_ACS_S  0
+
+#define SENSITIVE_CLOCK_GATE_REG          (DR_REG_SENSITIVE_BASE + 0x098)
 /* SENSITIVE_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define SENSITIVE_CLK_EN  (BIT(0))
@@ -900,7 +926,7 @@ extern "C" {
 #define SENSITIVE_CLK_EN_S  0
 
 #define SENSITIVE_DATE_REG          (DR_REG_SENSITIVE_BASE + 0xFFC)
-/* SENSITIVE_DATE : R/W ;bitpos:[27:0] ;default: 28'h1804130 ; */
+/* SENSITIVE_DATE : R/W ;bitpos:[27:0] ;default: 28'h1806050 ; */
 /*description: */
 #define SENSITIVE_DATE  0x0FFFFFFF
 #define SENSITIVE_DATE_M  ((SENSITIVE_DATE_V)<<(SENSITIVE_DATE_S))

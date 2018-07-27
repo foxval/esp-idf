@@ -379,6 +379,7 @@
 #define ETS_MMU_IA_INTR_SOURCE                  66/**< interrupt of MMU Invalid Access, LEVEL*/
 #define ETS_MPU_IA_INTR_SOURCE                  67/**< interrupt of MPU Invalid Access, LEVEL*/
 #define ETS_CACHE_IA_INTR_SOURCE                68/**< interrupt of Cache Invalied Access, LEVEL*/
+#define ETS_MAX_INTR_SOURCE                     69/**< the number of interrupt sources*/
 
 //interrupt cpu using table, Please see the core-isa.h
 /*************************************************************************************************************

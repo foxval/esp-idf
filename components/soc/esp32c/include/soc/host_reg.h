@@ -1,9 +1,9 @@
-// Copyright 2015-2018 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,6 +15,9 @@
 #define _SOC_HOST_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define HOST_SLCHOST_FUNC2_0_REG          (DR_REG_SLCHOST_BASE + 0x10)
 /* HOST_SLC_FUNC2_INT : R/W ;bitpos:[24] ;default: 1'b0 ; */
@@ -49,11 +52,11 @@
 #define HOST_GPIO_SDIO_INT0_S  0
 
 #define HOST_SLCHOST_GPIO_STATUS1_REG          (DR_REG_SLCHOST_BASE + 0x38)
-/* HOST_GPIO_SDIO_INT1 : RO ;bitpos:[7:0] ;default: 8'b0 ; */
+/* HOST_GPIO_SDIO_INT1 : RO ;bitpos:[21:0] ;default: 22'b0 ; */
 /*description: */
-#define HOST_GPIO_SDIO_INT1  0x000000FF
+#define HOST_GPIO_SDIO_INT1  0x003FFFFF
 #define HOST_GPIO_SDIO_INT1_M  ((HOST_GPIO_SDIO_INT1_V)<<(HOST_GPIO_SDIO_INT1_S))
-#define HOST_GPIO_SDIO_INT1_V  0xFF
+#define HOST_GPIO_SDIO_INT1_V  0x3FFFFF
 #define HOST_GPIO_SDIO_INT1_S  0
 
 #define HOST_SLCHOST_GPIO_IN0_REG          (DR_REG_SLCHOST_BASE + 0x3C)
@@ -65,11 +68,11 @@
 #define HOST_GPIO_SDIO_IN0_S  0
 
 #define HOST_SLCHOST_GPIO_IN1_REG          (DR_REG_SLCHOST_BASE + 0x40)
-/* HOST_GPIO_SDIO_IN1 : RO ;bitpos:[7:0] ;default: 8'b0 ; */
+/* HOST_GPIO_SDIO_IN1 : RO ;bitpos:[21:0] ;default: 22'b0 ; */
 /*description: */
-#define HOST_GPIO_SDIO_IN1  0x000000FF
+#define HOST_GPIO_SDIO_IN1  0x003FFFFF
 #define HOST_GPIO_SDIO_IN1_M  ((HOST_GPIO_SDIO_IN1_V)<<(HOST_GPIO_SDIO_IN1_S))
-#define HOST_GPIO_SDIO_IN1_V  0xFF
+#define HOST_GPIO_SDIO_IN1_V  0x3FFFFF
 #define HOST_GPIO_SDIO_IN1_S  0
 
 #define HOST_SLC0HOST_TOKEN_RDATA_REG          (DR_REG_SLCHOST_BASE + 0x44)
@@ -2679,6 +2682,12 @@
 #define HOST_SLC_APBWIN_WDATA_S  0
 
 #define HOST_SLC_APBWIN_CONF_REG          (DR_REG_SLCHOST_BASE + 0x104)
+/* HOST_SLC_APBWIN_BUS : R/W ;bitpos:[30] ;default: 1'b0 ; */
+/*description: */
+#define HOST_SLC_APBWIN_BUS  (BIT(30))
+#define HOST_SLC_APBWIN_BUS_M  (BIT(30))
+#define HOST_SLC_APBWIN_BUS_V  0x1
+#define HOST_SLC_APBWIN_BUS_S  30
 /* HOST_SLC_APBWIN_START : R/W ;bitpos:[29] ;default: 1'b0 ; */
 /*description: */
 #define HOST_SLC_APBWIN_START  (BIT(29))
@@ -3051,7 +3060,7 @@
 #define HOST_SLC1_TOHOST_BIT0_INT_ENA1_S  0
 
 #define HOST_SLCHOSTDATE_REG          (DR_REG_SLCHOST_BASE + 0x178)
-/* HOST_SLCHOST_DATE : R/W ;bitpos:[31:0] ;default: 32'h16022500 ; */
+/* HOST_SLCHOST_DATE : R/W ;bitpos:[31:0] ;default: 32'h18041700 ; */
 /*description: */
 #define HOST_SLCHOST_DATE  0xFFFFFFFF
 #define HOST_SLCHOST_DATE_M  ((HOST_SLCHOST_DATE_V)<<(HOST_SLCHOST_DATE_S))
@@ -3136,6 +3145,9 @@
 #define HOST_SDIO20_MODE_V  0x1F
 #define HOST_SDIO20_MODE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

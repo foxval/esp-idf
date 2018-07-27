@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ extern "C" {
 #define GPIO_PIN_PAD_DRIVER_MASK               0x00000004
 #define GPIO_PIN_PAD_DRIVER_GET(x)             (((x) & GPIO_PIN_PAD_DRIVER_MASK) >> GPIO_PIN_PAD_DRIVER_LSB)
 #define GPIO_PIN_PAD_DRIVER_SET(x)             (((x) << GPIO_PIN_PAD_DRIVER_LSB) & GPIO_PIN_PAD_DRIVER_MASK)
+
 #define GPIO_BT_SELECT_REG          (DR_REG_GPIO_BASE + 0x0)
 /* GPIO_BT_SEL : R/W ;bitpos:[31:0] ;default: x ; */
 /*description: */
@@ -2654,7 +2655,7 @@ extern "C" {
 #define GPIO_PIN53_SYNC2_BYPASS_V  0x3
 #define GPIO_PIN53_SYNC2_BYPASS_S  0
 
-#define GPIO_cali_conf_REG          (DR_REG_GPIO_BASE + 0x14C)
+#define GPIO_CALI_CONF_REG          (DR_REG_GPIO_BASE + 0x14C)
 /* GPIO_CALI_START : R/W ;bitpos:[31] ;default: x ; */
 /*description: */
 #define GPIO_CALI_START  (BIT(31))
@@ -2668,7 +2669,7 @@ extern "C" {
 #define GPIO_CALI_RTC_MAX_V  0x3FF
 #define GPIO_CALI_RTC_MAX_S  0
 
-#define GPIO_cali_data_REG          (DR_REG_GPIO_BASE + 0x150)
+#define GPIO_CALI_DATA_REG          (DR_REG_GPIO_BASE + 0x150)
 /* GPIO_CALI_RDY_SYNC2 : RO ;bitpos:[31] ;default:  ; */
 /*description: */
 #define GPIO_CALI_RDY_SYNC2  (BIT(31))

@@ -134,6 +134,7 @@ typedef struct {
 // 1: GPIO 14, 15, 2, 4, 12, 13 for CLK, CMD, D0, D1, D2, D3 respectively.
 // only one peripheral for SDIO and only one slot can work at the same time.
 // currently slot 0 is occupied by SPI for flash
+#ifdef CONFIG_CHIP_IS_ESP32
 static const sdio_slave_slot_info_t s_slot_info[2]  = {
     {
         .clk = PERIPHS_IO_MUX_SD_CLK_U,
@@ -153,6 +154,27 @@ static const sdio_slave_slot_info_t s_slot_info[2]  = {
         .func = 4,
     },
 };
+#else
+static const sdio_slave_slot_info_t s_slot_info[2]  = {
+    {
+        .clk = PERIPHS_IO_MUX_GPIO12_U,
+        .cmd = PERIPHS_IO_MUX_GPIO11_U,
+        .d0 = PERIPHS_IO_MUX_GPIO13_U,
+        .d1 = PERIPHS_IO_MUX_GPIO14_U,
+        .d2 = PERIPHS_IO_MUX_GPIO9_U,
+        .d3 = PERIPHS_IO_MUX_GPIO10_U,
+        .func = 0,
+    }, {
+        .clk = PERIPHS_IO_MUX_GPIO36_U,
+        .cmd = PERIPHS_IO_MUX_GPIO35_U,
+        .d0 = PERIPHS_IO_MUX_GPIO37_U,
+        .d1 = PERIPHS_IO_MUX_GPIO38_U,
+        .d2 = PERIPHS_IO_MUX_GPIO33_U,
+        .d3 = PERIPHS_IO_MUX_GPIO34_U,
+        .func = 3,
+    },
+};
+#endif
 
 // first 3 WORDs of this struct is defined by and compatible to the DMA link list format.
 // sdio_slave_buf_handle_t is of type buf_desc_t*;

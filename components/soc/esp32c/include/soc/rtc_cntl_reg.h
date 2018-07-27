@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 #include "soc.h"
+#define RTC_CNTL_TIME0_REG		RTC_CNTL_TIME_LOW0_REG
+#define RTC_CNTL_TIME1_REG		RTC_CNTL_TIME_HIGH0_REG
+
 #define RTC_CNTL_OPTIONS0_REG          (DR_REG_RTCCNTL_BASE + 0x0000)
 /* RTC_CNTL_SW_SYS_RST : WO ;bitpos:[31] ;default: 1'd0 ; */
 /*description: SW system reset*/
@@ -253,7 +256,6 @@ extern "C" {
 #define RTC_CNTL_TIMER_XTL_OFF_V  0x1
 #define RTC_CNTL_TIMER_XTL_OFF_S  28
 
-#define RTC_CNTL_TIME0_REG		RTC_CNTL_TIME_LOW0_REG
 #define RTC_CNTL_TIME_LOW0_REG          (DR_REG_RTCCNTL_BASE + 0x0010)
 /* RTC_CNTL_TIMER_VALUE0_LOW : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: RTC timer low 32 bits*/
@@ -262,7 +264,6 @@ extern "C" {
 #define RTC_CNTL_TIMER_VALUE0_LOW_V  0xFFFFFFFF
 #define RTC_CNTL_TIMER_VALUE0_LOW_S  0
 
-#define RTC_CNTL_TIME1_REG		RTC_CNTL_TIME_HIGH0_REG
 #define RTC_CNTL_TIME_HIGH0_REG          (DR_REG_RTCCNTL_BASE + 0x0014)
 /* RTC_CNTL_TIMER_VALUE0_HIGH : RO ;bitpos:[15:0] ;default: 16'h0 ; */
 /*description: RTC timer high 16 bits*/
@@ -495,18 +496,6 @@ extern "C" {
 #define RTC_CNTL_PLLA_FORCE_PD_M  (BIT(23))
 #define RTC_CNTL_PLLA_FORCE_PD_V  0x1
 #define RTC_CNTL_PLLA_FORCE_PD_S  23
-/* RTC_CNTL_PWDET_CAL_FORCE_EN : R/W ;bitpos:[22:21] ;default: 2'd0 ; */
-/*description: pwdet force option*/
-#define RTC_CNTL_PWDET_CAL_FORCE_EN  0x00000003
-#define RTC_CNTL_PWDET_CAL_FORCE_EN_M  ((RTC_CNTL_PWDET_CAL_FORCE_EN_V)<<(RTC_CNTL_PWDET_CAL_FORCE_EN_S))
-#define RTC_CNTL_PWDET_CAL_FORCE_EN_V  0x3
-#define RTC_CNTL_PWDET_CAL_FORCE_EN_S  21
-/* RTC_CNTL_PKDET_CAL_FORCE_EN : R/W ;bitpos:[20:19] ;default: 2'd0 ; */
-/*description: pkdet force option*/
-#define RTC_CNTL_PKDET_CAL_FORCE_EN  0x00000003
-#define RTC_CNTL_PKDET_CAL_FORCE_EN_M  ((RTC_CNTL_PKDET_CAL_FORCE_EN_V)<<(RTC_CNTL_PKDET_CAL_FORCE_EN_S))
-#define RTC_CNTL_PKDET_CAL_FORCE_EN_V  0x3
-#define RTC_CNTL_PKDET_CAL_FORCE_EN_S  19
 
 #define RTC_CNTL_RESET_STATE_REG          (DR_REG_RTCCNTL_BASE + 0x0038)
 /* RTC_CNTL_PROCPU_STAT_VECTOR_SEL : R/W ;bitpos:[13] ;default: 1'b1 ; */
@@ -1320,37 +1309,43 @@ extern "C" {
 #define RTC_CNTL_SDIO_ENCURLIM_M  (BIT(20))
 #define RTC_CNTL_SDIO_ENCURLIM_V  0x1
 #define RTC_CNTL_SDIO_ENCURLIM_S  20
-/* RTC_CNTL_SDIO_DCURLIM : R/W ;bitpos:[19:17] ;default: 3'd0 ; */
+/* RTC_CNTL_SDIO_MODECURLIM : R/W ;bitpos:[19] ;default: 1'd0 ; */
+/*description: select current limit mode*/
+#define RTC_CNTL_SDIO_MODECURLIM  (BIT(19))
+#define RTC_CNTL_SDIO_MODECURLIM_M  (BIT(19))
+#define RTC_CNTL_SDIO_MODECURLIM_V  0x1
+#define RTC_CNTL_SDIO_MODECURLIM_S  19
+/* RTC_CNTL_SDIO_DCURLIM : R/W ;bitpos:[18:16] ;default: 3'd0 ; */
 /*description: tune current limit threshold when tieh = 0. About 800mA/(8+d)*/
 #define RTC_CNTL_SDIO_DCURLIM  0x00000007
 #define RTC_CNTL_SDIO_DCURLIM_M  ((RTC_CNTL_SDIO_DCURLIM_V)<<(RTC_CNTL_SDIO_DCURLIM_S))
 #define RTC_CNTL_SDIO_DCURLIM_V  0x7
-#define RTC_CNTL_SDIO_DCURLIM_S  17
-/* RTC_CNTL_SDIO_EN_INITI : R/W ;bitpos:[16] ;default: 1'd1 ; */
+#define RTC_CNTL_SDIO_DCURLIM_S  16
+/* RTC_CNTL_SDIO_EN_INITI : R/W ;bitpos:[15] ;default: 1'd1 ; */
 /*description: 0 to set init[1:0]=0*/
-#define RTC_CNTL_SDIO_EN_INITI  (BIT(16))
-#define RTC_CNTL_SDIO_EN_INITI_M  (BIT(16))
+#define RTC_CNTL_SDIO_EN_INITI  (BIT(15))
+#define RTC_CNTL_SDIO_EN_INITI_M  (BIT(15))
 #define RTC_CNTL_SDIO_EN_INITI_V  0x1
-#define RTC_CNTL_SDIO_EN_INITI_S  16
-/* RTC_CNTL_SDIO_INITI : R/W ;bitpos:[15:14] ;default: 2'd1 ; */
+#define RTC_CNTL_SDIO_EN_INITI_S  15
+/* RTC_CNTL_SDIO_INITI : R/W ;bitpos:[14:13] ;default: 2'd1 ; */
 /*description: add resistor from ldo output to ground. 0: no res  1: 6k  2: 4k  3: 2k*/
 #define RTC_CNTL_SDIO_INITI  0x00000003
 #define RTC_CNTL_SDIO_INITI_M  ((RTC_CNTL_SDIO_INITI_V)<<(RTC_CNTL_SDIO_INITI_S))
 #define RTC_CNTL_SDIO_INITI_V  0x3
-#define RTC_CNTL_SDIO_INITI_S  14
-/* RTC_CNTL_SDIO_DCAP : R/W ;bitpos:[13:12] ;default: 2'b11 ; */
+#define RTC_CNTL_SDIO_INITI_S  13
+/* RTC_CNTL_SDIO_DCAP : R/W ;bitpos:[12:11] ;default: 2'b11 ; */
 /*description: ability to prevent LDO from overshoot*/
 #define RTC_CNTL_SDIO_DCAP  0x00000003
 #define RTC_CNTL_SDIO_DCAP_M  ((RTC_CNTL_SDIO_DCAP_V)<<(RTC_CNTL_SDIO_DCAP_S))
 #define RTC_CNTL_SDIO_DCAP_V  0x3
-#define RTC_CNTL_SDIO_DCAP_S  12
-/* RTC_CNTL_SDIO_DTHDRV : R/W ;bitpos:[11:10] ;default: 2'b11 ; */
+#define RTC_CNTL_SDIO_DCAP_S  11
+/* RTC_CNTL_SDIO_DTHDRV : R/W ;bitpos:[10:9] ;default: 2'b11 ; */
 /*description: Tieh = 1 mode drive ability. Initially set to 0 to limit charge
  current  set to 3 after several us.*/
 #define RTC_CNTL_SDIO_DTHDRV  0x00000003
 #define RTC_CNTL_SDIO_DTHDRV_M  ((RTC_CNTL_SDIO_DTHDRV_V)<<(RTC_CNTL_SDIO_DTHDRV_S))
 #define RTC_CNTL_SDIO_DTHDRV_V  0x3
-#define RTC_CNTL_SDIO_DTHDRV_S  10
+#define RTC_CNTL_SDIO_DTHDRV_S  9
 /* RTC_CNTL_SDIO_TIMER_TARGET : R/W ;bitpos:[7:0] ;default: 8'd10 ; */
 /*description: timer count to apply reg_sdio_dcap after sdio power on*/
 #define RTC_CNTL_SDIO_TIMER_TARGET  0x000000FF
@@ -2304,12 +2299,12 @@ extern "C" {
 #define RTC_CNTL_MAIN_STATE_XTAL_ISO_M  (BIT(17))
 #define RTC_CNTL_MAIN_STATE_XTAL_ISO_V  0x1
 #define RTC_CNTL_MAIN_STATE_XTAL_ISO_S  17
-/* RTC_CNTL_COCPU_DONE : RO ;bitpos:[16] ;default: 1'b0 ; */
+/* RTC_CNTL_COCPU_IDLE : RO ;bitpos:[16] ;default: 1'b0 ; */
 /*description: ulp/cocpu is done*/
-#define RTC_CNTL_COCPU_DONE  (BIT(16))
-#define RTC_CNTL_COCPU_DONE_M  (BIT(16))
-#define RTC_CNTL_COCPU_DONE_V  0x1
-#define RTC_CNTL_COCPU_DONE_S  16
+#define RTC_CNTL_COCPU_IDLE  (BIT(16))
+#define RTC_CNTL_COCPU_IDLE_M  (BIT(16))
+#define RTC_CNTL_COCPU_IDLE_V  0x1
+#define RTC_CNTL_COCPU_IDLE_S  16
 /* RTC_CNTL_COCPU_SLP : RO ;bitpos:[15] ;default: 1'b0 ; */
 /*description: ulp/cocpu is in sleep state*/
 #define RTC_CNTL_COCPU_SLP  (BIT(15))
@@ -2762,12 +2757,12 @@ extern "C" {
 #define RTC_CNTL_COCPU_SW_INT_TRIGGER_M  (BIT(24))
 #define RTC_CNTL_COCPU_SW_INT_TRIGGER_V  0x1
 #define RTC_CNTL_COCPU_SW_INT_TRIGGER_S  24
-/* RTC_CNTL_COCPU_DONE1 : R/W ;bitpos:[23] ;default: 1'b0 ; */
+/* RTC_CNTL_COCPU_DONE : R/W ;bitpos:[23] ;default: 1'b0 ; */
 /*description: done signal used by riscv to control timer.*/
-#define RTC_CNTL_COCPU_DONE1  (BIT(23))
-#define RTC_CNTL_COCPU_DONE1_M  (BIT(23))
-#define RTC_CNTL_COCPU_DONE1_V  0x1
-#define RTC_CNTL_COCPU_DONE1_S  23
+#define RTC_CNTL_COCPU_DONE  (BIT(23))
+#define RTC_CNTL_COCPU_DONE_M  (BIT(23))
+#define RTC_CNTL_COCPU_DONE_V  0x1
+#define RTC_CNTL_COCPU_DONE_S  23
 /* RTC_CNTL_COCPU_DONE_FORCE : R/W ;bitpos:[22] ;default: 1'b0 ; */
 /*description: 1: select riscv done 0: select ulp done*/
 #define RTC_CNTL_COCPU_DONE_FORCE  (BIT(22))
@@ -3046,7 +3041,7 @@ extern "C" {
 #define RTC_CNTL_TOUCH_BASELINE_RESET_S  19
 
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0120)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1805230 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1806190 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))

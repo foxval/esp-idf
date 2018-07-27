@@ -23,6 +23,7 @@
 #include "soc/syscon_reg.h"
 #include "soc/syscon_struct.h"
 #include "soc/rtc.h"
+#include "soc/periph_defs.h"
 #include "rtc_io.h"
 #include "touch_pad.h"
 #include "adc.h"

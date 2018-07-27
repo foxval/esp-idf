@@ -1,4 +1,4 @@
-// Copyright 2015-2017 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -251,9 +251,13 @@
 #define G1SPICS1_OUT_IDX			119
 #define G1SPICS2_IN_IDX			120
 #define G1SPICS2_OUT_IDX			120
+#define G0SPICD_OUT_IDX			121
+#define G1SPICD_OUT_IDX			122
 #define CAN_TX_IDX			123
 #define CAN_BUS_OFF_ON_IDX			124
 #define CAN_CLKOUT_IDX			125
+#define HSPICD_OUT_IDX			126
+#define VSPICD_OUT_IDX			127
 #define G0SPIIO4_IN_IDX			128
 #define G0SPIIO4_OUT_IDX			128
 #define G0SPIIO5_IN_IDX			129

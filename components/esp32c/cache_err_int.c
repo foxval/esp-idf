@@ -28,6 +28,7 @@
 #include "esp_intr.h"
 #include "esp_attr.h"
 #include "soc/dport_reg.h"
+#include "soc/periph_defs.h"
 #include "sdkconfig.h"
 #include "esp_dport_access.h"
 
@@ -71,7 +72,6 @@ void esp_cache_err_int_init()
     }
 #else
     DPORT_SET_PERI_REG_MASK(DPORT_PRO_CACHE_IA_INT_EN_REG,
-        DPORT_CACHE_IA_INT_PRO_OPPOSITE |
         DPORT_CACHE_IA_INT_PRO_DRAM1 |
         DPORT_CACHE_IA_INT_PRO_DROM0 |
         DPORT_CACHE_IA_INT_PRO_IROM0 |

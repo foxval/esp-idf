@@ -25,8 +25,6 @@ void app_main()
             (chip_info.features & CHIP_FEATURE_BT) ? "/BT" : "",
             (chip_info.features & CHIP_FEATURE_BLE) ? "/BLE" : "");
 
-    uint8_t * pbuf = malloc(1024*400);
-    printf("psram buf:%p\n", pbuf);
     printf("silicon revision %d, ", chip_info.revision);
 
     printf("%dMB %s flash\n", spi_flash_get_chip_size() / (1024 * 1024),

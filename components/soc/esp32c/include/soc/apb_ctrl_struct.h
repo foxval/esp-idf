@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -424,7 +424,13 @@ typedef volatile struct {
         uint32_t val;
     } g1spi1_pms_ctrl;
     uint32_t g1spi1_reject_addr;                        /**/
-    uint32_t reserved_12c;
+    union {
+        struct {
+            uint32_t sdio_win_access_en: 1;
+            uint32_t reserved1:         31;
+        };
+        uint32_t val;
+    } sdio_ctrl;
     uint32_t reserved_130;
     uint32_t reserved_134;
     uint32_t reserved_138;

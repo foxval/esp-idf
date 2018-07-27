@@ -1,9 +1,9 @@
-// Copyright 2015-2018 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,6 +15,9 @@
 #define _SOC_SLC_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define SLC_CONF0_REG          (DR_REG_SLC_BASE + 0x0)
 /* SLC_SLC1_TOKEN_SEL : R/W ;bitpos:[31] ;default: 1'h1 ; */
@@ -211,6 +214,12 @@
 #define SLC_SLC0_TX_RST_S  0
 
 #define SLC_0INT_RAW_REG          (DR_REG_SLC_BASE + 0x4)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_RAW : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_RAW  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_RAW_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_RAW_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_RAW_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_RAW : RO ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_RAW  (BIT(26))
@@ -375,6 +384,12 @@
 #define SLC_FRHOST_BIT0_INT_RAW_S  0
 
 #define SLC_0INT_ST_REG          (DR_REG_SLC_BASE + 0x8)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_ST : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_ST : RO ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_ST  (BIT(26))
@@ -539,6 +554,12 @@
 #define SLC_FRHOST_BIT0_INT_ST_S  0
 
 #define SLC_0INT_ENA_REG          (DR_REG_SLC_BASE + 0xC)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_ENA : R/W ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_ENA  (BIT(26))
@@ -703,6 +724,12 @@
 #define SLC_FRHOST_BIT0_INT_ENA_S  0
 
 #define SLC_0INT_CLR_REG          (DR_REG_SLC_BASE + 0x10)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_CLR : WO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_CLR  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_CLR_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_CLR_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_CLR_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_CLR : WO ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_CLR  (BIT(26))
@@ -1475,6 +1502,12 @@
 #define SLC_FRHOST_BIT8_INT_CLR_S  0
 
 #define SLC_RX_STATUS_REG          (DR_REG_SLC_BASE + 0x24)
+/* SLC_SLC1_RX_BUF_LEN : RO ;bitpos:[29:18] ;default: 12'h0 ; */
+/*description: */
+#define SLC_SLC1_RX_BUF_LEN  0x00000FFF
+#define SLC_SLC1_RX_BUF_LEN_M  ((SLC_SLC1_RX_BUF_LEN_V)<<(SLC_SLC1_RX_BUF_LEN_S))
+#define SLC_SLC1_RX_BUF_LEN_V  0xFFF
+#define SLC_SLC1_RX_BUF_LEN_S  18
 /* SLC_SLC1_RX_EMPTY : RO ;bitpos:[17] ;default: 1'b1 ; */
 /*description: */
 #define SLC_SLC1_RX_EMPTY  (BIT(17))
@@ -1487,6 +1520,12 @@
 #define SLC_SLC1_RX_FULL_M  (BIT(16))
 #define SLC_SLC1_RX_FULL_V  0x1
 #define SLC_SLC1_RX_FULL_S  16
+/* SLC_SLC0_RX_BUF_LEN : RO ;bitpos:[13:2] ;default: 12'h0 ; */
+/*description: */
+#define SLC_SLC0_RX_BUF_LEN  0x00000FFF
+#define SLC_SLC0_RX_BUF_LEN_M  ((SLC_SLC0_RX_BUF_LEN_V)<<(SLC_SLC0_RX_BUF_LEN_S))
+#define SLC_SLC0_RX_BUF_LEN_V  0xFFF
+#define SLC_SLC0_RX_BUF_LEN_S  2
 /* SLC_SLC0_RX_EMPTY : RO ;bitpos:[1] ;default: 1'b1 ; */
 /*description: */
 #define SLC_SLC0_RX_EMPTY  (BIT(1))
@@ -2589,6 +2628,12 @@
 #define SLC_SLC0_LEN_LIM_S  0
 
 #define SLC_0INT_ST1_REG          (DR_REG_SLC_BASE + 0x13C)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_ST1 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST1  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST1_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST1_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ST1_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_ST1 : RO ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_ST1  (BIT(26))
@@ -2753,6 +2798,12 @@
 #define SLC_FRHOST_BIT0_INT_ST1_S  0
 
 #define SLC_0INT_ENA1_REG          (DR_REG_SLC_BASE + 0x140)
+/* SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA1 : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA1  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA1_M  (BIT(27))
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA1_V  0x1
+#define SLC_SLC0_HOST_POP_EOF_ERR_INT_ENA1_S  27
 /* SLC_SLC0_RX_QUICK_EOF_INT_ENA1 : R/W ;bitpos:[26] ;default: 1'b0 ; */
 /*description: */
 #define SLC_SLC0_RX_QUICK_EOF_INT_ENA1  (BIT(26))
@@ -3221,7 +3272,7 @@
 #define SLC_FRHOST_BIT8_INT_ENA1_S  0
 
 #define SLC_DATE_REG          (DR_REG_SLC_BASE + 0x1F8)
-/* SLC_DATE : R/W ;bitpos:[31:0] ;default: 32'h16022500 ; */
+/* SLC_DATE : R/W ;bitpos:[31:0] ;default: 32'h17041500 ; */
 /*description: */
 #define SLC_DATE  0xFFFFFFFF
 #define SLC_DATE_M  ((SLC_DATE_V)<<(SLC_DATE_S))
@@ -3236,6 +3287,9 @@
 #define SLC_ID_V  0xFFFFFFFF
 #define SLC_ID_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

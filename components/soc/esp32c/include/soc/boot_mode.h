@@ -1,4 +1,4 @@
-// Copyright 2010-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@
 
 
 
-#define BOOT_MODE_GET()                                 (GPIO_REG_READ(GPIO_STRAP))
+#define BOOT_MODE_GET()                                 (GPIO_REG_READ(GPIO_STRAP_REG))
 
 /*do not include download mode*/
 #define ETS_IS_UART_BOOT()				IS_01111(BOOT_MODE_GET())
@@ -94,7 +94,7 @@
 #define ETS_IS_ATE_BOOT()				IS_01110(BOOT_MODE_GET())
 
 /*A bit to control flash boot print*/
-#define ETS_IS_PRINT_BOOT()                             (BOOT_MODE_GET() & 0x2)
+#define ETS_IS_PRINT_BOOT()                             (!(REG_READ(EFUSE_BLK0_RDATA3_REG) & BIT(14)) && (BOOT_MODE_GET() & 0x2))
 
 /*used by  ETS_IS_SDIO_UART_BOOT*/
 #define SEL_NO_BOOT                                    0
