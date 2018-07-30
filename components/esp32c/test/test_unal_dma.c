@@ -22,6 +22,7 @@
 #include "soc/i2s_reg.h"
 
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #define DPORT_I2S0_CLK_EN   (BIT(4))
 #define DPORT_I2S0_RST   (BIT(4))
 
@@ -202,4 +203,4 @@ TEST_CASE("Unaligned DMA test (needs I2S)", "[hw][ignore]")
     dmaMemcpy(src, dest + 1, 2048 + 2);
     TEST_ASSERT(mymemcmp(src, dest + 1, 2048) == 0);
 }
-
+#endif

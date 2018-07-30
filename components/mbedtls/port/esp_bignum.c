@@ -36,6 +36,7 @@
 #include "esp_attr.h"
 
 #include "soc/dport_reg.h"
+#include "soc/periph_defs.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

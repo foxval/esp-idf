@@ -35,6 +35,8 @@ extern "C" {
 
 #define DPORT_FLASH_MMU_TABLE_INVALID_VAL 0x8000
 
+#define DPORT_DATE_REG SYSTEM_DATE_REG
+
 #ifndef __ASSEMBLER__
 #include "dport_access.h"
 #endif

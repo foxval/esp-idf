@@ -16,7 +16,7 @@
 #include "esp_clk.h"
 
 
-
+#ifdef CONFIG_CHIP_IS_ESP32
 #define CALIBRATE_ONE(cali_clk) calibrate_one(cali_clk, #cali_clk)
 
 static uint32_t calibrate_one(rtc_cal_sel_t cal_clk, const char* name)
@@ -281,3 +281,4 @@ TEST_CASE("Test starting 'External 32kHz XTAL' on the board without it.", "[rtc_
 }
 
 #endif // CONFIG_SPIRAM_SUPPORT
+#endif

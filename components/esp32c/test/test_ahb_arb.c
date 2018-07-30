@@ -21,7 +21,7 @@
 #include "soc/gpio_reg.h"
 #include "soc/i2s_reg.h"
 
-
+#ifdef CONFIG_CHIP_IS_ESP32
 
 #define DPORT_I2S0_CLK_EN   (BIT(4))
 #define DPORT_I2S0_RST   (BIT(4))
@@ -292,3 +292,4 @@ TEST_CASE("S32C1I vs AHB test (needs I2S)", "[hw][ignore]")
     }
 }
 
+#endif

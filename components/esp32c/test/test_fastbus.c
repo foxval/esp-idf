@@ -13,7 +13,7 @@
 #include "soc/dport_reg.h"
 #include "soc/io_mux_reg.h"
 
-
+#ifdef CONFIG_CHIP_IS_ESP32
 /*
 This test tests the 'fast' peripherial bus at 0x3ff40000. This bus is connected directly to the core, and as such
 can receive 'speculative' reads, that is, reads that may or may not actually be executed in the code flow. This
@@ -129,4 +129,4 @@ TEST_CASE("Fast I/O bus test", "[hw][ignore]")
     }
     xt_ints_off(1 << ETS_UART0_INUM);
 }
-
+#endif

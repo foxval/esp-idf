@@ -11,6 +11,7 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
 static const char* TAG = "test_adc2";
 
 #define DEFAULT_SSID "TEST_SSID"
@@ -113,3 +114,4 @@ TEST_CASE("adc2 work with wifi","[adc]")
 
     TEST_IGNORE_MESSAGE("this test case is ignored due to the critical memory leak of tcpip_adapter and event_loop.");
 }
+#endif
