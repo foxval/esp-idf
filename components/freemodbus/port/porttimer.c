@@ -58,9 +58,9 @@ static void IRAM_ATTR vTimerGroupIsr(void *param)
     // from the timer that reported the interrupt
     uint32_t intr_status = MB_TG[usTimerGroupIndex]->int_st_timers.val;
     if (intr_status & BIT(usTimerIndex)) {
-        MB_TG[usTimerGroupIndex]->int_clr_timers.t0 = 1;
-        MB_TG[usTimerGroupIndex]->hw_timer[usTimerIndex].config.alarm_en = TIMER_ALARM_EN; // reenable alarm
-        (void)pxMBPortCBTimerExpired(); // calls xMBRTUTimerT35Expired(); callback function
+        MB_TG[usTimerGroupIndex]->int_clr_timers.val |= BIT(usTimerIndex);
+        (void)pxMBPortCBTimerExpired(); // Timer callback function
+        MB_TG[usTimerGroupIndex]->hw_timer[usTimerIndex].config.alarm_en = TIMER_ALARM_EN;
     }
 }
 #endif
