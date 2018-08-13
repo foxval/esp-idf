@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -14,6 +14,10 @@
 #ifndef _SOC_RMT_REG_H_
 #define _SOC_RMT_REG_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define RMT_CH0DATA_REG          (DR_REG_RMT_BASE + 0x0000)
 
@@ -80,6 +84,12 @@
 #define RMT_DIV_CNT_CH0_S  0
 
 #define RMT_CH0CONF1_REG          (DR_REG_RMT_BASE + 0x0024)
+/* RMT_TX_STOP_CH0 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH0  (BIT(20))
+#define RMT_TX_STOP_CH0_M  (BIT(20))
+#define RMT_TX_STOP_CH0_V  0x1
+#define RMT_TX_STOP_CH0_S  20
 /* RMT_IDLE_OUT_EN_CH0 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel0 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH0  (BIT(19))
@@ -98,12 +108,6 @@
 #define RMT_REF_ALWAYS_ON_CH0_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH0_V  0x1
 #define RMT_REF_ALWAYS_ON_CH0_S  17
-/* RMT_REF_CNT_RST_CH0 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel0.*/
-#define RMT_REF_CNT_RST_CH0  (BIT(16))
-#define RMT_REF_CNT_RST_CH0_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH0_V  0x1
-#define RMT_REF_CNT_RST_CH0_S  16
 /* RMT_RX_FILTER_THRES_CH0 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel0 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -198,6 +202,12 @@
 #define RMT_DIV_CNT_CH1_S  0
 
 #define RMT_CH1CONF1_REG          (DR_REG_RMT_BASE + 0x002c)
+/* RMT_TX_STOP_CH1 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH1  (BIT(20))
+#define RMT_TX_STOP_CH1_M  (BIT(20))
+#define RMT_TX_STOP_CH1_V  0x1
+#define RMT_TX_STOP_CH1_S  20
 /* RMT_IDLE_OUT_EN_CH1 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel1 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH1  (BIT(19))
@@ -216,12 +226,6 @@
 #define RMT_REF_ALWAYS_ON_CH1_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH1_V  0x1
 #define RMT_REF_ALWAYS_ON_CH1_S  17
-/* RMT_REF_CNT_RST_CH1 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel1.*/
-#define RMT_REF_CNT_RST_CH1  (BIT(16))
-#define RMT_REF_CNT_RST_CH1_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH1_V  0x1
-#define RMT_REF_CNT_RST_CH1_S  16
 /* RMT_RX_FILTER_THRES_CH1 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel1 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -316,6 +320,12 @@
 #define RMT_DIV_CNT_CH2_S  0
 
 #define RMT_CH2CONF1_REG          (DR_REG_RMT_BASE + 0x0034)
+/* RMT_TX_STOP_CH2 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH2  (BIT(20))
+#define RMT_TX_STOP_CH2_M  (BIT(20))
+#define RMT_TX_STOP_CH2_V  0x1
+#define RMT_TX_STOP_CH2_S  20
 /* RMT_IDLE_OUT_EN_CH2 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel2 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH2  (BIT(19))
@@ -334,12 +344,6 @@
 #define RMT_REF_ALWAYS_ON_CH2_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH2_V  0x1
 #define RMT_REF_ALWAYS_ON_CH2_S  17
-/* RMT_REF_CNT_RST_CH2 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel2.*/
-#define RMT_REF_CNT_RST_CH2  (BIT(16))
-#define RMT_REF_CNT_RST_CH2_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH2_V  0x1
-#define RMT_REF_CNT_RST_CH2_S  16
 /* RMT_RX_FILTER_THRES_CH2 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel2 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -434,6 +438,12 @@
 #define RMT_DIV_CNT_CH3_S  0
 
 #define RMT_CH3CONF1_REG          (DR_REG_RMT_BASE + 0x003c)
+/* RMT_TX_STOP_CH3 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH3  (BIT(20))
+#define RMT_TX_STOP_CH3_M  (BIT(20))
+#define RMT_TX_STOP_CH3_V  0x1
+#define RMT_TX_STOP_CH3_S  20
 /* RMT_IDLE_OUT_EN_CH3 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel3 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH3  (BIT(19))
@@ -452,12 +462,6 @@
 #define RMT_REF_ALWAYS_ON_CH3_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH3_V  0x1
 #define RMT_REF_ALWAYS_ON_CH3_S  17
-/* RMT_REF_CNT_RST_CH3 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel3.*/
-#define RMT_REF_CNT_RST_CH3  (BIT(16))
-#define RMT_REF_CNT_RST_CH3_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH3_V  0x1
-#define RMT_REF_CNT_RST_CH3_S  16
 /* RMT_RX_FILTER_THRES_CH3 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel3 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -552,6 +556,12 @@
 #define RMT_DIV_CNT_CH4_S  0
 
 #define RMT_CH4CONF1_REG          (DR_REG_RMT_BASE + 0x0044)
+/* RMT_TX_STOP_CH4 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH4  (BIT(20))
+#define RMT_TX_STOP_CH4_M  (BIT(20))
+#define RMT_TX_STOP_CH4_V  0x1
+#define RMT_TX_STOP_CH4_S  20
 /* RMT_IDLE_OUT_EN_CH4 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel4 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH4  (BIT(19))
@@ -570,12 +580,6 @@
 #define RMT_REF_ALWAYS_ON_CH4_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH4_V  0x1
 #define RMT_REF_ALWAYS_ON_CH4_S  17
-/* RMT_REF_CNT_RST_CH4 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel4.*/
-#define RMT_REF_CNT_RST_CH4  (BIT(16))
-#define RMT_REF_CNT_RST_CH4_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH4_V  0x1
-#define RMT_REF_CNT_RST_CH4_S  16
 /* RMT_RX_FILTER_THRES_CH4 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel4 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -670,6 +674,12 @@
 #define RMT_DIV_CNT_CH5_S  0
 
 #define RMT_CH5CONF1_REG          (DR_REG_RMT_BASE + 0x004c)
+/* RMT_TX_STOP_CH5 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH5  (BIT(20))
+#define RMT_TX_STOP_CH5_M  (BIT(20))
+#define RMT_TX_STOP_CH5_V  0x1
+#define RMT_TX_STOP_CH5_S  20
 /* RMT_IDLE_OUT_EN_CH5 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel5 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH5  (BIT(19))
@@ -688,12 +698,6 @@
 #define RMT_REF_ALWAYS_ON_CH5_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH5_V  0x1
 #define RMT_REF_ALWAYS_ON_CH5_S  17
-/* RMT_REF_CNT_RST_CH5 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel5.*/
-#define RMT_REF_CNT_RST_CH5  (BIT(16))
-#define RMT_REF_CNT_RST_CH5_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH5_V  0x1
-#define RMT_REF_CNT_RST_CH5_S  16
 /* RMT_RX_FILTER_THRES_CH5 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel5 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -788,6 +792,12 @@
 #define RMT_DIV_CNT_CH6_S  0
 
 #define RMT_CH6CONF1_REG          (DR_REG_RMT_BASE + 0x0054)
+/* RMT_TX_STOP_CH6 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH6  (BIT(20))
+#define RMT_TX_STOP_CH6_M  (BIT(20))
+#define RMT_TX_STOP_CH6_V  0x1
+#define RMT_TX_STOP_CH6_S  20
 /* RMT_IDLE_OUT_EN_CH6 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel6 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH6  (BIT(19))
@@ -806,12 +816,6 @@
 #define RMT_REF_ALWAYS_ON_CH6_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH6_V  0x1
 #define RMT_REF_ALWAYS_ON_CH6_S  17
-/* RMT_REF_CNT_RST_CH6 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel6.*/
-#define RMT_REF_CNT_RST_CH6  (BIT(16))
-#define RMT_REF_CNT_RST_CH6_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH6_V  0x1
-#define RMT_REF_CNT_RST_CH6_S  16
 /* RMT_RX_FILTER_THRES_CH6 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel6 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -906,6 +910,12 @@
 #define RMT_DIV_CNT_CH7_S  0
 
 #define RMT_CH7CONF1_REG          (DR_REG_RMT_BASE + 0x005c)
+/* RMT_TX_STOP_CH7 : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_STOP_CH7  (BIT(20))
+#define RMT_TX_STOP_CH7_M  (BIT(20))
+#define RMT_TX_STOP_CH7_V  0x1
+#define RMT_TX_STOP_CH7_S  20
 /* RMT_IDLE_OUT_EN_CH7 : R/W ;bitpos:[19] ;default: 1'b0 ; */
 /*description: This is the output enable control bit for channel6 in IDLE state.*/
 #define RMT_IDLE_OUT_EN_CH7  (BIT(19))
@@ -924,12 +934,6 @@
 #define RMT_REF_ALWAYS_ON_CH7_M  (BIT(17))
 #define RMT_REF_ALWAYS_ON_CH7_V  0x1
 #define RMT_REF_ALWAYS_ON_CH7_S  17
-/* RMT_REF_CNT_RST_CH7 : R/W ;bitpos:[16] ;default: 1'b0 ; */
-/*description: This bit is used to reset divider in channel7.*/
-#define RMT_REF_CNT_RST_CH7  (BIT(16))
-#define RMT_REF_CNT_RST_CH7_M  (BIT(16))
-#define RMT_REF_CNT_RST_CH7_V  0x1
-#define RMT_REF_CNT_RST_CH7_S  16
 /* RMT_RX_FILTER_THRES_CH7 : R/W ;bitpos:[15:8] ;default: 8'hf ; */
 /*description: in receive mode  channel7 ignore input pulse when the pulse width
  is smaller then this value.*/
@@ -989,132 +993,516 @@
 #define RMT_TX_START_CH7_S  0
 
 #define RMT_CH0STATUS_REG          (DR_REG_RMT_BASE + 0x0060)
-/* RMT_STATUS_CH0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel0*/
-#define RMT_STATUS_CH0  0xFFFFFFFF
-#define RMT_STATUS_CH0_M  ((RMT_STATUS_CH0_V)<<(RMT_STATUS_CH0_S))
-#define RMT_STATUS_CH0_V  0xFFFFFFFF
-#define RMT_STATUS_CH0_S  0
+/* RMT_APB_MEM_RD_ERR_CH0 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH0  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH0_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH0_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH0_S  27
+/* RMT_APB_MEM_WR_ERR_CH0 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH0  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH0_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH0_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH0_S  26
+/* RMT_MEM_EMPTY_CH0 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH0  (BIT(25))
+#define RMT_MEM_EMPTY_CH0_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH0_V  0x1
+#define RMT_MEM_EMPTY_CH0_S  25
+/* RMT_MEM_FULL_CH0 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH0  (BIT(24))
+#define RMT_MEM_FULL_CH0_M  (BIT(24))
+#define RMT_MEM_FULL_CH0_V  0x1
+#define RMT_MEM_FULL_CH0_S  24
+/* RMT_MEM_OWNER_ERR_CH0 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH0  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH0_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH0_V  0x1
+#define RMT_MEM_OWNER_ERR_CH0_S  23
+/* RMT_STATE_CH0 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH0  0x00000007
+#define RMT_STATE_CH0_M  ((RMT_STATE_CH0_V)<<(RMT_STATE_CH0_S))
+#define RMT_STATE_CH0_V  0x7
+#define RMT_STATE_CH0_S  20
+/* RMT_MEM_RADDR_EX_CH0 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH0  0x000003FF
+#define RMT_MEM_RADDR_EX_CH0_M  ((RMT_MEM_RADDR_EX_CH0_V)<<(RMT_MEM_RADDR_EX_CH0_S))
+#define RMT_MEM_RADDR_EX_CH0_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH0_S  10
+/* RMT_MEM_WADDR_EX_CH0 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH0  0x000003FF
+#define RMT_MEM_WADDR_EX_CH0_M  ((RMT_MEM_WADDR_EX_CH0_V)<<(RMT_MEM_WADDR_EX_CH0_S))
+#define RMT_MEM_WADDR_EX_CH0_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH0_S  0
 
 #define RMT_CH1STATUS_REG          (DR_REG_RMT_BASE + 0x0064)
-/* RMT_STATUS_CH1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel1*/
-#define RMT_STATUS_CH1  0xFFFFFFFF
-#define RMT_STATUS_CH1_M  ((RMT_STATUS_CH1_V)<<(RMT_STATUS_CH1_S))
-#define RMT_STATUS_CH1_V  0xFFFFFFFF
-#define RMT_STATUS_CH1_S  0
+/* RMT_APB_MEM_RD_ERR_CH1 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH1  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH1_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH1_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH1_S  27
+/* RMT_APB_MEM_WR_ERR_CH1 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH1  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH1_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH1_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH1_S  26
+/* RMT_MEM_EMPTY_CH1 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH1  (BIT(25))
+#define RMT_MEM_EMPTY_CH1_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH1_V  0x1
+#define RMT_MEM_EMPTY_CH1_S  25
+/* RMT_MEM_FULL_CH1 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH1  (BIT(24))
+#define RMT_MEM_FULL_CH1_M  (BIT(24))
+#define RMT_MEM_FULL_CH1_V  0x1
+#define RMT_MEM_FULL_CH1_S  24
+/* RMT_MEM_OWNER_ERR_CH1 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH1  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH1_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH1_V  0x1
+#define RMT_MEM_OWNER_ERR_CH1_S  23
+/* RMT_STATE_CH1 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH1  0x00000007
+#define RMT_STATE_CH1_M  ((RMT_STATE_CH1_V)<<(RMT_STATE_CH1_S))
+#define RMT_STATE_CH1_V  0x7
+#define RMT_STATE_CH1_S  20
+/* RMT_MEM_RADDR_EX_CH1 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH1  0x000003FF
+#define RMT_MEM_RADDR_EX_CH1_M  ((RMT_MEM_RADDR_EX_CH1_V)<<(RMT_MEM_RADDR_EX_CH1_S))
+#define RMT_MEM_RADDR_EX_CH1_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH1_S  10
+/* RMT_MEM_WADDR_EX_CH1 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH1  0x000003FF
+#define RMT_MEM_WADDR_EX_CH1_M  ((RMT_MEM_WADDR_EX_CH1_V)<<(RMT_MEM_WADDR_EX_CH1_S))
+#define RMT_MEM_WADDR_EX_CH1_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH1_S  0
 
 #define RMT_CH2STATUS_REG          (DR_REG_RMT_BASE + 0x0068)
-/* RMT_STATUS_CH2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel2*/
-#define RMT_STATUS_CH2  0xFFFFFFFF
-#define RMT_STATUS_CH2_M  ((RMT_STATUS_CH2_V)<<(RMT_STATUS_CH2_S))
-#define RMT_STATUS_CH2_V  0xFFFFFFFF
-#define RMT_STATUS_CH2_S  0
+/* RMT_APB_MEM_RD_ERR_CH2 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH2  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH2_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH2_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH2_S  27
+/* RMT_APB_MEM_WR_ERR_CH2 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH2  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH2_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH2_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH2_S  26
+/* RMT_MEM_EMPTY_CH2 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH2  (BIT(25))
+#define RMT_MEM_EMPTY_CH2_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH2_V  0x1
+#define RMT_MEM_EMPTY_CH2_S  25
+/* RMT_MEM_FULL_CH2 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH2  (BIT(24))
+#define RMT_MEM_FULL_CH2_M  (BIT(24))
+#define RMT_MEM_FULL_CH2_V  0x1
+#define RMT_MEM_FULL_CH2_S  24
+/* RMT_MEM_OWNER_ERR_CH2 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH2  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH2_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH2_V  0x1
+#define RMT_MEM_OWNER_ERR_CH2_S  23
+/* RMT_STATE_CH2 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH2  0x00000007
+#define RMT_STATE_CH2_M  ((RMT_STATE_CH2_V)<<(RMT_STATE_CH2_S))
+#define RMT_STATE_CH2_V  0x7
+#define RMT_STATE_CH2_S  20
+/* RMT_MEM_RADDR_EX_CH2 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH2  0x000003FF
+#define RMT_MEM_RADDR_EX_CH2_M  ((RMT_MEM_RADDR_EX_CH2_V)<<(RMT_MEM_RADDR_EX_CH2_S))
+#define RMT_MEM_RADDR_EX_CH2_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH2_S  10
+/* RMT_MEM_WADDR_EX_CH2 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH2  0x000003FF
+#define RMT_MEM_WADDR_EX_CH2_M  ((RMT_MEM_WADDR_EX_CH2_V)<<(RMT_MEM_WADDR_EX_CH2_S))
+#define RMT_MEM_WADDR_EX_CH2_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH2_S  0
 
 #define RMT_CH3STATUS_REG          (DR_REG_RMT_BASE + 0x006c)
-/* RMT_STATUS_CH3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel3*/
-#define RMT_STATUS_CH3  0xFFFFFFFF
-#define RMT_STATUS_CH3_M  ((RMT_STATUS_CH3_V)<<(RMT_STATUS_CH3_S))
-#define RMT_STATUS_CH3_V  0xFFFFFFFF
-#define RMT_STATUS_CH3_S  0
+/* RMT_APB_MEM_RD_ERR_CH3 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH3  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH3_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH3_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH3_S  27
+/* RMT_APB_MEM_WR_ERR_CH3 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH3  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH3_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH3_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH3_S  26
+/* RMT_MEM_EMPTY_CH3 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH3  (BIT(25))
+#define RMT_MEM_EMPTY_CH3_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH3_V  0x1
+#define RMT_MEM_EMPTY_CH3_S  25
+/* RMT_MEM_FULL_CH3 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH3  (BIT(24))
+#define RMT_MEM_FULL_CH3_M  (BIT(24))
+#define RMT_MEM_FULL_CH3_V  0x1
+#define RMT_MEM_FULL_CH3_S  24
+/* RMT_MEM_OWNER_ERR_CH3 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH3  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH3_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH3_V  0x1
+#define RMT_MEM_OWNER_ERR_CH3_S  23
+/* RMT_STATE_CH3 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH3  0x00000007
+#define RMT_STATE_CH3_M  ((RMT_STATE_CH3_V)<<(RMT_STATE_CH3_S))
+#define RMT_STATE_CH3_V  0x7
+#define RMT_STATE_CH3_S  20
+/* RMT_MEM_RADDR_EX_CH3 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH3  0x000003FF
+#define RMT_MEM_RADDR_EX_CH3_M  ((RMT_MEM_RADDR_EX_CH3_V)<<(RMT_MEM_RADDR_EX_CH3_S))
+#define RMT_MEM_RADDR_EX_CH3_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH3_S  10
+/* RMT_MEM_WADDR_EX_CH3 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH3  0x000003FF
+#define RMT_MEM_WADDR_EX_CH3_M  ((RMT_MEM_WADDR_EX_CH3_V)<<(RMT_MEM_WADDR_EX_CH3_S))
+#define RMT_MEM_WADDR_EX_CH3_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH3_S  0
 
 #define RMT_CH4STATUS_REG          (DR_REG_RMT_BASE + 0x0070)
-/* RMT_STATUS_CH4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel4*/
-#define RMT_STATUS_CH4  0xFFFFFFFF
-#define RMT_STATUS_CH4_M  ((RMT_STATUS_CH4_V)<<(RMT_STATUS_CH4_S))
-#define RMT_STATUS_CH4_V  0xFFFFFFFF
-#define RMT_STATUS_CH4_S  0
+/* RMT_APB_MEM_RD_ERR_CH4 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH4  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH4_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH4_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH4_S  27
+/* RMT_APB_MEM_WR_ERR_CH4 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH4  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH4_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH4_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH4_S  26
+/* RMT_MEM_EMPTY_CH4 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH4  (BIT(25))
+#define RMT_MEM_EMPTY_CH4_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH4_V  0x1
+#define RMT_MEM_EMPTY_CH4_S  25
+/* RMT_MEM_FULL_CH4 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH4  (BIT(24))
+#define RMT_MEM_FULL_CH4_M  (BIT(24))
+#define RMT_MEM_FULL_CH4_V  0x1
+#define RMT_MEM_FULL_CH4_S  24
+/* RMT_MEM_OWNER_ERR_CH4 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH4  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH4_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH4_V  0x1
+#define RMT_MEM_OWNER_ERR_CH4_S  23
+/* RMT_STATE_CH4 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH4  0x00000007
+#define RMT_STATE_CH4_M  ((RMT_STATE_CH4_V)<<(RMT_STATE_CH4_S))
+#define RMT_STATE_CH4_V  0x7
+#define RMT_STATE_CH4_S  20
+/* RMT_MEM_RADDR_EX_CH4 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH4  0x000003FF
+#define RMT_MEM_RADDR_EX_CH4_M  ((RMT_MEM_RADDR_EX_CH4_V)<<(RMT_MEM_RADDR_EX_CH4_S))
+#define RMT_MEM_RADDR_EX_CH4_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH4_S  10
+/* RMT_MEM_WADDR_EX_CH4 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH4  0x000003FF
+#define RMT_MEM_WADDR_EX_CH4_M  ((RMT_MEM_WADDR_EX_CH4_V)<<(RMT_MEM_WADDR_EX_CH4_S))
+#define RMT_MEM_WADDR_EX_CH4_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH4_S  0
 
 #define RMT_CH5STATUS_REG          (DR_REG_RMT_BASE + 0x0074)
-/* RMT_STATUS_CH5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel5*/
-#define RMT_STATUS_CH5  0xFFFFFFFF
-#define RMT_STATUS_CH5_M  ((RMT_STATUS_CH5_V)<<(RMT_STATUS_CH5_S))
-#define RMT_STATUS_CH5_V  0xFFFFFFFF
-#define RMT_STATUS_CH5_S  0
+/* RMT_APB_MEM_RD_ERR_CH5 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH5  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH5_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH5_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH5_S  27
+/* RMT_APB_MEM_WR_ERR_CH5 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH5  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH5_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH5_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH5_S  26
+/* RMT_MEM_EMPTY_CH5 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH5  (BIT(25))
+#define RMT_MEM_EMPTY_CH5_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH5_V  0x1
+#define RMT_MEM_EMPTY_CH5_S  25
+/* RMT_MEM_FULL_CH5 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH5  (BIT(24))
+#define RMT_MEM_FULL_CH5_M  (BIT(24))
+#define RMT_MEM_FULL_CH5_V  0x1
+#define RMT_MEM_FULL_CH5_S  24
+/* RMT_MEM_OWNER_ERR_CH5 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH5  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH5_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH5_V  0x1
+#define RMT_MEM_OWNER_ERR_CH5_S  23
+/* RMT_STATE_CH5 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH5  0x00000007
+#define RMT_STATE_CH5_M  ((RMT_STATE_CH5_V)<<(RMT_STATE_CH5_S))
+#define RMT_STATE_CH5_V  0x7
+#define RMT_STATE_CH5_S  20
+/* RMT_MEM_RADDR_EX_CH5 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH5  0x000003FF
+#define RMT_MEM_RADDR_EX_CH5_M  ((RMT_MEM_RADDR_EX_CH5_V)<<(RMT_MEM_RADDR_EX_CH5_S))
+#define RMT_MEM_RADDR_EX_CH5_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH5_S  10
+/* RMT_MEM_WADDR_EX_CH5 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH5  0x000003FF
+#define RMT_MEM_WADDR_EX_CH5_M  ((RMT_MEM_WADDR_EX_CH5_V)<<(RMT_MEM_WADDR_EX_CH5_S))
+#define RMT_MEM_WADDR_EX_CH5_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH5_S  0
 
 #define RMT_CH6STATUS_REG          (DR_REG_RMT_BASE + 0x0078)
-/* RMT_STATUS_CH6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel6*/
-#define RMT_STATUS_CH6  0xFFFFFFFF
-#define RMT_STATUS_CH6_M  ((RMT_STATUS_CH6_V)<<(RMT_STATUS_CH6_S))
-#define RMT_STATUS_CH6_V  0xFFFFFFFF
-#define RMT_STATUS_CH6_S  0
+/* RMT_APB_MEM_RD_ERR_CH6 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH6  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH6_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH6_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH6_S  27
+/* RMT_APB_MEM_WR_ERR_CH6 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH6  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH6_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH6_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH6_S  26
+/* RMT_MEM_EMPTY_CH6 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH6  (BIT(25))
+#define RMT_MEM_EMPTY_CH6_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH6_V  0x1
+#define RMT_MEM_EMPTY_CH6_S  25
+/* RMT_MEM_FULL_CH6 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH6  (BIT(24))
+#define RMT_MEM_FULL_CH6_M  (BIT(24))
+#define RMT_MEM_FULL_CH6_V  0x1
+#define RMT_MEM_FULL_CH6_S  24
+/* RMT_MEM_OWNER_ERR_CH6 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH6  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH6_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH6_V  0x1
+#define RMT_MEM_OWNER_ERR_CH6_S  23
+/* RMT_STATE_CH6 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH6  0x00000007
+#define RMT_STATE_CH6_M  ((RMT_STATE_CH6_V)<<(RMT_STATE_CH6_S))
+#define RMT_STATE_CH6_V  0x7
+#define RMT_STATE_CH6_S  20
+/* RMT_MEM_RADDR_EX_CH6 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH6  0x000003FF
+#define RMT_MEM_RADDR_EX_CH6_M  ((RMT_MEM_RADDR_EX_CH6_V)<<(RMT_MEM_RADDR_EX_CH6_S))
+#define RMT_MEM_RADDR_EX_CH6_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH6_S  10
+/* RMT_MEM_WADDR_EX_CH6 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH6  0x000003FF
+#define RMT_MEM_WADDR_EX_CH6_M  ((RMT_MEM_WADDR_EX_CH6_V)<<(RMT_MEM_WADDR_EX_CH6_S))
+#define RMT_MEM_WADDR_EX_CH6_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH6_S  0
 
 #define RMT_CH7STATUS_REG          (DR_REG_RMT_BASE + 0x007c)
-/* RMT_STATUS_CH7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The status for channel7*/
-#define RMT_STATUS_CH7  0xFFFFFFFF
-#define RMT_STATUS_CH7_M  ((RMT_STATUS_CH7_V)<<(RMT_STATUS_CH7_S))
-#define RMT_STATUS_CH7_V  0xFFFFFFFF
-#define RMT_STATUS_CH7_S  0
+/* RMT_APB_MEM_RD_ERR_CH7 : RO ;bitpos:[27] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RD_ERR_CH7  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH7_M  (BIT(27))
+#define RMT_APB_MEM_RD_ERR_CH7_V  0x1
+#define RMT_APB_MEM_RD_ERR_CH7_S  27
+/* RMT_APB_MEM_WR_ERR_CH7 : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WR_ERR_CH7  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH7_M  (BIT(26))
+#define RMT_APB_MEM_WR_ERR_CH7_V  0x1
+#define RMT_APB_MEM_WR_ERR_CH7_S  26
+/* RMT_MEM_EMPTY_CH7 : RO ;bitpos:[25] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_EMPTY_CH7  (BIT(25))
+#define RMT_MEM_EMPTY_CH7_M  (BIT(25))
+#define RMT_MEM_EMPTY_CH7_V  0x1
+#define RMT_MEM_EMPTY_CH7_S  25
+/* RMT_MEM_FULL_CH7 : RO ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_FULL_CH7  (BIT(24))
+#define RMT_MEM_FULL_CH7_M  (BIT(24))
+#define RMT_MEM_FULL_CH7_V  0x1
+#define RMT_MEM_FULL_CH7_S  24
+/* RMT_MEM_OWNER_ERR_CH7 : RO ;bitpos:[23] ;default: 1'b0 ; */
+/*description: */
+#define RMT_MEM_OWNER_ERR_CH7  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH7_M  (BIT(23))
+#define RMT_MEM_OWNER_ERR_CH7_V  0x1
+#define RMT_MEM_OWNER_ERR_CH7_S  23
+/* RMT_STATE_CH7 : RO ;bitpos:[22:20] ;default: 3'b0 ; */
+/*description: */
+#define RMT_STATE_CH7  0x00000007
+#define RMT_STATE_CH7_M  ((RMT_STATE_CH7_V)<<(RMT_STATE_CH7_S))
+#define RMT_STATE_CH7_V  0x7
+#define RMT_STATE_CH7_S  20
+/* RMT_MEM_RADDR_EX_CH7 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_RADDR_EX_CH7  0x000003FF
+#define RMT_MEM_RADDR_EX_CH7_M  ((RMT_MEM_RADDR_EX_CH7_V)<<(RMT_MEM_RADDR_EX_CH7_S))
+#define RMT_MEM_RADDR_EX_CH7_V  0x3FF
+#define RMT_MEM_RADDR_EX_CH7_S  10
+/* RMT_MEM_WADDR_EX_CH7 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_MEM_WADDR_EX_CH7  0x000003FF
+#define RMT_MEM_WADDR_EX_CH7_M  ((RMT_MEM_WADDR_EX_CH7_V)<<(RMT_MEM_WADDR_EX_CH7_S))
+#define RMT_MEM_WADDR_EX_CH7_V  0x3FF
+#define RMT_MEM_WADDR_EX_CH7_S  0
 
 #define RMT_CH0ADDR_REG          (DR_REG_RMT_BASE + 0x0080)
-/* RMT_APB_MEM_ADDR_CH0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel0 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH0  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH0_M  ((RMT_APB_MEM_ADDR_CH0_V)<<(RMT_APB_MEM_ADDR_CH0_S))
-#define RMT_APB_MEM_ADDR_CH0_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH0_S  0
+/* RMT_APB_MEM_RADDR_CH0 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH0  0x000003FF
+#define RMT_APB_MEM_RADDR_CH0_M  ((RMT_APB_MEM_RADDR_CH0_V)<<(RMT_APB_MEM_RADDR_CH0_S))
+#define RMT_APB_MEM_RADDR_CH0_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH0_S  10
+/* RMT_APB_MEM_WADDR_CH0 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH0  0x000003FF
+#define RMT_APB_MEM_WADDR_CH0_M  ((RMT_APB_MEM_WADDR_CH0_V)<<(RMT_APB_MEM_WADDR_CH0_S))
+#define RMT_APB_MEM_WADDR_CH0_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH0_S  0
 
 #define RMT_CH1ADDR_REG          (DR_REG_RMT_BASE + 0x0084)
-/* RMT_APB_MEM_ADDR_CH1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel1 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH1  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH1_M  ((RMT_APB_MEM_ADDR_CH1_V)<<(RMT_APB_MEM_ADDR_CH1_S))
-#define RMT_APB_MEM_ADDR_CH1_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH1_S  0
+/* RMT_APB_MEM_RADDR_CH1 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH1  0x000003FF
+#define RMT_APB_MEM_RADDR_CH1_M  ((RMT_APB_MEM_RADDR_CH1_V)<<(RMT_APB_MEM_RADDR_CH1_S))
+#define RMT_APB_MEM_RADDR_CH1_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH1_S  10
+/* RMT_APB_MEM_WADDR_CH1 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH1  0x000003FF
+#define RMT_APB_MEM_WADDR_CH1_M  ((RMT_APB_MEM_WADDR_CH1_V)<<(RMT_APB_MEM_WADDR_CH1_S))
+#define RMT_APB_MEM_WADDR_CH1_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH1_S  0
 
 #define RMT_CH2ADDR_REG          (DR_REG_RMT_BASE + 0x0088)
-/* RMT_APB_MEM_ADDR_CH2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel2 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH2  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH2_M  ((RMT_APB_MEM_ADDR_CH2_V)<<(RMT_APB_MEM_ADDR_CH2_S))
-#define RMT_APB_MEM_ADDR_CH2_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH2_S  0
+/* RMT_APB_MEM_RADDR_CH2 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH2  0x000003FF
+#define RMT_APB_MEM_RADDR_CH2_M  ((RMT_APB_MEM_RADDR_CH2_V)<<(RMT_APB_MEM_RADDR_CH2_S))
+#define RMT_APB_MEM_RADDR_CH2_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH2_S  10
+/* RMT_APB_MEM_WADDR_CH2 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH2  0x000003FF
+#define RMT_APB_MEM_WADDR_CH2_M  ((RMT_APB_MEM_WADDR_CH2_V)<<(RMT_APB_MEM_WADDR_CH2_S))
+#define RMT_APB_MEM_WADDR_CH2_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH2_S  0
 
 #define RMT_CH3ADDR_REG          (DR_REG_RMT_BASE + 0x008c)
-/* RMT_APB_MEM_ADDR_CH3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel3 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH3  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH3_M  ((RMT_APB_MEM_ADDR_CH3_V)<<(RMT_APB_MEM_ADDR_CH3_S))
-#define RMT_APB_MEM_ADDR_CH3_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH3_S  0
+/* RMT_APB_MEM_RADDR_CH3 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH3  0x000003FF
+#define RMT_APB_MEM_RADDR_CH3_M  ((RMT_APB_MEM_RADDR_CH3_V)<<(RMT_APB_MEM_RADDR_CH3_S))
+#define RMT_APB_MEM_RADDR_CH3_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH3_S  10
+/* RMT_APB_MEM_WADDR_CH3 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH3  0x000003FF
+#define RMT_APB_MEM_WADDR_CH3_M  ((RMT_APB_MEM_WADDR_CH3_V)<<(RMT_APB_MEM_WADDR_CH3_S))
+#define RMT_APB_MEM_WADDR_CH3_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH3_S  0
 
 #define RMT_CH4ADDR_REG          (DR_REG_RMT_BASE + 0x0090)
-/* RMT_APB_MEM_ADDR_CH4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel4 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH4  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH4_M  ((RMT_APB_MEM_ADDR_CH4_V)<<(RMT_APB_MEM_ADDR_CH4_S))
-#define RMT_APB_MEM_ADDR_CH4_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH4_S  0
+/* RMT_APB_MEM_RADDR_CH4 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH4  0x000003FF
+#define RMT_APB_MEM_RADDR_CH4_M  ((RMT_APB_MEM_RADDR_CH4_V)<<(RMT_APB_MEM_RADDR_CH4_S))
+#define RMT_APB_MEM_RADDR_CH4_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH4_S  10
+/* RMT_APB_MEM_WADDR_CH4 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH4  0x000003FF
+#define RMT_APB_MEM_WADDR_CH4_M  ((RMT_APB_MEM_WADDR_CH4_V)<<(RMT_APB_MEM_WADDR_CH4_S))
+#define RMT_APB_MEM_WADDR_CH4_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH4_S  0
 
 #define RMT_CH5ADDR_REG          (DR_REG_RMT_BASE + 0x0094)
-/* RMT_APB_MEM_ADDR_CH5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel5 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH5  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH5_M  ((RMT_APB_MEM_ADDR_CH5_V)<<(RMT_APB_MEM_ADDR_CH5_S))
-#define RMT_APB_MEM_ADDR_CH5_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH5_S  0
+/* RMT_APB_MEM_RADDR_CH5 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH5  0x000003FF
+#define RMT_APB_MEM_RADDR_CH5_M  ((RMT_APB_MEM_RADDR_CH5_V)<<(RMT_APB_MEM_RADDR_CH5_S))
+#define RMT_APB_MEM_RADDR_CH5_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH5_S  10
+/* RMT_APB_MEM_WADDR_CH5 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH5  0x000003FF
+#define RMT_APB_MEM_WADDR_CH5_M  ((RMT_APB_MEM_WADDR_CH5_V)<<(RMT_APB_MEM_WADDR_CH5_S))
+#define RMT_APB_MEM_WADDR_CH5_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH5_S  0
 
 #define RMT_CH6ADDR_REG          (DR_REG_RMT_BASE + 0x0098)
-/* RMT_APB_MEM_ADDR_CH6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel6 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH6  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH6_M  ((RMT_APB_MEM_ADDR_CH6_V)<<(RMT_APB_MEM_ADDR_CH6_S))
-#define RMT_APB_MEM_ADDR_CH6_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH6_S  0
+/* RMT_APB_MEM_RADDR_CH6 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH6  0x000003FF
+#define RMT_APB_MEM_RADDR_CH6_M  ((RMT_APB_MEM_RADDR_CH6_V)<<(RMT_APB_MEM_RADDR_CH6_S))
+#define RMT_APB_MEM_RADDR_CH6_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH6_S  10
+/* RMT_APB_MEM_WADDR_CH6 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH6  0x000003FF
+#define RMT_APB_MEM_WADDR_CH6_M  ((RMT_APB_MEM_WADDR_CH6_V)<<(RMT_APB_MEM_WADDR_CH6_S))
+#define RMT_APB_MEM_WADDR_CH6_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH6_S  0
 
 #define RMT_CH7ADDR_REG          (DR_REG_RMT_BASE + 0x009c)
-/* RMT_APB_MEM_ADDR_CH7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: The ram relative address in channel7 by apb fifo access*/
-#define RMT_APB_MEM_ADDR_CH7  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH7_M  ((RMT_APB_MEM_ADDR_CH7_V)<<(RMT_APB_MEM_ADDR_CH7_S))
-#define RMT_APB_MEM_ADDR_CH7_V  0xFFFFFFFF
-#define RMT_APB_MEM_ADDR_CH7_S  0
+/* RMT_APB_MEM_RADDR_CH7 : RO ;bitpos:[19:10] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_RADDR_CH7  0x000003FF
+#define RMT_APB_MEM_RADDR_CH7_M  ((RMT_APB_MEM_RADDR_CH7_V)<<(RMT_APB_MEM_RADDR_CH7_S))
+#define RMT_APB_MEM_RADDR_CH7_V  0x3FF
+#define RMT_APB_MEM_RADDR_CH7_S  10
+/* RMT_APB_MEM_WADDR_CH7 : RO ;bitpos:[9:0] ;default: 10'b0 ; */
+/*description: */
+#define RMT_APB_MEM_WADDR_CH7  0x000003FF
+#define RMT_APB_MEM_WADDR_CH7_M  ((RMT_APB_MEM_WADDR_CH7_V)<<(RMT_APB_MEM_WADDR_CH7_S))
+#define RMT_APB_MEM_WADDR_CH7_V  0x3FF
+#define RMT_APB_MEM_WADDR_CH7_S  0
 
 #define RMT_INT_RAW_REG          (DR_REG_RMT_BASE + 0x00a0)
 /* RMT_CH7_TX_THR_EVENT_INT_RAW : RO ;bitpos:[31] ;default: 1'b0 ; */
@@ -2069,6 +2457,18 @@
 #define RMT_CARRIER_LOW_CH7_S  0
 
 #define RMT_CH0_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00d0)
+/* RMT_TX_LOOP_CNT_EN_CH0 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH0  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH0_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH0_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH0_S  19
+/* RMT_TX_LOOP_NUM_CH0 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH0  0x000003FF
+#define RMT_TX_LOOP_NUM_CH0_M  ((RMT_TX_LOOP_NUM_CH0_V)<<(RMT_TX_LOOP_NUM_CH0_S))
+#define RMT_TX_LOOP_NUM_CH0_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH0_S  9
 /* RMT_TX_LIM_CH0 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel0 sends more than reg_rmt_tx_lim_ch0 datas then channel0
  produce the relative interrupt.*/
@@ -2078,6 +2478,18 @@
 #define RMT_TX_LIM_CH0_S  0
 
 #define RMT_CH1_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00d4)
+/* RMT_TX_LOOP_CNT_EN_CH1 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH1  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH1_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH1_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH1_S  19
+/* RMT_TX_LOOP_NUM_CH1 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH1  0x000003FF
+#define RMT_TX_LOOP_NUM_CH1_M  ((RMT_TX_LOOP_NUM_CH1_V)<<(RMT_TX_LOOP_NUM_CH1_S))
+#define RMT_TX_LOOP_NUM_CH1_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH1_S  9
 /* RMT_TX_LIM_CH1 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel1 sends more than reg_rmt_tx_lim_ch1 datas then channel1
  produce the relative interrupt.*/
@@ -2087,6 +2499,18 @@
 #define RMT_TX_LIM_CH1_S  0
 
 #define RMT_CH2_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00d8)
+/* RMT_TX_LOOP_CNT_EN_CH2 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH2  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH2_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH2_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH2_S  19
+/* RMT_TX_LOOP_NUM_CH2 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH2  0x000003FF
+#define RMT_TX_LOOP_NUM_CH2_M  ((RMT_TX_LOOP_NUM_CH2_V)<<(RMT_TX_LOOP_NUM_CH2_S))
+#define RMT_TX_LOOP_NUM_CH2_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH2_S  9
 /* RMT_TX_LIM_CH2 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel2 sends more than reg_rmt_tx_lim_ch2 datas then channel2
  produce the relative interrupt.*/
@@ -2096,6 +2520,18 @@
 #define RMT_TX_LIM_CH2_S  0
 
 #define RMT_CH3_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00dc)
+/* RMT_TX_LOOP_CNT_EN_CH3 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH3  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH3_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH3_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH3_S  19
+/* RMT_TX_LOOP_NUM_CH3 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH3  0x000003FF
+#define RMT_TX_LOOP_NUM_CH3_M  ((RMT_TX_LOOP_NUM_CH3_V)<<(RMT_TX_LOOP_NUM_CH3_S))
+#define RMT_TX_LOOP_NUM_CH3_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH3_S  9
 /* RMT_TX_LIM_CH3 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel3 sends more than reg_rmt_tx_lim_ch3 datas then channel3
  produce the relative interrupt.*/
@@ -2105,6 +2541,18 @@
 #define RMT_TX_LIM_CH3_S  0
 
 #define RMT_CH4_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00e0)
+/* RMT_TX_LOOP_CNT_EN_CH4 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH4  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH4_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH4_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH4_S  19
+/* RMT_TX_LOOP_NUM_CH4 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH4  0x000003FF
+#define RMT_TX_LOOP_NUM_CH4_M  ((RMT_TX_LOOP_NUM_CH4_V)<<(RMT_TX_LOOP_NUM_CH4_S))
+#define RMT_TX_LOOP_NUM_CH4_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH4_S  9
 /* RMT_TX_LIM_CH4 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel4 sends more than reg_rmt_tx_lim_ch4 datas then channel4
  produce the relative interrupt.*/
@@ -2114,6 +2562,18 @@
 #define RMT_TX_LIM_CH4_S  0
 
 #define RMT_CH5_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00e4)
+/* RMT_TX_LOOP_CNT_EN_CH5 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH5  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH5_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH5_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH5_S  19
+/* RMT_TX_LOOP_NUM_CH5 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH5  0x000003FF
+#define RMT_TX_LOOP_NUM_CH5_M  ((RMT_TX_LOOP_NUM_CH5_V)<<(RMT_TX_LOOP_NUM_CH5_S))
+#define RMT_TX_LOOP_NUM_CH5_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH5_S  9
 /* RMT_TX_LIM_CH5 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel5 sends more than reg_rmt_tx_lim_ch5 datas then channel5
  produce the relative interrupt.*/
@@ -2123,6 +2583,18 @@
 #define RMT_TX_LIM_CH5_S  0
 
 #define RMT_CH6_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00e8)
+/* RMT_TX_LOOP_CNT_EN_CH6 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH6  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH6_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH6_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH6_S  19
+/* RMT_TX_LOOP_NUM_CH6 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH6  0x000003FF
+#define RMT_TX_LOOP_NUM_CH6_M  ((RMT_TX_LOOP_NUM_CH6_V)<<(RMT_TX_LOOP_NUM_CH6_S))
+#define RMT_TX_LOOP_NUM_CH6_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH6_S  9
 /* RMT_TX_LIM_CH6 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel6 sends more than reg_rmt_tx_lim_ch6 datas then channel6
  produce the relative interrupt.*/
@@ -2132,6 +2604,18 @@
 #define RMT_TX_LIM_CH6_S  0
 
 #define RMT_CH7_TX_LIM_REG          (DR_REG_RMT_BASE + 0x00ec)
+/* RMT_TX_LOOP_CNT_EN_CH7 : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_CNT_EN_CH7  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH7_M  (BIT(19))
+#define RMT_TX_LOOP_CNT_EN_CH7_V  0x1
+#define RMT_TX_LOOP_CNT_EN_CH7_S  19
+/* RMT_TX_LOOP_NUM_CH7 : R/W ;bitpos:[18:9] ;default: 10'b0 ; */
+/*description: */
+#define RMT_TX_LOOP_NUM_CH7  0x000003FF
+#define RMT_TX_LOOP_NUM_CH7_M  ((RMT_TX_LOOP_NUM_CH7_V)<<(RMT_TX_LOOP_NUM_CH7_S))
+#define RMT_TX_LOOP_NUM_CH7_V  0x3FF
+#define RMT_TX_LOOP_NUM_CH7_S  9
 /* RMT_TX_LIM_CH7 : R/W ;bitpos:[8:0] ;default: 9'h80 ; */
 /*description: When channel7 sends more than reg_rmt_tx_lim_ch7 datas then channel7
  produce the relative interrupt.*/
@@ -2155,15 +2639,323 @@
 #define RMT_APB_FIFO_MASK_V  0x1
 #define RMT_APB_FIFO_MASK_S  0
 
-#define RMT_DATE_REG          (DR_REG_RMT_BASE + 0x00fc)
-/* RMT_DATE : R/W ;bitpos:[31:0] ;default: 32'h16022600 ; */
-/*description: This is the version register.*/
+#define RMT_TX_SIM_REG          (DR_REG_RMT_BASE + 0x00f4)
+/* RMT_TX_SIM_EN : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_EN  (BIT(8))
+#define RMT_TX_SIM_EN_M  (BIT(8))
+#define RMT_TX_SIM_EN_V  0x1
+#define RMT_TX_SIM_EN_S  8
+/* RMT_TX_SIM_CH7 : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH7  (BIT(7))
+#define RMT_TX_SIM_CH7_M  (BIT(7))
+#define RMT_TX_SIM_CH7_V  0x1
+#define RMT_TX_SIM_CH7_S  7
+/* RMT_TX_SIM_CH6 : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH6  (BIT(6))
+#define RMT_TX_SIM_CH6_M  (BIT(6))
+#define RMT_TX_SIM_CH6_V  0x1
+#define RMT_TX_SIM_CH6_S  6
+/* RMT_TX_SIM_CH5 : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH5  (BIT(5))
+#define RMT_TX_SIM_CH5_M  (BIT(5))
+#define RMT_TX_SIM_CH5_V  0x1
+#define RMT_TX_SIM_CH5_S  5
+/* RMT_TX_SIM_CH4 : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH4  (BIT(4))
+#define RMT_TX_SIM_CH4_M  (BIT(4))
+#define RMT_TX_SIM_CH4_V  0x1
+#define RMT_TX_SIM_CH4_S  4
+/* RMT_TX_SIM_CH3 : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH3  (BIT(3))
+#define RMT_TX_SIM_CH3_M  (BIT(3))
+#define RMT_TX_SIM_CH3_V  0x1
+#define RMT_TX_SIM_CH3_S  3
+/* RMT_TX_SIM_CH2 : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH2  (BIT(2))
+#define RMT_TX_SIM_CH2_M  (BIT(2))
+#define RMT_TX_SIM_CH2_V  0x1
+#define RMT_TX_SIM_CH2_S  2
+/* RMT_TX_SIM_CH1 : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH1  (BIT(1))
+#define RMT_TX_SIM_CH1_M  (BIT(1))
+#define RMT_TX_SIM_CH1_V  0x1
+#define RMT_TX_SIM_CH1_S  1
+/* RMT_TX_SIM_CH0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_TX_SIM_CH0  (BIT(0))
+#define RMT_TX_SIM_CH0_M  (BIT(0))
+#define RMT_TX_SIM_CH0_V  0x1
+#define RMT_TX_SIM_CH0_S  0
+
+#define RMT_REF_CNT_RST_REG          (DR_REG_RMT_BASE + 0x00f8)
+/* RMT_REF_CNT_RST_CH7 : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH7  (BIT(7))
+#define RMT_REF_CNT_RST_CH7_M  (BIT(7))
+#define RMT_REF_CNT_RST_CH7_V  0x1
+#define RMT_REF_CNT_RST_CH7_S  7
+/* RMT_REF_CNT_RST_CH6 : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH6  (BIT(6))
+#define RMT_REF_CNT_RST_CH6_M  (BIT(6))
+#define RMT_REF_CNT_RST_CH6_V  0x1
+#define RMT_REF_CNT_RST_CH6_S  6
+/* RMT_REF_CNT_RST_CH5 : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH5  (BIT(5))
+#define RMT_REF_CNT_RST_CH5_M  (BIT(5))
+#define RMT_REF_CNT_RST_CH5_V  0x1
+#define RMT_REF_CNT_RST_CH5_S  5
+/* RMT_REF_CNT_RST_CH4 : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH4  (BIT(4))
+#define RMT_REF_CNT_RST_CH4_M  (BIT(4))
+#define RMT_REF_CNT_RST_CH4_V  0x1
+#define RMT_REF_CNT_RST_CH4_S  4
+/* RMT_REF_CNT_RST_CH3 : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH3  (BIT(3))
+#define RMT_REF_CNT_RST_CH3_M  (BIT(3))
+#define RMT_REF_CNT_RST_CH3_V  0x1
+#define RMT_REF_CNT_RST_CH3_S  3
+/* RMT_REF_CNT_RST_CH2 : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH2  (BIT(2))
+#define RMT_REF_CNT_RST_CH2_M  (BIT(2))
+#define RMT_REF_CNT_RST_CH2_V  0x1
+#define RMT_REF_CNT_RST_CH2_S  2
+/* RMT_REF_CNT_RST_CH1 : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH1  (BIT(1))
+#define RMT_REF_CNT_RST_CH1_M  (BIT(1))
+#define RMT_REF_CNT_RST_CH1_V  0x1
+#define RMT_REF_CNT_RST_CH1_S  1
+/* RMT_REF_CNT_RST_CH0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_REF_CNT_RST_CH0  (BIT(0))
+#define RMT_REF_CNT_RST_CH0_M  (BIT(0))
+#define RMT_REF_CNT_RST_CH0_V  0x1
+#define RMT_REF_CNT_RST_CH0_S  0
+
+#define RMT_INT1_RAW_REG          (DR_REG_RMT_BASE + 0x00fc)
+/* RMT_CH7_TX_LOOP_INT_RAW : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH7_TX_LOOP_INT_RAW  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_RAW_M  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH7_TX_LOOP_INT_RAW_S  7
+/* RMT_CH6_TX_LOOP_INT_RAW : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH6_TX_LOOP_INT_RAW  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_RAW_M  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH6_TX_LOOP_INT_RAW_S  6
+/* RMT_CH5_TX_LOOP_INT_RAW : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH5_TX_LOOP_INT_RAW  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_RAW_M  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH5_TX_LOOP_INT_RAW_S  5
+/* RMT_CH4_TX_LOOP_INT_RAW : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH4_TX_LOOP_INT_RAW  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_RAW_M  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH4_TX_LOOP_INT_RAW_S  4
+/* RMT_CH3_TX_LOOP_INT_RAW : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH3_TX_LOOP_INT_RAW  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_RAW_M  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH3_TX_LOOP_INT_RAW_S  3
+/* RMT_CH2_TX_LOOP_INT_RAW : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH2_TX_LOOP_INT_RAW  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_RAW_M  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH2_TX_LOOP_INT_RAW_S  2
+/* RMT_CH1_TX_LOOP_INT_RAW : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH1_TX_LOOP_INT_RAW  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_RAW_M  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH1_TX_LOOP_INT_RAW_S  1
+/* RMT_CH0_TX_LOOP_INT_RAW : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH0_TX_LOOP_INT_RAW  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_RAW_M  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_RAW_V  0x1
+#define RMT_CH0_TX_LOOP_INT_RAW_S  0
+
+#define RMT_INT1_ST_REG          (DR_REG_RMT_BASE + 0x0100)
+/* RMT_CH7_TX_LOOP_INT_ST : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH7_TX_LOOP_INT_ST  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_ST_M  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH7_TX_LOOP_INT_ST_S  7
+/* RMT_CH6_TX_LOOP_INT_ST : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH6_TX_LOOP_INT_ST  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_ST_M  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH6_TX_LOOP_INT_ST_S  6
+/* RMT_CH5_TX_LOOP_INT_ST : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH5_TX_LOOP_INT_ST  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_ST_M  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH5_TX_LOOP_INT_ST_S  5
+/* RMT_CH4_TX_LOOP_INT_ST : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH4_TX_LOOP_INT_ST  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_ST_M  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH4_TX_LOOP_INT_ST_S  4
+/* RMT_CH3_TX_LOOP_INT_ST : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH3_TX_LOOP_INT_ST  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_ST_M  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH3_TX_LOOP_INT_ST_S  3
+/* RMT_CH2_TX_LOOP_INT_ST : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH2_TX_LOOP_INT_ST  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_ST_M  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH2_TX_LOOP_INT_ST_S  2
+/* RMT_CH1_TX_LOOP_INT_ST : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH1_TX_LOOP_INT_ST  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_ST_M  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH1_TX_LOOP_INT_ST_S  1
+/* RMT_CH0_TX_LOOP_INT_ST : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH0_TX_LOOP_INT_ST  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_ST_M  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_ST_V  0x1
+#define RMT_CH0_TX_LOOP_INT_ST_S  0
+
+#define RMT_INT1_ENA_REG          (DR_REG_RMT_BASE + 0x0104)
+/* RMT_CH7_TX_LOOP_INT_ENA : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH7_TX_LOOP_INT_ENA  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_ENA_M  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH7_TX_LOOP_INT_ENA_S  7
+/* RMT_CH6_TX_LOOP_INT_ENA : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH6_TX_LOOP_INT_ENA  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_ENA_M  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH6_TX_LOOP_INT_ENA_S  6
+/* RMT_CH5_TX_LOOP_INT_ENA : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH5_TX_LOOP_INT_ENA  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_ENA_M  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH5_TX_LOOP_INT_ENA_S  5
+/* RMT_CH4_TX_LOOP_INT_ENA : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH4_TX_LOOP_INT_ENA  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_ENA_M  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH4_TX_LOOP_INT_ENA_S  4
+/* RMT_CH3_TX_LOOP_INT_ENA : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH3_TX_LOOP_INT_ENA  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_ENA_M  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH3_TX_LOOP_INT_ENA_S  3
+/* RMT_CH2_TX_LOOP_INT_ENA : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH2_TX_LOOP_INT_ENA  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_ENA_M  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH2_TX_LOOP_INT_ENA_S  2
+/* RMT_CH1_TX_LOOP_INT_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH1_TX_LOOP_INT_ENA  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_ENA_M  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH1_TX_LOOP_INT_ENA_S  1
+/* RMT_CH0_TX_LOOP_INT_ENA : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH0_TX_LOOP_INT_ENA  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_ENA_M  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_ENA_V  0x1
+#define RMT_CH0_TX_LOOP_INT_ENA_S  0
+
+#define RMT_INT1_CLR_REG          (DR_REG_RMT_BASE + 0x0108)
+/* RMT_CH7_TX_LOOP_INT_CLR : WO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH7_TX_LOOP_INT_CLR  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_CLR_M  (BIT(7))
+#define RMT_CH7_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH7_TX_LOOP_INT_CLR_S  7
+/* RMT_CH6_TX_LOOP_INT_CLR : WO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH6_TX_LOOP_INT_CLR  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_CLR_M  (BIT(6))
+#define RMT_CH6_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH6_TX_LOOP_INT_CLR_S  6
+/* RMT_CH5_TX_LOOP_INT_CLR : WO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH5_TX_LOOP_INT_CLR  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_CLR_M  (BIT(5))
+#define RMT_CH5_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH5_TX_LOOP_INT_CLR_S  5
+/* RMT_CH4_TX_LOOP_INT_CLR : WO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH4_TX_LOOP_INT_CLR  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_CLR_M  (BIT(4))
+#define RMT_CH4_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH4_TX_LOOP_INT_CLR_S  4
+/* RMT_CH3_TX_LOOP_INT_CLR : WO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH3_TX_LOOP_INT_CLR  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_CLR_M  (BIT(3))
+#define RMT_CH3_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH3_TX_LOOP_INT_CLR_S  3
+/* RMT_CH2_TX_LOOP_INT_CLR : WO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH2_TX_LOOP_INT_CLR  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_CLR_M  (BIT(2))
+#define RMT_CH2_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH2_TX_LOOP_INT_CLR_S  2
+/* RMT_CH1_TX_LOOP_INT_CLR : WO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH1_TX_LOOP_INT_CLR  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_CLR_M  (BIT(1))
+#define RMT_CH1_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH1_TX_LOOP_INT_CLR_S  1
+/* RMT_CH0_TX_LOOP_INT_CLR : WO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define RMT_CH0_TX_LOOP_INT_CLR  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_CLR_M  (BIT(0))
+#define RMT_CH0_TX_LOOP_INT_CLR_V  0x1
+#define RMT_CH0_TX_LOOP_INT_CLR_S  0
+
+#define RMT_DATE_REG          (DR_REG_RMT_BASE + 0x010c)
+/* RMT_DATE : R/W ;bitpos:[31:0] ;default: 32'h18051400 ; */
+/*description: */
 #define RMT_DATE  0xFFFFFFFF
 #define RMT_DATE_M  ((RMT_DATE_V)<<(RMT_DATE_S))
 #define RMT_DATE_V  0xFFFFFFFF
 #define RMT_DATE_S  0
 
-/* RMT memory block address */
+#ifdef __cplusplus
+}
+#endif
 #define RMT_CHANNEL_MEM(i)  (DR_REG_RMT_BASE + 0x800 + 64 * 4 * (i))
 
 

@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_RMT_STRUCT_H_
 #define _SOC_RMT_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,17 +43,38 @@ typedef volatile struct {
                 uint32_t tx_conti_mode:   1;            /*Set this bit to continue sending  from the first data to the last data in channel0-7 again and again.*/
                 uint32_t rx_filter_en:    1;            /*This is the receive filter enable bit for channel0-7.*/
                 uint32_t rx_filter_thres: 8;            /*in receive mode  channel0-7 ignore input pulse when the pulse width is smaller then this value.*/
-                uint32_t ref_cnt_rst:     1;            /*This bit is used to reset divider in channel0-7.*/
+                uint32_t reserved16:          1;
                 uint32_t ref_always_on:   1;            /*This bit is used to select base clock. 1'b1:clk_apb  1'b0:clk_ref*/
                 uint32_t idle_out_lv:     1;            /*This bit configures the output signal's level for channel0-7 in IDLE state.*/
                 uint32_t idle_out_en:     1;            /*This is the output enable control bit for channel0-7 in IDLE state.*/
-                uint32_t reserved20:     12;
+                uint32_t tx_stop:             1;
+                uint32_t reserved21:         11;
             };
             uint32_t val;
         } conf1;
     } conf_ch[8];
-    uint32_t status_ch[8];                              /*The status for channel0-7*/
-    uint32_t apb_mem_addr_ch[8];                        /*The ram relative address in channel0-7 by apb fifo access*/
+    union {
+        struct {
+            uint32_t mem_waddr_ex:      10;
+            uint32_t mem_raddr_ex:      10;
+            uint32_t state:              3;
+            uint32_t mem_owner_err:      1;
+            uint32_t mem_full:           1;
+            uint32_t mem_empty:          1;
+            uint32_t apb_mem_wr_err:     1;
+            uint32_t apb_mem_rd_err:     1;
+            uint32_t reserved28:         4;
+        };
+        uint32_t val;
+    } status_ch[8];
+    union {
+        struct {
+            uint32_t waddr:            10;
+            uint32_t raddr:            10;
+            uint32_t reserved20:       12;
+        };
+        uint32_t val;
+    } apb_mem_addr_ch[8];
     union {
         struct {
             uint32_t ch0_tx_end:       1;               /*The interrupt raw bit for channel 0 turns to high level when the transmit process is done.*/
@@ -212,8 +232,10 @@ typedef volatile struct {
     } carrier_duty_ch[8];
     union {
         struct {
-            uint32_t limit: 9;                          /*When channel0-7 sends more than reg_rmt_tx_lim_ch0 data then channel0-7 produce the relative interrupt.*/
-            uint32_t reserved9: 23;
+            uint32_t limit:              9;
+            uint32_t tx_loop_num:       10;
+            uint32_t tx_loop_cnt_en:     1;
+            uint32_t reserved20:        12;
         };
         uint32_t val;
     } tx_lim_ch[8];
@@ -225,9 +247,92 @@ typedef volatile struct {
         };
         uint32_t val;
     } apb_conf;
-    uint32_t reserved_f4;
-    uint32_t reserved_f8;
-    uint32_t date;                                      /*This is the version register.*/
+    union {
+        struct {
+            uint32_t ch0:        1;
+            uint32_t ch1:        1;
+            uint32_t ch2:        1;
+            uint32_t ch3:        1;
+            uint32_t ch4:        1;
+            uint32_t ch5:        1;
+            uint32_t ch6:        1;
+            uint32_t ch7:        1;
+            uint32_t en:         1;
+            uint32_t reserved9: 23;
+        };
+        uint32_t val;
+    } tx_sim;
+    union {
+        struct {
+            uint32_t ch0:             1;
+            uint32_t ch1:             1;
+            uint32_t ch2:             1;
+            uint32_t ch3:             1;
+            uint32_t ch4:             1;
+            uint32_t ch5:             1;
+            uint32_t ch6:             1;
+            uint32_t ch7:             1;
+            uint32_t reserved8:      24;
+        };
+        uint32_t val;
+    } ref_cnt_rst;
+    union {
+        struct {
+            uint32_t ch0_tx_loop:         1;
+            uint32_t ch1_tx_loop:         1;
+            uint32_t ch2_tx_loop:         1;
+            uint32_t ch3_tx_loop:         1;
+            uint32_t ch4_tx_loop:         1;
+            uint32_t ch5_tx_loop:         1;
+            uint32_t ch6_tx_loop:         1;
+            uint32_t ch7_tx_loop:         1;
+            uint32_t reserved8:          24;
+        };
+        uint32_t val;
+    } int1_raw;
+    union {
+        struct {
+            uint32_t ch0_tx_loop:        1;
+            uint32_t ch1_tx_loop:        1;
+            uint32_t ch2_tx_loop:        1;
+            uint32_t ch3_tx_loop:        1;
+            uint32_t ch4_tx_loop:        1;
+            uint32_t ch5_tx_loop:        1;
+            uint32_t ch6_tx_loop:        1;
+            uint32_t ch7_tx_loop:        1;
+            uint32_t reserved8:         24;
+        };
+        uint32_t val;
+    } int1_st;
+    union {
+        struct {
+            uint32_t ch0_tx_loop:         1;
+            uint32_t ch1_tx_loop:         1;
+            uint32_t ch2_tx_loop:         1;
+            uint32_t ch3_tx_loop:         1;
+            uint32_t ch4_tx_loop:         1;
+            uint32_t ch5_tx_loop:         1;
+            uint32_t ch6_tx_loop:         1;
+            uint32_t ch7_tx_loop:         1;
+            uint32_t reserved8:          24;
+        };
+        uint32_t val;
+    } int1_ena;
+    union {
+        struct {
+            uint32_t ch0_tx_loop:         1;
+            uint32_t ch1_tx_loop:         1;
+            uint32_t ch2_tx_loop:         1;
+            uint32_t ch3_tx_loop:         1;
+            uint32_t ch4_tx_loop:         1;
+            uint32_t ch5_tx_loop:         1;
+            uint32_t ch6_tx_loop:         1;
+            uint32_t ch7_tx_loop:         1;
+            uint32_t reserved8:          24;
+        };
+        uint32_t val;
+    } int1_clr;
+    uint32_t date;                                      /**/
 } rmt_dev_t;
 extern rmt_dev_t RMT;
 

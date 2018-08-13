@@ -48,7 +48,7 @@ esp_err_t timer_get_counter_value(timer_group_t group_num, timer_idx_t timer_num
     TIMER_CHECK(timer_num < TIMER_MAX, TIMER_NUM_ERROR, ESP_ERR_INVALID_ARG);
     TIMER_CHECK(timer_val != NULL, TIMER_PARAM_ADDR_ERROR, ESP_ERR_INVALID_ARG);
     portENTER_CRITICAL(&timer_spinlock[group_num]);
-    TG[group_num]->hw_timer[timer_num].update = 1;
+    TG[group_num]->hw_timer[timer_num].update.update = 1;
     *timer_val = ((uint64_t) TG[group_num]->hw_timer[timer_num].cnt_high << 32)
         | (TG[group_num]->hw_timer[timer_num].cnt_low);
     portEXIT_CRITICAL(&timer_spinlock[group_num]);

@@ -23,12 +23,28 @@ typedef volatile struct {
         struct {
             union {
                 struct {
+                    uint32_t htimer_sel:       2;
+                    uint32_t hsig_out_en:      1;
+                    uint32_t hidle_lv:         1;
+                    uint32_t hovf_num:         10;
+                    uint32_t hovf_cnt_en:       1;
+                    uint32_t reserved15:      16;
+                    uint32_t clk_en:           1;
+                };
+                struct {
+                    uint32_t ltimer_sel:        2;
+                    uint32_t lsig_out_en:       1;
+                    uint32_t lidle_lv:          1;
+                    uint32_t low_speed_update: 1;
+                    uint32_t lovf_num:         10;
+                    uint32_t lovf_cnt_en:       1;
+                    uint32_t reserved16:      16;
+                };
+                struct {
                     uint32_t timer_sel:  2;              /*There are four high speed timers  the two bits are used to select one of them for high speed channel.  2'b00: seletc hstimer0.   2'b01: select hstimer1.  2'b10: select hstimer2.    2'b11: select hstimer3.*/
                     uint32_t sig_out_en: 1;              /*This is the output enable control bit for high speed channel*/
                     uint32_t idle_lv:    1;              /*This bit is used to control the output value when high speed channel is off.*/
-                    uint32_t low_speed_update: 1;        /*This bit is only useful for low speed timer channels, reserved for high speed timers*/
-                    uint32_t reserved4: 26;
-                    uint32_t clk_en:     1;              /*This bit is clock gating control signal. when software configure LED_PWM internal registers  it controls the register clock.*/
+                    uint32_t reserved28:   28;
                 };
                 uint32_t val;
             } conf0;
@@ -69,18 +85,13 @@ typedef volatile struct {
         struct {
             union {
                 struct {
-                    uint32_t duty_resolution:   5;     /*This register controls resolution of PWN duty by defining the bit width of timer's counter. The max bit width of the counter is 20.*/
-                    uint32_t clock_divider:    18;     /*This register is used to configure the divider of clock at the entry of timer. The least significant eight bits represent the decimal part.*/
-                    uint32_t pause:             1;     /*This bit is used to pause the counter in high speed timer*/
-                    uint32_t rst:               1;     /*This bit is used to reset high speed timer the counter will be 0 after reset.*/
-                    uint32_t tick_sel:          1;     /*This bit is used to choose apb_clk or ref_tick for high speed timer. 1'b1:apb_clk  0:ref_tick*/
-                    uint32_t low_speed_update:  1;     /*This bit is only useful for low speed timer channels, reserved for high speed timers*/
-                    uint32_t reserved26:        5;
-                };
-                struct {
-                    uint32_t bit_num:           5 __attribute__((deprecated));  /*Deprecated in ESP-IDF 3.0. This is an alias to 'duty_resolution' for backward compatibility with ESP-IDF 2.1.*/
-                    uint32_t div_num:          18 __attribute__((deprecated));  /*Deprecated in ESP-IDF 3.0. This is an alias to 'clock_divider' for backward compatibility with ESP-IDF 2.1.*/
-                    uint32_t place_holder:      9 __attribute__((deprecated));  /*A place holder to accommodate deprecated members*/
+                    uint32_t duty_resolution:          5;
+                    uint32_t clock_divider:          18;
+                    uint32_t pause:             1;
+                    uint32_t rst:               1;
+                    uint32_t tick_sel:          1;
+                    uint32_t low_speed_update:  1;
+                    uint32_t reserved27:        5;
                 };
                 uint32_t val;
             } conf;
@@ -215,8 +226,8 @@ typedef volatile struct {
     } int_clr;
     union {
         struct {
-            uint32_t apb_clk_sel: 1;                   /*This bit decides the slow clock for LEDC low speed channels, so we want to replace the field name with slow_clk_sel*/
-            uint32_t reserved1:  31;
+            uint32_t apb_clk_sel: 2;
+            uint32_t reserved2:  30;
         };
         struct {
             uint32_t slow_clk_sel: 1;                  /*This bit is used to set the frequency of slow_clk. 1'b1:80mhz  1'b0:8mhz, (only used by LEDC low speed channels/timers)*/
@@ -224,10 +235,94 @@ typedef volatile struct {
         };
         uint32_t val;
     } conf;
-    uint32_t reserved_194;
-    uint32_t reserved_198;
-    uint32_t reserved_19c;
-    uint32_t reserved_1a0;
+    union {
+        struct {
+            uint32_t ovf_cnt_hsch0:         1;
+            uint32_t ovf_cnt_hsch1:         1;
+            uint32_t ovf_cnt_hsch2:         1;
+            uint32_t ovf_cnt_hsch3:         1;
+            uint32_t ovf_cnt_hsch4:         1;
+            uint32_t ovf_cnt_hsch5:         1;
+            uint32_t ovf_cnt_hsch6:         1;
+            uint32_t ovf_cnt_hsch7:         1;
+            uint32_t ovf_cnt_lsch0:         1;
+            uint32_t ovf_cnt_lsch1:         1;
+            uint32_t ovf_cnt_lsch2:         1;
+            uint32_t ovf_cnt_lsch3:         1;
+            uint32_t ovf_cnt_lsch4:         1;
+            uint32_t ovf_cnt_lsch5:         1;
+            uint32_t ovf_cnt_lsch6:         1;
+            uint32_t ovf_cnt_lsch7:         1;
+            uint32_t reserved16:           16;
+        };
+        uint32_t val;
+    } int1_raw;
+    union {
+        struct {
+            uint32_t ovf_cnt_hsch0:        1;
+            uint32_t ovf_cnt_hsch1:        1;
+            uint32_t ovf_cnt_hsch2:        1;
+            uint32_t ovf_cnt_hsch3:        1;
+            uint32_t ovf_cnt_hsch4:        1;
+            uint32_t ovf_cnt_hsch5:        1;
+            uint32_t ovf_cnt_hsch6:        1;
+            uint32_t ovf_cnt_hsch7:        1;
+            uint32_t ovf_cnt_lsch0:        1;
+            uint32_t ovf_cnt_lsch1:        1;
+            uint32_t ovf_cnt_lsch2:        1;
+            uint32_t ovf_cnt_lsch3:        1;
+            uint32_t ovf_cnt_lsch4:        1;
+            uint32_t ovf_cnt_lsch5:        1;
+            uint32_t ovf_cnt_lsch6:        1;
+            uint32_t ovf_cnt_lsch7:        1;
+            uint32_t reserved16:          16;
+        };
+        uint32_t val;
+    } int1_st;
+    union {
+        struct {
+            uint32_t ovf_cnt_hsch0:         1;
+            uint32_t ovf_cnt_hsch1:         1;
+            uint32_t ovf_cnt_hsch2:         1;
+            uint32_t ovf_cnt_hsch3:         1;
+            uint32_t ovf_cnt_hsch4:         1;
+            uint32_t ovf_cnt_hsch5:         1;
+            uint32_t ovf_cnt_hsch6:         1;
+            uint32_t ovf_cnt_hsch7:         1;
+            uint32_t ovf_cnt_lsch0:         1;
+            uint32_t ovf_cnt_lsch1:         1;
+            uint32_t ovf_cnt_lsch2:         1;
+            uint32_t ovf_cnt_lsch3:         1;
+            uint32_t ovf_cnt_lsch4:         1;
+            uint32_t ovf_cnt_lsch5:         1;
+            uint32_t ovf_cnt_lsch6:         1;
+            uint32_t ovf_cnt_lsch7:         1;
+            uint32_t reserved16:           16;
+        };
+        uint32_t val;
+    } int1_ena;
+    union {
+        struct {
+            uint32_t ovf_cnt_hsch0:         1;
+            uint32_t ovf_cnt_hsch1:         1;
+            uint32_t ovf_cnt_hsch2:         1;
+            uint32_t ovf_cnt_hsch3:         1;
+            uint32_t ovf_cnt_hsch4:         1;
+            uint32_t ovf_cnt_hsch5:         1;
+            uint32_t ovf_cnt_hsch6:         1;
+            uint32_t ovf_cnt_hsch7:         1;
+            uint32_t ovf_cnt_lsch0:         1;
+            uint32_t ovf_cnt_lsch1:         1;
+            uint32_t ovf_cnt_lsch2:         1;
+            uint32_t ovf_cnt_lsch3:         1;
+            uint32_t ovf_cnt_lsch4:         1;
+            uint32_t ovf_cnt_lsch5:         1;
+            uint32_t ovf_cnt_lsch6:         1;
+            uint32_t ovf_cnt_lsch7:         1;
+            uint32_t reserved16:           16;
+        };
+        uint32_t val;
+    } int1_clr;
     uint32_t reserved_1a4;
     uint32_t reserved_1a8;
     uint32_t reserved_1ac;

@@ -132,12 +132,12 @@ extern "C" {
 #define GPIO_SD7_IN_S  0
 
 #define GPIO_SIGMADELTA_CG_REG          (DR_REG_GPIO_SD_BASE + 0x0020)
-/* GPIO_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/* GPIO_SD_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
 /*description: */
-#define GPIO_CLK_EN  (BIT(31))
-#define GPIO_CLK_EN_M  (BIT(31))
-#define GPIO_CLK_EN_V  0x1
-#define GPIO_CLK_EN_S  31
+#define GPIO_SD_CLK_EN  (BIT(31))
+#define GPIO_SD_CLK_EN_M  (BIT(31))
+#define GPIO_SD_CLK_EN_V  0x1
+#define GPIO_SD_CLK_EN_S  31
 
 #define GPIO_SIGMADELTA_MISC_REG          (DR_REG_GPIO_SD_BASE + 0x0024)
 /* GPIO_SPI_SWAP : R/W ;bitpos:[31] ;default: 1'h0 ; */
@@ -160,7 +160,7 @@ extern "C" {
 #define GPIO_SD_DATE_M  ((GPIO_SD_DATE_V)<<(GPIO_SD_DATE_S))
 #define GPIO_SD_DATE_V  0xFFFFFFF
 #define GPIO_SD_DATE_S  0
-
+#define SIGMADELTA_GPIO_SD_DATE_VERSION 0x1802260
 #ifdef __cplusplus
 }
 #endif

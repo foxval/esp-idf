@@ -291,7 +291,7 @@ static esp_err_t uart_reset_rx_fifo(uart_port_t uart_num)
     //See description about UART_TXFIFO_RST and UART_RXFIFO_RST in <<esp32_technical_reference_manual>> v2.6 or later.
 
     // we read the data out and make `fifo_len == 0 && rd_addr == wr_addr`.
-    while(UART[uart_num]->status.rxfifo_cnt != 0 || (UART[uart_num]->mem_rx_status.wr_addr != UART[uart_num]->mem_rx_status.rd_addr)) {
+    while(UART[uart_num]->status.rxfifo_cnt != 0 || (UART[uart_num]->mem_rx_status.rx_waddr != UART[uart_num]->mem_rx_status.apb_rx_raddr)) {
         READ_PERI_REG(UART_FIFO_AHB_REG(uart_num));
     }
     return ESP_OK;

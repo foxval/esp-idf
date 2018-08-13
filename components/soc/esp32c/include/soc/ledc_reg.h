@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,6 +15,9 @@
 #define _SOC_LEDC_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define LEDC_HSCH0_CONF0_REG          (DR_REG_LEDC_BASE + 0x0000)
 /* LEDC_CLK_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
@@ -24,6 +27,18 @@
 #define LEDC_CLK_EN_M  (BIT(31))
 #define LEDC_CLK_EN_V  0x1
 #define LEDC_CLK_EN_S  31
+/* LEDC_OVF_CNT_EN_HSCH0 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH0  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH0_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH0_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH0_S  14
+/* LEDC_OVF_NUM_HSCH0 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH0  0x000003FF
+#define LEDC_OVF_NUM_HSCH0_M  ((LEDC_OVF_NUM_HSCH0_V)<<(LEDC_OVF_NUM_HSCH0_S))
+#define LEDC_OVF_NUM_HSCH0_V  0x3FF
+#define LEDC_OVF_NUM_HSCH0_S  4
 /* LEDC_IDLE_LV_HSCH0 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel0 is off.*/
 #define LEDC_IDLE_LV_HSCH0  (BIT(3))
@@ -109,6 +124,18 @@
 #define LEDC_DUTY_HSCH0_S  0
 
 #define LEDC_HSCH1_CONF0_REG          (DR_REG_LEDC_BASE + 0x0014)
+/* LEDC_OVF_CNT_EN_HSCH1 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH1  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH1_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH1_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH1_S  14
+/* LEDC_OVF_NUM_HSCH1 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH1  0x000003FF
+#define LEDC_OVF_NUM_HSCH1_M  ((LEDC_OVF_NUM_HSCH1_V)<<(LEDC_OVF_NUM_HSCH1_S))
+#define LEDC_OVF_NUM_HSCH1_V  0x3FF
+#define LEDC_OVF_NUM_HSCH1_S  4
 /* LEDC_IDLE_LV_HSCH1 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel1 is off.*/
 #define LEDC_IDLE_LV_HSCH1  (BIT(3))
@@ -194,6 +221,18 @@
 #define LEDC_DUTY_HSCH1_S  0
 
 #define LEDC_HSCH2_CONF0_REG          (DR_REG_LEDC_BASE + 0x0028)
+/* LEDC_OVF_CNT_EN_HSCH2 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH2  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH2_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH2_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH2_S  14
+/* LEDC_OVF_NUM_HSCH2 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH2  0x000003FF
+#define LEDC_OVF_NUM_HSCH2_M  ((LEDC_OVF_NUM_HSCH2_V)<<(LEDC_OVF_NUM_HSCH2_S))
+#define LEDC_OVF_NUM_HSCH2_V  0x3FF
+#define LEDC_OVF_NUM_HSCH2_S  4
 /* LEDC_IDLE_LV_HSCH2 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel2 is off.*/
 #define LEDC_IDLE_LV_HSCH2  (BIT(3))
@@ -279,6 +318,18 @@
 #define LEDC_DUTY_HSCH2_S  0
 
 #define LEDC_HSCH3_CONF0_REG          (DR_REG_LEDC_BASE + 0x003C)
+/* LEDC_OVF_CNT_EN_HSCH3 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH3  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH3_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH3_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH3_S  14
+/* LEDC_OVF_NUM_HSCH3 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH3  0x000003FF
+#define LEDC_OVF_NUM_HSCH3_M  ((LEDC_OVF_NUM_HSCH3_V)<<(LEDC_OVF_NUM_HSCH3_S))
+#define LEDC_OVF_NUM_HSCH3_V  0x3FF
+#define LEDC_OVF_NUM_HSCH3_S  4
 /* LEDC_IDLE_LV_HSCH3 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel3 is off.*/
 #define LEDC_IDLE_LV_HSCH3  (BIT(3))
@@ -364,6 +415,18 @@
 #define LEDC_DUTY_HSCH3_S  0
 
 #define LEDC_HSCH4_CONF0_REG          (DR_REG_LEDC_BASE + 0x0050)
+/* LEDC_OVF_CNT_EN_HSCH4 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH4  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH4_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH4_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH4_S  14
+/* LEDC_OVF_NUM_HSCH4 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH4  0x000003FF
+#define LEDC_OVF_NUM_HSCH4_M  ((LEDC_OVF_NUM_HSCH4_V)<<(LEDC_OVF_NUM_HSCH4_S))
+#define LEDC_OVF_NUM_HSCH4_V  0x3FF
+#define LEDC_OVF_NUM_HSCH4_S  4
 /* LEDC_IDLE_LV_HSCH4 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel4 is off.*/
 #define LEDC_IDLE_LV_HSCH4  (BIT(3))
@@ -449,6 +512,18 @@
 #define LEDC_DUTY_HSCH4_S  0
 
 #define LEDC_HSCH5_CONF0_REG          (DR_REG_LEDC_BASE + 0x0064)
+/* LEDC_OVF_CNT_EN_HSCH5 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH5  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH5_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH5_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH5_S  14
+/* LEDC_OVF_NUM_HSCH5 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH5  0x000003FF
+#define LEDC_OVF_NUM_HSCH5_M  ((LEDC_OVF_NUM_HSCH5_V)<<(LEDC_OVF_NUM_HSCH5_S))
+#define LEDC_OVF_NUM_HSCH5_V  0x3FF
+#define LEDC_OVF_NUM_HSCH5_S  4
 /* LEDC_IDLE_LV_HSCH5 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel5 is off.*/
 #define LEDC_IDLE_LV_HSCH5  (BIT(3))
@@ -534,6 +609,18 @@
 #define LEDC_DUTY_HSCH5_S  0
 
 #define LEDC_HSCH6_CONF0_REG          (DR_REG_LEDC_BASE + 0x0078)
+/* LEDC_OVF_CNT_EN_HSCH6 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH6  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH6_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH6_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH6_S  14
+/* LEDC_OVF_NUM_HSCH6 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH6  0x000003FF
+#define LEDC_OVF_NUM_HSCH6_M  ((LEDC_OVF_NUM_HSCH6_V)<<(LEDC_OVF_NUM_HSCH6_S))
+#define LEDC_OVF_NUM_HSCH6_V  0x3FF
+#define LEDC_OVF_NUM_HSCH6_S  4
 /* LEDC_IDLE_LV_HSCH6 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel6 is off.*/
 #define LEDC_IDLE_LV_HSCH6  (BIT(3))
@@ -619,6 +706,18 @@
 #define LEDC_DUTY_HSCH6_S  0
 
 #define LEDC_HSCH7_CONF0_REG          (DR_REG_LEDC_BASE + 0x008C)
+/* LEDC_OVF_CNT_EN_HSCH7 : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_HSCH7  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH7_M  (BIT(14))
+#define LEDC_OVF_CNT_EN_HSCH7_V  0x1
+#define LEDC_OVF_CNT_EN_HSCH7_S  14
+/* LEDC_OVF_NUM_HSCH7 : R/W ;bitpos:[13:4] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_HSCH7  0x000003FF
+#define LEDC_OVF_NUM_HSCH7_M  ((LEDC_OVF_NUM_HSCH7_V)<<(LEDC_OVF_NUM_HSCH7_S))
+#define LEDC_OVF_NUM_HSCH7_V  0x3FF
+#define LEDC_OVF_NUM_HSCH7_S  4
 /* LEDC_IDLE_LV_HSCH7 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: This bit is used to control the output value when high speed channel7 is off.*/
 #define LEDC_IDLE_LV_HSCH7  (BIT(3))
@@ -704,6 +803,18 @@
 #define LEDC_DUTY_HSCH7_S  0
 
 #define LEDC_LSCH0_CONF0_REG          (DR_REG_LEDC_BASE + 0x00A0)
+/* LEDC_OVF_CNT_EN_LSCH0 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH0  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH0_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH0_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH0_S  15
+/* LEDC_OVF_NUM_LSCH0 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH0  0x000003FF
+#define LEDC_OVF_NUM_LSCH0_M  ((LEDC_OVF_NUM_LSCH0_V)<<(LEDC_OVF_NUM_LSCH0_S))
+#define LEDC_OVF_NUM_LSCH0_V  0x3FF
+#define LEDC_OVF_NUM_LSCH0_S  5
 /* LEDC_PARA_UP_LSCH0 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH0_HPOINT and LEDC_LSCH0_DUTY
  for low speed channel0.*/
@@ -796,6 +907,18 @@
 #define LEDC_DUTY_LSCH0_S  0
 
 #define LEDC_LSCH1_CONF0_REG          (DR_REG_LEDC_BASE + 0x00B4)
+/* LEDC_OVF_CNT_EN_LSCH1 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH1  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH1_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH1_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH1_S  15
+/* LEDC_OVF_NUM_LSCH1 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH1  0x000003FF
+#define LEDC_OVF_NUM_LSCH1_M  ((LEDC_OVF_NUM_LSCH1_V)<<(LEDC_OVF_NUM_LSCH1_S))
+#define LEDC_OVF_NUM_LSCH1_V  0x3FF
+#define LEDC_OVF_NUM_LSCH1_S  5
 /* LEDC_PARA_UP_LSCH1 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH1_HPOINT and LEDC_LSCH1_DUTY
  for low speed channel1.*/
@@ -888,6 +1011,18 @@
 #define LEDC_DUTY_LSCH1_S  0
 
 #define LEDC_LSCH2_CONF0_REG          (DR_REG_LEDC_BASE + 0x00C8)
+/* LEDC_OVF_CNT_EN_LSCH2 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH2  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH2_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH2_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH2_S  15
+/* LEDC_OVF_NUM_LSCH2 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH2  0x000003FF
+#define LEDC_OVF_NUM_LSCH2_M  ((LEDC_OVF_NUM_LSCH2_V)<<(LEDC_OVF_NUM_LSCH2_S))
+#define LEDC_OVF_NUM_LSCH2_V  0x3FF
+#define LEDC_OVF_NUM_LSCH2_S  5
 /* LEDC_PARA_UP_LSCH2 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH2_HPOINT and LEDC_LSCH2_DUTY
  for low speed channel2.*/
@@ -980,6 +1115,18 @@
 #define LEDC_DUTY_LSCH2_S  0
 
 #define LEDC_LSCH3_CONF0_REG          (DR_REG_LEDC_BASE + 0x00DC)
+/* LEDC_OVF_CNT_EN_LSCH3 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH3  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH3_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH3_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH3_S  15
+/* LEDC_OVF_NUM_LSCH3 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH3  0x000003FF
+#define LEDC_OVF_NUM_LSCH3_M  ((LEDC_OVF_NUM_LSCH3_V)<<(LEDC_OVF_NUM_LSCH3_S))
+#define LEDC_OVF_NUM_LSCH3_V  0x3FF
+#define LEDC_OVF_NUM_LSCH3_S  5
 /* LEDC_PARA_UP_LSCH3 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH3_HPOINT and LEDC_LSCH3_DUTY
  for low speed channel3.*/
@@ -1072,6 +1219,18 @@
 #define LEDC_DUTY_LSCH3_S  0
 
 #define LEDC_LSCH4_CONF0_REG          (DR_REG_LEDC_BASE + 0x00F0)
+/* LEDC_OVF_CNT_EN_LSCH4 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH4  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH4_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH4_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH4_S  15
+/* LEDC_OVF_NUM_LSCH4 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH4  0x000003FF
+#define LEDC_OVF_NUM_LSCH4_M  ((LEDC_OVF_NUM_LSCH4_V)<<(LEDC_OVF_NUM_LSCH4_S))
+#define LEDC_OVF_NUM_LSCH4_V  0x3FF
+#define LEDC_OVF_NUM_LSCH4_S  5
 /* LEDC_PARA_UP_LSCH4 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH4_HPOINT and LEDC_LSCH4_DUTY
  for low speed channel4.*/
@@ -1164,6 +1323,18 @@
 #define LEDC_DUTY_LSCH4_S  0
 
 #define LEDC_LSCH5_CONF0_REG          (DR_REG_LEDC_BASE + 0x0104)
+/* LEDC_OVF_CNT_EN_LSCH5 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH5  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH5_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH5_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH5_S  15
+/* LEDC_OVF_NUM_LSCH5 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH5  0x000003FF
+#define LEDC_OVF_NUM_LSCH5_M  ((LEDC_OVF_NUM_LSCH5_V)<<(LEDC_OVF_NUM_LSCH5_S))
+#define LEDC_OVF_NUM_LSCH5_V  0x3FF
+#define LEDC_OVF_NUM_LSCH5_S  5
 /* LEDC_PARA_UP_LSCH5 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH5_HPOINT and LEDC_LSCH5_DUTY
  for low speed channel5.*/
@@ -1256,6 +1427,18 @@
 #define LEDC_DUTY_LSCH5_S  0
 
 #define LEDC_LSCH6_CONF0_REG          (DR_REG_LEDC_BASE + 0x0118)
+/* LEDC_OVF_CNT_EN_LSCH6 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH6  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH6_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH6_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH6_S  15
+/* LEDC_OVF_NUM_LSCH6 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH6  0x000003FF
+#define LEDC_OVF_NUM_LSCH6_M  ((LEDC_OVF_NUM_LSCH6_V)<<(LEDC_OVF_NUM_LSCH6_S))
+#define LEDC_OVF_NUM_LSCH6_V  0x3FF
+#define LEDC_OVF_NUM_LSCH6_S  5
 /* LEDC_PARA_UP_LSCH6 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH6_HPOINT and LEDC_LSCH6_DUTY
  for low speed channel6.*/
@@ -1348,6 +1531,18 @@
 #define LEDC_DUTY_LSCH6_S  0
 
 #define LEDC_LSCH7_CONF0_REG          (DR_REG_LEDC_BASE + 0x012C)
+/* LEDC_OVF_CNT_EN_LSCH7 : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_EN_LSCH7  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH7_M  (BIT(15))
+#define LEDC_OVF_CNT_EN_LSCH7_V  0x1
+#define LEDC_OVF_CNT_EN_LSCH7_S  15
+/* LEDC_OVF_NUM_LSCH7 : R/W ;bitpos:[14:5] ;default: 10'b0 ; */
+/*description: */
+#define LEDC_OVF_NUM_LSCH7  0x000003FF
+#define LEDC_OVF_NUM_LSCH7_M  ((LEDC_OVF_NUM_LSCH7_V)<<(LEDC_OVF_NUM_LSCH7_S))
+#define LEDC_OVF_NUM_LSCH7_V  0x3FF
+#define LEDC_OVF_NUM_LSCH7_S  5
 /* LEDC_PARA_UP_LSCH7 : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: This bit is used to update register LEDC_LSCH7_HPOINT and LEDC_LSCH7_DUTY
  for low speed channel7.*/
@@ -1459,20 +1654,23 @@
 #define LEDC_HSTIMER0_PAUSE_M  (BIT(23))
 #define LEDC_HSTIMER0_PAUSE_V  0x1
 #define LEDC_HSTIMER0_PAUSE_S  23
-/* LEDC_DIV_NUM_HSTIMER0 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in high
- speed timer0 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_HSTIMER0  0x0003FFFF
-#define LEDC_DIV_NUM_HSTIMER0_M  ((LEDC_DIV_NUM_HSTIMER0_V)<<(LEDC_DIV_NUM_HSTIMER0_S))
-#define LEDC_DIV_NUM_HSTIMER0_V  0x3FFFF
-#define LEDC_DIV_NUM_HSTIMER0_S  5
-/* LEDC_HSTIMER0_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in high speed
- timer0. the counter range is [0 2**reg_hstimer0_lim] the max bit width for counter is 20.*/
-#define LEDC_HSTIMER0_LIM  0x0000001F
-#define LEDC_HSTIMER0_LIM_M  ((LEDC_HSTIMER0_LIM_V)<<(LEDC_HSTIMER0_LIM_S))
-#define LEDC_HSTIMER0_LIM_V  0x1F
-#define LEDC_HSTIMER0_LIM_S  0
+/* LEDC_CLK_DIV_HSTIMER0 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_HSTIMER0  0x0003FFFF
+#define LEDC_CLK_DIV_HSTIMER0_M  ((LEDC_CLK_DIV_HSTIMER0_V)<<(LEDC_CLK_DIV_HSTIMER0_S))
+#define LEDC_CLK_DIV_HSTIMER0_V  0x3FFFF
+#define LEDC_CLK_DIV_HSTIMER0_S  5
+/* LEDC_HSTIMER0_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_HSTIMER0_DUTY_RES  0x0000001F
+#define LEDC_HSTIMER0_DUTY_RES_M  ((LEDC_HSTIMER0_DUTY_RES_V)<<(LEDC_HSTIMER0_DUTY_RES_S))
+#define LEDC_HSTIMER0_DUTY_RES_V  0x1F
+#define LEDC_HSTIMER0_DUTY_RES_S  0
+
+#define LEDC_DIV_NUM_HSTIMER0    LEDC_CLK_DIV_HSTIMER0
+#define LEDC_DIV_NUM_HSTIMER0_M  LEDC_CLK_DIV_HSTIMER0_M
+#define LEDC_DIV_NUM_HSTIMER0_V  LEDC_CLK_DIV_HSTIMER0_V
+#define LEDC_DIV_NUM_HSTIMER0_S  LEDC_CLK_DIV_HSTIMER0_S
 
 #define LEDC_HSTIMER0_VALUE_REG          (DR_REG_LEDC_BASE + 0x0144)
 /* LEDC_HSTIMER0_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1503,20 +1701,18 @@
 #define LEDC_HSTIMER1_PAUSE_M  (BIT(23))
 #define LEDC_HSTIMER1_PAUSE_V  0x1
 #define LEDC_HSTIMER1_PAUSE_S  23
-/* LEDC_DIV_NUM_HSTIMER1 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in high
- speed timer1 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_HSTIMER1  0x0003FFFF
-#define LEDC_DIV_NUM_HSTIMER1_M  ((LEDC_DIV_NUM_HSTIMER1_V)<<(LEDC_DIV_NUM_HSTIMER1_S))
-#define LEDC_DIV_NUM_HSTIMER1_V  0x3FFFF
-#define LEDC_DIV_NUM_HSTIMER1_S  5
-/* LEDC_HSTIMER1_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in high speed
- timer1. the counter range is [0 2**reg_hstimer1_lim] the max bit width for counter is 20.*/
-#define LEDC_HSTIMER1_LIM  0x0000001F
-#define LEDC_HSTIMER1_LIM_M  ((LEDC_HSTIMER1_LIM_V)<<(LEDC_HSTIMER1_LIM_S))
-#define LEDC_HSTIMER1_LIM_V  0x1F
-#define LEDC_HSTIMER1_LIM_S  0
+/* LEDC_CLK_DIV_HSTIMER1 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_HSTIMER1  0x0003FFFF
+#define LEDC_CLK_DIV_HSTIMER1_M  ((LEDC_CLK_DIV_HSTIMER1_V)<<(LEDC_CLK_DIV_HSTIMER1_S))
+#define LEDC_CLK_DIV_HSTIMER1_V  0x3FFFF
+#define LEDC_CLK_DIV_HSTIMER1_S  5
+/* LEDC_HSTIMER1_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_HSTIMER1_DUTY_RES  0x0000001F
+#define LEDC_HSTIMER1_DUTY_RES_M  ((LEDC_HSTIMER1_DUTY_RES_V)<<(LEDC_HSTIMER1_DUTY_RES_S))
+#define LEDC_HSTIMER1_DUTY_RES_V  0x1F
+#define LEDC_HSTIMER1_DUTY_RES_S  0
 
 #define LEDC_HSTIMER1_VALUE_REG          (DR_REG_LEDC_BASE + 0x014C)
 /* LEDC_HSTIMER1_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1547,20 +1743,18 @@
 #define LEDC_HSTIMER2_PAUSE_M  (BIT(23))
 #define LEDC_HSTIMER2_PAUSE_V  0x1
 #define LEDC_HSTIMER2_PAUSE_S  23
-/* LEDC_DIV_NUM_HSTIMER2 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in high
- speed timer2 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_HSTIMER2  0x0003FFFF
-#define LEDC_DIV_NUM_HSTIMER2_M  ((LEDC_DIV_NUM_HSTIMER2_V)<<(LEDC_DIV_NUM_HSTIMER2_S))
-#define LEDC_DIV_NUM_HSTIMER2_V  0x3FFFF
-#define LEDC_DIV_NUM_HSTIMER2_S  5
-/* LEDC_HSTIMER2_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in high speed
- timer2. the counter range is [0 2**reg_hstimer2_lim] the max bit width for counter is 20.*/
-#define LEDC_HSTIMER2_LIM  0x0000001F
-#define LEDC_HSTIMER2_LIM_M  ((LEDC_HSTIMER2_LIM_V)<<(LEDC_HSTIMER2_LIM_S))
-#define LEDC_HSTIMER2_LIM_V  0x1F
-#define LEDC_HSTIMER2_LIM_S  0
+/* LEDC_CLK_DIV_HSTIMER2 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_HSTIMER2  0x0003FFFF
+#define LEDC_CLK_DIV_HSTIMER2_M  ((LEDC_CLK_DIV_HSTIMER2_V)<<(LEDC_CLK_DIV_HSTIMER2_S))
+#define LEDC_CLK_DIV_HSTIMER2_V  0x3FFFF
+#define LEDC_CLK_DIV_HSTIMER2_S  5
+/* LEDC_HSTIMER2_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_HSTIMER2_DUTY_RES  0x0000001F
+#define LEDC_HSTIMER2_DUTY_RES_M  ((LEDC_HSTIMER2_DUTY_RES_V)<<(LEDC_HSTIMER2_DUTY_RES_S))
+#define LEDC_HSTIMER2_DUTY_RES_V  0x1F
+#define LEDC_HSTIMER2_DUTY_RES_S  0
 
 #define LEDC_HSTIMER2_VALUE_REG          (DR_REG_LEDC_BASE + 0x0154)
 /* LEDC_HSTIMER2_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1591,20 +1785,18 @@
 #define LEDC_HSTIMER3_PAUSE_M  (BIT(23))
 #define LEDC_HSTIMER3_PAUSE_V  0x1
 #define LEDC_HSTIMER3_PAUSE_S  23
-/* LEDC_DIV_NUM_HSTIMER3 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in high
- speed timer3 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_HSTIMER3  0x0003FFFF
-#define LEDC_DIV_NUM_HSTIMER3_M  ((LEDC_DIV_NUM_HSTIMER3_V)<<(LEDC_DIV_NUM_HSTIMER3_S))
-#define LEDC_DIV_NUM_HSTIMER3_V  0x3FFFF
-#define LEDC_DIV_NUM_HSTIMER3_S  5
-/* LEDC_HSTIMER3_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in high speed
- timer3. the counter range is [0 2**reg_hstimer3_lim] the max bit width for counter is 20.*/
-#define LEDC_HSTIMER3_LIM  0x0000001F
-#define LEDC_HSTIMER3_LIM_M  ((LEDC_HSTIMER3_LIM_V)<<(LEDC_HSTIMER3_LIM_S))
-#define LEDC_HSTIMER3_LIM_V  0x1F
-#define LEDC_HSTIMER3_LIM_S  0
+/* LEDC_CLK_DIV_HSTIMER3 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_HSTIMER3  0x0003FFFF
+#define LEDC_CLK_DIV_HSTIMER3_M  ((LEDC_CLK_DIV_HSTIMER3_V)<<(LEDC_CLK_DIV_HSTIMER3_S))
+#define LEDC_CLK_DIV_HSTIMER3_V  0x3FFFF
+#define LEDC_CLK_DIV_HSTIMER3_S  5
+/* LEDC_HSTIMER3_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_HSTIMER3_DUTY_RES  0x0000001F
+#define LEDC_HSTIMER3_DUTY_RES_M  ((LEDC_HSTIMER3_DUTY_RES_V)<<(LEDC_HSTIMER3_DUTY_RES_S))
+#define LEDC_HSTIMER3_DUTY_RES_V  0x1F
+#define LEDC_HSTIMER3_DUTY_RES_S  0
 
 #define LEDC_HSTIMER3_VALUE_REG          (DR_REG_LEDC_BASE + 0x015C)
 /* LEDC_HSTIMER3_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1641,20 +1833,18 @@
 #define LEDC_LSTIMER0_PAUSE_M  (BIT(23))
 #define LEDC_LSTIMER0_PAUSE_V  0x1
 #define LEDC_LSTIMER0_PAUSE_S  23
-/* LEDC_DIV_NUM_LSTIMER0 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in low
- speed timer0 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_LSTIMER0  0x0003FFFF
-#define LEDC_DIV_NUM_LSTIMER0_M  ((LEDC_DIV_NUM_LSTIMER0_V)<<(LEDC_DIV_NUM_LSTIMER0_S))
-#define LEDC_DIV_NUM_LSTIMER0_V  0x3FFFF
-#define LEDC_DIV_NUM_LSTIMER0_S  5
-/* LEDC_LSTIMER0_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in low speed
- timer0. the counter range is [0 2**reg_lstimer0_lim] the max bit width for counter is 20.*/
-#define LEDC_LSTIMER0_LIM  0x0000001F
-#define LEDC_LSTIMER0_LIM_M  ((LEDC_LSTIMER0_LIM_V)<<(LEDC_LSTIMER0_LIM_S))
-#define LEDC_LSTIMER0_LIM_V  0x1F
-#define LEDC_LSTIMER0_LIM_S  0
+/* LEDC_CLK_DIV_LSTIMER0 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_LSTIMER0  0x0003FFFF
+#define LEDC_CLK_DIV_LSTIMER0_M  ((LEDC_CLK_DIV_LSTIMER0_V)<<(LEDC_CLK_DIV_LSTIMER0_S))
+#define LEDC_CLK_DIV_LSTIMER0_V  0x3FFFF
+#define LEDC_CLK_DIV_LSTIMER0_S  5
+/* LEDC_LSTIMER0_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_LSTIMER0_DUTY_RES  0x0000001F
+#define LEDC_LSTIMER0_DUTY_RES_M  ((LEDC_LSTIMER0_DUTY_RES_V)<<(LEDC_LSTIMER0_DUTY_RES_S))
+#define LEDC_LSTIMER0_DUTY_RES_V  0x1F
+#define LEDC_LSTIMER0_DUTY_RES_S  0
 
 #define LEDC_LSTIMER0_VALUE_REG          (DR_REG_LEDC_BASE + 0x0164)
 /* LEDC_LSTIMER0_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1691,20 +1881,18 @@
 #define LEDC_LSTIMER1_PAUSE_M  (BIT(23))
 #define LEDC_LSTIMER1_PAUSE_V  0x1
 #define LEDC_LSTIMER1_PAUSE_S  23
-/* LEDC_DIV_NUM_LSTIMER1 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in low
- speed timer1 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_LSTIMER1  0x0003FFFF
-#define LEDC_DIV_NUM_LSTIMER1_M  ((LEDC_DIV_NUM_LSTIMER1_V)<<(LEDC_DIV_NUM_LSTIMER1_S))
-#define LEDC_DIV_NUM_LSTIMER1_V  0x3FFFF
-#define LEDC_DIV_NUM_LSTIMER1_S  5
-/* LEDC_LSTIMER1_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in low speed
- timer1. the counter range is [0 2**reg_lstimer1_lim] the max bit width for counter is 20.*/
-#define LEDC_LSTIMER1_LIM  0x0000001F
-#define LEDC_LSTIMER1_LIM_M  ((LEDC_LSTIMER1_LIM_V)<<(LEDC_LSTIMER1_LIM_S))
-#define LEDC_LSTIMER1_LIM_V  0x1F
-#define LEDC_LSTIMER1_LIM_S  0
+/* LEDC_CLK_DIV_LSTIMER1 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_LSTIMER1  0x0003FFFF
+#define LEDC_CLK_DIV_LSTIMER1_M  ((LEDC_CLK_DIV_LSTIMER1_V)<<(LEDC_CLK_DIV_LSTIMER1_S))
+#define LEDC_CLK_DIV_LSTIMER1_V  0x3FFFF
+#define LEDC_CLK_DIV_LSTIMER1_S  5
+/* LEDC_LSTIMER1_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_LSTIMER1_DUTY_RES  0x0000001F
+#define LEDC_LSTIMER1_DUTY_RES_M  ((LEDC_LSTIMER1_DUTY_RES_V)<<(LEDC_LSTIMER1_DUTY_RES_S))
+#define LEDC_LSTIMER1_DUTY_RES_V  0x1F
+#define LEDC_LSTIMER1_DUTY_RES_S  0
 
 #define LEDC_LSTIMER1_VALUE_REG          (DR_REG_LEDC_BASE + 0x016C)
 /* LEDC_LSTIMER1_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1741,20 +1929,18 @@
 #define LEDC_LSTIMER2_PAUSE_M  (BIT(23))
 #define LEDC_LSTIMER2_PAUSE_V  0x1
 #define LEDC_LSTIMER2_PAUSE_S  23
-/* LEDC_DIV_NUM_LSTIMER2 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in low
- speed timer2 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_LSTIMER2  0x0003FFFF
-#define LEDC_DIV_NUM_LSTIMER2_M  ((LEDC_DIV_NUM_LSTIMER2_V)<<(LEDC_DIV_NUM_LSTIMER2_S))
-#define LEDC_DIV_NUM_LSTIMER2_V  0x3FFFF
-#define LEDC_DIV_NUM_LSTIMER2_S  5
-/* LEDC_LSTIMER2_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in low speed
- timer2. the counter range is [0 2**reg_lstimer2_lim] the max bit width for counter is 20.*/
-#define LEDC_LSTIMER2_LIM  0x0000001F
-#define LEDC_LSTIMER2_LIM_M  ((LEDC_LSTIMER2_LIM_V)<<(LEDC_LSTIMER2_LIM_S))
-#define LEDC_LSTIMER2_LIM_V  0x1F
-#define LEDC_LSTIMER2_LIM_S  0
+/* LEDC_CLK_DIV_LSTIMER2 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_LSTIMER2  0x0003FFFF
+#define LEDC_CLK_DIV_LSTIMER2_M  ((LEDC_CLK_DIV_LSTIMER2_V)<<(LEDC_CLK_DIV_LSTIMER2_S))
+#define LEDC_CLK_DIV_LSTIMER2_V  0x3FFFF
+#define LEDC_CLK_DIV_LSTIMER2_S  5
+/* LEDC_LSTIMER2_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_LSTIMER2_DUTY_RES  0x0000001F
+#define LEDC_LSTIMER2_DUTY_RES_M  ((LEDC_LSTIMER2_DUTY_RES_V)<<(LEDC_LSTIMER2_DUTY_RES_S))
+#define LEDC_LSTIMER2_DUTY_RES_V  0x1F
+#define LEDC_LSTIMER2_DUTY_RES_S  0
 
 #define LEDC_LSTIMER2_VALUE_REG          (DR_REG_LEDC_BASE + 0x0174)
 /* LEDC_LSTIMER2_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -1791,20 +1977,18 @@
 #define LEDC_LSTIMER3_PAUSE_M  (BIT(23))
 #define LEDC_LSTIMER3_PAUSE_V  0x1
 #define LEDC_LSTIMER3_PAUSE_S  23
-/* LEDC_DIV_NUM_LSTIMER3 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
-/*description: This register is used to configure parameter for divider in low
- speed timer3 the least significant eight bits represent the decimal part.*/
-#define LEDC_DIV_NUM_LSTIMER3  0x0003FFFF
-#define LEDC_DIV_NUM_LSTIMER3_M  ((LEDC_DIV_NUM_LSTIMER3_V)<<(LEDC_DIV_NUM_LSTIMER3_S))
-#define LEDC_DIV_NUM_LSTIMER3_V  0x3FFFF
-#define LEDC_DIV_NUM_LSTIMER3_S  5
-/* LEDC_LSTIMER3_LIM : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
-/*description: This register controls the range of the counter in low speed
- timer3. the counter range is [0 2**reg_lstimer3_lim] the max bit width for counter is 20.*/
-#define LEDC_LSTIMER3_LIM  0x0000001F
-#define LEDC_LSTIMER3_LIM_M  ((LEDC_LSTIMER3_LIM_V)<<(LEDC_LSTIMER3_LIM_S))
-#define LEDC_LSTIMER3_LIM_V  0x1F
-#define LEDC_LSTIMER3_LIM_S  0
+/* LEDC_CLK_DIV_LSTIMER3 : R/W ;bitpos:[22:5] ;default: 18'h0 ; */
+/*description: */
+#define LEDC_CLK_DIV_LSTIMER3  0x0003FFFF
+#define LEDC_CLK_DIV_LSTIMER3_M  ((LEDC_CLK_DIV_LSTIMER3_V)<<(LEDC_CLK_DIV_LSTIMER3_S))
+#define LEDC_CLK_DIV_LSTIMER3_V  0x3FFFF
+#define LEDC_CLK_DIV_LSTIMER3_S  5
+/* LEDC_LSTIMER3_DUTY_RES : R/W ;bitpos:[4:0] ;default: 5'h0 ; */
+/*description: */
+#define LEDC_LSTIMER3_DUTY_RES  0x0000001F
+#define LEDC_LSTIMER3_DUTY_RES_M  ((LEDC_LSTIMER3_DUTY_RES_V)<<(LEDC_LSTIMER3_DUTY_RES_S))
+#define LEDC_LSTIMER3_DUTY_RES_V  0x1F
+#define LEDC_LSTIMER3_DUTY_RES_S  0
 
 #define LEDC_LSTIMER3_VALUE_REG          (DR_REG_LEDC_BASE + 0x017C)
 /* LEDC_LSTIMER3_CNT : RO ;bitpos:[19:0] ;default: 20'b0 ; */
@@ -2400,21 +2584,416 @@
 #define LEDC_HSTIMER0_OVF_INT_CLR_S  0
 
 #define LEDC_CONF_REG          (DR_REG_LEDC_BASE + 0x0190)
-/* LEDC_APB_CLK_SEL : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: This bit is used to set the frequency of slow_clk. 1'b1:80mhz  1'b0:8mhz*/
-#define LEDC_APB_CLK_SEL  (BIT(0))
-#define LEDC_APB_CLK_SEL_M  (BIT(0))
-#define LEDC_APB_CLK_SEL_V  0x1
+/* LEDC_APB_CLK_SEL : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define LEDC_APB_CLK_SEL  0x00000003
+#define LEDC_APB_CLK_SEL_M  ((LEDC_APB_CLK_SEL_V)<<(LEDC_APB_CLK_SEL_S))
+#define LEDC_APB_CLK_SEL_V  0x3
 #define LEDC_APB_CLK_SEL_S  0
 
+#define LEDC_INT1_RAW_REG          (DR_REG_LEDC_BASE + 0x0194)
+/* LEDC_OVF_CNT_LSCH7_INT_RAW : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH7_INT_RAW  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_RAW_M  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH7_INT_RAW_S  15
+/* LEDC_OVF_CNT_LSCH6_INT_RAW : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH6_INT_RAW  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_RAW_M  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH6_INT_RAW_S  14
+/* LEDC_OVF_CNT_LSCH5_INT_RAW : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH5_INT_RAW  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_RAW_M  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH5_INT_RAW_S  13
+/* LEDC_OVF_CNT_LSCH4_INT_RAW : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH4_INT_RAW  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_RAW_M  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH4_INT_RAW_S  12
+/* LEDC_OVF_CNT_LSCH3_INT_RAW : RO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH3_INT_RAW  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_RAW_M  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH3_INT_RAW_S  11
+/* LEDC_OVF_CNT_LSCH2_INT_RAW : RO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH2_INT_RAW  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_RAW_M  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH2_INT_RAW_S  10
+/* LEDC_OVF_CNT_LSCH1_INT_RAW : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH1_INT_RAW  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_RAW_M  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH1_INT_RAW_S  9
+/* LEDC_OVF_CNT_LSCH0_INT_RAW : RO ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH0_INT_RAW  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_RAW_M  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_LSCH0_INT_RAW_S  8
+/* LEDC_OVF_CNT_HSCH7_INT_RAW : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH7_INT_RAW  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_RAW_M  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH7_INT_RAW_S  7
+/* LEDC_OVF_CNT_HSCH6_INT_RAW : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH6_INT_RAW  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_RAW_M  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH6_INT_RAW_S  6
+/* LEDC_OVF_CNT_HSCH5_INT_RAW : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH5_INT_RAW  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_RAW_M  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH5_INT_RAW_S  5
+/* LEDC_OVF_CNT_HSCH4_INT_RAW : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH4_INT_RAW  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_RAW_M  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH4_INT_RAW_S  4
+/* LEDC_OVF_CNT_HSCH3_INT_RAW : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH3_INT_RAW  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_RAW_M  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH3_INT_RAW_S  3
+/* LEDC_OVF_CNT_HSCH2_INT_RAW : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH2_INT_RAW  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_RAW_M  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH2_INT_RAW_S  2
+/* LEDC_OVF_CNT_HSCH1_INT_RAW : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH1_INT_RAW  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_RAW_M  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH1_INT_RAW_S  1
+/* LEDC_OVF_CNT_HSCH0_INT_RAW : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH0_INT_RAW  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_RAW_M  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_RAW_V  0x1
+#define LEDC_OVF_CNT_HSCH0_INT_RAW_S  0
+
+#define LEDC_INT1_ST_REG          (DR_REG_LEDC_BASE + 0x0198)
+/* LEDC_OVF_CNT_LSCH7_INT_ST : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH7_INT_ST  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_ST_M  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH7_INT_ST_S  15
+/* LEDC_OVF_CNT_LSCH6_INT_ST : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH6_INT_ST  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_ST_M  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH6_INT_ST_S  14
+/* LEDC_OVF_CNT_LSCH5_INT_ST : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH5_INT_ST  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_ST_M  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH5_INT_ST_S  13
+/* LEDC_OVF_CNT_LSCH4_INT_ST : RO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH4_INT_ST  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_ST_M  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH4_INT_ST_S  12
+/* LEDC_OVF_CNT_LSCH3_INT_ST : RO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH3_INT_ST  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_ST_M  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH3_INT_ST_S  11
+/* LEDC_OVF_CNT_LSCH2_INT_ST : RO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH2_INT_ST  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_ST_M  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH2_INT_ST_S  10
+/* LEDC_OVF_CNT_LSCH1_INT_ST : RO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH1_INT_ST  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_ST_M  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH1_INT_ST_S  9
+/* LEDC_OVF_CNT_LSCH0_INT_ST : RO ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH0_INT_ST  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_ST_M  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_ST_V  0x1
+#define LEDC_OVF_CNT_LSCH0_INT_ST_S  8
+/* LEDC_OVF_CNT_HSCH7_INT_ST : RO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH7_INT_ST  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_ST_M  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH7_INT_ST_S  7
+/* LEDC_OVF_CNT_HSCH6_INT_ST : RO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH6_INT_ST  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_ST_M  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH6_INT_ST_S  6
+/* LEDC_OVF_CNT_HSCH5_INT_ST : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH5_INT_ST  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_ST_M  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH5_INT_ST_S  5
+/* LEDC_OVF_CNT_HSCH4_INT_ST : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH4_INT_ST  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_ST_M  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH4_INT_ST_S  4
+/* LEDC_OVF_CNT_HSCH3_INT_ST : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH3_INT_ST  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_ST_M  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH3_INT_ST_S  3
+/* LEDC_OVF_CNT_HSCH2_INT_ST : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH2_INT_ST  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_ST_M  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH2_INT_ST_S  2
+/* LEDC_OVF_CNT_HSCH1_INT_ST : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH1_INT_ST  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_ST_M  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH1_INT_ST_S  1
+/* LEDC_OVF_CNT_HSCH0_INT_ST : RO ;bitpos:[0] ;default: 1'h0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH0_INT_ST  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_ST_M  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_ST_V  0x1
+#define LEDC_OVF_CNT_HSCH0_INT_ST_S  0
+
+#define LEDC_INT1_ENA_REG          (DR_REG_LEDC_BASE + 0x019c)
+/* LEDC_OVF_CNT_LSCH7_INT_ENA : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH7_INT_ENA  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_ENA_M  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH7_INT_ENA_S  15
+/* LEDC_OVF_CNT_LSCH6_INT_ENA : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH6_INT_ENA  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_ENA_M  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH6_INT_ENA_S  14
+/* LEDC_OVF_CNT_LSCH5_INT_ENA : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH5_INT_ENA  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_ENA_M  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH5_INT_ENA_S  13
+/* LEDC_OVF_CNT_LSCH4_INT_ENA : R/W ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH4_INT_ENA  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_ENA_M  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH4_INT_ENA_S  12
+/* LEDC_OVF_CNT_LSCH3_INT_ENA : R/W ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH3_INT_ENA  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_ENA_M  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH3_INT_ENA_S  11
+/* LEDC_OVF_CNT_LSCH2_INT_ENA : R/W ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH2_INT_ENA  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_ENA_M  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH2_INT_ENA_S  10
+/* LEDC_OVF_CNT_LSCH1_INT_ENA : R/W ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH1_INT_ENA  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_ENA_M  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH1_INT_ENA_S  9
+/* LEDC_OVF_CNT_LSCH0_INT_ENA : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH0_INT_ENA  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_ENA_M  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_LSCH0_INT_ENA_S  8
+/* LEDC_OVF_CNT_HSCH7_INT_ENA : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH7_INT_ENA  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_ENA_M  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH7_INT_ENA_S  7
+/* LEDC_OVF_CNT_HSCH6_INT_ENA : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH6_INT_ENA  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_ENA_M  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH6_INT_ENA_S  6
+/* LEDC_OVF_CNT_HSCH5_INT_ENA : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH5_INT_ENA  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_ENA_M  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH5_INT_ENA_S  5
+/* LEDC_OVF_CNT_HSCH4_INT_ENA : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH4_INT_ENA  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_ENA_M  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH4_INT_ENA_S  4
+/* LEDC_OVF_CNT_HSCH3_INT_ENA : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH3_INT_ENA  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_ENA_M  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH3_INT_ENA_S  3
+/* LEDC_OVF_CNT_HSCH2_INT_ENA : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH2_INT_ENA  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_ENA_M  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH2_INT_ENA_S  2
+/* LEDC_OVF_CNT_HSCH1_INT_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH1_INT_ENA  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_ENA_M  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH1_INT_ENA_S  1
+/* LEDC_OVF_CNT_HSCH0_INT_ENA : R/W ;bitpos:[0] ;default: 1'h0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH0_INT_ENA  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_ENA_M  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_ENA_V  0x1
+#define LEDC_OVF_CNT_HSCH0_INT_ENA_S  0
+
+#define LEDC_INT1_CLR_REG          (DR_REG_LEDC_BASE + 0x01a0)
+/* LEDC_OVF_CNT_LSCH7_INT_CLR : WO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH7_INT_CLR  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_CLR_M  (BIT(15))
+#define LEDC_OVF_CNT_LSCH7_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH7_INT_CLR_S  15
+/* LEDC_OVF_CNT_LSCH6_INT_CLR : WO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH6_INT_CLR  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_CLR_M  (BIT(14))
+#define LEDC_OVF_CNT_LSCH6_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH6_INT_CLR_S  14
+/* LEDC_OVF_CNT_LSCH5_INT_CLR : WO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH5_INT_CLR  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_CLR_M  (BIT(13))
+#define LEDC_OVF_CNT_LSCH5_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH5_INT_CLR_S  13
+/* LEDC_OVF_CNT_LSCH4_INT_CLR : WO ;bitpos:[12] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH4_INT_CLR  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_CLR_M  (BIT(12))
+#define LEDC_OVF_CNT_LSCH4_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH4_INT_CLR_S  12
+/* LEDC_OVF_CNT_LSCH3_INT_CLR : WO ;bitpos:[11] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH3_INT_CLR  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_CLR_M  (BIT(11))
+#define LEDC_OVF_CNT_LSCH3_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH3_INT_CLR_S  11
+/* LEDC_OVF_CNT_LSCH2_INT_CLR : WO ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH2_INT_CLR  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_CLR_M  (BIT(10))
+#define LEDC_OVF_CNT_LSCH2_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH2_INT_CLR_S  10
+/* LEDC_OVF_CNT_LSCH1_INT_CLR : WO ;bitpos:[9] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH1_INT_CLR  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_CLR_M  (BIT(9))
+#define LEDC_OVF_CNT_LSCH1_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH1_INT_CLR_S  9
+/* LEDC_OVF_CNT_LSCH0_INT_CLR : WO ;bitpos:[8] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_LSCH0_INT_CLR  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_CLR_M  (BIT(8))
+#define LEDC_OVF_CNT_LSCH0_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_LSCH0_INT_CLR_S  8
+/* LEDC_OVF_CNT_HSCH7_INT_CLR : WO ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH7_INT_CLR  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_CLR_M  (BIT(7))
+#define LEDC_OVF_CNT_HSCH7_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH7_INT_CLR_S  7
+/* LEDC_OVF_CNT_HSCH6_INT_CLR : WO ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH6_INT_CLR  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_CLR_M  (BIT(6))
+#define LEDC_OVF_CNT_HSCH6_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH6_INT_CLR_S  6
+/* LEDC_OVF_CNT_HSCH5_INT_CLR : WO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH5_INT_CLR  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_CLR_M  (BIT(5))
+#define LEDC_OVF_CNT_HSCH5_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH5_INT_CLR_S  5
+/* LEDC_OVF_CNT_HSCH4_INT_CLR : WO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH4_INT_CLR  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_CLR_M  (BIT(4))
+#define LEDC_OVF_CNT_HSCH4_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH4_INT_CLR_S  4
+/* LEDC_OVF_CNT_HSCH3_INT_CLR : WO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH3_INT_CLR  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_CLR_M  (BIT(3))
+#define LEDC_OVF_CNT_HSCH3_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH3_INT_CLR_S  3
+/* LEDC_OVF_CNT_HSCH2_INT_CLR : WO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH2_INT_CLR  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_CLR_M  (BIT(2))
+#define LEDC_OVF_CNT_HSCH2_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH2_INT_CLR_S  2
+/* LEDC_OVF_CNT_HSCH1_INT_CLR : WO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH1_INT_CLR  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_CLR_M  (BIT(1))
+#define LEDC_OVF_CNT_HSCH1_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH1_INT_CLR_S  1
+/* LEDC_OVF_CNT_HSCH0_INT_CLR : WO ;bitpos:[0] ;default: 1'h0 ; */
+/*description: */
+#define LEDC_OVF_CNT_HSCH0_INT_CLR  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_CLR_M  (BIT(0))
+#define LEDC_OVF_CNT_HSCH0_INT_CLR_V  0x1
+#define LEDC_OVF_CNT_HSCH0_INT_CLR_S  0
+
 #define LEDC_DATE_REG          (DR_REG_LEDC_BASE + 0x01FC)
-/* LEDC_DATE : R/W ;bitpos:[31:0] ;default: 32'h16031700 ; */
-/*description: This register represents the version .*/
+/* LEDC_DATE : R/W ;bitpos:[31:0] ;default: 32'h18051200 ; */
+/*description: */
 #define LEDC_DATE  0xFFFFFFFF
 #define LEDC_DATE_M  ((LEDC_DATE_V)<<(LEDC_DATE_S))
 #define LEDC_DATE_V  0xFFFFFFFF
 #define LEDC_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

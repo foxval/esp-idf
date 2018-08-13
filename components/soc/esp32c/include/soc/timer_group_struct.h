@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -22,7 +22,7 @@ typedef volatile struct {
         union {
             struct {
                 uint32_t reserved0:       9;
-                uint32_t use_reftick:     1;
+                uint32_t use_xtal:        1;
                 uint32_t alarm_en:        1;
                 uint32_t level_int_en:    1;
                 uint32_t edge_int_en:     1;
@@ -33,14 +33,20 @@ typedef volatile struct {
             };
             uint32_t val;
         } config;
-        uint32_t cnt_low;                                    /**/
-        uint32_t cnt_high;                                    /**/
-        uint32_t update;                                /**/
-        uint32_t alarm_low;                               /**/
-        uint32_t alarm_high;                               /**/
-        uint32_t load_low;                                /**/
-        uint32_t load_high;                                /**/
-        uint32_t reload;                                  /**/
+        uint32_t cnt_low;                                      /**/
+        uint32_t cnt_high;                                      /**/
+        union {
+            struct {
+                uint32_t reserved0: 31;
+                uint32_t update:     1;
+            };
+            uint32_t val;
+        } update;
+        uint32_t alarm_low;                                 /**/
+        uint32_t alarm_high;                                 /**/
+        uint32_t load_low;                                  /**/
+        uint32_t load_high;                                  /**/
+        uint32_t reload;                                    /**/
     } hw_timer[2];
     union {
         struct {
@@ -67,12 +73,12 @@ typedef volatile struct {
         };
         uint32_t val;
     } wdt_config1;
-    uint32_t wdt_config2;                              /**/
-    uint32_t wdt_config3;                              /**/
-    uint32_t wdt_config4;                              /**/
-    uint32_t wdt_config5;                              /**/
-    uint32_t wdt_feed;                                 /**/
-    uint32_t wdt_wprotect;                             /**/
+    uint32_t wdt_config2;                                /**/
+    uint32_t wdt_config3;                                /**/
+    uint32_t wdt_config4;                                /**/
+    uint32_t wdt_config5;                                /**/
+    uint32_t wdt_feed;                                   /**/
+    uint32_t wdt_wprotect;                               /**/
     union {
         struct {
             uint32_t reserved0:             12;
@@ -115,14 +121,14 @@ typedef volatile struct {
         };
         uint32_t val;
     } lactrtc;
-    uint32_t lactlo;                                  /**/
-    uint32_t lacthi;                                  /**/
-    uint32_t lactupdate;                              /**/
-    uint32_t lactalarmlo;                             /**/
-    uint32_t lactalarmhi;                             /**/
-    uint32_t lactloadlo;                              /**/
-    uint32_t lactloadhi;                              /**/
-    uint32_t lactload;                                /**/
+    uint32_t lactlo;                                    /**/
+    uint32_t lacthi;                                    /**/
+    uint32_t lactupdate;                                /**/
+    uint32_t lactalarmlo;                               /**/
+    uint32_t lactalarmhi;                               /**/
+    uint32_t lactloadlo;                                /**/
+    uint32_t lactloadhi;                                /**/
+    uint32_t lactload;                                  /**/
     union {
         struct {
             uint32_t t0:           1;
@@ -152,7 +158,7 @@ typedef volatile struct {
             uint32_t reserved4:  28;
         };
         uint32_t val;
-    } int_st_timers;
+    } int_st;
     union {
         struct {
             uint32_t t0:           1;
@@ -162,8 +168,16 @@ typedef volatile struct {
             uint32_t reserved4:   28;
         };
         uint32_t val;
-    } int_clr_timers;
-    uint32_t reserved_a8;
+    } int_clr;
+    union {
+        struct {
+            uint32_t timeout:                  1;       /*timeout indicator*/
+            uint32_t reserved1:                2;
+            uint32_t timeout_rst_cnt:          4;       /*Cycles that release calibration timeout reset*/
+            uint32_t timeout_thres:           25;       /*timeout if cali value counts over threshold*/
+        };
+        uint32_t val;
+    } rtc_cali_cfg2;
     uint32_t reserved_ac;
     uint32_t reserved_b0;
     uint32_t reserved_b4;

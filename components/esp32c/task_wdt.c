@@ -129,7 +129,7 @@ static void task_wdt_isr(void *arg)
     TIMERG0.wdt_feed=1;
     TIMERG0.wdt_wprotect=0;
     //Acknowledge interrupt
-    TIMERG0.int_clr_timers.wdt=1;
+    TIMERG0.int_clr.wdt=1;
     //We are taking a spinlock while doing I/O (ets_printf) here. Normally, that is a pretty
     //bad thing, possibly (temporarily) hanging up the 2nd core and stopping FreeRTOS. In this case,
     //something bad already happened and reporting this is considered more important

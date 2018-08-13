@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_UART_STRUCT_H_
 #define _SOC_UART_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -194,14 +193,14 @@ typedef volatile struct {
     } conf0;
     union {
         struct {
-            uint32_t rxfifo_full_thrhd:  7;         /*When receiver receives more data than its threshold value，receiver will produce rxfifo_full_int_raw interrupt.the threshold value is (rx_flow_thrhd_h3 rxfifo_full_thrhd).*/
+            uint32_t rxfifo_full_thrhd:  7;
             uint32_t reserved7:          1;
-            uint32_t txfifo_empty_thrhd: 7;         /*when the data amount in transmitter fifo is less than its threshold value， it will produce txfifo_empty_int_raw interrupt. the threshold value is (tx_mem_empty_thrhd txfifo_empty_thrhd)*/
-            uint32_t reserved15:         1;
-            uint32_t rx_flow_thrhd:      7;         /*when receiver receives more data than its threshold value， receiver produce signal to tell the transmitter stop transferring data. the threshold value is (rx_flow_thrhd_h3 rx_flow_thrhd).*/
-            uint32_t rx_flow_en:         1;         /*This is the flow enable bit for uart receiver. 1:choose software flow control with configuring sw_rts signal*/
-            uint32_t rx_tout_thrhd:      7;         /*This register is used to configure the timeout value for uart receiver receiving a byte.*/
-            uint32_t rx_tout_en:         1;         /*This is the enable bit for uart receiver's timeout function.*/
+            uint32_t txfifo_empty_thrhd: 7;
+            uint32_t rx_tout_flow_dis:   1;
+            uint32_t rx_flow_thrhd:      7;
+            uint32_t rx_flow_en:         1;
+            uint32_t rx_tout_thrhd:      7;
+            uint32_t rx_tout_en:         1;
         };
         uint32_t val;
     } conf1;
@@ -325,21 +324,17 @@ typedef volatile struct {
     } mem_conf;
     union {
         struct {
-            uint32_t status:24;
-            uint32_t reserved24:    8;
+            uint32_t apb_tx_waddr:11;
+            uint32_t tx_raddr:    11;
+            uint32_t reserved22:  10;
         };
         uint32_t val;
     } mem_tx_status;
     union {
         struct {
-            uint32_t status:      24;
-            uint32_t reserved24:   8;
-        };
-        struct {
-            uint32_t reserved0:     2;
-            uint32_t rd_addr:      11;              /*This register stores the rx mem read address.*/
-            uint32_t wr_addr:      11;              /*This register stores the rx mem write address.*/
-            uint32_t reserved:      8;
+            uint32_t apb_rx_raddr:11;
+            uint32_t rx_waddr:    11;
+            uint32_t reserved22:  10;
         };
         uint32_t val;
     } mem_rx_status;
@@ -373,7 +368,6 @@ typedef volatile struct {
 extern uart_dev_t UART0;
 extern uart_dev_t UART1;
 extern uart_dev_t UART2;
-
 #ifdef __cplusplus
 }
 #endif

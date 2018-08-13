@@ -309,7 +309,7 @@ esp_err_t rmt_set_idle_level(rmt_channel_t channel, bool idle_out_en, rmt_idle_l
 esp_err_t rmt_get_status(rmt_channel_t channel, uint32_t* status)
 {
     RMT_CHECK(channel < RMT_CHANNEL_MAX, RMT_CHANNEL_ERROR_STR, ESP_ERR_INVALID_ARG);
-    *status = RMT.status_ch[channel];
+    *status = RMT.status_ch[channel].val;
     return ESP_OK;
 }
 

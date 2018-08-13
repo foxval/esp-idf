@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
 #define _SOC_I2C_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 
 #define REG_I2C_BASE(i)    (DR_REG_I2C_EXT_BASE + (i) * 0x14000 )
@@ -28,6 +31,24 @@
 #define I2C_SCL_LOW_PERIOD_S  0
 
 #define I2C_CTR_REG(i)          (REG_I2C_BASE(i) + 0x0004)
+/* I2C_REF_ALWAYS_ON : R/W ;bitpos:[11] ;default: 1'b1 ; */
+/*description: */
+#define I2C_REF_ALWAYS_ON  (BIT(11))
+#define I2C_REF_ALWAYS_ON_M  (BIT(11))
+#define I2C_REF_ALWAYS_ON_V  0x1
+#define I2C_REF_ALWAYS_ON_S  11
+/* I2C_FSM_RST : R/W ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define I2C_FSM_RST  (BIT(10))
+#define I2C_FSM_RST_M  (BIT(10))
+#define I2C_FSM_RST_V  0x1
+#define I2C_FSM_RST_S  10
+/* I2C_ARBITRATION_EN : R/W ;bitpos:[9] ;default: 1'b1 ; */
+/*description: */
+#define I2C_ARBITRATION_EN  (BIT(9))
+#define I2C_ARBITRATION_EN_M  (BIT(9))
+#define I2C_ARBITRATION_EN_V  0x1
+#define I2C_ARBITRATION_EN_S  9
 /* I2C_CLK_EN : R/W ;bitpos:[8] ;default: 1'b0 ; */
 /*description: This is the clock gating control bit for reading or writing registers.*/
 #define I2C_CLK_EN  (BIT(8))
@@ -61,6 +82,12 @@
 #define I2C_MS_MODE_M  (BIT(4))
 #define I2C_MS_MODE_V  0x1
 #define I2C_MS_MODE_S  4
+/* I2C_ACK_LEVEL : R/W ;bitpos:[3] ;default: 1'b1 ; */
+/*description: */
+#define I2C_ACK_LEVEL  (BIT(3))
+#define I2C_ACK_LEVEL_M  (BIT(3))
+#define I2C_ACK_LEVEL_V  0x1
+#define I2C_ACK_LEVEL_S  3
 /* I2C_SAMPLE_SCL_LEVEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
 /*description: Set this bit to sample data in SCL low level. clear this bit
  to sample data in SCL high level.*/
@@ -156,11 +183,17 @@
 #define I2C_ACK_REC_S  0
 
 #define I2C_TO_REG(i)          (REG_I2C_BASE(i) + 0x000c)
-/* I2C_TIME_OUT_REG : R/W ;bitpos:[19:0] ;default: 20'b0 ; */
-/*description: This register is used to configure the max clock number of receiving  a data.*/
-#define I2C_TIME_OUT_REG  0x000FFFFF
+/* I2C_TIME_OUT_EN : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: */
+#define I2C_TIME_OUT_EN  (BIT(24))
+#define I2C_TIME_OUT_EN_M  (BIT(24))
+#define I2C_TIME_OUT_EN_V  0x1
+#define I2C_TIME_OUT_EN_S  24
+/* I2C_TIME_OUT_REG : R/W ;bitpos:[23:0] ;default: 24'b0 ; */
+/*description: */
+#define I2C_TIME_OUT_REG  0x00FFFFFF
 #define I2C_TIME_OUT_REG_M  ((I2C_TIME_OUT_REG_V)<<(I2C_TIME_OUT_REG_S))
-#define I2C_TIME_OUT_REG_V  0xFFFFF
+#define I2C_TIME_OUT_REG_V  0xFFFFFF
 #define I2C_TIME_OUT_REG_S  0
 
 #define I2C_SLAVE_ADDR_REG(i)          (REG_I2C_BASE(i) + 0x0010)
@@ -179,6 +212,30 @@
 #define I2C_SLAVE_ADDR_S  0
 
 #define I2C_RXFIFO_ST_REG(i)          (REG_I2C_BASE(i) + 0x0014)
+/* I2C_RXFIFO_INIT_WADDR : RO ;bitpos:[31:27] ;default: 5'b0 ; */
+/*description: */
+#define I2C_RXFIFO_INIT_WADDR  0x0000001F
+#define I2C_RXFIFO_INIT_WADDR_M  ((I2C_RXFIFO_INIT_WADDR_V)<<(I2C_RXFIFO_INIT_WADDR_S))
+#define I2C_RXFIFO_INIT_WADDR_V  0x1F
+#define I2C_RXFIFO_INIT_WADDR_S  27
+/* I2C_TXFIFO_INIT_RADDR : RO ;bitpos:[26:22] ;default: 5'b0 ; */
+/*description: */
+#define I2C_TXFIFO_INIT_RADDR  0x0000001F
+#define I2C_TXFIFO_INIT_RADDR_M  ((I2C_TXFIFO_INIT_RADDR_V)<<(I2C_TXFIFO_INIT_RADDR_S))
+#define I2C_TXFIFO_INIT_RADDR_V  0x1F
+#define I2C_TXFIFO_INIT_RADDR_S  22
+/* I2C_TX_UPDATE : WO ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define I2C_TX_UPDATE  (BIT(21))
+#define I2C_TX_UPDATE_M  (BIT(21))
+#define I2C_TX_UPDATE_V  0x1
+#define I2C_TX_UPDATE_S  21
+/* I2C_RX_UPDATE : WO ;bitpos:[20] ;default: 1'b0 ; */
+/*description: */
+#define I2C_RX_UPDATE  (BIT(20))
+#define I2C_RX_UPDATE_M  (BIT(20))
+#define I2C_RX_UPDATE_V  0x1
+#define I2C_RX_UPDATE_S  20
 /* I2C_TXFIFO_END_ADDR : RO ;bitpos:[19:15] ;default: 5'b0 ; */
 /*description: This is the offset address of the last  sending data as described
  in nonfifo_tx_thres register.*/
@@ -272,6 +329,24 @@
 #define I2C_FIFO_RDATA_S  0
 
 #define I2C_INT_RAW_REG(i)          (REG_I2C_BASE(i) + 0x0020)
+/* I2C_DET_START_INT_RAW : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define I2C_DET_START_INT_RAW  (BIT(15))
+#define I2C_DET_START_INT_RAW_M  (BIT(15))
+#define I2C_DET_START_INT_RAW_V  0x1
+#define I2C_DET_START_INT_RAW_S  15
+/* I2C_SCL_MAIN_ST_TO_INT_RAW : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_MAIN_ST_TO_INT_RAW  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_RAW_M  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_RAW_V  0x1
+#define I2C_SCL_MAIN_ST_TO_INT_RAW_S  14
+/* I2C_SCL_ST_TO_INT_RAW : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_ST_TO_INT_RAW  (BIT(13))
+#define I2C_SCL_ST_TO_INT_RAW_M  (BIT(13))
+#define I2C_SCL_ST_TO_INT_RAW_V  0x1
+#define I2C_SCL_ST_TO_INT_RAW_S  13
 /* I2C_TX_SEND_EMPTY_INT_RAW : RO ;bitpos:[12] ;default: 1'b0 ; */
 /*description: The raw interrupt status bit for tx_send_empty_int interrupt.when
  I2C sends more data than nonfifo_tx_thres  it will produce tx_send_empty_int interrupt..*/
@@ -363,6 +438,24 @@
 #define I2C_RXFIFO_FULL_INT_RAW_S  0
 
 #define I2C_INT_CLR_REG(i)          (REG_I2C_BASE(i) + 0x0024)
+/* I2C_DET_START_INT_CLR : WO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define I2C_DET_START_INT_CLR  (BIT(15))
+#define I2C_DET_START_INT_CLR_M  (BIT(15))
+#define I2C_DET_START_INT_CLR_V  0x1
+#define I2C_DET_START_INT_CLR_S  15
+/* I2C_SCL_MAIN_ST_TO_INT_CLR : WO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_MAIN_ST_TO_INT_CLR  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_CLR_M  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_CLR_V  0x1
+#define I2C_SCL_MAIN_ST_TO_INT_CLR_S  14
+/* I2C_SCL_ST_TO_INT_CLR : WO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_ST_TO_INT_CLR  (BIT(13))
+#define I2C_SCL_ST_TO_INT_CLR_M  (BIT(13))
+#define I2C_SCL_ST_TO_INT_CLR_V  0x1
+#define I2C_SCL_ST_TO_INT_CLR_S  13
 /* I2C_TX_SEND_EMPTY_INT_CLR : WO ;bitpos:[12] ;default: 1'b0 ; */
 /*description: Set this bit to clear the tx_send_empty_int interrupt.*/
 #define I2C_TX_SEND_EMPTY_INT_CLR  (BIT(12))
@@ -443,6 +536,24 @@
 #define I2C_RXFIFO_FULL_INT_CLR_S  0
 
 #define I2C_INT_ENA_REG(i)          (REG_I2C_BASE(i) + 0x0028)
+/* I2C_DET_START_INT_ENA : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define I2C_DET_START_INT_ENA  (BIT(15))
+#define I2C_DET_START_INT_ENA_M  (BIT(15))
+#define I2C_DET_START_INT_ENA_V  0x1
+#define I2C_DET_START_INT_ENA_S  15
+/* I2C_SCL_MAIN_ST_TO_INT_ENA : R/W ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_MAIN_ST_TO_INT_ENA  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_ENA_M  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_ENA_V  0x1
+#define I2C_SCL_MAIN_ST_TO_INT_ENA_S  14
+/* I2C_SCL_ST_TO_INT_ENA : R/W ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_ST_TO_INT_ENA  (BIT(13))
+#define I2C_SCL_ST_TO_INT_ENA_M  (BIT(13))
+#define I2C_SCL_ST_TO_INT_ENA_V  0x1
+#define I2C_SCL_ST_TO_INT_ENA_S  13
 /* I2C_TX_SEND_EMPTY_INT_ENA : R/W ;bitpos:[12] ;default: 1'b0 ; */
 /*description: The enable bit for tx_send_empty_int interrupt.*/
 #define I2C_TX_SEND_EMPTY_INT_ENA  (BIT(12))
@@ -523,6 +634,24 @@
 #define I2C_RXFIFO_FULL_INT_ENA_S  0
 
 #define I2C_INT_STATUS_REG(i)          (REG_I2C_BASE(i) + 0x002c)
+/* I2C_DET_START_INT_ST : RO ;bitpos:[15] ;default: 1'b0 ; */
+/*description: */
+#define I2C_DET_START_INT_ST  (BIT(15))
+#define I2C_DET_START_INT_ST_M  (BIT(15))
+#define I2C_DET_START_INT_ST_V  0x1
+#define I2C_DET_START_INT_ST_S  15
+/* I2C_SCL_MAIN_ST_TO_INT_ST : RO ;bitpos:[14] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_MAIN_ST_TO_INT_ST  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_ST_M  (BIT(14))
+#define I2C_SCL_MAIN_ST_TO_INT_ST_V  0x1
+#define I2C_SCL_MAIN_ST_TO_INT_ST_S  14
+/* I2C_SCL_ST_TO_INT_ST : RO ;bitpos:[13] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_ST_TO_INT_ST  (BIT(13))
+#define I2C_SCL_ST_TO_INT_ST_M  (BIT(13))
+#define I2C_SCL_ST_TO_INT_ST_V  0x1
+#define I2C_SCL_ST_TO_INT_ST_S  13
 /* I2C_TX_SEND_EMPTY_INT_ST : RO ;bitpos:[12] ;default: 1'b0 ; */
 /*description: The masked interrupt status for tx_send_empty_int interrupt.*/
 #define I2C_TX_SEND_EMPTY_INT_ST  (BIT(12))
@@ -933,8 +1062,50 @@
 #define I2C_COMMAND15_V  0x3FFF
 #define I2C_COMMAND15_S  0
 
+#define I2C_SCL_ST_TIME_OUT_REG(i)          (REG_I2C_BASE(i) + 0x0098)
+/* I2C_SCL_ST_TO_REG : R/W ;bitpos:[23:0] ;default: 24'h100 ; */
+/*description: */
+#define I2C_SCL_ST_TO_REG  0x00FFFFFF
+#define I2C_SCL_ST_TO_REG_M  ((I2C_SCL_ST_TO_REG_V)<<(I2C_SCL_ST_TO_REG_S))
+#define I2C_SCL_ST_TO_REG_V  0xFFFFFF
+#define I2C_SCL_ST_TO_REG_S  0
+
+#define I2C_SCL_MAIN_ST_TIME_OUT_REG(i)          (REG_I2C_BASE(i) + 0x009c)
+/* I2C_SCL_MAIN_ST_TO_REG : R/W ;bitpos:[23:0] ;default: 24'h100 ; */
+/*description: */
+#define I2C_SCL_MAIN_ST_TO_REG  0x00FFFFFF
+#define I2C_SCL_MAIN_ST_TO_REG_M  ((I2C_SCL_MAIN_ST_TO_REG_V)<<(I2C_SCL_MAIN_ST_TO_REG_S))
+#define I2C_SCL_MAIN_ST_TO_REG_V  0xFFFFFF
+#define I2C_SCL_MAIN_ST_TO_REG_S  0
+
+#define I2C_SCL_SP_CONF_REG(i)          (REG_I2C_BASE(i) + 0x00a0)
+/* I2C_SDA_PD_EN : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SDA_PD_EN  (BIT(7))
+#define I2C_SDA_PD_EN_M  (BIT(7))
+#define I2C_SDA_PD_EN_V  0x1
+#define I2C_SDA_PD_EN_S  7
+/* I2C_SCL_PD_EN : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_PD_EN  (BIT(6))
+#define I2C_SCL_PD_EN_M  (BIT(6))
+#define I2C_SCL_PD_EN_V  0x1
+#define I2C_SCL_PD_EN_S  6
+/* I2C_SCL_RST_SLV_NUM : R/W ;bitpos:[5:1] ;default: 5'b0 ; */
+/*description: */
+#define I2C_SCL_RST_SLV_NUM  0x0000001F
+#define I2C_SCL_RST_SLV_NUM_M  ((I2C_SCL_RST_SLV_NUM_V)<<(I2C_SCL_RST_SLV_NUM_S))
+#define I2C_SCL_RST_SLV_NUM_V  0x1F
+#define I2C_SCL_RST_SLV_NUM_S  1
+/* I2C_SCL_RST_SLV_EN : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define I2C_SCL_RST_SLV_EN  (BIT(0))
+#define I2C_SCL_RST_SLV_EN_M  (BIT(0))
+#define I2C_SCL_RST_SLV_EN_V  0x1
+#define I2C_SCL_RST_SLV_EN_S  0
+
 #define I2C_DATE_REG(i)          (REG_I2C_BASE(i) + 0x00F8)
-/* I2C_DATE : R/W ;bitpos:[31:0] ;default: 32'h16042000 ; */
+/* I2C_DATE : R/W ;bitpos:[31:0] ;default: 32'h18051600 ; */
 /*description: */
 #define I2C_DATE  0xFFFFFFFF
 #define I2C_DATE_M  ((I2C_DATE_V)<<(I2C_DATE_S))
@@ -943,6 +1114,9 @@
 
 #define I2C_FIFO_START_ADDR_REG(i)          (REG_I2C_BASE(i) + 0x0100)
 
+#ifdef __cplusplus
+}
+#endif
 
 
 

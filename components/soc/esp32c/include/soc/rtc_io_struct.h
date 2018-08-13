@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -20,71 +20,71 @@ extern "C" {
 typedef volatile struct {
     union {
         struct {
-            uint32_t reserved0:        14;
-            uint32_t data:             18;              /*RTC GPIO 0 ~ 17 output data*/
+            uint32_t reserved0:        11;
+            uint32_t data:             21;              /*RTC GPIO 0 ~ 20 output data*/
         };
         uint32_t val;
     } out;
     union {
         struct {
-            uint32_t reserved0:             14;
-            uint32_t w1ts:                  18;         /*RTC GPIO 0 ~ 17 output data write 1 to set*/
+            uint32_t reserved0:             11;
+            uint32_t w1ts:                  21;         /*RTC GPIO 0 ~ 20 output data write 1 to set*/
         };
         uint32_t val;
     } out_w1ts;
     union {
         struct {
-            uint32_t reserved0:             14;
-            uint32_t w1tc:                  18;         /*RTC GPIO 0 ~ 17 output data write 1 to clear*/
+            uint32_t reserved0:             11;
+            uint32_t w1tc:                  21;         /*RTC GPIO 0 ~ 20 output data write 1 to clear*/
         };
         uint32_t val;
     } out_w1tc;
     union {
         struct {
-            uint32_t reserved0:      14;
-            uint32_t enable:         18;                /*RTC GPIO 0 ~ 17 enable*/
+            uint32_t reserved0:      11;
+            uint32_t enable:         21;                /*RTC GPIO 0 ~ 20 enable*/
         };
         uint32_t val;
     } enable;
     union {
         struct {
-            uint32_t reserved0:           14;
-            uint32_t w1ts:                18;           /*RTC GPIO 0 ~ 17 enable write 1 to set*/
+            uint32_t reserved0:           11;
+            uint32_t w1ts:                21;           /*RTC GPIO 0 ~ 20 enable write 1 to set*/
         };
         uint32_t val;
     } enable_w1ts;
     union {
         struct {
-            uint32_t reserved0:           14;
-            uint32_t w1tc:                18;           /*RTC GPIO 0 ~ 17 enable write 1 to clear*/
+            uint32_t reserved0:           11;
+            uint32_t w1tc:                21;           /*RTC GPIO 0 ~ 20 enable write 1 to clear*/
         };
         uint32_t val;
     } enable_w1tc;
     union {
         struct {
-            uint32_t reserved0:          14;
-            uint32_t status:             18;            /*RTC GPIO 0 ~ 17 interrupt status*/
+            uint32_t reserved0:          11;
+            uint32_t status:             21;            /*RTC GPIO 0 ~ 20 interrupt status*/
         };
         uint32_t val;
     } status;
     union {
         struct {
-            uint32_t reserved0:               14;
-            uint32_t w1ts:                    18;       /*RTC GPIO 0 ~ 17 interrupt status write 1 to set*/
+            uint32_t reserved0:               11;
+            uint32_t w1ts:                    21;       /*RTC GPIO 0 ~ 20 interrupt status write 1 to set*/
         };
         uint32_t val;
     } status_w1ts;
     union {
         struct {
-            uint32_t reserved0:               14;
-            uint32_t w1tc:                    18;       /*RTC GPIO 0 ~ 17 interrupt status write 1 to clear*/
+            uint32_t reserved0:               11;
+            uint32_t w1tc:                    21;       /*RTC GPIO 0 ~ 20 interrupt status write 1 to clear*/
         };
         uint32_t val;
     } status_w1tc;
     union {
         struct {
-            uint32_t reserved0:       14;
-            uint32_t in:              18;               /*RTC GPIO input data*/
+            uint32_t reserved0:       11;
+            uint32_t in:              21;               /*RTC GPIO input data*/
         };
         uint32_t val;
     } in_val;
@@ -98,7 +98,7 @@ typedef volatile struct {
             uint32_t reserved11:                 21;
         };
         uint32_t val;
-    } pin[18];
+    } pin[21];
     union {
         struct {
             uint32_t sel0:                    5;
@@ -113,127 +113,7 @@ typedef volatile struct {
     } debug_sel;
     union {
         struct {
-            uint32_t reserved0: 30;
-            uint32_t hall_phase: 1;                     /*Reverse phase of hall sensor*/
-            uint32_t xpd_hall:   1;                     /*Power on hall sensor and connect to VP and VN*/
-        };
-        uint32_t val;
-    } hall_sens;
-    union {
-        struct {
-            uint32_t reserved0:      4;
-            uint32_t sense4_fun_ie:  1;                 /*input enable in work mode*/
-            uint32_t sense4_slp_ie:  1;                 /*input enable in sleep mode*/
-            uint32_t sense4_slp_sel: 1;                 /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t sense4_fun_sel: 2;                 /*SENSE4 function sel*/
-            uint32_t sense3_fun_ie:  1;                 /*input enable in work mode*/
-            uint32_t sense3_slp_ie:  1;                 /*input enable in sleep mode*/
-            uint32_t sense3_slp_sel: 1;                 /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t sense3_fun_sel: 2;                 /*SENSE3 function sel*/
-            uint32_t sense2_fun_ie:  1;                 /*input enable in work mode*/
-            uint32_t sense2_slp_ie:  1;                 /*input enable in sleep mode*/
-            uint32_t sense2_slp_sel: 1;                 /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t sense2_fun_sel: 2;                 /*SENSE2 function sel*/
-            uint32_t sense1_fun_ie:  1;                 /*input enable in work mode*/
-            uint32_t sense1_slp_ie:  1;                 /*input enable in sleep mode*/
-            uint32_t sense1_slp_sel: 1;                 /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t sense1_fun_sel: 2;                 /*SENSE1 function sel*/
-            uint32_t sense4_mux_sel: 1;                 /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t sense3_mux_sel: 1;                 /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t sense2_mux_sel: 1;                 /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t sense1_mux_sel: 1;                 /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t sense4_hold:    1;                 /*SENSE4 hold*/
-            uint32_t sense3_hold:    1;                 /*SENSE3 hold*/
-            uint32_t sense2_hold:    1;                 /*SENSE2 hold*/
-            uint32_t sense1_hold:    1;                 /*SENSE1 hold*/
-        };
-        uint32_t val;
-    } sensor_pads;
-    union {
-        struct {
-            uint32_t reserved0:   10;
-            uint32_t adc2_fun_ie:  1;                   /*input enable in work mode*/
-            uint32_t adc2_slp_ie:  1;                   /*input enable in sleep mode*/
-            uint32_t adc2_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t adc2_fun_sel: 2;                   /*ADC2 function sel*/
-            uint32_t adc2_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t adc2_rue:     1;                   /*ADC2_RUE*/
-            uint32_t adc2_rde:     1;                   /*ADC2_RDE*/
-            uint32_t adc2_hold:    1;                   /*ADC2 hold*/
-            uint32_t adc2_drv:     2;                   /*ADC2_DRV*/
-            uint32_t adc1_fun_ie:  1;                   /*input enable in work mode*/
-            uint32_t adc1_slp_ie:  1;                   /*input enable in sleep mode*/
-            uint32_t adc1_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t adc1_fun_sel: 2;                   /*ADC1 function sel*/
-            uint32_t adc1_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t adc1_rue:     1;                   /*ADC1_RUE*/
-            uint32_t adc1_rde:     1;                   /*ADC1_RDE*/
-            uint32_t adc1_hold:    1;                   /*ADC1 hold*/
-            uint32_t adc1_drv:     2;                   /*ADC1_DRV*/
-        };
-        uint32_t val;
-    } adc_pad;
-    union {
-        struct {
-            uint32_t reserved0:          10;
-            uint32_t dac_xpd_force:       1;            /*1: use reg_pdac1_xpd_dac to control PDAC1_XPD_DAC 0: use SAR ADC FSM to control PDAC1_XPD_DAC*/
-            uint32_t fun_ie:              1;            /*input enable in work mode*/
-            uint32_t slp_oe:              1;            /*output enable in sleep mode*/
-            uint32_t slp_ie:              1;            /*input enable in sleep mode*/
-            uint32_t slp_sel:             1;            /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t fun_sel:             2;            /*PDAC1 function sel*/
-            uint32_t mux_sel:             1;            /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t xpd_dac:             1;            /*PDAC1_XPD_DAC*/
-            uint32_t dac:                 8;            /*PDAC1_DAC*/
-            uint32_t rue:                 1;            /*PDAC1_RUE*/
-            uint32_t rde:                 1;            /*PDAC1_RDE*/
-            uint32_t hold:                1;            /*PDAC1 hold*/
-            uint32_t drv:                 2;            /*PDAC1_DRV*/
-        };
-        uint32_t val;
-    } pad_dac[2];
-    union {
-        struct {
-            uint32_t reserved0:    5;
-            uint32_t x32p_fun_ie:  1;                   /*input enable in work mode*/
-            uint32_t x32p_slp_oe:  1;                   /*output enable in sleep mode*/
-            uint32_t x32p_slp_ie:  1;                   /*input enable in sleep mode*/
-            uint32_t x32p_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t x32p_fun_sel: 2;                   /*X32P function sel*/
-            uint32_t x32n_fun_ie:  1;                   /*input enable in work mode*/
-            uint32_t x32n_slp_oe:  1;                   /*output enable in sleep mode*/
-            uint32_t x32n_slp_ie:  1;                   /*input enable in sleep mode*/
-            uint32_t x32n_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
-            uint32_t x32n_fun_sel: 2;                   /*X32N function sel*/
-            uint32_t x32p_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t x32n_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
-            uint32_t reserved19:   3;
-            uint32_t x32p_rue:     1;                   /*X32N RUE*/
-            uint32_t x32p_rde:     1;                   /*X32N RDE*/
-            uint32_t x32p_hold:    1;                   /*X32N hold*/
-            uint32_t x32p_drv:     2;                   /*X32P_DRV*/
-            uint32_t x32n_rue:     1;                   /*X32N_RUE*/
-            uint32_t x32n_rde:     1;                   /*X32N_RDE*/
-            uint32_t x32n_hold:    1;                   /*X32N hold*/
-            uint32_t x32n_drv:     2;                   /*X32N_DRV*/
-        };
-        uint32_t val;
-    } xtal_32k_pad;
-    union {
-        struct {
-            uint32_t reserved0:     23;
-            uint32_t dcur:           2;                 /*TOUCH_DCUR*/
-            uint32_t drange:         2;                 /*TOUCH_DRANGE*/
-            uint32_t drefl:          2;                 /*TOUCH_DREFL*/
-            uint32_t drefh:          2;                 /*TOUCH_DREFH*/
-            uint32_t xpd_bias:       1;                 /*TOUCH_XPD_BIAS*/
-        };
-        uint32_t val;
-    } touch_cfg;
-    union {
-        struct {
-            uint32_t reserved0:         12;
-            uint32_t to_gpio:            1;
+            uint32_t reserved0:         13;
             uint32_t fun_ie:             1;             /*input enable in work mode*/
             uint32_t slp_oe:             1;             /*output enable in sleep mode*/
             uint32_t slp_ie:             1;             /*input enable in sleep mode*/
@@ -248,10 +128,98 @@ typedef volatile struct {
             uint32_t rue:                1;             /*RUE*/
             uint32_t rde:                1;             /*RDE*/
             uint32_t drv:                2;             /*DRV*/
-            uint32_t hold:               1;             /*hold*/
+            uint32_t reserved31:         1;
         };
         uint32_t val;
-    } touch_pad[10];
+    } touch_pad[15];
+    union {
+        struct {
+            uint32_t reserved0:   13;
+            uint32_t x32p_fun_ie:  1;                   /*input enable in work mode*/
+            uint32_t x32p_slp_oe:  1;                   /*output enable in sleep mode*/
+            uint32_t x32p_slp_ie:  1;                   /*input enable in sleep mode*/
+            uint32_t x32p_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t x32p_fun_sel: 2;                   /*function sel*/
+            uint32_t x32p_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:   7;
+            uint32_t x32p_rue:     1;                   /*RUE*/
+            uint32_t x32p_rde:     1;                   /*RDE*/
+            uint32_t x32p_drv:     2;                   /*DRV*/
+            uint32_t reserved31:   1;
+        };
+        uint32_t val;
+    } xtal_32p_pad;
+    union {
+        struct {
+            uint32_t reserved0:   13;
+            uint32_t x32n_fun_ie:  1;                   /*input enable in work mode*/
+            uint32_t x32n_slp_oe:  1;                   /*output enable in sleep mode*/
+            uint32_t x32n_slp_ie:  1;                   /*input enable in sleep mode*/
+            uint32_t x32n_slp_sel: 1;                   /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t x32n_fun_sel: 2;                   /*function sel*/
+            uint32_t x32n_mux_sel: 1;                   /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:   7;
+            uint32_t x32n_rue:     1;                   /*RUE*/
+            uint32_t x32n_rde:     1;                   /*RDE*/
+            uint32_t x32n_drv:     2;                   /*DRV*/
+            uint32_t reserved31:   1;
+        };
+        uint32_t val;
+    } xtal_32n_pad;
+    union {
+        struct {
+            uint32_t reserved0:           3;
+            uint32_t dac:                 8;            /*PDAC1_DAC*/
+            uint32_t xpd_dac:             1;            /*PDAC1_XPD_DAC*/
+            uint32_t dac_xpd_force:       1;            /*1: use reg_pdac1_xpd_dac to control PDAC1_XPD_DAC 0: use SAR ADC FSM to control PDAC1_XPD_DAC*/
+            uint32_t fun_ie:              1;            /*input enable in work mode*/
+            uint32_t slp_oe:              1;            /*output enable in sleep mode*/
+            uint32_t slp_ie:              1;            /*input enable in sleep mode*/
+            uint32_t slp_sel:             1;            /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t fun_sel:             2;            /*PDAC1 function sel*/
+            uint32_t mux_sel:             1;            /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:          7;
+            uint32_t rue:                 1;            /*PDAC1_RUE*/
+            uint32_t rde:                 1;            /*PDAC1_RDE*/
+            uint32_t drv:                 2;            /*PDAC1_DRV*/
+            uint32_t reserved31:          1;
+        };
+        uint32_t val;
+    } pad_dac[2];
+    union {
+        struct {
+            uint32_t reserved0:        13;
+            uint32_t rtc_pad19_fun_ie:  1;              /*input enable in work mode*/
+            uint32_t rtc_pad19_slp_oe:  1;              /*output enable in sleep mode*/
+            uint32_t rtc_pad19_slp_ie:  1;              /*input enable in sleep mode*/
+            uint32_t rtc_pad19_slp_sel: 1;              /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t rtc_pad19_fun_sel: 2;              /*function sel*/
+            uint32_t rtc_pad19_mux_sel: 1;              /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:        7;
+            uint32_t rtc_pad19_rue:     1;              /*RUE*/
+            uint32_t rtc_pad19_rde:     1;              /*RDE*/
+            uint32_t rtc_pad19_drv:     2;              /*DRV*/
+            uint32_t reserved31:        1;
+        };
+        uint32_t val;
+    } rtc_pad19;
+    union {
+        struct {
+            uint32_t reserved0:        13;
+            uint32_t rtc_pad20_fun_ie:  1;              /*input enable in work mode*/
+            uint32_t rtc_pad20_slp_oe:  1;              /*output enable in sleep mode*/
+            uint32_t rtc_pad20_slp_ie:  1;              /*input enable in sleep mode*/
+            uint32_t rtc_pad20_slp_sel: 1;              /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t rtc_pad20_fun_sel: 2;              /*function sel*/
+            uint32_t rtc_pad20_mux_sel: 1;              /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:        7;
+            uint32_t rtc_pad20_rue:     1;              /*RUE*/
+            uint32_t rtc_pad20_rde:     1;              /*RDE*/
+            uint32_t rtc_pad20_drv:     2;              /*DRV*/
+            uint32_t reserved31:        1;
+        };
+        uint32_t val;
+    } rtc_pad20;
     union {
         struct {
             uint32_t reserved0:      27;
@@ -275,6 +243,11 @@ typedef volatile struct {
         };
         uint32_t val;
     } sar_i2c_io;
+    uint32_t reserved_3b;
+    uint32_t reserved_3f;
+    uint32_t reserved_43;
+    uint32_t reserved_47;
+    uint32_t reserved_4b;
     union {
         struct {
             uint32_t date:      28;

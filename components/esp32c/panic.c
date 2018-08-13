@@ -283,7 +283,7 @@ void panicHandler(XtExcFrame *frame)
         disableAllWdts();
         if (frame->exccause == PANIC_RSN_INTWDT_CPU0 ||
             frame->exccause == PANIC_RSN_INTWDT_CPU1) {
-            TIMERG1.int_clr_timers.wdt = 1;
+            TIMERG1.int_clr.wdt = 1;
         }
 #if CONFIG_ESP32_APPTRACE_ENABLE
 #if CONFIG_SYSVIEW_ENABLE

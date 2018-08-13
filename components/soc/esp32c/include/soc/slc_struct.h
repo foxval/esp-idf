@@ -1,9 +1,9 @@
-// Copyright 2015-2018 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_SLC_STRUCT_H_
 #define _SOC_SLC_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -85,7 +84,8 @@ typedef volatile struct {
             uint32_t tx_err_eof:              1;
             uint32_t cmd_dtc:                 1;
             uint32_t rx_quick_eof:            1;
-            uint32_t reserved27:              5;
+            uint32_t host_pop_eof_err:              1;
+            uint32_t reserved28:                    4;
         };
         uint32_t val;
     } slc0_int_raw;
@@ -118,7 +118,8 @@ typedef volatile struct {
             uint32_t tx_err_eof:             1;
             uint32_t cmd_dtc:                1;
             uint32_t rx_quick_eof:           1;
-            uint32_t reserved27:             5;
+            uint32_t host_pop_eof_err:             1;
+            uint32_t reserved28:                   4;
         };
         uint32_t val;
     } slc0_int_st;
@@ -151,7 +152,8 @@ typedef volatile struct {
             uint32_t tx_err_eof:              1;
             uint32_t cmd_dtc:                 1;
             uint32_t rx_quick_eof:            1;
-            uint32_t reserved27:              5;
+            uint32_t host_pop_eof_err:              1;
+            uint32_t reserved28:                    4;
         };
         uint32_t val;
     } slc0_int_ena;
@@ -184,7 +186,8 @@ typedef volatile struct {
             uint32_t tx_err_eof:              1;
             uint32_t cmd_dtc:                 1;
             uint32_t rx_quick_eof:            1;
-            uint32_t reserved27:              5;
+            uint32_t host_pop_eof_err:              1;
+            uint32_t reserved28:                    4;
         };
         uint32_t val;
     } slc0_int_clr;
@@ -314,12 +317,14 @@ typedef volatile struct {
     } slc1_int_clr;
     union {
         struct {
-            uint32_t slc0_rx_full: 1;
-            uint32_t slc0_rx_empty: 1;
-            uint32_t reserved2: 14;
-            uint32_t slc1_rx_full: 1;
-            uint32_t slc1_rx_empty: 1;
-            uint32_t reserved18:14;
+            uint32_t slc0_rx_full:    1;
+            uint32_t slc0_rx_empty:   1;
+            uint32_t slc0_rx_buf_len:12;
+            uint32_t reserved14:      2;
+            uint32_t slc1_rx_full:    1;
+            uint32_t slc1_rx_empty:   1;
+            uint32_t slc1_rx_buf_len:12;
+            uint32_t reserved30:      2;
         };
         uint32_t val;
     } rx_status;
@@ -704,7 +709,8 @@ typedef volatile struct {
             uint32_t tx_err_eof1:             1;
             uint32_t cmd_dtc1:                1;
             uint32_t rx_quick_eof1:           1;
-            uint32_t reserved27:              5;
+            uint32_t host_pop_eof_err1:             1;
+            uint32_t reserved28:                    4;
         };
         uint32_t val;
     } slc0_int_st1;
@@ -737,7 +743,8 @@ typedef volatile struct {
             uint32_t tx_err_eof1:              1;
             uint32_t cmd_dtc1:                 1;
             uint32_t rx_quick_eof1:            1;
-            uint32_t reserved27:               5;
+            uint32_t host_pop_eof_err1:              1;
+            uint32_t reserved28:                     4;
         };
         uint32_t val;
     } slc0_int_ena1;

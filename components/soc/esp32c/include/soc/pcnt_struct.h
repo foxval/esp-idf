@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_PCNT_STRUCT_H_
 #define _SOC_PCNT_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -174,7 +173,6 @@ typedef volatile struct {
     uint32_t date;                                  /**/
 } pcnt_dev_t;
 extern pcnt_dev_t PCNT;
-
 #ifdef __cplusplus
 }
 #endif

@@ -597,6 +597,8 @@ esp_err_t touch_pad_set_voltage(touch_high_volt_t refh, touch_low_volt_t refl, t
     RTC_MODULE_CHECK(((atten < TOUCH_HVOLT_ATTEN_MAX) && (refh >= (int )TOUCH_HVOLT_ATTEN_KEEP)), "touch atten error",
             ESP_ERR_INVALID_ARG);
 
+    // dbg tmp
+#if 0
     portENTER_CRITICAL(&rtc_spinlock);
     if (refh > TOUCH_HVOLT_KEEP) {
         RTCIO.touch_cfg.drefh = refh;
@@ -608,11 +610,14 @@ esp_err_t touch_pad_set_voltage(touch_high_volt_t refh, touch_low_volt_t refl, t
         RTCIO.touch_cfg.drange = atten;
     }
     portEXIT_CRITICAL(&rtc_spinlock);
+#endif
     return ESP_OK;
 }
 
 esp_err_t touch_pad_get_voltage(touch_high_volt_t *refh, touch_low_volt_t *refl, touch_volt_atten_t *atten)
 {
+    // dbg tmp
+#if 0
     portENTER_CRITICAL(&rtc_spinlock);
     if (refh) {
         *refh = RTCIO.touch_cfg.drefh;
@@ -624,6 +629,7 @@ esp_err_t touch_pad_get_voltage(touch_high_volt_t *refh, touch_low_volt_t *refl,
         *atten = RTCIO.touch_cfg.drange;
     }
     portEXIT_CRITICAL(&rtc_spinlock);
+#endif
     return ESP_OK;
 }
 
@@ -1913,7 +1919,10 @@ esp_err_t dac_i2s_disable()
 
 static inline void adc1_hall_enable(bool enable)
 {
-    RTCIO.hall_sens.xpd_hall = enable;        
+    //dbg tmp
+#if 0
+    RTCIO.hall_sens.xpd_hall = enable;
+#endif
 }
 
 static int hall_sensor_get_value()    //hall sensor without LNA
@@ -1922,10 +1931,11 @@ static int hall_sensor_get_value()    //hall sensor without LNA
     int Sens_Vn0;
     int Sens_Vp1;
     int Sens_Vn1;
-    int hall_value;
+    int hall_value = 0;
     
     adc_power_on();
-
+    // dbg tmp
+#if 0
     portENTER_CRITICAL(&rtc_spinlock);
     //disable other peripherals
     adc1_fsm_disable();//currently the LNA is not open, close it by default    
@@ -1941,6 +1951,7 @@ static int hall_sensor_get_value()    //hall sensor without LNA
     Sens_Vn1 = adc_convert( ADC_UNIT_1, ADC1_CHANNEL_3 );
     portEXIT_CRITICAL(&rtc_spinlock);
     hall_value = (Sens_Vp1 - Sens_Vp0) - (Sens_Vn1 - Sens_Vn0);
+#endif
 
     return hall_value;
 }

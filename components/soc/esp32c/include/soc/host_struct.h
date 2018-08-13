@@ -1,9 +1,9 @@
-// Copyright 2015-2018 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -13,7 +13,6 @@
 // limitations under the License.
 #ifndef _SOC_HOST_STRUCT_H_
 #define _SOC_HOST_STRUCT_H_
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -54,16 +53,16 @@ typedef volatile struct {
     uint32_t gpio_status0;                                  /**/
     union {
         struct {
-            uint32_t sdio_int1:      8;
-            uint32_t reserved8:     24;
+            uint32_t sdio_int1:     22;
+            uint32_t reserved22:    10;
         };
         uint32_t val;
     } gpio_status1;
     uint32_t gpio_in0;                                      /**/
     union {
         struct {
-            uint32_t sdio_in1:      8;
-            uint32_t reserved8:    24;
+            uint32_t sdio_in1:     22;
+            uint32_t reserved22:   10;
         };
         uint32_t val;
     } gpio_in1;
@@ -720,7 +719,8 @@ typedef volatile struct {
             uint32_t addr:            28;
             uint32_t wr:               1;
             uint32_t start:            1;
-            uint32_t reserved30:       2;
+            uint32_t bus:              1;
+            uint32_t reserved31:       1;
         };
         uint32_t val;
     } apbwin_conf;
@@ -828,8 +828,8 @@ typedef volatile struct {
     uint32_t reserved_16c;
     uint32_t reserved_170;
     uint32_t reserved_174;
-    uint32_t date;                                          /**/
-    uint32_t id;                                            /**/
+    uint32_t date;                                      /**/
+    uint32_t id;                                        /**/
     uint32_t reserved_180;
     uint32_t reserved_184;
     uint32_t reserved_188;
@@ -883,7 +883,6 @@ typedef volatile struct {
     } inf_st;
 } host_dev_t;
 extern host_dev_t HOST;
-
 #ifdef __cplusplus
 }
 #endif

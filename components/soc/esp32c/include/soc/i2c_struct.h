@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,13 +31,16 @@ typedef volatile struct {
             uint32_t sda_force_out:    1;           /*1：normally output sda data   0: exchange the function of sda_o and sda_oe (sda_o is the original internal output sda signal sda_oe is the enable bit for the internal output sda signal)*/
             uint32_t scl_force_out:    1;           /*1：normally output scl clock  0: exchange the function of scl_o and scl_oe (scl_o is the original internal output scl signal  scl_oe is the enable bit for the internal output scl signal)*/
             uint32_t sample_scl_level: 1;           /*Set this bit to sample data in SCL low level. clear this bit to sample data in SCL high level.*/
-            uint32_t reserved3:        1;
+            uint32_t ack_level:        1;
             uint32_t ms_mode:          1;           /*Set this bit to configure the module as i2c master  clear this bit to configure the module as i2c slave.*/
             uint32_t trans_start:      1;           /*Set this bit to start sending data in tx_fifo.*/
             uint32_t tx_lsb_first:     1;           /*This bit is used to control the sending mode for  data need to be send. 1：receive data from most significant bit    0：receive data from least significant bit*/
             uint32_t rx_lsb_first:     1;           /*This bit is used to control the storage mode for received data. 1：receive data from most significant bit    0：receive data from least significant bit*/
             uint32_t clk_en:           1;           /*This is the clock gating control bit for reading or writing registers.*/
-            uint32_t reserved9:       23;
+            uint32_t arbitration_en:   1;
+            uint32_t fsm_rst:          1;
+            uint32_t ref_always_on:    1;
+            uint32_t reserved12:      20;
         };
         uint32_t val;
     } ctr;
@@ -63,8 +66,9 @@ typedef volatile struct {
     } status_reg;
     union {
         struct {
-            uint32_t tout:      20;                 /*This register is used to configure the max clock number of receiving a data, unit: APB clock cycle.*/
-            uint32_t reserved20:12;
+            uint32_t tout:       24;
+            uint32_t time_out_en: 1;
+            uint32_t reserved25:  7;
         };
         uint32_t val;
     } timeout;
@@ -82,7 +86,10 @@ typedef volatile struct {
             uint32_t rx_fifo_end_addr:   5;         /*This is the offset address of the first receiving data as described in nonfifo_rx_thres_register.*/
             uint32_t tx_fifo_start_addr: 5;         /*This is the offset address of the first  sending data as described in nonfifo_tx_thres register.*/
             uint32_t tx_fifo_end_addr:   5;         /*This is the offset address of the last  sending data as described in nonfifo_tx_thres register.*/
-            uint32_t reserved20:        12;
+            uint32_t rx_update:         1;
+            uint32_t tx_update:         1;
+            uint32_t tx_fifo_init_raddr: 5;
+            uint32_t rx_fifo_init_waddr: 5;
         };
         uint32_t val;
     } fifo_st;
@@ -122,7 +129,10 @@ typedef volatile struct {
             uint32_t ack_err:          1;           /*The raw interrupt status bit for ack_err_int interrupt. when I2C receives a wrong ACK bit  it will produce ack_err_int interrupt..*/
             uint32_t rx_rec_full:      1;           /*The raw interrupt status bit for rx_rec_full_int interrupt. when I2C receives more data  than nonfifo_rx_thres  it will produce rx_rec_full_int interrupt.*/
             uint32_t tx_send_empty:    1;           /*The raw interrupt status bit for tx_send_empty_int interrupt.when I2C sends more data than nonfifo_tx_thres  it will produce tx_send_empty_int interrupt..*/
-            uint32_t reserved13:      19;
+            uint32_t scl_st_to:                1;
+            uint32_t scl_main_st_to:           1;
+            uint32_t det_start:                1;
+            uint32_t reserved16:              16;
         };
         uint32_t val;
     } int_raw;
@@ -141,7 +151,10 @@ typedef volatile struct {
             uint32_t ack_err:          1;           /*Set this bit to clear the ack_err_int interrupt.*/
             uint32_t rx_rec_full:      1;           /*Set this bit to clear the rx_rec_full_int interrupt.*/
             uint32_t tx_send_empty:    1;           /*Set this bit to clear the tx_send_empty_int interrupt.*/
-            uint32_t reserved13:      19;
+            uint32_t scl_st_to:                1;
+            uint32_t scl_main_st_to:           1;
+            uint32_t det_start:                1;
+            uint32_t reserved16:              16;
         };
         uint32_t val;
     } int_clr;
@@ -160,7 +173,10 @@ typedef volatile struct {
             uint32_t ack_err:          1;           /*The enable bit for ack_err_int interrupt.*/
             uint32_t rx_rec_full:      1;           /*The enable bit for rx_rec_full_int interrupt.*/
             uint32_t tx_send_empty:    1;           /*The enable bit for tx_send_empty_int interrupt.*/
-            uint32_t reserved13:      19;
+            uint32_t scl_st_to:                1;
+            uint32_t scl_main_st_to:           1;
+            uint32_t det_start:                1;
+            uint32_t reserved16:              16;
         };
         uint32_t val;
     } int_ena;
@@ -179,7 +195,10 @@ typedef volatile struct {
             uint32_t ack_err:          1;            /*The masked interrupt status for ack_err_int interrupt.*/
             uint32_t rx_rec_full:      1;            /*The masked interrupt status for rx_rec_full_int interrupt.*/
             uint32_t tx_send_empty:    1;            /*The masked interrupt status for tx_send_empty_int interrupt.*/
-            uint32_t reserved13:      19;
+            uint32_t scl_st_to:               1;
+            uint32_t scl_main_st_to:          1;
+            uint32_t det_start:               1;
+            uint32_t reserved16:             16;
         };
         uint32_t val;
     } int_status;
@@ -261,9 +280,30 @@ typedef volatile struct {
         };
         uint32_t val;
     } command[16];
-    uint32_t reserved_98;
-    uint32_t reserved_9c;
-    uint32_t reserved_a0;
+    union {
+        struct {
+            uint32_t scl_st_to: 24;
+            uint32_t reserved24: 8;
+        };
+        uint32_t val;
+    } scl_st_time_out;
+    union {
+        struct {
+            uint32_t scl_main_st_to:24;
+            uint32_t reserved24:     8;
+        };
+        uint32_t val;
+    } scl_main_st_time_out;
+    union {
+        struct {
+            uint32_t scl_rst_slv_en:  1;
+            uint32_t scl_rst_slv_num: 5;
+            uint32_t scl_pd_en:       1;
+            uint32_t sda_pd_en:       1;
+            uint32_t reserved8:      24;
+        };
+        uint32_t val;
+    } scl_sp_conf;
     uint32_t reserved_a4;
     uint32_t reserved_a8;
     uint32_t reserved_ac;

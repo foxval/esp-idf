@@ -1,9 +1,9 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2017-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
@@ -15,6 +15,9 @@
 #define _SOC_PCNT_REG_H_
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include "soc.h"
 #define PCNT_U0_CONF0_REG          (DR_REG_PCNT_BASE + 0x0000)
 /* PCNT_CH1_LCTRL_MODE_U0 : R/W ;bitpos:[31:30] ;default: 2'd0 ; */
@@ -1049,68 +1052,68 @@
 #define PCNT_CNT_H_LIM_U7_S  0
 
 #define PCNT_U0_CNT_REG          (DR_REG_PCNT_BASE + 0x0060)
-/* PCNT_PLUS_CNT_U0 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit0.*/
-#define PCNT_PLUS_CNT_U0  0x0000FFFF
-#define PCNT_PLUS_CNT_U0_M  ((PCNT_PLUS_CNT_U0_V)<<(PCNT_PLUS_CNT_U0_S))
-#define PCNT_PLUS_CNT_U0_V  0xFFFF
-#define PCNT_PLUS_CNT_U0_S  0
+/* PCNT_PULSE_CNT_U0 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U0  0x0000FFFF
+#define PCNT_PULSE_CNT_U0_M  ((PCNT_PULSE_CNT_U0_V)<<(PCNT_PULSE_CNT_U0_S))
+#define PCNT_PULSE_CNT_U0_V  0xFFFF
+#define PCNT_PULSE_CNT_U0_S  0
 
 #define PCNT_U1_CNT_REG          (DR_REG_PCNT_BASE + 0x0064)
-/* PCNT_PLUS_CNT_U1 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit1.*/
-#define PCNT_PLUS_CNT_U1  0x0000FFFF
-#define PCNT_PLUS_CNT_U1_M  ((PCNT_PLUS_CNT_U1_V)<<(PCNT_PLUS_CNT_U1_S))
-#define PCNT_PLUS_CNT_U1_V  0xFFFF
-#define PCNT_PLUS_CNT_U1_S  0
+/* PCNT_PULSE_CNT_U1 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U1  0x0000FFFF
+#define PCNT_PULSE_CNT_U1_M  ((PCNT_PULSE_CNT_U1_V)<<(PCNT_PULSE_CNT_U1_S))
+#define PCNT_PULSE_CNT_U1_V  0xFFFF
+#define PCNT_PULSE_CNT_U1_S  0
 
 #define PCNT_U2_CNT_REG          (DR_REG_PCNT_BASE + 0x0068)
-/* PCNT_PLUS_CNT_U2 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit2.*/
-#define PCNT_PLUS_CNT_U2  0x0000FFFF
-#define PCNT_PLUS_CNT_U2_M  ((PCNT_PLUS_CNT_U2_V)<<(PCNT_PLUS_CNT_U2_S))
-#define PCNT_PLUS_CNT_U2_V  0xFFFF
-#define PCNT_PLUS_CNT_U2_S  0
+/* PCNT_PULSE_CNT_U2 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U2  0x0000FFFF
+#define PCNT_PULSE_CNT_U2_M  ((PCNT_PULSE_CNT_U2_V)<<(PCNT_PULSE_CNT_U2_S))
+#define PCNT_PULSE_CNT_U2_V  0xFFFF
+#define PCNT_PULSE_CNT_U2_S  0
 
 #define PCNT_U3_CNT_REG          (DR_REG_PCNT_BASE + 0x006c)
-/* PCNT_PLUS_CNT_U3 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit3.*/
-#define PCNT_PLUS_CNT_U3  0x0000FFFF
-#define PCNT_PLUS_CNT_U3_M  ((PCNT_PLUS_CNT_U3_V)<<(PCNT_PLUS_CNT_U3_S))
-#define PCNT_PLUS_CNT_U3_V  0xFFFF
-#define PCNT_PLUS_CNT_U3_S  0
+/* PCNT_PULSE_CNT_U3 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U3  0x0000FFFF
+#define PCNT_PULSE_CNT_U3_M  ((PCNT_PULSE_CNT_U3_V)<<(PCNT_PULSE_CNT_U3_S))
+#define PCNT_PULSE_CNT_U3_V  0xFFFF
+#define PCNT_PULSE_CNT_U3_S  0
 
 #define PCNT_U4_CNT_REG          (DR_REG_PCNT_BASE + 0x0070)
-/* PCNT_PLUS_CNT_U4 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit4.*/
-#define PCNT_PLUS_CNT_U4  0x0000FFFF
-#define PCNT_PLUS_CNT_U4_M  ((PCNT_PLUS_CNT_U4_V)<<(PCNT_PLUS_CNT_U4_S))
-#define PCNT_PLUS_CNT_U4_V  0xFFFF
-#define PCNT_PLUS_CNT_U4_S  0
+/* PCNT_PULSE_CNT_U4 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U4  0x0000FFFF
+#define PCNT_PULSE_CNT_U4_M  ((PCNT_PULSE_CNT_U4_V)<<(PCNT_PULSE_CNT_U4_S))
+#define PCNT_PULSE_CNT_U4_V  0xFFFF
+#define PCNT_PULSE_CNT_U4_S  0
 
 #define PCNT_U5_CNT_REG          (DR_REG_PCNT_BASE + 0x0074)
-/* PCNT_PLUS_CNT_U5 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit5.*/
-#define PCNT_PLUS_CNT_U5  0x0000FFFF
-#define PCNT_PLUS_CNT_U5_M  ((PCNT_PLUS_CNT_U5_V)<<(PCNT_PLUS_CNT_U5_S))
-#define PCNT_PLUS_CNT_U5_V  0xFFFF
-#define PCNT_PLUS_CNT_U5_S  0
+/* PCNT_PULSE_CNT_U5 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U5  0x0000FFFF
+#define PCNT_PULSE_CNT_U5_M  ((PCNT_PULSE_CNT_U5_V)<<(PCNT_PULSE_CNT_U5_S))
+#define PCNT_PULSE_CNT_U5_V  0xFFFF
+#define PCNT_PULSE_CNT_U5_S  0
 
 #define PCNT_U6_CNT_REG          (DR_REG_PCNT_BASE + 0x0078)
-/* PCNT_PLUS_CNT_U6 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit6.*/
-#define PCNT_PLUS_CNT_U6  0x0000FFFF
-#define PCNT_PLUS_CNT_U6_M  ((PCNT_PLUS_CNT_U6_V)<<(PCNT_PLUS_CNT_U6_S))
-#define PCNT_PLUS_CNT_U6_V  0xFFFF
-#define PCNT_PLUS_CNT_U6_S  0
+/* PCNT_PULSE_CNT_U6 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U6  0x0000FFFF
+#define PCNT_PULSE_CNT_U6_M  ((PCNT_PULSE_CNT_U6_V)<<(PCNT_PULSE_CNT_U6_S))
+#define PCNT_PULSE_CNT_U6_V  0xFFFF
+#define PCNT_PULSE_CNT_U6_S  0
 
 #define PCNT_U7_CNT_REG          (DR_REG_PCNT_BASE + 0x007c)
-/* PCNT_PLUS_CNT_U7 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
-/*description: This register stores the current pulse count value for unit7.*/
-#define PCNT_PLUS_CNT_U7  0x0000FFFF
-#define PCNT_PLUS_CNT_U7_M  ((PCNT_PLUS_CNT_U7_V)<<(PCNT_PLUS_CNT_U7_S))
-#define PCNT_PLUS_CNT_U7_V  0xFFFF
-#define PCNT_PLUS_CNT_U7_S  0
+/* PCNT_PULSE_CNT_U7 : RO ;bitpos:[15:0] ;default: 16'h0 ; */
+/*description: */
+#define PCNT_PULSE_CNT_U7  0x0000FFFF
+#define PCNT_PULSE_CNT_U7_M  ((PCNT_PULSE_CNT_U7_V)<<(PCNT_PULSE_CNT_U7_S))
+#define PCNT_PULSE_CNT_U7_V  0xFFFF
+#define PCNT_PULSE_CNT_U7_S  0
 
 #define PCNT_INT_RAW_REG          (DR_REG_PCNT_BASE + 0x0080)
 /* PCNT_CNT_THR_EVENT_U7_INT_RAW : RO ;bitpos:[7] ;default: 1'b0 ; */
@@ -1315,96 +1318,306 @@
 #define PCNT_U0_STATUS_REG          (DR_REG_PCNT_BASE + 0x0090)
 /* PCNT_CORE_STATUS_U0 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U0  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U0_M  ((PCNT_CORE_STATUS_U0_V)<<(PCNT_CORE_STATUS_U0_S))
-#define PCNT_CORE_STATUS_U0_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U0_S  0
-/*0: positive value to zero; 1: negative value to zero; 2: counter value negative ; 3: counter value positive*/
-#define PCNT_STATUS_CNT_MODE    0x3
-#define PCNT_STATUS_CNT_MODE_M  ((PCNT_STATUS_CNT_MODE_V)<<(PCNT_STATUS_CNT_MODE_S))
-#define PCNT_STATUS_CNT_MODE_V  0x3
-#define PCNT_STATUS_CNT_MODE_S  0
-/* counter value equals to thresh1*/
-#define PCNT_STATUS_THRES1    BIT(2)
-#define PCNT_STATUS_THRES1_M  BIT(2)
-#define PCNT_STATUS_THRES1_V  0x1
-#define PCNT_STATUS_THRES1_S  2
-/* counter value equals to thresh0*/
-#define PCNT_STATUS_THRES0    BIT(3)
-#define PCNT_STATUS_THRES0_M  BIT(3)
-#define PCNT_STATUS_THRES0_V  0x1
-#define PCNT_STATUS_THRES0_S  3
-/* counter value reaches h_lim*/
-#define PCNT_STATUS_L_LIM    BIT(4)
-#define PCNT_STATUS_L_LIM_M  BIT(4)
-#define PCNT_STATUS_L_LIM_V  0x1
-#define PCNT_STATUS_L_LIM_S  4
-/* counter value reaches l_lim*/
-#define PCNT_STATUS_H_LIM    BIT(5)
-#define PCNT_STATUS_H_LIM_M  BIT(5)
-#define PCNT_STATUS_H_LIM_V  0x1
-#define PCNT_STATUS_H_LIM_S  5
-/* counter value equals to zero*/
-#define PCNT_STATUS_ZERO    BIT(6)
-#define PCNT_STATUS_ZERO_M  BIT(6)
-#define PCNT_STATUS_ZERO_V  0x1
-#define PCNT_STATUS_ZERO_S  6
+#define PCNT_CNT_THR_ZERO_LAT_U0  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U0_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U0_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U0_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U0 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U0  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U0_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U0_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U0_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U0 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U0  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U0_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U0_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U0_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U0 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U0  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U0_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U0_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U0_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U0 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U0  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U0_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U0_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U0_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U0 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U0  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U0_M  ((PCNT_CNT_THR_ZERO_MODE_U0_V)<<(PCNT_CNT_THR_ZERO_MODE_U0_S))
+#define PCNT_CNT_THR_ZERO_MODE_U0_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U0_S  0
 
 #define PCNT_U1_STATUS_REG          (DR_REG_PCNT_BASE + 0x0094)
-/* PCNT_CORE_STATUS_U1 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U1 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U1  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U1_M  ((PCNT_CORE_STATUS_U1_V)<<(PCNT_CORE_STATUS_U1_S))
-#define PCNT_CORE_STATUS_U1_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U1_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U1  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U1_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U1_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U1_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U1 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U1  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U1_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U1_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U1_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U1 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U1  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U1_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U1_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U1_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U1 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U1  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U1_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U1_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U1_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U1 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U1  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U1_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U1_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U1_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U1 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U1  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U1_M  ((PCNT_CNT_THR_ZERO_MODE_U1_V)<<(PCNT_CNT_THR_ZERO_MODE_U1_S))
+#define PCNT_CNT_THR_ZERO_MODE_U1_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U1_S  0
 
 #define PCNT_U2_STATUS_REG          (DR_REG_PCNT_BASE + 0x0098)
-/* PCNT_CORE_STATUS_U2 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U2 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U2  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U2_M  ((PCNT_CORE_STATUS_U2_V)<<(PCNT_CORE_STATUS_U2_S))
-#define PCNT_CORE_STATUS_U2_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U2_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U2  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U2_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U2_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U2_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U2 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U2  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U2_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U2_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U2_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U2 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U2  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U2_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U2_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U2_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U2 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U2  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U2_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U2_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U2_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U2 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U2  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U2_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U2_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U2_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U2 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U2  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U2_M  ((PCNT_CNT_THR_ZERO_MODE_U2_V)<<(PCNT_CNT_THR_ZERO_MODE_U2_S))
+#define PCNT_CNT_THR_ZERO_MODE_U2_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U2_S  0
 
 #define PCNT_U3_STATUS_REG          (DR_REG_PCNT_BASE + 0x009c)
-/* PCNT_CORE_STATUS_U3 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U3 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U3  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U3_M  ((PCNT_CORE_STATUS_U3_V)<<(PCNT_CORE_STATUS_U3_S))
-#define PCNT_CORE_STATUS_U3_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U3_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U3  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U3_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U3_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U3_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U3 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U3  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U3_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U3_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U3_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U3 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U3  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U3_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U3_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U3_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U3 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U3  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U3_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U3_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U3_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U3 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U3  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U3_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U3_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U3_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U3 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U3  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U3_M  ((PCNT_CNT_THR_ZERO_MODE_U3_V)<<(PCNT_CNT_THR_ZERO_MODE_U3_S))
+#define PCNT_CNT_THR_ZERO_MODE_U3_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U3_S  0
 
 #define PCNT_U4_STATUS_REG          (DR_REG_PCNT_BASE + 0x00a0)
-/* PCNT_CORE_STATUS_U4 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U4 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U4  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U4_M  ((PCNT_CORE_STATUS_U4_V)<<(PCNT_CORE_STATUS_U4_S))
-#define PCNT_CORE_STATUS_U4_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U4_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U4  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U4_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U4_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U4_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U4 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U4  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U4_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U4_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U4_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U4 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U4  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U4_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U4_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U4_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U4 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U4  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U4_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U4_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U4_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U4 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U4  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U4_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U4_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U4_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U4 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U4  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U4_M  ((PCNT_CNT_THR_ZERO_MODE_U4_V)<<(PCNT_CNT_THR_ZERO_MODE_U4_S))
+#define PCNT_CNT_THR_ZERO_MODE_U4_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U4_S  0
 
 #define PCNT_U5_STATUS_REG          (DR_REG_PCNT_BASE + 0x00a4)
-/* PCNT_CORE_STATUS_U5 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U5 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U5  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U5_M  ((PCNT_CORE_STATUS_U5_V)<<(PCNT_CORE_STATUS_U5_S))
-#define PCNT_CORE_STATUS_U5_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U5_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U5  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U5_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U5_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U5_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U5 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U5  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U5_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U5_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U5_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U5 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U5  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U5_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U5_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U5_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U5 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U5  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U5_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U5_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U5_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U5 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U5  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U5_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U5_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U5_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U5 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U5  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U5_M  ((PCNT_CNT_THR_ZERO_MODE_U5_V)<<(PCNT_CNT_THR_ZERO_MODE_U5_S))
+#define PCNT_CNT_THR_ZERO_MODE_U5_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U5_S  0
 
 #define PCNT_U6_STATUS_REG          (DR_REG_PCNT_BASE + 0x00a8)
-/* PCNT_CORE_STATUS_U6 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U6 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U6  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U6_M  ((PCNT_CORE_STATUS_U6_V)<<(PCNT_CORE_STATUS_U6_S))
-#define PCNT_CORE_STATUS_U6_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U6_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U6  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U6_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U6_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U6_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U6 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U6  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U6_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U6_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U6_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U6 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U6  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U6_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U6_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U6_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U6 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U6  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U6_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U6_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U6_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U6 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U6  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U6_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U6_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U6_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U6 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U6  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U6_M  ((PCNT_CNT_THR_ZERO_MODE_U6_V)<<(PCNT_CNT_THR_ZERO_MODE_U6_S))
+#define PCNT_CNT_THR_ZERO_MODE_U6_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U6_S  0
 
 #define PCNT_U7_STATUS_REG          (DR_REG_PCNT_BASE + 0x00ac)
-/* PCNT_CORE_STATUS_U7 : RO ;bitpos:[31:0] ;default: 32'h0 ; */
+/* PCNT_CNT_THR_ZERO_LAT_U7 : RO ;bitpos:[6] ;default: 1'b0 ; */
 /*description: */
-#define PCNT_CORE_STATUS_U7  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U7_M  ((PCNT_CORE_STATUS_U7_V)<<(PCNT_CORE_STATUS_U7_S))
-#define PCNT_CORE_STATUS_U7_V  0xFFFFFFFF
-#define PCNT_CORE_STATUS_U7_S  0
+#define PCNT_CNT_THR_ZERO_LAT_U7  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U7_M  (BIT(6))
+#define PCNT_CNT_THR_ZERO_LAT_U7_V  0x1
+#define PCNT_CNT_THR_ZERO_LAT_U7_S  6
+/* PCNT_CNT_THR_H_LIM_LAT_U7 : RO ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_H_LIM_LAT_U7  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U7_M  (BIT(5))
+#define PCNT_CNT_THR_H_LIM_LAT_U7_V  0x1
+#define PCNT_CNT_THR_H_LIM_LAT_U7_S  5
+/* PCNT_CNT_THR_L_LIM_LAT_U7 : RO ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_L_LIM_LAT_U7  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U7_M  (BIT(4))
+#define PCNT_CNT_THR_L_LIM_LAT_U7_V  0x1
+#define PCNT_CNT_THR_L_LIM_LAT_U7_S  4
+/* PCNT_CNT_THR_THRES0_LAT_U7 : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES0_LAT_U7  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U7_M  (BIT(3))
+#define PCNT_CNT_THR_THRES0_LAT_U7_V  0x1
+#define PCNT_CNT_THR_THRES0_LAT_U7_S  3
+/* PCNT_CNT_THR_THRES1_LAT_U7 : RO ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_THRES1_LAT_U7  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U7_M  (BIT(2))
+#define PCNT_CNT_THR_THRES1_LAT_U7_V  0x1
+#define PCNT_CNT_THR_THRES1_LAT_U7_S  2
+/* PCNT_CNT_THR_ZERO_MODE_U7 : RO ;bitpos:[1:0] ;default: 2'b0 ; */
+/*description: */
+#define PCNT_CNT_THR_ZERO_MODE_U7  0x00000003
+#define PCNT_CNT_THR_ZERO_MODE_U7_M  ((PCNT_CNT_THR_ZERO_MODE_U7_V)<<(PCNT_CNT_THR_ZERO_MODE_U7_S))
+#define PCNT_CNT_THR_ZERO_MODE_U7_V  0x3
+#define PCNT_CNT_THR_ZERO_MODE_U7_S  0
 
 #define PCNT_CTRL_REG          (DR_REG_PCNT_BASE + 0x00b0)
 /* PCNT_CLK_EN : R/W ;bitpos:[16] ;default: 1'b0 ; */
@@ -1419,96 +1632,96 @@
 #define PCNT_CNT_PAUSE_U7_M  (BIT(15))
 #define PCNT_CNT_PAUSE_U7_V  0x1
 #define PCNT_CNT_PAUSE_U7_S  15
-/* PCNT_PLUS_CNT_RST_U7 : R/W ;bitpos:[14] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit7's counter.*/
-#define PCNT_PLUS_CNT_RST_U7  (BIT(14))
-#define PCNT_PLUS_CNT_RST_U7_M  (BIT(14))
-#define PCNT_PLUS_CNT_RST_U7_V  0x1
-#define PCNT_PLUS_CNT_RST_U7_S  14
+/* PCNT_PULSE_CNT_RST_U7 : R/W ;bitpos:[14] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U7  (BIT(14))
+#define PCNT_PULSE_CNT_RST_U7_M  (BIT(14))
+#define PCNT_PULSE_CNT_RST_U7_V  0x1
+#define PCNT_PULSE_CNT_RST_U7_S  14
 /* PCNT_CNT_PAUSE_U6 : R/W ;bitpos:[13] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit6's counter.*/
 #define PCNT_CNT_PAUSE_U6  (BIT(13))
 #define PCNT_CNT_PAUSE_U6_M  (BIT(13))
 #define PCNT_CNT_PAUSE_U6_V  0x1
 #define PCNT_CNT_PAUSE_U6_S  13
-/* PCNT_PLUS_CNT_RST_U6 : R/W ;bitpos:[12] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit6's counter.*/
-#define PCNT_PLUS_CNT_RST_U6  (BIT(12))
-#define PCNT_PLUS_CNT_RST_U6_M  (BIT(12))
-#define PCNT_PLUS_CNT_RST_U6_V  0x1
-#define PCNT_PLUS_CNT_RST_U6_S  12
+/* PCNT_PULSE_CNT_RST_U6 : R/W ;bitpos:[12] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U6  (BIT(12))
+#define PCNT_PULSE_CNT_RST_U6_M  (BIT(12))
+#define PCNT_PULSE_CNT_RST_U6_V  0x1
+#define PCNT_PULSE_CNT_RST_U6_S  12
 /* PCNT_CNT_PAUSE_U5 : R/W ;bitpos:[11] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit5's counter.*/
 #define PCNT_CNT_PAUSE_U5  (BIT(11))
 #define PCNT_CNT_PAUSE_U5_M  (BIT(11))
 #define PCNT_CNT_PAUSE_U5_V  0x1
 #define PCNT_CNT_PAUSE_U5_S  11
-/* PCNT_PLUS_CNT_RST_U5 : R/W ;bitpos:[10] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit5's counter.*/
-#define PCNT_PLUS_CNT_RST_U5  (BIT(10))
-#define PCNT_PLUS_CNT_RST_U5_M  (BIT(10))
-#define PCNT_PLUS_CNT_RST_U5_V  0x1
-#define PCNT_PLUS_CNT_RST_U5_S  10
+/* PCNT_PULSE_CNT_RST_U5 : R/W ;bitpos:[10] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U5  (BIT(10))
+#define PCNT_PULSE_CNT_RST_U5_M  (BIT(10))
+#define PCNT_PULSE_CNT_RST_U5_V  0x1
+#define PCNT_PULSE_CNT_RST_U5_S  10
 /* PCNT_CNT_PAUSE_U4 : R/W ;bitpos:[9] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit4's counter.*/
 #define PCNT_CNT_PAUSE_U4  (BIT(9))
 #define PCNT_CNT_PAUSE_U4_M  (BIT(9))
 #define PCNT_CNT_PAUSE_U4_V  0x1
 #define PCNT_CNT_PAUSE_U4_S  9
-/* PCNT_PLUS_CNT_RST_U4 : R/W ;bitpos:[8] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit4's counter.*/
-#define PCNT_PLUS_CNT_RST_U4  (BIT(8))
-#define PCNT_PLUS_CNT_RST_U4_M  (BIT(8))
-#define PCNT_PLUS_CNT_RST_U4_V  0x1
-#define PCNT_PLUS_CNT_RST_U4_S  8
+/* PCNT_PULSE_CNT_RST_U4 : R/W ;bitpos:[8] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U4  (BIT(8))
+#define PCNT_PULSE_CNT_RST_U4_M  (BIT(8))
+#define PCNT_PULSE_CNT_RST_U4_V  0x1
+#define PCNT_PULSE_CNT_RST_U4_S  8
 /* PCNT_CNT_PAUSE_U3 : R/W ;bitpos:[7] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit3's counter.*/
 #define PCNT_CNT_PAUSE_U3  (BIT(7))
 #define PCNT_CNT_PAUSE_U3_M  (BIT(7))
 #define PCNT_CNT_PAUSE_U3_V  0x1
 #define PCNT_CNT_PAUSE_U3_S  7
-/* PCNT_PLUS_CNT_RST_U3 : R/W ;bitpos:[6] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit3's counter.*/
-#define PCNT_PLUS_CNT_RST_U3  (BIT(6))
-#define PCNT_PLUS_CNT_RST_U3_M  (BIT(6))
-#define PCNT_PLUS_CNT_RST_U3_V  0x1
-#define PCNT_PLUS_CNT_RST_U3_S  6
+/* PCNT_PULSE_CNT_RST_U3 : R/W ;bitpos:[6] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U3  (BIT(6))
+#define PCNT_PULSE_CNT_RST_U3_M  (BIT(6))
+#define PCNT_PULSE_CNT_RST_U3_V  0x1
+#define PCNT_PULSE_CNT_RST_U3_S  6
 /* PCNT_CNT_PAUSE_U2 : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit2's counter.*/
 #define PCNT_CNT_PAUSE_U2  (BIT(5))
 #define PCNT_CNT_PAUSE_U2_M  (BIT(5))
 #define PCNT_CNT_PAUSE_U2_V  0x1
 #define PCNT_CNT_PAUSE_U2_S  5
-/* PCNT_PLUS_CNT_RST_U2 : R/W ;bitpos:[4] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit2's counter.*/
-#define PCNT_PLUS_CNT_RST_U2  (BIT(4))
-#define PCNT_PLUS_CNT_RST_U2_M  (BIT(4))
-#define PCNT_PLUS_CNT_RST_U2_V  0x1
-#define PCNT_PLUS_CNT_RST_U2_S  4
+/* PCNT_PULSE_CNT_RST_U2 : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U2  (BIT(4))
+#define PCNT_PULSE_CNT_RST_U2_M  (BIT(4))
+#define PCNT_PULSE_CNT_RST_U2_V  0x1
+#define PCNT_PULSE_CNT_RST_U2_S  4
 /* PCNT_CNT_PAUSE_U1 : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit1's counter.*/
 #define PCNT_CNT_PAUSE_U1  (BIT(3))
 #define PCNT_CNT_PAUSE_U1_M  (BIT(3))
 #define PCNT_CNT_PAUSE_U1_V  0x1
 #define PCNT_CNT_PAUSE_U1_S  3
-/* PCNT_PLUS_CNT_RST_U1 : R/W ;bitpos:[2] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit1's counter.*/
-#define PCNT_PLUS_CNT_RST_U1  (BIT(2))
-#define PCNT_PLUS_CNT_RST_U1_M  (BIT(2))
-#define PCNT_PLUS_CNT_RST_U1_V  0x1
-#define PCNT_PLUS_CNT_RST_U1_S  2
+/* PCNT_PULSE_CNT_RST_U1 : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U1  (BIT(2))
+#define PCNT_PULSE_CNT_RST_U1_M  (BIT(2))
+#define PCNT_PULSE_CNT_RST_U1_V  0x1
+#define PCNT_PULSE_CNT_RST_U1_S  2
 /* PCNT_CNT_PAUSE_U0 : R/W ;bitpos:[1] ;default: 1'b0 ; */
 /*description: Set this bit to pause unit0's counter.*/
 #define PCNT_CNT_PAUSE_U0  (BIT(1))
 #define PCNT_CNT_PAUSE_U0_M  (BIT(1))
 #define PCNT_CNT_PAUSE_U0_V  0x1
 #define PCNT_CNT_PAUSE_U0_S  1
-/* PCNT_PLUS_CNT_RST_U0 : R/W ;bitpos:[0] ;default: 1'b1 ; */
-/*description: Set this bit to clear unit0's counter.*/
-#define PCNT_PLUS_CNT_RST_U0  (BIT(0))
-#define PCNT_PLUS_CNT_RST_U0_M  (BIT(0))
-#define PCNT_PLUS_CNT_RST_U0_V  0x1
-#define PCNT_PLUS_CNT_RST_U0_S  0
+/* PCNT_PULSE_CNT_RST_U0 : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define PCNT_PULSE_CNT_RST_U0  (BIT(0))
+#define PCNT_PULSE_CNT_RST_U0_M  (BIT(0))
+#define PCNT_PULSE_CNT_RST_U0_V  0x1
+#define PCNT_PULSE_CNT_RST_U0_S  0
 
 #define PCNT_DATE_REG          (DR_REG_PCNT_BASE + 0x00fc)
 /* PCNT_DATE : R/W ;bitpos:[31:0] ;default: 32'h14122600 ; */
@@ -1518,6 +1731,9 @@
 #define PCNT_DATE_V  0xFFFFFFFF
 #define PCNT_DATE_S  0
 
+#ifdef __cplusplus
+}
+#endif
 
 
 
