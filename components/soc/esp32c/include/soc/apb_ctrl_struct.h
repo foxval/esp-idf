@@ -136,9 +136,7 @@ typedef volatile struct {
             uint32_t peri_io_swap: 8;
             uint32_t g0spi0_hold:  1;
             uint32_t g0spi1_hold:  1;
-            uint32_t g1spi0_hold:  1;
-            uint32_t g1spi1_hold:  1;
-            uint32_t g1spi_prior:  1;
+            uint32_t reserved10:   3;
             uint32_t g0spi_prior:  1;
             uint32_t reserved14:  18;
         };
@@ -172,42 +170,10 @@ typedef volatile struct {
         };
         uint32_t val;
     } flash_ace3_attr;
-    union {
-        struct {
-            uint32_t flash_ace4_attr: 3;
-            uint32_t reserved3:      29;
-        };
-        uint32_t val;
-    } flash_ace4_attr;
-    union {
-        struct {
-            uint32_t flash_ace5_attr: 3;
-            uint32_t reserved3:      29;
-        };
-        uint32_t val;
-    } flash_ace5_attr;
-    union {
-        struct {
-            uint32_t flash_ace6_attr: 3;
-            uint32_t reserved3:      29;
-        };
-        uint32_t val;
-    } flash_ace6_attr;
-    union {
-        struct {
-            uint32_t flash_ace7_attr: 3;
-            uint32_t reserved3:      29;
-        };
-        uint32_t val;
-    } flash_ace7_attr;
     uint32_t flash_ace0_addr;                           /**/
     uint32_t flash_ace1_addr;                           /**/
     uint32_t flash_ace2_addr;                           /**/
     uint32_t flash_ace3_addr;                           /**/
-    uint32_t flash_ace4_addr;                           /**/
-    uint32_t flash_ace5_addr;                           /**/
-    uint32_t flash_ace6_addr;                           /**/
-    uint32_t flash_ace7_addr;                           /**/
     union {
         struct {
             uint32_t flash_ace0_size:16;
@@ -238,34 +204,6 @@ typedef volatile struct {
     } flash_ace3_size;
     union {
         struct {
-            uint32_t flash_ace4_size:16;
-            uint32_t reserved16:     16;
-        };
-        uint32_t val;
-    } flash_ace4_size;
-    union {
-        struct {
-            uint32_t flash_ace5_size:16;
-            uint32_t reserved16:     16;
-        };
-        uint32_t val;
-    } flash_ace5_size;
-    union {
-        struct {
-            uint32_t flash_ace6_size:16;
-            uint32_t reserved16:     16;
-        };
-        uint32_t val;
-    } flash_ace6_size;
-    union {
-        struct {
-            uint32_t flash_ace7_size:16;
-            uint32_t reserved16:     16;
-        };
-        uint32_t val;
-    } flash_ace7_size;
-    union {
-        struct {
             uint32_t sram_ace0_attr: 3;
             uint32_t reserved3:     29;
         };
@@ -292,42 +230,10 @@ typedef volatile struct {
         };
         uint32_t val;
     } sram_ace3_attr;
-    union {
-        struct {
-            uint32_t sram_ace4_attr: 3;
-            uint32_t reserved3:     29;
-        };
-        uint32_t val;
-    } sram_ace4_attr;
-    union {
-        struct {
-            uint32_t sram_ace5_attr: 3;
-            uint32_t reserved3:     29;
-        };
-        uint32_t val;
-    } sram_ace5_attr;
-    union {
-        struct {
-            uint32_t sram_ace6_attr: 3;
-            uint32_t reserved3:     29;
-        };
-        uint32_t val;
-    } sram_ace6_attr;
-    union {
-        struct {
-            uint32_t sram_ace7_attr: 3;
-            uint32_t reserved3:     29;
-        };
-        uint32_t val;
-    } sram_ace7_attr;
     uint32_t sram_ace0_addr;                            /**/
     uint32_t sram_ace1_addr;                            /**/
     uint32_t sram_ace2_addr;                            /**/
     uint32_t sram_ace3_addr;                            /**/
-    uint32_t sram_ace4_addr;                            /**/
-    uint32_t sram_ace5_addr;                            /**/
-    uint32_t sram_ace6_addr;                            /**/
-    uint32_t sram_ace7_addr;                            /**/
     union {
         struct {
             uint32_t sram_ace0_size:16;
@@ -358,34 +264,6 @@ typedef volatile struct {
     } sram_ace3_size;
     union {
         struct {
-            uint32_t sram_ace4_size:16;
-            uint32_t reserved16:    16;
-        };
-        uint32_t val;
-    } sram_ace4_size;
-    union {
-        struct {
-            uint32_t sram_ace5_size:16;
-            uint32_t reserved16:    16;
-        };
-        uint32_t val;
-    } sram_ace5_size;
-    union {
-        struct {
-            uint32_t sram_ace6_size:16;
-            uint32_t reserved16:    16;
-        };
-        uint32_t val;
-    } sram_ace6_size;
-    union {
-        struct {
-            uint32_t sram_ace7_size:16;
-            uint32_t reserved16:    16;
-        };
-        uint32_t val;
-    } sram_ace7_size;
-    union {
-        struct {
             uint32_t g0spi0_reject_int: 1;
             uint32_t g0spi0_reject_clr: 1;
             uint32_t g0spi0_reject_cde: 5;
@@ -406,31 +284,39 @@ typedef volatile struct {
     uint32_t g0spi1_reject_addr;                        /**/
     union {
         struct {
-            uint32_t g1spi0_reject_int: 1;
-            uint32_t g1spi0_reject_clr: 1;
-            uint32_t g1spi0_reject_cde: 5;
-            uint32_t reserved7:        25;
-        };
-        uint32_t val;
-    } g1spi0_pms_ctrl;
-    uint32_t g1spi0_reject_addr;                        /**/
-    union {
-        struct {
-            uint32_t g1spi1_reject_int: 1;
-            uint32_t g1spi1_reject_clr: 1;
-            uint32_t g1spi1_reject_cde: 5;
-            uint32_t reserved7:        25;
-        };
-        uint32_t val;
-    } g1spi1_pms_ctrl;
-    uint32_t g1spi1_reject_addr;                        /**/
-    union {
-        struct {
             uint32_t sdio_win_access_en: 1;
             uint32_t reserved1:         31;
         };
         uint32_t val;
     } sdio_ctrl;
+    uint32_t reserved_c0;
+    uint32_t reserved_c4;
+    uint32_t reserved_c8;
+    uint32_t reserved_cc;
+    uint32_t reserved_d0;
+    uint32_t reserved_d4;
+    uint32_t reserved_d8;
+    uint32_t reserved_dc;
+    uint32_t reserved_e0;
+    uint32_t reserved_e4;
+    uint32_t reserved_e8;
+    uint32_t reserved_ec;
+    uint32_t reserved_f0;
+    uint32_t reserved_f4;
+    uint32_t reserved_f8;
+    uint32_t reserved_fc;
+    uint32_t reserved_100;
+    uint32_t reserved_104;
+    uint32_t reserved_108;
+    uint32_t reserved_10c;
+    uint32_t reserved_110;
+    uint32_t reserved_114;
+    uint32_t reserved_118;
+    uint32_t reserved_11c;
+    uint32_t reserved_120;
+    uint32_t reserved_124;
+    uint32_t reserved_128;
+    uint32_t reserved_12c;
     uint32_t reserved_130;
     uint32_t reserved_134;
     uint32_t reserved_138;

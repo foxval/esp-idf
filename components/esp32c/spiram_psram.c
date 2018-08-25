@@ -481,9 +481,10 @@ static esp_err_t IRAM_ATTR psram_enable_qio_mode(psram_spi_num_t spi_num)
 //spi param init for psram
 void IRAM_ATTR psram_spi_init(psram_spi_num_t spi_num, psram_cache_mode_t mode)
 {
-    uint8_t i, k;
+    uint8_t k;
     CLEAR_PERI_REG_MASK(SPI_SLAVE_REG(spi_num), SPI_TRANS_DONE << 5);
     SET_PERI_REG_MASK(SPI_USER_REG(spi_num), SPI_CS_SETUP);
+#if 0
     // SPI_CPOL & SPI_CPHA
     CLEAR_PERI_REG_MASK(SPI_PIN_REG(spi_num), SPI_CK_IDLE_EDGE);
     CLEAR_PERI_REG_MASK(SPI_USER_REG(spi_num), SPI_CK_OUT_EDGE);
@@ -492,18 +493,19 @@ void IRAM_ATTR psram_spi_init(psram_spi_num_t spi_num, psram_cache_mode_t mode)
     CLEAR_PERI_REG_MASK(SPI_CTRL_REG(spi_num), SPI_RD_BIT_ORDER);
     // SPI bit order
     CLEAR_PERI_REG_MASK(SPI_USER_REG(spi_num), SPI_DOUTDIN);
+#endif
     // May be not must to do.
     WRITE_PERI_REG(SPI_USER1_REG(spi_num), 0);
+#if 0
     // SPI mode type
     CLEAR_PERI_REG_MASK(SPI_SLAVE_REG(spi_num), SPI_SLAVE_MODE);
+#endif
     // Set SPI speed for non-80M mode. (80M mode uses APB clock directly.)
     if (mode!=PSRAM_CACHE_F80M_S80M) {
-        i = 1;      //Pre-divider
         k = 2;      //Main divider. Divide by 2 so we get 40MHz
          //clear bit 31, set SPI clock div
         CLEAR_PERI_REG_MASK(SPI_CLOCK_REG(spi_num), SPI_CLK_EQU_SYSCLK);
         WRITE_PERI_REG(SPI_CLOCK_REG(spi_num),
-                (((i - 1) & SPI_CLKDIV_PRE) << SPI_CLKDIV_PRE_S) |
                 (((k - 1) & SPI_CLKCNT_N) << SPI_CLKCNT_N_S) |
                 ((((k + 1) / 2 - 1) & SPI_CLKCNT_H) << SPI_CLKCNT_H_S) | //50% duty cycle
                 (((k - 1) & SPI_CLKCNT_L) << SPI_CLKCNT_L_S));
@@ -690,7 +692,9 @@ esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vad
     periph_module_enable(PERIPH_SPI_MODULE);
 
     WRITE_PERI_REG(SPI_EXT3_REG(0), 0x1);
+#if 0
     CLEAR_PERI_REG_MASK(SPI_USER_REG(PSRAM_SPI_1), SPI_USR_PREP_HOLD_M);
+#endif
 
     switch (mode) {
         case PSRAM_CACHE_F80M_S80M:

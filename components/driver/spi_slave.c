@@ -38,6 +38,7 @@
 #include "driver/periph_ctrl.h"
 #include "esp_heap_caps.h"
 
+#if 0
 static const char *SPI_TAG = "spi_slave";
 #define SPI_CHECK(a, str, ret_val) \
     if (!(a)) { \
@@ -455,4 +456,4 @@ static void IRAM_ATTR spi_intr(void *arg)
     }
     if (do_yield) portYIELD_FROM_ISR();
 }
-
+#endif

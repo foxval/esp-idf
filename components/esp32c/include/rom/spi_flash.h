@@ -20,7 +20,7 @@
 
 #include "esp_attr.h"
 
-#include "soc/spi_reg.h"
+#include "soc/spi_mem_reg.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,23 +65,23 @@ extern "C" {
  *************************************************************
  */
 
-#define PERIPHS_SPI_FLASH_CMD                 SPI_CMD_REG(1)
-#define PERIPHS_SPI_FLASH_ADDR                SPI_ADDR_REG(1)
-#define PERIPHS_SPI_FLASH_CTRL                SPI_CTRL_REG(1)
-#define PERIPHS_SPI_FLASH_CTRL1               SPI_CTRL1_REG(1)
-#define PERIPHS_SPI_FLASH_STATUS              SPI_RD_STATUS_REG(1)
-#define PERIPHS_SPI_FLASH_USRREG              SPI_USER_REG(1)
-#define PERIPHS_SPI_FLASH_USRREG1             SPI_USER1_REG(1)
-#define PERIPHS_SPI_FLASH_USRREG2             SPI_USER2_REG(1)
-#define PERIPHS_SPI_FLASH_C0                  SPI_W0_REG(1)
-#define PERIPHS_SPI_FLASH_C1                  SPI_W1_REG(1)
-#define PERIPHS_SPI_FLASH_C2                  SPI_W2_REG(1)
-#define PERIPHS_SPI_FLASH_C3                  SPI_W3_REG(1)
-#define PERIPHS_SPI_FLASH_C4                  SPI_W4_REG(1)
-#define PERIPHS_SPI_FLASH_C5                  SPI_W5_REG(1)
-#define PERIPHS_SPI_FLASH_C6                  SPI_W6_REG(1)
-#define PERIPHS_SPI_FLASH_C7                  SPI_W7_REG(1)
-#define PERIPHS_SPI_FLASH_TX_CRC              SPI_TX_CRC_REG(1)
+#define PERIPHS_SPI_FLASH_CMD                 SPI_MEM_CMD_REG(1)
+#define PERIPHS_SPI_FLASH_ADDR                SPI_MEM_ADDR_REG(1)
+#define PERIPHS_SPI_FLASH_CTRL                SPI_MEM_CTRL_REG(1)
+#define PERIPHS_SPI_FLASH_CTRL1               SPI_MEM_CTRL1_REG(1)
+#define PERIPHS_SPI_FLASH_STATUS              SPI_MEM_RD_STATUS_REG(1)
+#define PERIPHS_SPI_FLASH_USRREG              SPI_MEM_USER_REG(1)
+#define PERIPHS_SPI_FLASH_USRREG1             SPI_MEM_USER1_REG(1)
+#define PERIPHS_SPI_FLASH_USRREG2             SPI_MEM_USER2_REG(1)
+#define PERIPHS_SPI_FLASH_C0                  SPI_MEM_W0_REG(1)
+#define PERIPHS_SPI_FLASH_C1                  SPI_MEM_W1_REG(1)
+#define PERIPHS_SPI_FLASH_C2                  SPI_MEM_W2_REG(1)
+#define PERIPHS_SPI_FLASH_C3                  SPI_MEM_W3_REG(1)
+#define PERIPHS_SPI_FLASH_C4                  SPI_MEM_W4_REG(1)
+#define PERIPHS_SPI_FLASH_C5                  SPI_MEM_W5_REG(1)
+#define PERIPHS_SPI_FLASH_C6                  SPI_MEM_W6_REG(1)
+#define PERIPHS_SPI_FLASH_C7                  SPI_MEM_W7_REG(1)
+#define PERIPHS_SPI_FLASH_TX_CRC              SPI_MEM_TX_CRC_REG(1)
 
 #define SPI0_R_QIO_DUMMY_CYCLELEN             3
 #define SPI0_R_QIO_ADDR_BITSLEN               31

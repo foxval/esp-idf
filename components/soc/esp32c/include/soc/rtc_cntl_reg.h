@@ -255,6 +255,12 @@ extern "C" {
 #define RTC_CNTL_TIMER_XTL_OFF_M  (BIT(28))
 #define RTC_CNTL_TIMER_XTL_OFF_V  0x1
 #define RTC_CNTL_TIMER_XTL_OFF_S  28
+/* RTC_CNTL_TIMER_SYS_STALL : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/*description: Enable to record system stall time*/
+#define RTC_CNTL_TIMER_SYS_STALL  (BIT(27))
+#define RTC_CNTL_TIMER_SYS_STALL_M  (BIT(27))
+#define RTC_CNTL_TIMER_SYS_STALL_V  0x1
+#define RTC_CNTL_TIMER_SYS_STALL_S  27
 
 #define RTC_CNTL_TIME_LOW0_REG          (DR_REG_RTCCNTL_BASE + 0x0010)
 /* RTC_CNTL_TIMER_VALUE0_LOW : RO ;bitpos:[31:0] ;default: 32'h0 ; */
@@ -980,6 +986,90 @@ extern "C" {
 #define RTC_CNTL_XTL_EXT_CTR_LV_M  (BIT(30))
 #define RTC_CNTL_XTL_EXT_CTR_LV_V  0x1
 #define RTC_CNTL_XTL_EXT_CTR_LV_S  30
+/* RTC_CNTL_XTAL32K_GPIO_SEL : R/W ;bitpos:[22] ;default: 1'b0 ; */
+/*description: XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
+#define RTC_CNTL_XTAL32K_GPIO_SEL  (BIT(22))
+#define RTC_CNTL_XTAL32K_GPIO_SEL_M  (BIT(22))
+#define RTC_CNTL_XTAL32K_GPIO_SEL_V  0x1
+#define RTC_CNTL_XTAL32K_GPIO_SEL_S  22
+/* RTC_CNTL_DAC_XTAL_32K : R/W ;bitpos:[21:16] ;default: 6'd3 ; */
+/*description: DAC_XTAL_32K*/
+#define RTC_CNTL_DAC_XTAL_32K  0x0000003F
+#define RTC_CNTL_DAC_XTAL_32K_M  ((RTC_CNTL_DAC_XTAL_32K_V)<<(RTC_CNTL_DAC_XTAL_32K_S))
+#define RTC_CNTL_DAC_XTAL_32K_V  0x3F
+#define RTC_CNTL_DAC_XTAL_32K_S  16
+/* RTC_CNTL_XPD_XTAL_32K : R/W ;bitpos:[15] ;default: 1'd0 ; */
+/*description: XPD_XTAL_32K*/
+#define RTC_CNTL_XPD_XTAL_32K  (BIT(15))
+#define RTC_CNTL_XPD_XTAL_32K_M  (BIT(15))
+#define RTC_CNTL_XPD_XTAL_32K_V  0x1
+#define RTC_CNTL_XPD_XTAL_32K_S  15
+/* RTC_CNTL_DRES_XTAL_32K : R/W ;bitpos:[14:12] ;default: 3'd3 ; */
+/*description: DRES_XTAL_32K*/
+#define RTC_CNTL_DRES_XTAL_32K  0x00000007
+#define RTC_CNTL_DRES_XTAL_32K_M  ((RTC_CNTL_DRES_XTAL_32K_V)<<(RTC_CNTL_DRES_XTAL_32K_S))
+#define RTC_CNTL_DRES_XTAL_32K_V  0x7
+#define RTC_CNTL_DRES_XTAL_32K_S  12
+/* RTC_CNTL_DGM_XTAL_32K : R/W ;bitpos:[11:9] ;default: 3'd3 ; */
+/*description: xtal_32k gm control*/
+#define RTC_CNTL_DGM_XTAL_32K  0x00000007
+#define RTC_CNTL_DGM_XTAL_32K_M  ((RTC_CNTL_DGM_XTAL_32K_V)<<(RTC_CNTL_DGM_XTAL_32K_S))
+#define RTC_CNTL_DGM_XTAL_32K_V  0x7
+#define RTC_CNTL_DGM_XTAL_32K_S  9
+/* RTC_CNTL_DBUF_XTAL_32K : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: 0: single-end buffer 1: differential buffer*/
+#define RTC_CNTL_DBUF_XTAL_32K  (BIT(8))
+#define RTC_CNTL_DBUF_XTAL_32K_M  (BIT(8))
+#define RTC_CNTL_DBUF_XTAL_32K_V  0x1
+#define RTC_CNTL_DBUF_XTAL_32K_S  8
+/* RTC_CNTL_ENCKINIT_XTAL_32K : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/*description: apply an internal clock to help xtal 32k to start*/
+#define RTC_CNTL_ENCKINIT_XTAL_32K  (BIT(7))
+#define RTC_CNTL_ENCKINIT_XTAL_32K_M  (BIT(7))
+#define RTC_CNTL_ENCKINIT_XTAL_32K_V  0x1
+#define RTC_CNTL_ENCKINIT_XTAL_32K_S  7
+/* RTC_CNTL_XTAL32K_XPD_FORCE : R/W ;bitpos:[6] ;default: 1'b1 ; */
+/*description: Xtal 32k xpd control by sw or fsm*/
+#define RTC_CNTL_XTAL32K_XPD_FORCE  (BIT(6))
+#define RTC_CNTL_XTAL32K_XPD_FORCE_M  (BIT(6))
+#define RTC_CNTL_XTAL32K_XPD_FORCE_V  0x1
+#define RTC_CNTL_XTAL32K_XPD_FORCE_S  6
+/* RTC_CNTL_XTAL32K_AUTO_RETURN : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: xtal 32k switch back xtal when xtal is restarted*/
+#define RTC_CNTL_XTAL32K_AUTO_RETURN  (BIT(5))
+#define RTC_CNTL_XTAL32K_AUTO_RETURN_M  (BIT(5))
+#define RTC_CNTL_XTAL32K_AUTO_RETURN_V  0x1
+#define RTC_CNTL_XTAL32K_AUTO_RETURN_S  5
+/* RTC_CNTL_XTAL32K_AUTO_RESTART : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: xtal 32k restart xtal when xtal is dead*/
+#define RTC_CNTL_XTAL32K_AUTO_RESTART  (BIT(4))
+#define RTC_CNTL_XTAL32K_AUTO_RESTART_M  (BIT(4))
+#define RTC_CNTL_XTAL32K_AUTO_RESTART_V  0x1
+#define RTC_CNTL_XTAL32K_AUTO_RESTART_S  4
+/* RTC_CNTL_XTAL32K_AUTO_BACKUP : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: xtal 32k switch to back up clock when xtal is dead*/
+#define RTC_CNTL_XTAL32K_AUTO_BACKUP  (BIT(3))
+#define RTC_CNTL_XTAL32K_AUTO_BACKUP_M  (BIT(3))
+#define RTC_CNTL_XTAL32K_AUTO_BACKUP_V  0x1
+#define RTC_CNTL_XTAL32K_AUTO_BACKUP_S  3
+/* RTC_CNTL_XTAL32K_EXT_CLK_FO : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: xtal 32k external xtal clock force on*/
+#define RTC_CNTL_XTAL32K_EXT_CLK_FO  (BIT(2))
+#define RTC_CNTL_XTAL32K_EXT_CLK_FO_M  (BIT(2))
+#define RTC_CNTL_XTAL32K_EXT_CLK_FO_V  0x1
+#define RTC_CNTL_XTAL32K_EXT_CLK_FO_S  2
+/* RTC_CNTL_XTAL32K_WDT_CLK_FO : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: xtal 32k watch dog clock force on*/
+#define RTC_CNTL_XTAL32K_WDT_CLK_FO  (BIT(1))
+#define RTC_CNTL_XTAL32K_WDT_CLK_FO_M  (BIT(1))
+#define RTC_CNTL_XTAL32K_WDT_CLK_FO_V  0x1
+#define RTC_CNTL_XTAL32K_WDT_CLK_FO_S  1
+/* RTC_CNTL_XTAL32K_WDT_EN : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: xtal 32k watch dog enable*/
+#define RTC_CNTL_XTAL32K_WDT_EN  (BIT(0))
+#define RTC_CNTL_XTAL32K_WDT_EN_M  (BIT(0))
+#define RTC_CNTL_XTAL32K_WDT_EN_V  0x1
+#define RTC_CNTL_XTAL32K_WDT_EN_S  0
 
 #define RTC_CNTL_EXT_WAKEUP_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x0064)
 /* RTC_CNTL_EXT_WAKEUP1_LV : R/W ;bitpos:[31] ;default: 1'b0 ; */
@@ -1163,96 +1253,6 @@ extern "C" {
 #define RTC_CNTL_ANA_CLK_DIV_VLD_M  (BIT(22))
 #define RTC_CNTL_ANA_CLK_DIV_VLD_V  0x1
 #define RTC_CNTL_ANA_CLK_DIV_VLD_S  22
-/* RTC_CNTL_XTAL32K_GPIO_SEL : R/W ;bitpos:[21] ;default: 1'b0 ; */
-/*description: XTAL_32K sel. 0: external XTAL_32K  1: CLK from RTC pad X32P_C*/
-#define RTC_CNTL_XTAL32K_GPIO_SEL  (BIT(21))
-#define RTC_CNTL_XTAL32K_GPIO_SEL_M  (BIT(21))
-#define RTC_CNTL_XTAL32K_GPIO_SEL_V  0x1
-#define RTC_CNTL_XTAL32K_GPIO_SEL_S  21
-/* RTC_CNTL_DAC_XTAL_32K : R/W ;bitpos:[20:19] ;default: 2'b01 ; */
-/*description: DAC_XTAL_32K*/
-#define RTC_CNTL_DAC_XTAL_32K  0x00000003
-#define RTC_CNTL_DAC_XTAL_32K_M  ((RTC_CNTL_DAC_XTAL_32K_V)<<(RTC_CNTL_DAC_XTAL_32K_S))
-#define RTC_CNTL_DAC_XTAL_32K_V  0x3
-#define RTC_CNTL_DAC_XTAL_32K_S  19
-/* RTC_CNTL_XPD_XTAL_32K : R/W ;bitpos:[18] ;default: 1'd0 ; */
-/*description: XPD_XTAL_32K*/
-#define RTC_CNTL_XPD_XTAL_32K  (BIT(18))
-#define RTC_CNTL_XPD_XTAL_32K_M  (BIT(18))
-#define RTC_CNTL_XPD_XTAL_32K_V  0x1
-#define RTC_CNTL_XPD_XTAL_32K_S  18
-/* RTC_CNTL_DRES_XTAL_32K : R/W ;bitpos:[17:16] ;default: 2'b10 ; */
-/*description: DRES_XTAL_32K*/
-#define RTC_CNTL_DRES_XTAL_32K  0x00000003
-#define RTC_CNTL_DRES_XTAL_32K_M  ((RTC_CNTL_DRES_XTAL_32K_V)<<(RTC_CNTL_DRES_XTAL_32K_S))
-#define RTC_CNTL_DRES_XTAL_32K_V  0x3
-#define RTC_CNTL_DRES_XTAL_32K_S  16
-/* RTC_CNTL_DBIAS_XTAL_32K : R/W ;bitpos:[15:14] ;default: 2'b00 ; */
-/*description: DBIAS_XTAL_32K*/
-#define RTC_CNTL_DBIAS_XTAL_32K  0x00000003
-#define RTC_CNTL_DBIAS_XTAL_32K_M  ((RTC_CNTL_DBIAS_XTAL_32K_V)<<(RTC_CNTL_DBIAS_XTAL_32K_S))
-#define RTC_CNTL_DBIAS_XTAL_32K_V  0x3
-#define RTC_CNTL_DBIAS_XTAL_32K_S  14
-/* RTC_CNTL_DGM_XTAL_32K : R/W ;bitpos:[13:11] ;default: 3'd3 ; */
-/*description: xtal_32k gm control*/
-#define RTC_CNTL_DGM_XTAL_32K  0x00000007
-#define RTC_CNTL_DGM_XTAL_32K_M  ((RTC_CNTL_DGM_XTAL_32K_V)<<(RTC_CNTL_DGM_XTAL_32K_S))
-#define RTC_CNTL_DGM_XTAL_32K_V  0x7
-#define RTC_CNTL_DGM_XTAL_32K_S  11
-/* RTC_CNTL_DBUF_XTAL_32K : R/W ;bitpos:[10] ;default: 1'b0 ; */
-/*description: 0: single-end buffer 1: differential buffer*/
-#define RTC_CNTL_DBUF_XTAL_32K  (BIT(10))
-#define RTC_CNTL_DBUF_XTAL_32K_M  (BIT(10))
-#define RTC_CNTL_DBUF_XTAL_32K_V  0x1
-#define RTC_CNTL_DBUF_XTAL_32K_S  10
-/* RTC_CNTL_ENCKINIT_XTAL_32K : R/W ;bitpos:[9] ;default: 1'b0 ; */
-/*description: apply an internal clock to help xtal 32k to start*/
-#define RTC_CNTL_ENCKINIT_XTAL_32K  (BIT(9))
-#define RTC_CNTL_ENCKINIT_XTAL_32K_M  (BIT(9))
-#define RTC_CNTL_ENCKINIT_XTAL_32K_V  0x1
-#define RTC_CNTL_ENCKINIT_XTAL_32K_S  9
-/* RTC_CNTL_XTAL32K_XPD_FORCE : R/W ;bitpos:[6] ;default: 1'b1 ; */
-/*description: Xtal 32k xpd control by sw or fsm*/
-#define RTC_CNTL_XTAL32K_XPD_FORCE  (BIT(6))
-#define RTC_CNTL_XTAL32K_XPD_FORCE_M  (BIT(6))
-#define RTC_CNTL_XTAL32K_XPD_FORCE_V  0x1
-#define RTC_CNTL_XTAL32K_XPD_FORCE_S  6
-/* RTC_CNTL_XTAL32K_AUTO_RETURN : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: xtal 32k switch back xtal when xtal is restarted*/
-#define RTC_CNTL_XTAL32K_AUTO_RETURN  (BIT(5))
-#define RTC_CNTL_XTAL32K_AUTO_RETURN_M  (BIT(5))
-#define RTC_CNTL_XTAL32K_AUTO_RETURN_V  0x1
-#define RTC_CNTL_XTAL32K_AUTO_RETURN_S  5
-/* RTC_CNTL_XTAL32K_AUTO_RESTART : R/W ;bitpos:[4] ;default: 1'b0 ; */
-/*description: xtal 32k restart xtal when xtal is dead*/
-#define RTC_CNTL_XTAL32K_AUTO_RESTART  (BIT(4))
-#define RTC_CNTL_XTAL32K_AUTO_RESTART_M  (BIT(4))
-#define RTC_CNTL_XTAL32K_AUTO_RESTART_V  0x1
-#define RTC_CNTL_XTAL32K_AUTO_RESTART_S  4
-/* RTC_CNTL_XTAL32K_AUTO_BACKUP : R/W ;bitpos:[3] ;default: 1'b0 ; */
-/*description: xtal 32k switch to back up clock when xtal is dead*/
-#define RTC_CNTL_XTAL32K_AUTO_BACKUP  (BIT(3))
-#define RTC_CNTL_XTAL32K_AUTO_BACKUP_M  (BIT(3))
-#define RTC_CNTL_XTAL32K_AUTO_BACKUP_V  0x1
-#define RTC_CNTL_XTAL32K_AUTO_BACKUP_S  3
-/* RTC_CNTL_XTAL32K_EXT_CLK_FO : R/W ;bitpos:[2] ;default: 1'b0 ; */
-/*description: xtal 32k external xtal clock force on*/
-#define RTC_CNTL_XTAL32K_EXT_CLK_FO  (BIT(2))
-#define RTC_CNTL_XTAL32K_EXT_CLK_FO_M  (BIT(2))
-#define RTC_CNTL_XTAL32K_EXT_CLK_FO_V  0x1
-#define RTC_CNTL_XTAL32K_EXT_CLK_FO_S  2
-/* RTC_CNTL_XTAL32K_WDT_CLK_FO : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: xtal 32k watch dog clock force on*/
-#define RTC_CNTL_XTAL32K_WDT_CLK_FO  (BIT(1))
-#define RTC_CNTL_XTAL32K_WDT_CLK_FO_M  (BIT(1))
-#define RTC_CNTL_XTAL32K_WDT_CLK_FO_V  0x1
-#define RTC_CNTL_XTAL32K_WDT_CLK_FO_S  1
-/* RTC_CNTL_XTAL32K_WDT_EN : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: xtal 32k watch dog enable*/
-#define RTC_CNTL_XTAL32K_WDT_EN  (BIT(0))
-#define RTC_CNTL_XTAL32K_WDT_EN_M  (BIT(0))
-#define RTC_CNTL_XTAL32K_WDT_EN_V  0x1
-#define RTC_CNTL_XTAL32K_WDT_EN_S  0
 
 #define RTC_CNTL_SDIO_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x007c)
 /* RTC_CNTL_XPD_SDIO_REG : R/W ;bitpos:[31] ;default: 1'd0 ; */
@@ -2178,6 +2178,12 @@ extern "C" {
 #define RTC_CNTL_ENT_RTC_M  (BIT(29))
 #define RTC_CNTL_ENT_RTC_V  0x1
 #define RTC_CNTL_ENT_RTC_S  29
+/* RTC_CNTL_ENT_TSENS : R/W ;bitpos:[28] ;default: 1'd0 ; */
+/*description: ENT_TSENS*/
+#define RTC_CNTL_ENT_TSENS  (BIT(28))
+#define RTC_CNTL_ENT_TSENS_M  (BIT(28))
+#define RTC_CNTL_ENT_TSENS_V  0x1
+#define RTC_CNTL_ENT_TSENS_S  28
 
 #define RTC_CNTL_SW_CPU_STALL_REG          (DR_REG_RTCCNTL_BASE + 0x00bc)
 /* RTC_CNTL_SW_STALL_PROCPU_C1 : R/W ;bitpos:[31:26] ;default: 6'b0 ; */
@@ -3041,7 +3047,7 @@ extern "C" {
 #define RTC_CNTL_TOUCH_BASELINE_RESET_S  19
 
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0120)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1806190 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1807161 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))

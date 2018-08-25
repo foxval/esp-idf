@@ -20,35 +20,35 @@ extern "C" {
 #endif
 #include "soc.h"
 #define DPORT_ROM_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x000)
-/* DPORT_ROM_FO : R/W ;bitpos:[4:0] ;default: ~5'b0 ; */
+/* DPORT_ROM_FO : R/W ;bitpos:[1:0] ;default: ~2'b0 ; */
 /*description: */
-#define DPORT_ROM_FO  0x0000001F
+#define DPORT_ROM_FO  0x00000003
 #define DPORT_ROM_FO_M  ((DPORT_ROM_FO_V)<<(DPORT_ROM_FO_S))
-#define DPORT_ROM_FO_V  0x1F
+#define DPORT_ROM_FO_V  0x3
 #define DPORT_ROM_FO_S  0
 
 #define DPORT_ROM_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x004)
-/* DPORT_ROM_PD : R/W ;bitpos:[4:0] ;default: 5'b0 ; */
+/* DPORT_ROM_PD : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: */
-#define DPORT_ROM_PD  0x0000001F
+#define DPORT_ROM_PD  0x00000003
 #define DPORT_ROM_PD_M  ((DPORT_ROM_PD_V)<<(DPORT_ROM_PD_S))
-#define DPORT_ROM_PD_V  0x1F
+#define DPORT_ROM_PD_V  0x3
 #define DPORT_ROM_PD_S  0
 
 #define DPORT_SRAM_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x008)
-/* DPORT_SRAM_FO : R/W ;bitpos:[28:0] ;default: ~29'b0 ; */
+/* DPORT_SRAM_FO : R/W ;bitpos:[21:0] ;default: ~22'b0 ; */
 /*description: */
-#define DPORT_SRAM_FO  0x1FFFFFFF
+#define DPORT_SRAM_FO  0x003FFFFF
 #define DPORT_SRAM_FO_M  ((DPORT_SRAM_FO_V)<<(DPORT_SRAM_FO_S))
-#define DPORT_SRAM_FO_V  0x1FFFFFFF
+#define DPORT_SRAM_FO_V  0x3FFFFF
 #define DPORT_SRAM_FO_S  0
 
 #define DPORT_SRAM_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x00C)
-/* DPORT_SRAM_PD : R/W ;bitpos:[28:0] ;default: 29'b0 ; */
+/* DPORT_SRAM_PD : R/W ;bitpos:[21:0] ;default: 22'b0 ; */
 /*description: */
-#define DPORT_SRAM_PD  0x1FFFFFFF
+#define DPORT_SRAM_PD  0x003FFFFF
 #define DPORT_SRAM_PD_M  ((DPORT_SRAM_PD_V)<<(DPORT_SRAM_PD_S))
-#define DPORT_SRAM_PD_V  0x1FFFFFFF
+#define DPORT_SRAM_PD_V  0x3FFFFF
 #define DPORT_SRAM_PD_S  0
 
 #define DPORT_PERI_CLK_EN_REG DPORT_CPU_PERI_CLK_EN_REG
@@ -878,13 +878,13 @@ extern "C" {
 #define DPORT_SPI_SHARED_DMA_SEL_V  0x1
 #define DPORT_SPI_SHARED_DMA_SEL_S  0
 
-#define DPORT_BUSTODPORT_ENA_REG          (DR_REG_SYSTEM_BASE + 0x084)
-/* DPORT_BUSTODPORT_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
+#define DPORT_BUSTOEXTMEM_ENA_REG          (DR_REG_SYSTEM_BASE + 0x084)
+/* DPORT_BUSTOEXTMEM_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_BUSTODPORT_ENA  (BIT(0))
-#define DPORT_BUSTODPORT_ENA_M  (BIT(0))
-#define DPORT_BUSTODPORT_ENA_V  0x1
-#define DPORT_BUSTODPORT_ENA_S  0
+#define DPORT_BUSTOEXTMEM_ENA  (BIT(0))
+#define DPORT_BUSTOEXTMEM_ENA_M  (BIT(0))
+#define DPORT_BUSTOEXTMEM_ENA_V  0x1
+#define DPORT_BUSTOEXTMEM_ENA_S  0
 
 #define DPORT_CACHE_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x088)
 /* DPORT_PRO_DCACHE_CLK_ON : R/W ;bitpos:[1] ;default: 1'b1 ; */
@@ -975,7 +975,7 @@ extern "C" {
 #define SYSTEM_CLK_EN_S  0
 
 #define SYSTEM_DATE_REG          (DR_REG_SYSTEM_BASE + 0xFFC)
-/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1806290 ; */
+/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1807271 ; */
 /*description: */
 #define SYSTEM_DATE  0x0FFFFFFF
 #define SYSTEM_DATE_M  ((SYSTEM_DATE_V)<<(SYSTEM_DATE_S))

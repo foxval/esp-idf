@@ -60,9 +60,6 @@
 #define U1TXD_OUT_IDX			17
 #define U1CTS_IN_IDX			18
 #define U1RTS_OUT_IDX			18
-#define I2CM_SCL_O_IDX			19
-#define I2CM_SDA_I_IDX			20
-#define I2CM_SDA_O_IDX			20
 #define U1DSR_IN_IDX			21
 #define U1DTR_OUT_IDX			21
 #define U2DSR_IN_IDX			22

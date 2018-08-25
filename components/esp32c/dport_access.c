@@ -31,7 +31,7 @@
 
 #include "soc/cpu.h"
 #include "soc/dport_reg.h"
-#include "soc/spi_reg.h"
+#include "soc/spi_mem_reg.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"

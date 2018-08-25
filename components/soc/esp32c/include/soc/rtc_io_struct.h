@@ -243,11 +243,29 @@ typedef volatile struct {
         };
         uint32_t val;
     } sar_i2c_io;
-    uint32_t reserved_3b;
-    uint32_t reserved_3f;
-    uint32_t reserved_43;
-    uint32_t reserved_47;
-    uint32_t reserved_4b;
+    uint32_t reserved_e0;
+    uint32_t reserved_e4;
+    uint32_t reserved_e8;
+    uint32_t reserved_ec;
+    uint32_t reserved_f0;
+    uint32_t reserved_f4;
+    uint32_t reserved_f8;
+    uint32_t reserved_fc;
+    uint32_t reserved_100;
+    uint32_t reserved_104;
+    uint32_t reserved_108;
+    uint32_t reserved_10c;
+    uint32_t reserved_110;
+    uint32_t reserved_114;
+    uint32_t reserved_118;
+    uint32_t reserved_11c;
+    uint32_t reserved_120;
+    uint32_t reserved_124;
+    uint32_t reserved_128;
+    uint32_t reserved_12c;
+    uint32_t reserved_130;
+    uint32_t reserved_134;
+    uint32_t reserved_138;
     union {
         struct {
             uint32_t date:      28;

@@ -30,7 +30,7 @@
 #include "soc/rtc_cntl_reg.h"
 #include "soc/apb_ctrl_reg.h"
 #include "soc/rtc_io_reg.h"
-#include "soc/spi_reg.h"
+#include "soc/spi_mem_reg.h"
 #include "soc/sens_reg.h"
 #include "soc/dport_reg.h"
 #include "driver/rtc_io.h"

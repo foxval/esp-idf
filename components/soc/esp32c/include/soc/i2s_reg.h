@@ -19,8 +19,14 @@
 extern "C" {
 #endif
 #include "soc.h"
-#define REG_I2S_BASE( i ) ( DR_REG_I2S_BASE + ((i)*0x1E000))
+#define REG_I2S_BASE( i ) (DR_REG_I2S_BASE)
 #define I2S_CONF_REG(i)          (REG_I2S_BASE(i) + 0x0008)
+/* I2S_RX_RESET_ST : RO ;bitpos:[29] ;default: 1'b0 ; */
+/*description: */
+#define I2S_RX_RESET_ST  (BIT(29))
+#define I2S_RX_RESET_ST_M  (BIT(29))
+#define I2S_RX_RESET_ST_V  0x1
+#define I2S_RX_RESET_ST_S  29
 /* I2S_RX_BIG_ENDIAN : R/W ;bitpos:[28] ;default: 1'b0 ; */
 /*description: */
 #define I2S_RX_BIG_ENDIAN  (BIT(28))
@@ -1527,7 +1533,7 @@ extern "C" {
 #define I2S_CLK_SEL_V  0x3
 #define I2S_CLK_SEL_S  21
 #define I2S_CLK_AUDIO_PLL 1
-#define I2S_CLK_160M_PLL
+#define I2S_CLK_160M_PLL 2
 /* I2S_CLK_EN : R/W ;bitpos:[20] ;default: 1'b0 ; */
 /*description: Set this bit to enable clk gate*/
 #define I2S_CLK_EN  (BIT(20))

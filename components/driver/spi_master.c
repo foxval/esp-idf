@@ -59,6 +59,7 @@ queue and re-enabling the interrupt will trigger the interrupt again, which can 
 #include "driver/periph_ctrl.h"
 #include "esp_heap_caps.h"
 
+#if 0
 typedef struct spi_device_t spi_device_t;
 typedef typeof(SPI1.clock) spi_clock_reg_t;
 
@@ -889,4 +890,4 @@ esp_err_t SPI_MASTER_ATTR spi_device_transmit(spi_device_handle_t handle, spi_tr
     assert(ret_trans==trans_desc);
     return ESP_OK;
 }
-
+#endif

@@ -20,7 +20,9 @@
 #include "soc/periph_defs.h"
 //include soc related (generated) definitions
 #include "soc/spi_pins.h"
+#if 0
 #include "soc/spi_reg.h"
+#endif
 #include "soc/spi_struct.h"
 #include "soc/gpio_sig_map.h"
 

@@ -93,12 +93,6 @@ extern "C" {
 #define UHCI_OUTDSCR_BURST_EN_M  (BIT(12))
 #define UHCI_OUTDSCR_BURST_EN_V  0x1
 #define UHCI_OUTDSCR_BURST_EN_S  12
-/* UHCI_UART2_CE : R/W ;bitpos:[11] ;default: 1'b0 ; */
-/*description: */
-#define UHCI_UART2_CE  (BIT(11))
-#define UHCI_UART2_CE_M  (BIT(11))
-#define UHCI_UART2_CE_V  0x1
-#define UHCI_UART2_CE_S  11
 /* UHCI_UART1_CE : R/W ;bitpos:[10] ;default: 1'b0 ; */
 /*description: */
 #define UHCI_UART1_CE  (BIT(10))
@@ -1259,7 +1253,7 @@ extern "C" {
 #define UHCI_PKT_THRS_S  0
 
 #define UHCI_DATE_REG(i)          (REG_UHCI_BASE(i) + 0xFC)
-/* UHCI_DATE : R/W ;bitpos:[31:0] ;default: 32'h16041001 ; */
+/* UHCI_DATE : R/W ;bitpos:[31:0] ;default: 32'h18073001 ; */
 /*description: */
 #define UHCI_DATE  0xFFFFFFFF
 #define UHCI_DATE_M  ((UHCI_DATE_V)<<(UHCI_DATE_S))

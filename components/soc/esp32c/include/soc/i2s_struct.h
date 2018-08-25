@@ -51,7 +51,8 @@ typedef volatile struct {
             uint32_t pre_req_en:       1;                 /*set this bit to enable i2s to prepare data earlier*/
             uint32_t tx_big_endian:    1;
             uint32_t rx_big_endian:    1;
-            uint32_t reserved29:       3;
+            uint32_t rx_reset_st:      1;
+            uint32_t reserved30:       2;
         };
         uint32_t val;
     } conf;
