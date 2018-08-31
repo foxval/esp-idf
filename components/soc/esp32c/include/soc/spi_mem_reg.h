@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 #include "soc.h"
-#define REG_SPI_BASE(i)     (DR_REG_SPI1_BASE + (((i)* 0x1000) + 0x20000))
+#define REG_SPI_BASE(i)     (DR_REG_SPI0_BASE - (i)* 0x1000)
 
 #define SPI_CMD_REG SPI_MEM_CMD_REG
 #define SPI_FLASH_READ SPI_MEM_FLASH_READ

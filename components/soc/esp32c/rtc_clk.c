@@ -406,6 +406,7 @@ void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
 #else
 void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
 {
+#ifndef CONFIG_HARDWARE_IS_FPGA
     uint8_t div_ref;
     uint8_t div7_0;
     uint8_t dr1;
@@ -504,6 +505,7 @@ void rtc_clk_bbpll_set(rtc_xtal_freq_t xtal_freq, rtc_cpu_freq_t cpu_freq)
     uint32_t delay_pll_en = (rtc_clk_slow_freq_get() == RTC_SLOW_FREQ_RTC) ?
             DELAY_PLL_ENABLE_WITH_150K : DELAY_PLL_ENABLE_WITH_32K;
     ets_delay_us(delay_pll_en);
+#endif
 }
 #endif
 
