@@ -10,7 +10,7 @@
  *  core-specific but system independent.
  */
 
-/* Customer ID=11657; Build=0x5fe96; Copyright (c) 2000-2010 Tensilica Inc.
+/* Copyright (c) 2000-2010 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -69,6 +69,9 @@
 #define XSHAL_FLOATING_POINT_ABI	0
 
 /*  SW workarounds enabled for HW errata:  */
+
+/*  SW options for functional safety:  */
+#define XSHAL_FUNC_SAFETY_ENABLED	0
 
 /*----------------------------------------------------------------------
 				DEVICE ADDRESSES

@@ -8,7 +8,7 @@
    macros, etc.) for this specific Xtensa processor's TIE extensions
    and options.  It is customized to this Xtensa processor configuration.
 
-   Customer ID=11657; Build=0x5fe96; Copyright (c) 1999-2016 Cadence Design Systems Inc.
+   Copyright (c) 1999-2018 Cadence Design Systems Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -85,52 +85,6 @@
 	xchal_sa_align	\ptr, 0, 1016, 4, 4
 	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 4
 	.endif
-	// Optional caller-saved registers used by default by the compiler:
-	.ifeq (XTHAL_SAS_OPT | XTHAL_SAS_CC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 1012, 4, 4
-	rsr.ACCLO	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+0
-	rsr.ACCHI	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 8
-	.elseif ((XTHAL_SAS_OPT | XTHAL_SAS_CC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 1012, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 8
-	.endif
-	// Optional caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_OPT | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 996, 4, 4
-	rsr.BR	\at1		// boolean option
-	s32i	\at1, \ptr, .Lxchal_ofs_+0
-	rsr.SCOMPARE1	\at1		// conditional store option
-	s32i	\at1, \ptr, .Lxchal_ofs_+4
-	rsr.M0	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+8
-	rsr.M1	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+12
-	rsr.M2	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+16
-	rsr.M3	\at1		// MAC16 option
-	s32i	\at1, \ptr, .Lxchal_ofs_+20
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 24
-	.elseif ((XTHAL_SAS_OPT | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 996, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 24
-	.endif
-	// Custom caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 1008, 4, 4
-	rur.F64R_LO	\at1		// ureg 234
-	s32i	\at1, \ptr, .Lxchal_ofs_+0
-	rur.F64R_HI	\at1		// ureg 235
-	s32i	\at1, \ptr, .Lxchal_ofs_+4
-	rur.F64S	\at1		// ureg 236
-	s32i	\at1, \ptr, .Lxchal_ofs_+8
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 12
-	.elseif ((XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 1008, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 12
-	.endif
     .endm	// xchal_ncp_store
 
     /*
@@ -165,159 +119,12 @@
 	xchal_sa_align	\ptr, 0, 1016, 4, 4
 	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 4
 	.endif
-	// Optional caller-saved registers used by default by the compiler:
-	.ifeq (XTHAL_SAS_OPT | XTHAL_SAS_CC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 1012, 4, 4
-	l32i	\at1, \ptr, .Lxchal_ofs_+0
-	wsr.ACCLO	\at1		// MAC16 option
-	l32i	\at1, \ptr, .Lxchal_ofs_+4
-	wsr.ACCHI	\at1		// MAC16 option
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 8
-	.elseif ((XTHAL_SAS_OPT | XTHAL_SAS_CC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 1012, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 8
-	.endif
-	// Optional caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_OPT | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 996, 4, 4
-	l32i	\at1, \ptr, .Lxchal_ofs_+0
-	wsr.BR	\at1		// boolean option
-	l32i	\at1, \ptr, .Lxchal_ofs_+4
-	wsr.SCOMPARE1	\at1		// conditional store option
-	l32i	\at1, \ptr, .Lxchal_ofs_+8
-	wsr.M0	\at1		// MAC16 option
-	l32i	\at1, \ptr, .Lxchal_ofs_+12
-	wsr.M1	\at1		// MAC16 option
-	l32i	\at1, \ptr, .Lxchal_ofs_+16
-	wsr.M2	\at1		// MAC16 option
-	l32i	\at1, \ptr, .Lxchal_ofs_+20
-	wsr.M3	\at1		// MAC16 option
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 24
-	.elseif ((XTHAL_SAS_OPT | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 996, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 24
-	.endif
-	// Custom caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 1008, 4, 4
-	l32i	\at1, \ptr, .Lxchal_ofs_+0
-	wur.F64R_LO	\at1		// ureg 234
-	l32i	\at1, \ptr, .Lxchal_ofs_+4
-	wur.F64R_HI	\at1		// ureg 235
-	l32i	\at1, \ptr, .Lxchal_ofs_+8
-	wur.F64S	\at1		// ureg 236
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 12
-	.elseif ((XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 1008, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 12
-	.endif
     .endm	// xchal_ncp_load
 
 
 #define XCHAL_NCP_NUM_ATMPS	1
 
-    /* 
-     *  Macro to store the state of TIE coprocessor FPU.
-     *  Required parameters:
-     *      ptr         Save area pointer address register (clobbered)
-     *                  (register must contain a 4 byte aligned address).
-     *      at1..at4    Four temporary address registers (first XCHAL_CP0_NUM_ATMPS
-     *                  registers are clobbered, the remaining are unused).
-     *  Optional parameters are the same as for xchal_ncp_store.
-     */
-#define xchal_cp_FPU_store	xchal_cp0_store
-    .macro	xchal_cp0_store  ptr at1 at2 at3 at4  continue=0 ofs=-1 select=XTHAL_SAS_ALL alloc=0
-	xchal_sa_start \continue, \ofs
-	// Custom caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 948, 4, 4
-	rur.FCR	\at1		// ureg 232
-	s32i	\at1, \ptr, .Lxchal_ofs_+0
-	rur.FSR	\at1		// ureg 233
-	s32i	\at1, \ptr, .Lxchal_ofs_+4
-	ssi	f0, \ptr, .Lxchal_ofs_+8
-	ssi	f1, \ptr, .Lxchal_ofs_+12
-	ssi	f2, \ptr, .Lxchal_ofs_+16
-	ssi	f3, \ptr, .Lxchal_ofs_+20
-	ssi	f4, \ptr, .Lxchal_ofs_+24
-	ssi	f5, \ptr, .Lxchal_ofs_+28
-	ssi	f6, \ptr, .Lxchal_ofs_+32
-	ssi	f7, \ptr, .Lxchal_ofs_+36
-	ssi	f8, \ptr, .Lxchal_ofs_+40
-	ssi	f9, \ptr, .Lxchal_ofs_+44
-	ssi	f10, \ptr, .Lxchal_ofs_+48
-	ssi	f11, \ptr, .Lxchal_ofs_+52
-	ssi	f12, \ptr, .Lxchal_ofs_+56
-	ssi	f13, \ptr, .Lxchal_ofs_+60
-	ssi	f14, \ptr, .Lxchal_ofs_+64
-	ssi	f15, \ptr, .Lxchal_ofs_+68
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 72
-	.elseif ((XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 948, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 72
-	.endif
-    .endm	// xchal_cp0_store
-
-    /* 
-     *  Macro to load the state of TIE coprocessor FPU.
-     *  Required parameters:
-     *      ptr         Save area pointer address register (clobbered)
-     *                  (register must contain a 4 byte aligned address).
-     *      at1..at4    Four temporary address registers (first XCHAL_CP0_NUM_ATMPS
-     *                  registers are clobbered, the remaining are unused).
-     *  Optional parameters are the same as for xchal_ncp_load.
-     */
-#define xchal_cp_FPU_load	xchal_cp0_load
-    .macro	xchal_cp0_load  ptr at1 at2 at3 at4  continue=0 ofs=-1 select=XTHAL_SAS_ALL alloc=0
-	xchal_sa_start \continue, \ofs
-	// Custom caller-saved registers not used by default by the compiler:
-	.ifeq (XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\select)
-	xchal_sa_align	\ptr, 0, 948, 4, 4
-	l32i	\at1, \ptr, .Lxchal_ofs_+0
-	wur.FCR	\at1		// ureg 232
-	l32i	\at1, \ptr, .Lxchal_ofs_+4
-	wur.FSR	\at1		// ureg 233
-	lsi	f0, \ptr, .Lxchal_ofs_+8
-	lsi	f1, \ptr, .Lxchal_ofs_+12
-	lsi	f2, \ptr, .Lxchal_ofs_+16
-	lsi	f3, \ptr, .Lxchal_ofs_+20
-	lsi	f4, \ptr, .Lxchal_ofs_+24
-	lsi	f5, \ptr, .Lxchal_ofs_+28
-	lsi	f6, \ptr, .Lxchal_ofs_+32
-	lsi	f7, \ptr, .Lxchal_ofs_+36
-	lsi	f8, \ptr, .Lxchal_ofs_+40
-	lsi	f9, \ptr, .Lxchal_ofs_+44
-	lsi	f10, \ptr, .Lxchal_ofs_+48
-	lsi	f11, \ptr, .Lxchal_ofs_+52
-	lsi	f12, \ptr, .Lxchal_ofs_+56
-	lsi	f13, \ptr, .Lxchal_ofs_+60
-	lsi	f14, \ptr, .Lxchal_ofs_+64
-	lsi	f15, \ptr, .Lxchal_ofs_+68
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 72
-	.elseif ((XTHAL_SAS_TIE | XTHAL_SAS_NOCC | XTHAL_SAS_CALR) & ~(\alloc)) == 0
-	xchal_sa_align	\ptr, 0, 948, 4, 4
-	.set	.Lxchal_ofs_, .Lxchal_ofs_ + 72
-	.endif
-    .endm	// xchal_cp0_load
-
-#define XCHAL_CP0_NUM_ATMPS	1
 #define XCHAL_SA_NUM_ATMPS	1
-
-	/*  Empty macros for unconfigured coprocessors:  */
-	.macro xchal_cp1_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp1_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp2_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp2_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp3_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp3_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp4_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp4_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp5_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp5_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp6_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp6_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp7_store	p a b c d continue=0 ofs=-1 select=-1 ; .endm
-	.macro xchal_cp7_load	p a b c d continue=0 ofs=-1 select=-1 ; .endm
 
 #endif /*_XTENSA_CORE_TIE_ASM_H*/
 

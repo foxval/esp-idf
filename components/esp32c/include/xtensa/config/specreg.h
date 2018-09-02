@@ -2,9 +2,9 @@
  * Xtensa Special Register symbolic names
  */
 
-/* $Id: //depot/rel/Eaglenest/Xtensa/SWConfig/hal/specreg.h.tpp#1 $ */
+/* $Id: //depot/rel/Foxhill/dot.8/Xtensa/SWConfig/hal/specreg.h.tpp#1 $ */
 
-/* Customer ID=11657; Build=0x5fe96; Copyright (c) 1998-2002 Tensilica Inc.
+/* Copyright (c) 1998-2002 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -33,23 +33,10 @@
 
 
 /*  Special registers:  */
-#define LBEG		0
-#define LEND		1
-#define LCOUNT		2
 #define SAR		3
-#define BR		4
-#define SCOMPARE1	12
-#define ACCLO		16
-#define ACCHI		17
-#define MR_0		32
-#define MR_1		33
-#define MR_2		34
-#define MR_3		35
 #define WINDOWBASE	72
 #define WINDOWSTART	73
 #define IBREAKENABLE	96
-#define MEMCTL		97
-#define ATOMCTL		99
 #define DDR		104
 #define IBREAKA_0	128
 #define IBREAKA_1	129
@@ -99,7 +86,6 @@
 #define MISC_REG_3	247
 
 /*  Special cases (bases of special register series):  */
-#define MR		32
 #define IBREAKA		128
 #define DBREAKA		144
 #define DBREAKC		160

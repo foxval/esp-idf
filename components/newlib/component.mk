@@ -19,8 +19,11 @@ LIBC_PATH := $(COMPONENT_PATH)/lib/libc_esp32c.a
 endif
 endif  # CONFIG_NEWLIB_NANO_FORMAT
 
+ifdef CONFIG_CHIP_IS_ESP32
 LIBM_PATH := $(COMPONENT_PATH)/lib/libm.a
-
+else
+LIBM_PATH := $(COMPONENT_PATH)/lib/libm_esp32c.a
+endif
 endif  # CONFIG_SPIRAM_CACHE_WORKAROUND
 
 COMPONENT_ADD_LDFLAGS := $(LIBC_PATH) $(LIBM_PATH) -lnewlib

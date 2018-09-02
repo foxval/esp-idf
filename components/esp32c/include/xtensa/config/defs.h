@@ -1,6 +1,6 @@
 /* Definitions for Xtensa instructions, types, and protos. */
 
-/* Customer ID=11657; Build=0x5fe96; Copyright (c) 2003-2004 Tensilica Inc.
+/* Copyright (c) 2003-2004 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -32,7 +32,6 @@
 
 #include <xtensa/tie/xt_core.h>
 #include <xtensa/tie/xt_misc.h>
-#include <xtensa/tie/xt_booleans.h>
 
 #endif /* __XTENSA__ */
 #endif /* !_XTENSA_BASE_HEADER */

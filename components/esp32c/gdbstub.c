@@ -218,9 +218,11 @@ static void dumpHwToRegfile(XtExcFrame *frame) {
 	gdbRegFile.pc=frame->pc;
 	for (i=0; i<16; i++) gdbRegFile.a[i]=frameAregs[i];
 	for (i=16; i<64; i++) gdbRegFile.a[i]=0xDEADBEEF;
+#if CONFIG_CHIP_IS_ESP32
 	gdbRegFile.lbeg=frame->lbeg;
 	gdbRegFile.lend=frame->lend;
 	gdbRegFile.lcount=frame->lcount;
+#endif
 	gdbRegFile.sar=frame->sar;
 	//All windows have been spilled to the stack by the ISR routines. The following values should indicate that.
 	gdbRegFile.sar=frame->sar;

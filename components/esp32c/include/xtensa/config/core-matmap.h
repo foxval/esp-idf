@@ -22,7 +22,7 @@
  *	XCHAL_HW_VERSION_MINOR
  */
 
-/* Customer ID=11657; Build=0x5fe96; Copyright (c) 1999-2016 Tensilica Inc.
+/* Copyright (c) 1999-2018 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -51,6 +51,7 @@
 /*----------------------------------------------------------------------
 			CACHE (MEMORY ACCESS) ATTRIBUTES
   ----------------------------------------------------------------------*/
+
 
 
 /*  Cache Attribute encodings -- lists of access modes for each cache attribute:  */
@@ -84,7 +85,7 @@
 				XTHAL_LAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_LAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_LAM_EXCEPTION	XCHAL_SEP \
-				XTHAL_LAM_BYPASSG	XCHAL_SEP \
+				XTHAL_LAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_LAM_EXCEPTION
 #define XCHAL_SCA_LIST		XTHAL_SAM_BYPASS	XCHAL_SEP \
 				XTHAL_SAM_BYPASS	XCHAL_SEP \
@@ -100,9 +101,13 @@
 				XTHAL_SAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_SAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_SAM_EXCEPTION	XCHAL_SEP \
-				XTHAL_SAM_BYPASS	XCHAL_SEP \
+				XTHAL_SAM_EXCEPTION	XCHAL_SEP \
 				XTHAL_SAM_EXCEPTION
 
+#define XCHAL_CA_R   (0xC0 | 0x40000000)
+#define XCHAL_CA_RX  (0xD0 | 0x40000000)
+#define XCHAL_CA_RW  (0xE0 | 0x40000000)
+#define XCHAL_CA_RWX (0xF0 | 0x40000000)
 
 /*
  *  Specific encoded cache attribute values of general interest.
@@ -112,17 +117,16 @@
  */
 #define XCHAL_CA_BYPASS  		2	/* cache disabled (bypassed) mode */
 #define XCHAL_CA_BYPASSBUF  		6	/* cache disabled (bypassed) bufferable mode */
-#define XCHAL_CA_WRITETHRU		2	/* cache enabled (write-through) mode */
+#define XCHAL_CA_WRITETHRU		1	/* cache enabled (write-through) mode */
 #define XCHAL_CA_WRITEBACK		2	/* cache enabled (write-back) mode */
 #define XCHAL_HAVE_CA_WRITEBACK_NOALLOC	0	/* write-back no-allocate availability */
 #define XCHAL_CA_WRITEBACK_NOALLOC	2	/* cache enabled (write-back no-allocate) mode */
 #define XCHAL_CA_BYPASS_RW  		0	/* cache disabled (bypassed) mode (no exec) */
-#define XCHAL_CA_WRITETHRU_RW		0	/* cache enabled (write-through) mode (no exec) */
+#define XCHAL_CA_WRITETHRU_RW		0	/* cache enabled (write-through) mode (no exec) (FALLBACK) */
 #define XCHAL_CA_WRITEBACK_RW		0	/* cache enabled (write-back) mode (no exec) */
 #define XCHAL_CA_WRITEBACK_NOALLOC_RW	0	/* cache enabled (write-back no-allocate) mode (no exec) */
 #define XCHAL_CA_ILLEGAL		15	/* no access allowed (all cause exceptions) mode */
 #define XCHAL_CA_ISOLATE		0	/* cache isolate (accesses go to cache not memory) mode */
-
 
 /*----------------------------------------------------------------------
 				MMU
@@ -168,14 +172,14 @@
  *	  ways have independent lists of supported page sizes sharing a
  *	  common encoding with PTE entries; the encoding is the index into
  *	  this list; unsupported sizes for a given way are zero in the list;
- *	  selecting unsupported sizes results in undefined hardware behaviour;
+ *	  selecting unsupported sizes results in undefine hardware behaviour;
  *	- is only possible for ways 0 thru 7 (due to ITLBCFG/DTLBCFG definition).
  */
 
 #define XCHAL_MMU_ASID_INVALID		0	/* ASID value indicating invalid address space */
 #define XCHAL_MMU_ASID_KERNEL		0	/* ASID value indicating kernel (ring 0) address space */
 #define XCHAL_MMU_SR_BITS		0	/* number of size-restriction bits supported */
-#define XCHAL_MMU_CA_BITS		4	/* number of bits needed to hold cache attribute encoding */
+#define XCHAL_MMU_CA_BITS		4	 /* number of bits needed to hold cache attribute encoding */
 #define XCHAL_MMU_MAX_PTE_PAGE_SIZE	29	/* max page size in a PTE structure (log2) */
 #define XCHAL_MMU_MIN_PTE_PAGE_SIZE	29	/* min page size in a PTE structure (log2) */
 
