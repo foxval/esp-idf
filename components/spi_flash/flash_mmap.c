@@ -44,7 +44,7 @@
 #define INVALID_ENTRY_VAL DPORT_FLASH_MMU_TABLE_INVALID_VAL
 #define VADDR0_START_ADDR 0x3F400000
 #define VADDR1_START_ADDR 0x40000000
-#define VADDR1_FIRST_USABLE_ADDR 0x400D0000
+#define VADDR1_FIRST_USABLE_ADDR 0x40080000
 #define PRO_IRAM0_FIRST_USABLE_PAGE ((VADDR1_FIRST_USABLE_ADDR - VADDR1_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + 64)
 
 /* Ensure pages in a region haven't been marked as written via
@@ -137,7 +137,7 @@ esp_err_t IRAM_ATTR spi_flash_mmap(size_t src_addr, size_t size, spi_flash_mmap_
         return ESP_ERR_NO_MEM;
     }
     for (int i = 0; i < page_count; i++) {
-        pages[i] = (phys_page+i) | BIT(16);
+        pages[i] = (phys_page+i) | BIT(15);
     }
     ret=spi_flash_mmap_pages(pages, page_count, memory, out_ptr, out_handle);
     free(pages);

@@ -353,7 +353,7 @@ void start_cpu0_default(void)
     //Initialize the interrupt watch dog for CPU0.
     esp_int_wdt_cpu_init();
 #endif
-    esp_cache_err_int_init();
+    //esp_cache_err_int_init();
     esp_crosscore_int_init();
     esp_ipc_init();
 #ifndef CONFIG_FREERTOS_UNICORE

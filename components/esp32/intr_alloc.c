@@ -549,7 +549,7 @@ esp_err_t esp_intr_alloc_intrstatus(int source, int flags, uint32_t intrstatusre
     if (intrstatusreg && !intrstatusmask) return ESP_ERR_INVALID_ARG;
     //If the ISR is marked to be IRAM-resident, the handler must not be in the cached region
     if ((flags&ESP_INTR_FLAG_IRAM) &&
-            (ptrdiff_t) handler >= 0x400C0000 &&
+            (ptrdiff_t) handler >= 0x400C2000 &&
             (ptrdiff_t) handler < 0x50000000 ) {
         return ESP_ERR_INVALID_ARG;
     }

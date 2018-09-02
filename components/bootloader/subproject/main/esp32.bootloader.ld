@@ -12,14 +12,14 @@ Linker file used to link the bootloader.
 MEMORY
 {
   /* I/O */
-  dport0_seg (RW) :                 	org = 0x3FF00000, len = 0x10
+  dport0_seg (RW) :                    org = 0x3FF00000, len = 0x10
   /* IRAM POOL1, used for APP CPU cache. Bootloader runs from here during the final stage of loading the app because APP CPU is still held in reset, the main app enables APP CPU cache */
   /* iram_loader_seg (RWX) :           org = 0x40078000, len = 0x8000 */  /* 32KB, APP CPU cache */
   /* Digital team to check */
-  iram_loader_seg (RWX) :           org = 0x40050000, len = 0x4000  /* 32KB, APP CPU cache */
-  iram_seg (RWX) :                  org = 0x40054000, len = 0x4000
+  iram_loader_seg (RWX) :           org = 0x40022000, len = 0x4000  /* 32KB, APP CPU cache */
+  iram_seg (RWX) :                  org = 0x40026000, len = 0x2000
   /* 64k at the end of DRAM, after ROM bootloader stack */
-  dram_seg (RW) :                  	org = 0x3FFF2000, len = 0xe000
+  dram_seg (RW) :                  	org = 0x3FFF5000, len = 0xb000
 }
 
 /*  Default entry point:  */

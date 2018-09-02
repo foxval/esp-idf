@@ -524,20 +524,13 @@ typedef enum {
 } cache_layout_t;
 
 typedef enum {
-    CACHE_SET_SIZE_256B,
-    CACHE_SET_SIZE_512B,
-    CACHE_SET_SIZE_1KB,
-    CACHE_SET_SIZE_2KB,
-    CACHE_SET_SIZE_4KB = 2,
-    CACHE_SET_SIZE_8KB,
+    CACHE_SET_SIZE_8KB = 0,
+    CACHE_SET_SIZE_16KB = 1,
 } cache_size_t;
 
 typedef enum {
-    CACHE_WAYS_2WAYS = 0,
-    CACHE_WAYS_3WAYS = 1,
-    CACHE_WAYS_4WAYS = 2,
-    CACHE_WAYS_6WAYS = 3,
-    CACHE_WAYS_8WAYS = 4,
+    CACHE_WAYS_4WAYS = 0,
+    CACHE_WAYS_8WAYS = 1,
 } cache_ways_t;
 
 typedef enum {
@@ -545,6 +538,7 @@ typedef enum {
     CACHE_LINE_SIZE_32B = 1,
     CACHE_LINE_SIZE_64B = 2,
 } cache_line_size_t;
+
 extern void Cache_Allocate_SRAM(cache_layout_t sram0_layout, cache_layout_t sram1_layout, cache_layout_t sram2_layout);
 
 /*

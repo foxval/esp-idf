@@ -29,7 +29,7 @@ extern "C" {
 #define TIMG_WDT_STG_SEL_RESET_CPU 2
 #define TIMG_WDT_STG_SEL_RESET_SYSTEM 3
 
-#define REG_TIMG_BASE(i)              (0x3ff5F000 - (i)*0x1000)
+#define REG_TIMG_BASE(i)              (DR_REG_TIMERGROUP0_BASE + (i)*0x1000)
 #define TIMG_T0CONFIG_REG(i)          (REG_TIMG_BASE(i) + 0x0000)
 /* TIMG_T0_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
 /*description: */

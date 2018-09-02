@@ -28,11 +28,11 @@ MEMORY
   are connected to the data port of the CPU and eg allow bytewise access. */
 
   /* IRAM for PRO cpu. Not sure if happy with this, this is MMU area... */
-  iram0_0_seg (RX) :                 org = 0x40058000, len = 0x18000
+  iram0_0_seg (RX) :                 org = 0x40028000, len = 0x18000
 
   /* Even though the segment name is iram, it is actually mapped to flash
   */
-  iram0_2_seg (RX) :                 org = 0x400D0018, len = 0x330000-0x18
+  iram0_2_seg (RX) :                 org = 0x40080018, len = 0x380000-0x18
 
   /*
     (0x18 offset above is a convenience for the app binary image generation. Flash cache has 64KB pages. The .bin file
@@ -50,8 +50,8 @@ MEMORY
      in heap at runtime. However due to static ROM memory usage at this 176KB mark, the
      additional static memory temporarily cannot be used.
   */
-  dram0_0_seg (RW) :                 org = 0x3FFB0000 + CONFIG_BT_RESERVE_DRAM,
-                                     len = 0x2c200 - CONFIG_BT_RESERVE_DRAM
+  dram0_0_seg (RW) :                 org = 0x3FFD0000 + CONFIG_BT_RESERVE_DRAM,
+                                     len = 0x20000 - CONFIG_BT_RESERVE_DRAM
 
   /* Flash mapped constant data */
   drom0_0_seg (R) :                  org = 0x3F400018, len = 0x400000-0x18
@@ -60,7 +60,7 @@ MEMORY
 
   /* RTC fast memory (executable). Persists over deep sleep.
    */
-  rtc_iram_seg(RWX) :                org = 0x400C0000, len = 0x2000
+  rtc_iram_seg(RWX) :                org = 0x40070000, len = 0x2000
 
   /* RTC slow memory (data accessible). Persists over deep sleep.
 

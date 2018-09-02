@@ -93,8 +93,12 @@ bool esp_spiram_test()
 
 void IRAM_ATTR esp_spiram_init_cache()
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     //Enable external RAM in MMU
     cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 32, 128 );
+#else
+    cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 64, 64 );
+#endif
     //Flush and enable icache for APP CPU
 #if !CONFIG_FREERTOS_UNICORE
     DPORT_CLEAR_PERI_REG_MASK(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DRAM1);
