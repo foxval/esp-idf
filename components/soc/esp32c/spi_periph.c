@@ -42,6 +42,7 @@ const spi_signal_conn_t spi_periph_signal[3] = {
         .module = PERIPH_SPI_MODULE,
         .hw = &SPI1
     }, {
+#if CONFIG_CHIP_IS_ESP32
         .spiclk_out = HSPICLK_OUT_IDX,
         .spiclk_in = HSPICLK_IN_IDX,
         .spid_out = HSPID_OUT_IDX,
@@ -64,7 +65,9 @@ const spi_signal_conn_t spi_periph_signal[3] = {
         .irq_dma = ETS_SPI2_DMA_INTR_SOURCE,
         .module = PERIPH_HSPI_MODULE,
         .hw = &SPI2
+#endif
     }, {
+#if CONFIG_CHIP_IS_ESP32
         .spiclk_out = VSPICLK_OUT_IDX,
         .spiclk_in = VSPICLK_IN_IDX,
         .spid_out = VSPID_OUT_IDX,
@@ -87,5 +90,6 @@ const spi_signal_conn_t spi_periph_signal[3] = {
         .irq_dma = ETS_SPI3_DMA_INTR_SOURCE,
         .module = PERIPH_VSPI_MODULE,
         .hw = &SPI3
+#endif
     }
 };

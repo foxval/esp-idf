@@ -733,10 +733,8 @@ esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vad
             gpio_matrix_in(PSRAM_INTERNAL_IO_29, SIG_IN_FUNC221_IDX, 0);
             gpio_matrix_out(PSRAM_CLK_IO, SIG_IN_FUNC221_IDX, 0, 0);
 #else
-            REG_SET_FIELD(SPI_CTRL1_REG(0), SPI_CLK_MODE, 1);
-            REG_SET_FIELD(SPI_CTRL1_REG(0), SPI_CS_HOLD_DELAY, 2);
+            REG_SET_FIELD(SPI_MEM_SRAM_CMD_REG(0), SPI_MEM_SCLK_MODE, 1);
             REG_SET_FIELD(SPI_CTRL1_REG(1), SPI_CLK_MODE, 1);
-            REG_SET_FIELD(SPI_CTRL1_REG(1), SPI_CS_HOLD_DELAY, 2);
 #endif
 
             break;

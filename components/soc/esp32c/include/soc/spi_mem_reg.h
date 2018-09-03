@@ -991,13 +991,20 @@ extern "C" {
 #define SPI_MEM_CACHE_USR_SCMD_4BYTE_S  0
 
 #define SPI_MEM_SRAM_CMD_REG(i)          (REG_SPI_BASE(i) + 0x048)
-/* SPI_MEM_SWB_MODE : R/W ;bitpos:[12:5] ;default: 8'b0 ; */
+/* SPI_MEM_SWB_MODE : R/W ;bitpos:[9:2] ;default: 8'b0 ; */
 /*description: Mode bits in the psram fast read mode  it is combined with spi_mem_fastrd_mode
  bit.*/
 #define SPI_MEM_SWB_MODE  0x000000FF
 #define SPI_MEM_SWB_MODE_M  ((SPI_MEM_SWB_MODE_V)<<(SPI_MEM_SWB_MODE_S))
 #define SPI_MEM_SWB_MODE_V  0xFF
-#define SPI_MEM_SWB_MODE_S  5
+#define SPI_MEM_SWB_MODE_S  2
+/* SPI_MEM_SCLK_MODE : R/W ;bitpos:[1:0] ;default: 2'd0 ; */
+/*description: SPI clock mode bits. 0: SPI clock is off when CS inactive 1:
+ SPI clock is delayed one cycle after CS inactive 2: SPI clock is delayed two cycles after CS inactive 3: SPI clock is alwasy on.*/
+#define SPI_MEM_SCLK_MODE  0x00000003
+#define SPI_MEM_SCLK_MODE_M  ((SPI_MEM_SCLK_MODE_V)<<(SPI_MEM_SCLK_MODE_S))
+#define SPI_MEM_SCLK_MODE_V  0x3
+#define SPI_MEM_SCLK_MODE_S  0
 
 #define SPI_MEM_SRAM_DRD_CMD_REG(i)          (REG_SPI_BASE(i) + 0x04C)
 /* SPI_MEM_CACHE_SRAM_USR_RD_CMD_BITLEN : R/W ;bitpos:[31:28] ;default: 4'h0 ; */
@@ -1753,36 +1760,6 @@ extern "C" {
 #define SPI_MEM_BUF15_S  0
 
 #define SPI_MEM_DIN_MODE_REG(i)          (REG_SPI_BASE(i) + 0x0EC)
-/* SPI_MEM_DINS_DLY_EDGE : R/W ;bitpos:[26] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify input line timing.*/
-#define SPI_MEM_DINS_DLY_EDGE  (BIT(26))
-#define SPI_MEM_DINS_DLY_EDGE_M  (BIT(26))
-#define SPI_MEM_DINS_DLY_EDGE_V  0x1
-#define SPI_MEM_DINS_DLY_EDGE_S  26
-/* SPI_MEM_DIN7_DLY_EDGE : R/W ;bitpos:[25] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify input line timing.*/
-#define SPI_MEM_DIN7_DLY_EDGE  (BIT(25))
-#define SPI_MEM_DIN7_DLY_EDGE_M  (BIT(25))
-#define SPI_MEM_DIN7_DLY_EDGE_V  0x1
-#define SPI_MEM_DIN7_DLY_EDGE_S  25
-/* SPI_MEM_DIN6_DLY_EDGE : R/W ;bitpos:[24] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify input line timing.*/
-#define SPI_MEM_DIN6_DLY_EDGE  (BIT(24))
-#define SPI_MEM_DIN6_DLY_EDGE_M  (BIT(24))
-#define SPI_MEM_DIN6_DLY_EDGE_V  0x1
-#define SPI_MEM_DIN6_DLY_EDGE_S  24
-/* SPI_MEM_DIN5_DLY_EDGE : R/W ;bitpos:[23] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify input line timing.*/
-#define SPI_MEM_DIN5_DLY_EDGE  (BIT(23))
-#define SPI_MEM_DIN5_DLY_EDGE_M  (BIT(23))
-#define SPI_MEM_DIN5_DLY_EDGE_V  0x1
-#define SPI_MEM_DIN5_DLY_EDGE_S  23
-/* SPI_MEM_DIN4_DLY_EDGE : R/W ;bitpos:[22] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify input line timing.*/
-#define SPI_MEM_DIN4_DLY_EDGE  (BIT(22))
-#define SPI_MEM_DIN4_DLY_EDGE_M  (BIT(22))
-#define SPI_MEM_DIN4_DLY_EDGE_V  0x1
-#define SPI_MEM_DIN4_DLY_EDGE_S  22
 /* SPI_MEM_DIN3_DLY_EDGE : R/W ;bitpos:[21] ;default: 1'b0 ; */
 /*description: The bit is used to select the spi clock edge to modify input line timing.*/
 #define SPI_MEM_DIN3_DLY_EDGE  (BIT(21))
@@ -1807,41 +1784,6 @@ extern "C" {
 #define SPI_MEM_DIN0_DLY_EDGE_M  (BIT(18))
 #define SPI_MEM_DIN0_DLY_EDGE_V  0x1
 #define SPI_MEM_DIN0_DLY_EDGE_S  18
-/* SPI_MEM_DINS_MODE : R/W ;bitpos:[17:16] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: input
- without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
-#define SPI_MEM_DINS_MODE  0x00000003
-#define SPI_MEM_DINS_MODE_M  ((SPI_MEM_DINS_MODE_V)<<(SPI_MEM_DINS_MODE_S))
-#define SPI_MEM_DINS_MODE_V  0x3
-#define SPI_MEM_DINS_MODE_S  16
-/* SPI_MEM_DIN7_MODE : R/W ;bitpos:[15:14] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: input
- without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
-#define SPI_MEM_DIN7_MODE  0x00000003
-#define SPI_MEM_DIN7_MODE_M  ((SPI_MEM_DIN7_MODE_V)<<(SPI_MEM_DIN7_MODE_S))
-#define SPI_MEM_DIN7_MODE_V  0x3
-#define SPI_MEM_DIN7_MODE_S  14
-/* SPI_MEM_DIN6_MODE : R/W ;bitpos:[13:12] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: input
- without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
-#define SPI_MEM_DIN6_MODE  0x00000003
-#define SPI_MEM_DIN6_MODE_M  ((SPI_MEM_DIN6_MODE_V)<<(SPI_MEM_DIN6_MODE_S))
-#define SPI_MEM_DIN6_MODE_V  0x3
-#define SPI_MEM_DIN6_MODE_S  12
-/* SPI_MEM_DIN5_MODE : R/W ;bitpos:[11:10] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: input
- without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
-#define SPI_MEM_DIN5_MODE  0x00000003
-#define SPI_MEM_DIN5_MODE_M  ((SPI_MEM_DIN5_MODE_V)<<(SPI_MEM_DIN5_MODE_S))
-#define SPI_MEM_DIN5_MODE_V  0x3
-#define SPI_MEM_DIN5_MODE_S  10
-/* SPI_MEM_DIN4_MODE : R/W ;bitpos:[9:8] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: input
- without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
-#define SPI_MEM_DIN4_MODE  0x00000003
-#define SPI_MEM_DIN4_MODE_M  ((SPI_MEM_DIN4_MODE_V)<<(SPI_MEM_DIN4_MODE_S))
-#define SPI_MEM_DIN4_MODE_V  0x3
-#define SPI_MEM_DIN4_MODE_S  8
 /* SPI_MEM_DIN3_MODE : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
 /*description: the input signals are delayed by system clock cycles  0: input
  without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
@@ -1872,41 +1814,6 @@ extern "C" {
 #define SPI_MEM_DIN0_MODE_S  0
 
 #define SPI_MEM_DIN_NUM_REG(i)          (REG_SPI_BASE(i) + 0x0F0)
-/* SPI_MEM_DINS_NUM : R/W ;bitpos:[17:16] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DINS_NUM  0x00000003
-#define SPI_MEM_DINS_NUM_M  ((SPI_MEM_DINS_NUM_V)<<(SPI_MEM_DINS_NUM_S))
-#define SPI_MEM_DINS_NUM_V  0x3
-#define SPI_MEM_DINS_NUM_S  16
-/* SPI_MEM_DIN7_NUM : R/W ;bitpos:[15:14] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DIN7_NUM  0x00000003
-#define SPI_MEM_DIN7_NUM_M  ((SPI_MEM_DIN7_NUM_V)<<(SPI_MEM_DIN7_NUM_S))
-#define SPI_MEM_DIN7_NUM_V  0x3
-#define SPI_MEM_DIN7_NUM_S  14
-/* SPI_MEM_DIN6_NUM : R/W ;bitpos:[13:12] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DIN6_NUM  0x00000003
-#define SPI_MEM_DIN6_NUM_M  ((SPI_MEM_DIN6_NUM_V)<<(SPI_MEM_DIN6_NUM_S))
-#define SPI_MEM_DIN6_NUM_V  0x3
-#define SPI_MEM_DIN6_NUM_S  12
-/* SPI_MEM_DIN5_NUM : R/W ;bitpos:[11:10] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DIN5_NUM  0x00000003
-#define SPI_MEM_DIN5_NUM_M  ((SPI_MEM_DIN5_NUM_V)<<(SPI_MEM_DIN5_NUM_S))
-#define SPI_MEM_DIN5_NUM_V  0x3
-#define SPI_MEM_DIN5_NUM_S  10
-/* SPI_MEM_DIN4_NUM : R/W ;bitpos:[9:8] ;default: 2'h0 ; */
-/*description: the input signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DIN4_NUM  0x00000003
-#define SPI_MEM_DIN4_NUM_M  ((SPI_MEM_DIN4_NUM_V)<<(SPI_MEM_DIN4_NUM_S))
-#define SPI_MEM_DIN4_NUM_V  0x3
-#define SPI_MEM_DIN4_NUM_S  8
 /* SPI_MEM_DIN3_NUM : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
 /*description: the input signals are delayed by system clock cycles  0: delayed
  by 1 cycle  1: delayed by 2 cycles ...*/
@@ -1937,36 +1844,6 @@ extern "C" {
 #define SPI_MEM_DIN0_NUM_S  0
 
 #define SPI_MEM_DOUT_MODE_REG(i)          (REG_SPI_BASE(i) + 0x0F4)
-/* SPI_MEM_DOUTS_DLY_EDGE : R/W ;bitpos:[26] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify output line timing.*/
-#define SPI_MEM_DOUTS_DLY_EDGE  (BIT(26))
-#define SPI_MEM_DOUTS_DLY_EDGE_M  (BIT(26))
-#define SPI_MEM_DOUTS_DLY_EDGE_V  0x1
-#define SPI_MEM_DOUTS_DLY_EDGE_S  26
-/* SPI_MEM_DOUT7_DLY_EDGE : R/W ;bitpos:[25] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify output line timing.*/
-#define SPI_MEM_DOUT7_DLY_EDGE  (BIT(25))
-#define SPI_MEM_DOUT7_DLY_EDGE_M  (BIT(25))
-#define SPI_MEM_DOUT7_DLY_EDGE_V  0x1
-#define SPI_MEM_DOUT7_DLY_EDGE_S  25
-/* SPI_MEM_DOUT6_DLY_EDGE : R/W ;bitpos:[24] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify output line timing.*/
-#define SPI_MEM_DOUT6_DLY_EDGE  (BIT(24))
-#define SPI_MEM_DOUT6_DLY_EDGE_M  (BIT(24))
-#define SPI_MEM_DOUT6_DLY_EDGE_V  0x1
-#define SPI_MEM_DOUT6_DLY_EDGE_S  24
-/* SPI_MEM_DOUT5_DLY_EDGE : R/W ;bitpos:[23] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify output line timing.*/
-#define SPI_MEM_DOUT5_DLY_EDGE  (BIT(23))
-#define SPI_MEM_DOUT5_DLY_EDGE_M  (BIT(23))
-#define SPI_MEM_DOUT5_DLY_EDGE_V  0x1
-#define SPI_MEM_DOUT5_DLY_EDGE_S  23
-/* SPI_MEM_DOUT4_DLY_EDGE : R/W ;bitpos:[22] ;default: 1'b0 ; */
-/*description: The bit is used to select the spi clock edge to modify output line timing.*/
-#define SPI_MEM_DOUT4_DLY_EDGE  (BIT(22))
-#define SPI_MEM_DOUT4_DLY_EDGE_M  (BIT(22))
-#define SPI_MEM_DOUT4_DLY_EDGE_V  0x1
-#define SPI_MEM_DOUT4_DLY_EDGE_S  22
 /* SPI_MEM_DOUT3_DLY_EDGE : R/W ;bitpos:[21] ;default: 1'b0 ; */
 /*description: The bit is used to select the spi clock edge to modify output line timing.*/
 #define SPI_MEM_DOUT3_DLY_EDGE  (BIT(21))
@@ -1991,41 +1868,6 @@ extern "C" {
 #define SPI_MEM_DOUT0_DLY_EDGE_M  (BIT(18))
 #define SPI_MEM_DOUT0_DLY_EDGE_V  0x1
 #define SPI_MEM_DOUT0_DLY_EDGE_S  18
-/* SPI_MEM_DOUTS_MODE : R/W ;bitpos:[17:16] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: output
- without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
-#define SPI_MEM_DOUTS_MODE  0x00000003
-#define SPI_MEM_DOUTS_MODE_M  ((SPI_MEM_DOUTS_MODE_V)<<(SPI_MEM_DOUTS_MODE_S))
-#define SPI_MEM_DOUTS_MODE_V  0x3
-#define SPI_MEM_DOUTS_MODE_S  16
-/* SPI_MEM_DOUT7_MODE : R/W ;bitpos:[15:14] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: output
- without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
-#define SPI_MEM_DOUT7_MODE  0x00000003
-#define SPI_MEM_DOUT7_MODE_M  ((SPI_MEM_DOUT7_MODE_V)<<(SPI_MEM_DOUT7_MODE_S))
-#define SPI_MEM_DOUT7_MODE_V  0x3
-#define SPI_MEM_DOUT7_MODE_S  14
-/* SPI_MEM_DOUT6_MODE : R/W ;bitpos:[13:12] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: output
- without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
-#define SPI_MEM_DOUT6_MODE  0x00000003
-#define SPI_MEM_DOUT6_MODE_M  ((SPI_MEM_DOUT6_MODE_V)<<(SPI_MEM_DOUT6_MODE_S))
-#define SPI_MEM_DOUT6_MODE_V  0x3
-#define SPI_MEM_DOUT6_MODE_S  12
-/* SPI_MEM_DOUT5_MODE : R/W ;bitpos:[11:10] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: output
- without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
-#define SPI_MEM_DOUT5_MODE  0x00000003
-#define SPI_MEM_DOUT5_MODE_M  ((SPI_MEM_DOUT5_MODE_V)<<(SPI_MEM_DOUT5_MODE_S))
-#define SPI_MEM_DOUT5_MODE_V  0x3
-#define SPI_MEM_DOUT5_MODE_S  10
-/* SPI_MEM_DOUT4_MODE : R/W ;bitpos:[9:8] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: output
- without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
-#define SPI_MEM_DOUT4_MODE  0x00000003
-#define SPI_MEM_DOUT4_MODE_M  ((SPI_MEM_DOUT4_MODE_V)<<(SPI_MEM_DOUT4_MODE_S))
-#define SPI_MEM_DOUT4_MODE_V  0x3
-#define SPI_MEM_DOUT4_MODE_S  8
 /* SPI_MEM_DOUT3_MODE : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
 /*description: the output signals are delayed by system clock cycles  0: output
  without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
@@ -2056,41 +1898,6 @@ extern "C" {
 #define SPI_MEM_DOUT0_MODE_S  0
 
 #define SPI_MEM_DOUT_NUM_REG(i)          (REG_SPI_BASE(i) + 0x0F8)
-/* SPI_MEM_DOUTS_NUM : R/W ;bitpos:[17:16] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DOUTS_NUM  0x00000003
-#define SPI_MEM_DOUTS_NUM_M  ((SPI_MEM_DOUTS_NUM_V)<<(SPI_MEM_DOUTS_NUM_S))
-#define SPI_MEM_DOUTS_NUM_V  0x3
-#define SPI_MEM_DOUTS_NUM_S  16
-/* SPI_MEM_DOUT7_NUM : R/W ;bitpos:[15:14] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DOUT7_NUM  0x00000003
-#define SPI_MEM_DOUT7_NUM_M  ((SPI_MEM_DOUT7_NUM_V)<<(SPI_MEM_DOUT7_NUM_S))
-#define SPI_MEM_DOUT7_NUM_V  0x3
-#define SPI_MEM_DOUT7_NUM_S  14
-/* SPI_MEM_DOUT6_NUM : R/W ;bitpos:[13:12] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DOUT6_NUM  0x00000003
-#define SPI_MEM_DOUT6_NUM_M  ((SPI_MEM_DOUT6_NUM_V)<<(SPI_MEM_DOUT6_NUM_S))
-#define SPI_MEM_DOUT6_NUM_V  0x3
-#define SPI_MEM_DOUT6_NUM_S  12
-/* SPI_MEM_DOUT5_NUM : R/W ;bitpos:[11:10] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DOUT5_NUM  0x00000003
-#define SPI_MEM_DOUT5_NUM_M  ((SPI_MEM_DOUT5_NUM_V)<<(SPI_MEM_DOUT5_NUM_S))
-#define SPI_MEM_DOUT5_NUM_V  0x3
-#define SPI_MEM_DOUT5_NUM_S  10
-/* SPI_MEM_DOUT4_NUM : R/W ;bitpos:[9:8] ;default: 2'h0 ; */
-/*description: the output signals are delayed by system clock cycles  0: delayed
- by 1 cycle  1: delayed by 2 cycles ...*/
-#define SPI_MEM_DOUT4_NUM  0x00000003
-#define SPI_MEM_DOUT4_NUM_M  ((SPI_MEM_DOUT4_NUM_V)<<(SPI_MEM_DOUT4_NUM_S))
-#define SPI_MEM_DOUT4_NUM_V  0x3
-#define SPI_MEM_DOUT4_NUM_S  8
 /* SPI_MEM_DOUT3_NUM : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
 /*description: the output signals are delayed by system clock cycles  0: delayed
  by 1 cycle  1: delayed by 2 cycles ...*/
@@ -2120,7 +1927,175 @@ extern "C" {
 #define SPI_MEM_DOUT0_NUM_V  0x3
 #define SPI_MEM_DOUT0_NUM_S  0
 
-#define SPI_CLOCK_GATE_REG(i)          (REG_SPI_BASE(i) + 0x0FC)
+#define SPI_SMEM_DIN_MODE_REG(i)          (REG_SPI_BASE(i) + 0x0FC)
+/* SPI_SMEM_DIN3_DLY_EDGE : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify input line timing.*/
+#define SPI_SMEM_DIN3_DLY_EDGE  (BIT(21))
+#define SPI_SMEM_DIN3_DLY_EDGE_M  (BIT(21))
+#define SPI_SMEM_DIN3_DLY_EDGE_V  0x1
+#define SPI_SMEM_DIN3_DLY_EDGE_S  21
+/* SPI_SMEM_DIN2_DLY_EDGE : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify input line timing.*/
+#define SPI_SMEM_DIN2_DLY_EDGE  (BIT(20))
+#define SPI_SMEM_DIN2_DLY_EDGE_M  (BIT(20))
+#define SPI_SMEM_DIN2_DLY_EDGE_V  0x1
+#define SPI_SMEM_DIN2_DLY_EDGE_S  20
+/* SPI_SMEM_DIN1_DLY_EDGE : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify input line timing.*/
+#define SPI_SMEM_DIN1_DLY_EDGE  (BIT(19))
+#define SPI_SMEM_DIN1_DLY_EDGE_M  (BIT(19))
+#define SPI_SMEM_DIN1_DLY_EDGE_V  0x1
+#define SPI_SMEM_DIN1_DLY_EDGE_S  19
+/* SPI_SMEM_DIN0_DLY_EDGE : R/W ;bitpos:[18] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify input line timing.*/
+#define SPI_SMEM_DIN0_DLY_EDGE  (BIT(18))
+#define SPI_SMEM_DIN0_DLY_EDGE_M  (BIT(18))
+#define SPI_SMEM_DIN0_DLY_EDGE_V  0x1
+#define SPI_SMEM_DIN0_DLY_EDGE_S  18
+/* SPI_SMEM_DIN3_MODE : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: input
+ without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
+#define SPI_SMEM_DIN3_MODE  0x00000003
+#define SPI_SMEM_DIN3_MODE_M  ((SPI_SMEM_DIN3_MODE_V)<<(SPI_SMEM_DIN3_MODE_S))
+#define SPI_SMEM_DIN3_MODE_V  0x3
+#define SPI_SMEM_DIN3_MODE_S  6
+/* SPI_SMEM_DIN2_MODE : R/W ;bitpos:[5:4] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: input
+ without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
+#define SPI_SMEM_DIN2_MODE  0x00000003
+#define SPI_SMEM_DIN2_MODE_M  ((SPI_SMEM_DIN2_MODE_V)<<(SPI_SMEM_DIN2_MODE_S))
+#define SPI_SMEM_DIN2_MODE_V  0x3
+#define SPI_SMEM_DIN2_MODE_S  4
+/* SPI_SMEM_DIN1_MODE : R/W ;bitpos:[3:2] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: input
+ without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
+#define SPI_SMEM_DIN1_MODE  0x00000003
+#define SPI_SMEM_DIN1_MODE_M  ((SPI_SMEM_DIN1_MODE_V)<<(SPI_SMEM_DIN1_MODE_S))
+#define SPI_SMEM_DIN1_MODE_V  0x3
+#define SPI_SMEM_DIN1_MODE_S  2
+/* SPI_SMEM_DIN0_MODE : R/W ;bitpos:[1:0] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: input
+ without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
+#define SPI_SMEM_DIN0_MODE  0x00000003
+#define SPI_SMEM_DIN0_MODE_M  ((SPI_SMEM_DIN0_MODE_V)<<(SPI_SMEM_DIN0_MODE_S))
+#define SPI_SMEM_DIN0_MODE_V  0x3
+#define SPI_SMEM_DIN0_MODE_S  0
+
+#define SPI_SMEM_DIN_NUM_REG(i)          (REG_SPI_BASE(i) + 0x100)
+/* SPI_SMEM_DIN3_NUM : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DIN3_NUM  0x00000003
+#define SPI_SMEM_DIN3_NUM_M  ((SPI_SMEM_DIN3_NUM_V)<<(SPI_SMEM_DIN3_NUM_S))
+#define SPI_SMEM_DIN3_NUM_V  0x3
+#define SPI_SMEM_DIN3_NUM_S  6
+/* SPI_SMEM_DIN2_NUM : R/W ;bitpos:[5:4] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DIN2_NUM  0x00000003
+#define SPI_SMEM_DIN2_NUM_M  ((SPI_SMEM_DIN2_NUM_V)<<(SPI_SMEM_DIN2_NUM_S))
+#define SPI_SMEM_DIN2_NUM_V  0x3
+#define SPI_SMEM_DIN2_NUM_S  4
+/* SPI_SMEM_DIN1_NUM : R/W ;bitpos:[3:2] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DIN1_NUM  0x00000003
+#define SPI_SMEM_DIN1_NUM_M  ((SPI_SMEM_DIN1_NUM_V)<<(SPI_SMEM_DIN1_NUM_S))
+#define SPI_SMEM_DIN1_NUM_V  0x3
+#define SPI_SMEM_DIN1_NUM_S  2
+/* SPI_SMEM_DIN0_NUM : R/W ;bitpos:[1:0] ;default: 2'h0 ; */
+/*description: the input signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DIN0_NUM  0x00000003
+#define SPI_SMEM_DIN0_NUM_M  ((SPI_SMEM_DIN0_NUM_V)<<(SPI_SMEM_DIN0_NUM_S))
+#define SPI_SMEM_DIN0_NUM_V  0x3
+#define SPI_SMEM_DIN0_NUM_S  0
+
+#define SPI_SMEM_DOUT_MODE_REG(i)          (REG_SPI_BASE(i) + 0x104)
+/* SPI_SMEM_DOUT3_DLY_EDGE : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify output line timing.*/
+#define SPI_SMEM_DOUT3_DLY_EDGE  (BIT(21))
+#define SPI_SMEM_DOUT3_DLY_EDGE_M  (BIT(21))
+#define SPI_SMEM_DOUT3_DLY_EDGE_V  0x1
+#define SPI_SMEM_DOUT3_DLY_EDGE_S  21
+/* SPI_SMEM_DOUT2_DLY_EDGE : R/W ;bitpos:[20] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify output line timing.*/
+#define SPI_SMEM_DOUT2_DLY_EDGE  (BIT(20))
+#define SPI_SMEM_DOUT2_DLY_EDGE_M  (BIT(20))
+#define SPI_SMEM_DOUT2_DLY_EDGE_V  0x1
+#define SPI_SMEM_DOUT2_DLY_EDGE_S  20
+/* SPI_SMEM_DOUT1_DLY_EDGE : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify output line timing.*/
+#define SPI_SMEM_DOUT1_DLY_EDGE  (BIT(19))
+#define SPI_SMEM_DOUT1_DLY_EDGE_M  (BIT(19))
+#define SPI_SMEM_DOUT1_DLY_EDGE_V  0x1
+#define SPI_SMEM_DOUT1_DLY_EDGE_S  19
+/* SPI_SMEM_DOUT0_DLY_EDGE : R/W ;bitpos:[18] ;default: 1'b0 ; */
+/*description: The bit is used to select the spi clock edge to modify output line timing.*/
+#define SPI_SMEM_DOUT0_DLY_EDGE  (BIT(18))
+#define SPI_SMEM_DOUT0_DLY_EDGE_M  (BIT(18))
+#define SPI_SMEM_DOUT0_DLY_EDGE_V  0x1
+#define SPI_SMEM_DOUT0_DLY_EDGE_S  18
+/* SPI_SMEM_DOUT3_MODE : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: output
+ without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
+#define SPI_SMEM_DOUT3_MODE  0x00000003
+#define SPI_SMEM_DOUT3_MODE_M  ((SPI_SMEM_DOUT3_MODE_V)<<(SPI_SMEM_DOUT3_MODE_S))
+#define SPI_SMEM_DOUT3_MODE_V  0x3
+#define SPI_SMEM_DOUT3_MODE_S  6
+/* SPI_SMEM_DOUT2_MODE : R/W ;bitpos:[5:4] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: output
+ without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
+#define SPI_SMEM_DOUT2_MODE  0x00000003
+#define SPI_SMEM_DOUT2_MODE_M  ((SPI_SMEM_DOUT2_MODE_V)<<(SPI_SMEM_DOUT2_MODE_S))
+#define SPI_SMEM_DOUT2_MODE_V  0x3
+#define SPI_SMEM_DOUT2_MODE_S  4
+/* SPI_SMEM_DOUT1_MODE : R/W ;bitpos:[3:2] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: output
+ without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
+#define SPI_SMEM_DOUT1_MODE  0x00000003
+#define SPI_SMEM_DOUT1_MODE_M  ((SPI_SMEM_DOUT1_MODE_V)<<(SPI_SMEM_DOUT1_MODE_S))
+#define SPI_SMEM_DOUT1_MODE_V  0x3
+#define SPI_SMEM_DOUT1_MODE_S  2
+/* SPI_SMEM_DOUT0_MODE : R/W ;bitpos:[1:0] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: output
+ without delayed  1: output with the posedge of clk_apb 2 output with the negedge of clk_apb  3: output with the spi_clk*/
+#define SPI_SMEM_DOUT0_MODE  0x00000003
+#define SPI_SMEM_DOUT0_MODE_M  ((SPI_SMEM_DOUT0_MODE_V)<<(SPI_SMEM_DOUT0_MODE_S))
+#define SPI_SMEM_DOUT0_MODE_V  0x3
+#define SPI_SMEM_DOUT0_MODE_S  0
+
+#define SPI_SMEM_DOUT_NUM_REG(i)          (REG_SPI_BASE(i) + 0x108)
+/* SPI_SMEM_DOUT3_NUM : R/W ;bitpos:[7:6] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DOUT3_NUM  0x00000003
+#define SPI_SMEM_DOUT3_NUM_M  ((SPI_SMEM_DOUT3_NUM_V)<<(SPI_SMEM_DOUT3_NUM_S))
+#define SPI_SMEM_DOUT3_NUM_V  0x3
+#define SPI_SMEM_DOUT3_NUM_S  6
+/* SPI_SMEM_DOUT2_NUM : R/W ;bitpos:[5:4] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DOUT2_NUM  0x00000003
+#define SPI_SMEM_DOUT2_NUM_M  ((SPI_SMEM_DOUT2_NUM_V)<<(SPI_SMEM_DOUT2_NUM_S))
+#define SPI_SMEM_DOUT2_NUM_V  0x3
+#define SPI_SMEM_DOUT2_NUM_S  4
+/* SPI_SMEM_DOUT1_NUM : R/W ;bitpos:[3:2] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DOUT1_NUM  0x00000003
+#define SPI_SMEM_DOUT1_NUM_M  ((SPI_SMEM_DOUT1_NUM_V)<<(SPI_SMEM_DOUT1_NUM_S))
+#define SPI_SMEM_DOUT1_NUM_V  0x3
+#define SPI_SMEM_DOUT1_NUM_S  2
+/* SPI_SMEM_DOUT0_NUM : R/W ;bitpos:[1:0] ;default: 2'h0 ; */
+/*description: the output signals are delayed by system clock cycles  0: delayed
+ by 1 cycle  1: delayed by 2 cycles ...*/
+#define SPI_SMEM_DOUT0_NUM  0x00000003
+#define SPI_SMEM_DOUT0_NUM_M  ((SPI_SMEM_DOUT0_NUM_V)<<(SPI_SMEM_DOUT0_NUM_S))
+#define SPI_SMEM_DOUT0_NUM_V  0x3
+#define SPI_SMEM_DOUT0_NUM_S  0
+
+#define SPI_CLOCK_GATE_REG(i)          (REG_SPI_BASE(i) + 0x10C)
 /* SPI_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define SPI_CLK_EN  (BIT(0))
@@ -2129,7 +2104,7 @@ extern "C" {
 #define SPI_CLK_EN_S  0
 
 #define SPI_MEM_DATE_REG(i)          (REG_SPI_BASE(i) + 0x3FC)
-/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808030 ; */
+/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808150 ; */
 /*description: SPI register version.*/
 #define SPI_MEM_DATE  0x0FFFFFFF
 #define SPI_MEM_DATE_M  ((SPI_MEM_DATE_V)<<(SPI_MEM_DATE_S))

@@ -37,6 +37,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+#if 0
 static const char* I2S_TAG = "I2S";
 #define I2S_CHECK(a, str, ret) if (!(a)) {                                              \
         ESP_LOGE(I2S_TAG,"%s:%d (%s):%s", __FILE__, __LINE__, __FUNCTION__, str);       \
@@ -1327,5 +1328,4 @@ int i2s_pop_sample(i2s_port_t i2s_num, void *sample, TickType_t ticks_to_wait)
         return bytes_pop;
     }
 }
-
-
+#endif

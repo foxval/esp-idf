@@ -20,71 +20,71 @@ extern "C" {
 typedef volatile struct {
     union {
         struct {
-            uint32_t reserved0:        11;
-            uint32_t data:             21;              /*RTC GPIO 0 ~ 20 output data*/
+            uint32_t reserved0:        10;
+            uint32_t data:             22;              /*RTC GPIO 0 ~ 21 output data*/
         };
         uint32_t val;
     } out;
     union {
         struct {
-            uint32_t reserved0:             11;
-            uint32_t w1ts:                  21;         /*RTC GPIO 0 ~ 20 output data write 1 to set*/
+            uint32_t reserved0:             10;
+            uint32_t w1ts:                  22;         /*RTC GPIO 0 ~ 21 output data write 1 to set*/
         };
         uint32_t val;
     } out_w1ts;
     union {
         struct {
-            uint32_t reserved0:             11;
-            uint32_t w1tc:                  21;         /*RTC GPIO 0 ~ 20 output data write 1 to clear*/
+            uint32_t reserved0:             10;
+            uint32_t w1tc:                  22;         /*RTC GPIO 0 ~ 21 output data write 1 to clear*/
         };
         uint32_t val;
     } out_w1tc;
     union {
         struct {
-            uint32_t reserved0:      11;
-            uint32_t enable:         21;                /*RTC GPIO 0 ~ 20 enable*/
+            uint32_t reserved0:      10;
+            uint32_t enable:         22;                /*RTC GPIO 0 ~ 21 enable*/
         };
         uint32_t val;
     } enable;
     union {
         struct {
-            uint32_t reserved0:           11;
-            uint32_t w1ts:                21;           /*RTC GPIO 0 ~ 20 enable write 1 to set*/
+            uint32_t reserved0:           10;
+            uint32_t w1ts:                22;           /*RTC GPIO 0 ~ 21 enable write 1 to set*/
         };
         uint32_t val;
     } enable_w1ts;
     union {
         struct {
-            uint32_t reserved0:           11;
-            uint32_t w1tc:                21;           /*RTC GPIO 0 ~ 20 enable write 1 to clear*/
+            uint32_t reserved0:           10;
+            uint32_t w1tc:                22;           /*RTC GPIO 0 ~ 21 enable write 1 to clear*/
         };
         uint32_t val;
     } enable_w1tc;
     union {
         struct {
-            uint32_t reserved0:          11;
-            uint32_t status:             21;            /*RTC GPIO 0 ~ 20 interrupt status*/
+            uint32_t reserved0:          10;
+            uint32_t status:             22;            /*RTC GPIO 0 ~ 21 interrupt status*/
         };
         uint32_t val;
     } status;
     union {
         struct {
-            uint32_t reserved0:               11;
-            uint32_t w1ts:                    21;       /*RTC GPIO 0 ~ 20 interrupt status write 1 to set*/
+            uint32_t reserved0:               10;
+            uint32_t w1ts:                    22;       /*RTC GPIO 0 ~ 21 interrupt status write 1 to set*/
         };
         uint32_t val;
     } status_w1ts;
     union {
         struct {
-            uint32_t reserved0:               11;
-            uint32_t w1tc:                    21;       /*RTC GPIO 0 ~ 20 interrupt status write 1 to clear*/
+            uint32_t reserved0:               10;
+            uint32_t w1tc:                    22;       /*RTC GPIO 0 ~ 21 interrupt status write 1 to clear*/
         };
         uint32_t val;
     } status_w1tc;
     union {
         struct {
-            uint32_t reserved0:       11;
-            uint32_t in:              21;               /*RTC GPIO input data*/
+            uint32_t reserved0:       10;
+            uint32_t in:              22;               /*RTC GPIO input data*/
         };
         uint32_t val;
     } in_val;
@@ -99,6 +99,17 @@ typedef volatile struct {
         };
         uint32_t val;
     } pin[21];
+    union {
+        struct {
+            uint32_t reserved0:                    2;
+            uint32_t rtc_gpio_pin21_pad_driver:    1;   /*if set to 0: normal output  if set to 1: open drain*/
+            uint32_t reserved3:                    4;
+            uint32_t rtc_gpio_pin21_int_type:      3;   /*if set to 0: GPIO interrupt disable   if set to 1: rising edge trigger   if set to 2: falling edge trigger  if set to 3: any edge trigger  if set to 4: low level trigger   if set to 5: high level trigger*/
+            uint32_t rtc_gpio_pin21_wakeup_enable: 1;   /*RTC GPIO wakeup enable bit*/
+            uint32_t reserved11:                  21;
+        };
+        uint32_t val;
+    } pin21;
     union {
         struct {
             uint32_t sel0:                    5;
@@ -222,6 +233,23 @@ typedef volatile struct {
     } rtc_pad20;
     union {
         struct {
+            uint32_t reserved0:        13;
+            uint32_t rtc_pad21_fun_ie:  1;              /*input enable in work mode*/
+            uint32_t rtc_pad21_slp_oe:  1;              /*output enable in sleep mode*/
+            uint32_t rtc_pad21_slp_ie:  1;              /*input enable in sleep mode*/
+            uint32_t rtc_pad21_slp_sel: 1;              /*1: enable sleep mode during sleep 0: no sleep mode*/
+            uint32_t rtc_pad21_fun_sel: 2;              /*function sel*/
+            uint32_t rtc_pad21_mux_sel: 1;              /*1: use RTC GPIO 0: use digital GPIO*/
+            uint32_t reserved20:        7;
+            uint32_t rtc_pad21_rue:     1;              /*RUE*/
+            uint32_t rtc_pad21_rde:     1;              /*RDE*/
+            uint32_t rtc_pad21_drv:     2;              /*DRV*/
+            uint32_t reserved31:        1;
+        };
+        uint32_t val;
+    } rtc_pad21;
+    union {
+        struct {
             uint32_t reserved0:      27;
             uint32_t sel:             5;
         };
@@ -243,8 +271,6 @@ typedef volatile struct {
         };
         uint32_t val;
     } sar_i2c_io;
-    uint32_t reserved_e0;
-    uint32_t reserved_e4;
     uint32_t reserved_e8;
     uint32_t reserved_ec;
     uint32_t reserved_f0;
@@ -266,6 +292,54 @@ typedef volatile struct {
     uint32_t reserved_130;
     uint32_t reserved_134;
     uint32_t reserved_138;
+    uint32_t reserved_13c;
+    uint32_t reserved_140;
+    uint32_t reserved_144;
+    uint32_t reserved_148;
+    uint32_t reserved_14c;
+    uint32_t reserved_150;
+    uint32_t reserved_154;
+    uint32_t reserved_158;
+    uint32_t reserved_15c;
+    uint32_t reserved_160;
+    uint32_t reserved_164;
+    uint32_t reserved_168;
+    uint32_t reserved_16c;
+    uint32_t reserved_170;
+    uint32_t reserved_174;
+    uint32_t reserved_178;
+    uint32_t reserved_17c;
+    uint32_t reserved_180;
+    uint32_t reserved_184;
+    uint32_t reserved_188;
+    uint32_t reserved_18c;
+    uint32_t reserved_190;
+    uint32_t reserved_194;
+    uint32_t reserved_198;
+    uint32_t reserved_19c;
+    uint32_t reserved_1a0;
+    uint32_t reserved_1a4;
+    uint32_t reserved_1a8;
+    uint32_t reserved_1ac;
+    uint32_t reserved_1b0;
+    uint32_t reserved_1b4;
+    uint32_t reserved_1b8;
+    uint32_t reserved_1bc;
+    uint32_t reserved_1c0;
+    uint32_t reserved_1c4;
+    uint32_t reserved_1c8;
+    uint32_t reserved_1cc;
+    uint32_t reserved_1d0;
+    uint32_t reserved_1d4;
+    uint32_t reserved_1d8;
+    uint32_t reserved_1dc;
+    uint32_t reserved_1e0;
+    uint32_t reserved_1e4;
+    uint32_t reserved_1e8;
+    uint32_t reserved_1ec;
+    uint32_t reserved_1f0;
+    uint32_t reserved_1f4;
+    uint32_t reserved_1f8;
     union {
         struct {
             uint32_t date:      28;

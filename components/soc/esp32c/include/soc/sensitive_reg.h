@@ -1021,7 +1021,29 @@ extern "C" {
 #define DPORT_PRO_BOOT_REMAP_V  0x1
 #define DPORT_PRO_BOOT_REMAP_S  0
 
-#define DPORT_APB_PERIPHERAL_0_REG          (DR_REG_SENSITIVE_BASE + 0x0B4)
+#define DPORT_I_CACHE_SOURCE_0_REG          (DR_REG_SENSITIVE_BASE + 0x0B4)
+/* DPORT_I_CACHE_SOURCE_LOCK : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_I_CACHE_SOURCE_LOCK  (BIT(0))
+#define DPORT_I_CACHE_SOURCE_LOCK_M  (BIT(0))
+#define DPORT_I_CACHE_SOURCE_LOCK_V  0x1
+#define DPORT_I_CACHE_SOURCE_LOCK_S  0
+
+#define DPORT_I_CACHE_SOURCE_1_REG          (DR_REG_SENSITIVE_BASE + 0x0B8)
+/* DPORT_I_CACHE_SOURCE_IROM0 : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_I_CACHE_SOURCE_IROM0  (BIT(1))
+#define DPORT_I_CACHE_SOURCE_IROM0_M  (BIT(1))
+#define DPORT_I_CACHE_SOURCE_IROM0_V  0x1
+#define DPORT_I_CACHE_SOURCE_IROM0_S  1
+/* DPORT_I_CACHE_SOURCE_IRAM1 : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define DPORT_I_CACHE_SOURCE_IRAM1  (BIT(0))
+#define DPORT_I_CACHE_SOURCE_IRAM1_M  (BIT(0))
+#define DPORT_I_CACHE_SOURCE_IRAM1_V  0x1
+#define DPORT_I_CACHE_SOURCE_IRAM1_S  0
+
+#define DPORT_APB_PERIPHERAL_0_REG          (DR_REG_SENSITIVE_BASE + 0x0BC)
 /* DPORT_APB_PERIPHERAL_LOCK : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_APB_PERIPHERAL_LOCK  (BIT(0))
@@ -1029,7 +1051,7 @@ extern "C" {
 #define DPORT_APB_PERIPHERAL_LOCK_V  0x1
 #define DPORT_APB_PERIPHERAL_LOCK_S  0
 
-#define DPORT_APB_PERIPHERAL_1_REG          (DR_REG_SENSITIVE_BASE + 0x0B8)
+#define DPORT_APB_PERIPHERAL_1_REG          (DR_REG_SENSITIVE_BASE + 0x0C0)
 /* DPORT_APB_PERIPHERAL_SPLIT_BURST : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_APB_PERIPHERAL_SPLIT_BURST  (BIT(0))
@@ -1037,7 +1059,7 @@ extern "C" {
 #define DPORT_APB_PERIPHERAL_SPLIT_BURST_V  0x1
 #define DPORT_APB_PERIPHERAL_SPLIT_BURST_S  0
 
-#define DPORT_PMS_OCCUPY_0_REG          (DR_REG_SENSITIVE_BASE + 0x0BC)
+#define DPORT_PMS_OCCUPY_0_REG          (DR_REG_SENSITIVE_BASE + 0x0C4)
 /* DPORT_PMS_OCCUPY_LOCK : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PMS_OCCUPY_LOCK  (BIT(0))
@@ -1045,7 +1067,7 @@ extern "C" {
 #define DPORT_PMS_OCCUPY_LOCK_V  0x1
 #define DPORT_PMS_OCCUPY_LOCK_S  0
 
-#define DPORT_PMS_OCCUPY_1_REG          (DR_REG_SENSITIVE_BASE + 0x0C0)
+#define DPORT_PMS_OCCUPY_1_REG          (DR_REG_SENSITIVE_BASE + 0x0C8)
 /* DPORT_PMS_OCCUPY_CACHE : R/W ;bitpos:[3:0] ;default: 4'b0000 ; */
 /*description: */
 #define DPORT_PMS_OCCUPY_CACHE  0x0000000F
@@ -1053,7 +1075,7 @@ extern "C" {
 #define DPORT_PMS_OCCUPY_CACHE_V  0xF
 #define DPORT_PMS_OCCUPY_CACHE_S  0
 
-#define DPORT_PMS_OCCUPY_2_REG          (DR_REG_SENSITIVE_BASE + 0x0C4)
+#define DPORT_PMS_OCCUPY_2_REG          (DR_REG_SENSITIVE_BASE + 0x0CC)
 /* DPORT_PMS_OCCUPY_MAC_DUMP : R/W ;bitpos:[3:0] ;default: 4'b0000 ; */
 /*description: */
 #define DPORT_PMS_OCCUPY_MAC_DUMP  0x0000000F
@@ -1061,7 +1083,7 @@ extern "C" {
 #define DPORT_PMS_OCCUPY_MAC_DUMP_V  0xF
 #define DPORT_PMS_OCCUPY_MAC_DUMP_S  0
 
-#define DPORT_PMS_OCCUPY_3_REG          (DR_REG_SENSITIVE_BASE + 0x0C8)
+#define DPORT_PMS_OCCUPY_3_REG          (DR_REG_SENSITIVE_BASE + 0x0D0)
 /* DPORT_PMS_OCCUPY_PRO_TRACE : R/W ;bitpos:[17:0] ;default: 18'b0 ; */
 /*description: */
 #define DPORT_PMS_OCCUPY_PRO_TRACE  0x0003FFFF
@@ -1069,7 +1091,7 @@ extern "C" {
 #define DPORT_PMS_OCCUPY_PRO_TRACE_V  0x3FFFF
 #define DPORT_PMS_OCCUPY_PRO_TRACE_S  0
 
-#define DPORT_CACHE_TAG_ACCESS_0_REG          (DR_REG_SENSITIVE_BASE + 0x0CC)
+#define DPORT_CACHE_TAG_ACCESS_0_REG          (DR_REG_SENSITIVE_BASE + 0x0D4)
 /* DPORT_CACHE_TAG_ACCESS_LOCK : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CACHE_TAG_ACCESS_LOCK  (BIT(0))
@@ -1077,7 +1099,7 @@ extern "C" {
 #define DPORT_CACHE_TAG_ACCESS_LOCK_V  0x1
 #define DPORT_CACHE_TAG_ACCESS_LOCK_S  0
 
-#define DPORT_CACHE_TAG_ACCESS_1_REG          (DR_REG_SENSITIVE_BASE + 0x0D0)
+#define DPORT_CACHE_TAG_ACCESS_1_REG          (DR_REG_SENSITIVE_BASE + 0x0D8)
 /* DPORT_PRO_D_TAG_WR_ACS : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_D_TAG_WR_ACS  (BIT(3))
@@ -1103,7 +1125,7 @@ extern "C" {
 #define DPORT_PRO_I_TAG_RD_ACS_V  0x1
 #define DPORT_PRO_I_TAG_RD_ACS_S  0
 
-#define SENSITIVE_CLOCK_GATE_REG          (DR_REG_SENSITIVE_BASE + 0x0D4)
+#define SENSITIVE_CLOCK_GATE_REG          (DR_REG_SENSITIVE_BASE + 0x0DC)
 /* SENSITIVE_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define SENSITIVE_CLK_EN  (BIT(0))
@@ -1112,7 +1134,7 @@ extern "C" {
 #define SENSITIVE_CLK_EN_S  0
 
 #define SENSITIVE_DATE_REG          (DR_REG_SENSITIVE_BASE + 0xFFC)
-/* SENSITIVE_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808030 ; */
+/* SENSITIVE_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808140 ; */
 /*description: */
 #define SENSITIVE_DATE  0x0FFFFFFF
 #define SENSITIVE_DATE_M  ((SENSITIVE_DATE_V)<<(SENSITIVE_DATE_S))

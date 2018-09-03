@@ -20,84 +20,84 @@ extern "C" {
 #endif
 #include "soc.h"
 #define RTC_GPIO_OUT_REG          (DR_REG_RTCIO_BASE + 0x0)
-/* RTC_GPIO_OUT_DATA : R/W ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 output data*/
-#define RTC_GPIO_OUT_DATA  0x001FFFFF
+/* RTC_GPIO_OUT_DATA : R/W ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 output data*/
+#define RTC_GPIO_OUT_DATA  0x003FFFFF
 #define RTC_GPIO_OUT_DATA_M  ((RTC_GPIO_OUT_DATA_V)<<(RTC_GPIO_OUT_DATA_S))
-#define RTC_GPIO_OUT_DATA_V  0x1FFFFF
-#define RTC_GPIO_OUT_DATA_S  11
+#define RTC_GPIO_OUT_DATA_V  0x3FFFFF
+#define RTC_GPIO_OUT_DATA_S  10
 
 #define RTC_GPIO_OUT_W1TS_REG          (DR_REG_RTCIO_BASE + 0x10)
-/* RTC_GPIO_OUT_DATA_W1TS : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 output data write 1 to set*/
-#define RTC_GPIO_OUT_DATA_W1TS  0x001FFFFF
+/* RTC_GPIO_OUT_DATA_W1TS : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 output data write 1 to set*/
+#define RTC_GPIO_OUT_DATA_W1TS  0x003FFFFF
 #define RTC_GPIO_OUT_DATA_W1TS_M  ((RTC_GPIO_OUT_DATA_W1TS_V)<<(RTC_GPIO_OUT_DATA_W1TS_S))
-#define RTC_GPIO_OUT_DATA_W1TS_V  0x1FFFFF
-#define RTC_GPIO_OUT_DATA_W1TS_S  11
+#define RTC_GPIO_OUT_DATA_W1TS_V  0x3FFFFF
+#define RTC_GPIO_OUT_DATA_W1TS_S  10
 
 #define RTC_GPIO_OUT_W1TC_REG          (DR_REG_RTCIO_BASE + 0x20)
-/* RTC_GPIO_OUT_DATA_W1TC : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 output data write 1 to clear*/
-#define RTC_GPIO_OUT_DATA_W1TC  0x001FFFFF
+/* RTC_GPIO_OUT_DATA_W1TC : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 output data write 1 to clear*/
+#define RTC_GPIO_OUT_DATA_W1TC  0x003FFFFF
 #define RTC_GPIO_OUT_DATA_W1TC_M  ((RTC_GPIO_OUT_DATA_W1TC_V)<<(RTC_GPIO_OUT_DATA_W1TC_S))
-#define RTC_GPIO_OUT_DATA_W1TC_V  0x1FFFFF
-#define RTC_GPIO_OUT_DATA_W1TC_S  11
+#define RTC_GPIO_OUT_DATA_W1TC_V  0x3FFFFF
+#define RTC_GPIO_OUT_DATA_W1TC_S  10
 
 #define RTC_GPIO_ENABLE_REG          (DR_REG_RTCIO_BASE + 0x30)
-/* RTC_GPIO_ENABLE : R/W ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 enable*/
-#define RTC_GPIO_ENABLE  0x001FFFFF
+/* RTC_GPIO_ENABLE : R/W ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 enable*/
+#define RTC_GPIO_ENABLE  0x003FFFFF
 #define RTC_GPIO_ENABLE_M  ((RTC_GPIO_ENABLE_V)<<(RTC_GPIO_ENABLE_S))
-#define RTC_GPIO_ENABLE_V  0x1FFFFF
-#define RTC_GPIO_ENABLE_S  11
+#define RTC_GPIO_ENABLE_V  0x3FFFFF
+#define RTC_GPIO_ENABLE_S  10
 
 #define RTC_GPIO_ENABLE_W1TS_REG          (DR_REG_RTCIO_BASE + 0x40)
-/* RTC_GPIO_ENABLE_W1TS : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 enable write 1 to set*/
-#define RTC_GPIO_ENABLE_W1TS  0x001FFFFF
+/* RTC_GPIO_ENABLE_W1TS : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 enable write 1 to set*/
+#define RTC_GPIO_ENABLE_W1TS  0x003FFFFF
 #define RTC_GPIO_ENABLE_W1TS_M  ((RTC_GPIO_ENABLE_W1TS_V)<<(RTC_GPIO_ENABLE_W1TS_S))
-#define RTC_GPIO_ENABLE_W1TS_V  0x1FFFFF
-#define RTC_GPIO_ENABLE_W1TS_S  11
+#define RTC_GPIO_ENABLE_W1TS_V  0x3FFFFF
+#define RTC_GPIO_ENABLE_W1TS_S  10
 
 #define RTC_GPIO_ENABLE_W1TC_REG          (DR_REG_RTCIO_BASE + 0x50)
-/* RTC_GPIO_ENABLE_W1TC : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 enable write 1 to clear*/
-#define RTC_GPIO_ENABLE_W1TC  0x001FFFFF
+/* RTC_GPIO_ENABLE_W1TC : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 enable write 1 to clear*/
+#define RTC_GPIO_ENABLE_W1TC  0x003FFFFF
 #define RTC_GPIO_ENABLE_W1TC_M  ((RTC_GPIO_ENABLE_W1TC_V)<<(RTC_GPIO_ENABLE_W1TC_S))
-#define RTC_GPIO_ENABLE_W1TC_V  0x1FFFFF
-#define RTC_GPIO_ENABLE_W1TC_S  11
+#define RTC_GPIO_ENABLE_W1TC_V  0x3FFFFF
+#define RTC_GPIO_ENABLE_W1TC_S  10
 
 #define RTC_GPIO_STATUS_REG          (DR_REG_RTCIO_BASE + 0x60)
-/* RTC_GPIO_STATUS_INT : R/W ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 interrupt status*/
-#define RTC_GPIO_STATUS_INT  0x001FFFFF
+/* RTC_GPIO_STATUS_INT : R/W ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 interrupt status*/
+#define RTC_GPIO_STATUS_INT  0x003FFFFF
 #define RTC_GPIO_STATUS_INT_M  ((RTC_GPIO_STATUS_INT_V)<<(RTC_GPIO_STATUS_INT_S))
-#define RTC_GPIO_STATUS_INT_V  0x1FFFFF
-#define RTC_GPIO_STATUS_INT_S  11
+#define RTC_GPIO_STATUS_INT_V  0x3FFFFF
+#define RTC_GPIO_STATUS_INT_S  10
 
 #define RTC_GPIO_STATUS_W1TS_REG          (DR_REG_RTCIO_BASE + 0x70)
-/* RTC_GPIO_STATUS_INT_W1TS : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 interrupt status write 1 to set*/
-#define RTC_GPIO_STATUS_INT_W1TS  0x001FFFFF
+/* RTC_GPIO_STATUS_INT_W1TS : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 interrupt status write 1 to set*/
+#define RTC_GPIO_STATUS_INT_W1TS  0x003FFFFF
 #define RTC_GPIO_STATUS_INT_W1TS_M  ((RTC_GPIO_STATUS_INT_W1TS_V)<<(RTC_GPIO_STATUS_INT_W1TS_S))
-#define RTC_GPIO_STATUS_INT_W1TS_V  0x1FFFFF
-#define RTC_GPIO_STATUS_INT_W1TS_S  11
+#define RTC_GPIO_STATUS_INT_W1TS_V  0x3FFFFF
+#define RTC_GPIO_STATUS_INT_W1TS_S  10
 
 #define RTC_GPIO_STATUS_W1TC_REG          (DR_REG_RTCIO_BASE + 0x80)
-/* RTC_GPIO_STATUS_INT_W1TC : WO ;bitpos:[31:11] ;default: 0 ; */
-/*description: RTC GPIO 0 ~ 20 interrupt status write 1 to clear*/
-#define RTC_GPIO_STATUS_INT_W1TC  0x001FFFFF
+/* RTC_GPIO_STATUS_INT_W1TC : WO ;bitpos:[31:10] ;default: 0 ; */
+/*description: RTC GPIO 0 ~ 21 interrupt status write 1 to clear*/
+#define RTC_GPIO_STATUS_INT_W1TC  0x003FFFFF
 #define RTC_GPIO_STATUS_INT_W1TC_M  ((RTC_GPIO_STATUS_INT_W1TC_V)<<(RTC_GPIO_STATUS_INT_W1TC_S))
-#define RTC_GPIO_STATUS_INT_W1TC_V  0x1FFFFF
-#define RTC_GPIO_STATUS_INT_W1TC_S  11
+#define RTC_GPIO_STATUS_INT_W1TC_V  0x3FFFFF
+#define RTC_GPIO_STATUS_INT_W1TC_S  10
 
 #define RTC_GPIO_IN_REG          (DR_REG_RTCIO_BASE + 0x90)
-/* RTC_GPIO_IN_NEXT : RO ;bitpos:[31:11] ;default:  ; */
+/* RTC_GPIO_IN_NEXT : RO ;bitpos:[31:10] ;default:  ; */
 /*description: RTC GPIO input data*/
-#define RTC_GPIO_IN_NEXT  0x001FFFFF
+#define RTC_GPIO_IN_NEXT  0x003FFFFF
 #define RTC_GPIO_IN_NEXT_M  ((RTC_GPIO_IN_NEXT_V)<<(RTC_GPIO_IN_NEXT_S))
-#define RTC_GPIO_IN_NEXT_V  0x1FFFFF
-#define RTC_GPIO_IN_NEXT_S  11
+#define RTC_GPIO_IN_NEXT_V  0x3FFFFF
+#define RTC_GPIO_IN_NEXT_S  10
 
 #define RTC_GPIO_PIN0_REG          (DR_REG_RTCIO_BASE + 0xa0)
 /* RTC_GPIO_PIN0_WAKEUP_ENABLE : R/W ;bitpos:[10] ;default: 0 ; */
@@ -540,7 +540,28 @@ extern "C" {
 #define RTC_GPIO_PIN20_PAD_DRIVER_V  0x1
 #define RTC_GPIO_PIN20_PAD_DRIVER_S  2
 
-#define RTC_IO_RTC_DEBUG_SEL_REG          (DR_REG_RTCIO_BASE + 0x1f0)
+#define RTC_GPIO_PIN21_REG          (DR_REG_RTCIO_BASE + 0x1f0)
+/* RTC_GPIO_PIN21_WAKEUP_ENABLE : R/W ;bitpos:[10] ;default: 0 ; */
+/*description: RTC GPIO wakeup enable bit*/
+#define RTC_GPIO_PIN21_WAKEUP_ENABLE  (BIT(10))
+#define RTC_GPIO_PIN21_WAKEUP_ENABLE_M  (BIT(10))
+#define RTC_GPIO_PIN21_WAKEUP_ENABLE_V  0x1
+#define RTC_GPIO_PIN21_WAKEUP_ENABLE_S  10
+/* RTC_GPIO_PIN21_INT_TYPE : R/W ;bitpos:[9:7] ;default: 0 ; */
+/*description: if set to 0: GPIO interrupt disable   if set to 1: rising edge
+ trigger   if set to 2: falling edge trigger  if set to 3: any edge trigger  if set to 4: low level trigger   if set to 5: high level trigger*/
+#define RTC_GPIO_PIN21_INT_TYPE  0x00000007
+#define RTC_GPIO_PIN21_INT_TYPE_M  ((RTC_GPIO_PIN21_INT_TYPE_V)<<(RTC_GPIO_PIN21_INT_TYPE_S))
+#define RTC_GPIO_PIN21_INT_TYPE_V  0x7
+#define RTC_GPIO_PIN21_INT_TYPE_S  7
+/* RTC_GPIO_PIN21_PAD_DRIVER : R/W ;bitpos:[2] ;default: 0 ; */
+/*description: if set to 0: normal output  if set to 1: open drain*/
+#define RTC_GPIO_PIN21_PAD_DRIVER  (BIT(2))
+#define RTC_GPIO_PIN21_PAD_DRIVER_M  (BIT(2))
+#define RTC_GPIO_PIN21_PAD_DRIVER_V  0x1
+#define RTC_GPIO_PIN21_PAD_DRIVER_S  2
+
+#define RTC_IO_RTC_DEBUG_SEL_REG          (DR_REG_RTCIO_BASE + 0x200)
 /* RTC_IO_DEBUG_12M_NO_GATING : R/W ;bitpos:[25] ;default: 1'd0 ; */
 /*description: */
 #define RTC_IO_DEBUG_12M_NO_GATING  (BIT(25))
@@ -578,7 +599,7 @@ extern "C" {
 #define RTC_IO_DEBUG_SEL0_V  0x1F
 #define RTC_IO_DEBUG_SEL0_S  0
 
-#define RTC_IO_TOUCH_PAD0_REG          (DR_REG_RTCIO_BASE + 0x200)
+#define RTC_IO_TOUCH_PAD0_REG          (DR_REG_RTCIO_BASE + 0x210)
 /* RTC_IO_TOUCH_PAD0_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD0_DRV  0x00000003
@@ -658,7 +679,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD0_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD0_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD1_REG          (DR_REG_RTCIO_BASE + 0x210)
+#define RTC_IO_TOUCH_PAD1_REG          (DR_REG_RTCIO_BASE + 0x220)
 /* RTC_IO_TOUCH_PAD1_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD1_DRV  0x00000003
@@ -738,7 +759,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD1_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD1_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD2_REG          (DR_REG_RTCIO_BASE + 0x220)
+#define RTC_IO_TOUCH_PAD2_REG          (DR_REG_RTCIO_BASE + 0x230)
 /* RTC_IO_TOUCH_PAD2_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD2_DRV  0x00000003
@@ -818,7 +839,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD2_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD2_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD3_REG          (DR_REG_RTCIO_BASE + 0x230)
+#define RTC_IO_TOUCH_PAD3_REG          (DR_REG_RTCIO_BASE + 0x240)
 /* RTC_IO_TOUCH_PAD3_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD3_DRV  0x00000003
@@ -898,7 +919,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD3_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD3_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD4_REG          (DR_REG_RTCIO_BASE + 0x240)
+#define RTC_IO_TOUCH_PAD4_REG          (DR_REG_RTCIO_BASE + 0x250)
 /* RTC_IO_TOUCH_PAD4_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD4_DRV  0x00000003
@@ -978,7 +999,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD4_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD4_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD5_REG          (DR_REG_RTCIO_BASE + 0x250)
+#define RTC_IO_TOUCH_PAD5_REG          (DR_REG_RTCIO_BASE + 0x260)
 /* RTC_IO_TOUCH_PAD5_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD5_DRV  0x00000003
@@ -1058,7 +1079,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD5_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD5_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD6_REG          (DR_REG_RTCIO_BASE + 0x260)
+#define RTC_IO_TOUCH_PAD6_REG          (DR_REG_RTCIO_BASE + 0x270)
 /* RTC_IO_TOUCH_PAD6_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD6_DRV  0x00000003
@@ -1138,7 +1159,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD6_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD6_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD7_REG          (DR_REG_RTCIO_BASE + 0x270)
+#define RTC_IO_TOUCH_PAD7_REG          (DR_REG_RTCIO_BASE + 0x280)
 /* RTC_IO_TOUCH_PAD7_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD7_DRV  0x00000003
@@ -1218,7 +1239,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD7_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD7_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD8_REG          (DR_REG_RTCIO_BASE + 0x280)
+#define RTC_IO_TOUCH_PAD8_REG          (DR_REG_RTCIO_BASE + 0x290)
 /* RTC_IO_TOUCH_PAD8_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD8_DRV  0x00000003
@@ -1298,7 +1319,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD8_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD8_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD9_REG          (DR_REG_RTCIO_BASE + 0x290)
+#define RTC_IO_TOUCH_PAD9_REG          (DR_REG_RTCIO_BASE + 0x2a0)
 /* RTC_IO_TOUCH_PAD9_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD9_DRV  0x00000003
@@ -1378,7 +1399,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD9_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD9_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD10_REG          (DR_REG_RTCIO_BASE + 0x2a0)
+#define RTC_IO_TOUCH_PAD10_REG          (DR_REG_RTCIO_BASE + 0x2b0)
 /* RTC_IO_TOUCH_PAD10_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD10_DRV  0x00000003
@@ -1458,7 +1479,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD10_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD10_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD11_REG          (DR_REG_RTCIO_BASE + 0x2b0)
+#define RTC_IO_TOUCH_PAD11_REG          (DR_REG_RTCIO_BASE + 0x2c0)
 /* RTC_IO_TOUCH_PAD11_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD11_DRV  0x00000003
@@ -1538,7 +1559,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD11_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD11_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD12_REG          (DR_REG_RTCIO_BASE + 0x2c0)
+#define RTC_IO_TOUCH_PAD12_REG          (DR_REG_RTCIO_BASE + 0x2d0)
 /* RTC_IO_TOUCH_PAD12_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD12_DRV  0x00000003
@@ -1618,7 +1639,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD12_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD12_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD13_REG          (DR_REG_RTCIO_BASE + 0x2d0)
+#define RTC_IO_TOUCH_PAD13_REG          (DR_REG_RTCIO_BASE + 0x2e0)
 /* RTC_IO_TOUCH_PAD13_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD13_DRV  0x00000003
@@ -1698,7 +1719,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD13_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD13_FUN_IE_S  13
 
-#define RTC_IO_TOUCH_PAD14_REG          (DR_REG_RTCIO_BASE + 0x2e0)
+#define RTC_IO_TOUCH_PAD14_REG          (DR_REG_RTCIO_BASE + 0x2f0)
 /* RTC_IO_TOUCH_PAD14_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_TOUCH_PAD14_DRV  0x00000003
@@ -1778,7 +1799,7 @@ extern "C" {
 #define RTC_IO_TOUCH_PAD14_FUN_IE_V  0x1
 #define RTC_IO_TOUCH_PAD14_FUN_IE_S  13
 
-#define RTC_IO_XTAL_32P_PAD_REG          (DR_REG_RTCIO_BASE + 0x2f0)
+#define RTC_IO_XTAL_32P_PAD_REG          (DR_REG_RTCIO_BASE + 0x300)
 /* RTC_IO_X32P_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_X32P_DRV  0x00000003
@@ -1834,7 +1855,7 @@ extern "C" {
 #define RTC_IO_X32P_FUN_IE_V  0x1
 #define RTC_IO_X32P_FUN_IE_S  13
 
-#define RTC_IO_XTAL_32N_PAD_REG          (DR_REG_RTCIO_BASE + 0x300)
+#define RTC_IO_XTAL_32N_PAD_REG          (DR_REG_RTCIO_BASE + 0x310)
 /* RTC_IO_X32N_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_X32N_DRV  0x00000003
@@ -1890,7 +1911,7 @@ extern "C" {
 #define RTC_IO_X32N_FUN_IE_V  0x1
 #define RTC_IO_X32N_FUN_IE_S  13
 
-#define RTC_IO_PAD_DAC1_REG          (DR_REG_RTCIO_BASE + 0x310)
+#define RTC_IO_PAD_DAC1_REG          (DR_REG_RTCIO_BASE + 0x320)
 /* RTC_IO_PDAC1_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: PDAC1_DRV*/
 #define RTC_IO_PDAC1_DRV  0x00000003
@@ -1965,7 +1986,7 @@ extern "C" {
 #define RTC_IO_PDAC1_DAC_V  0xFF
 #define RTC_IO_PDAC1_DAC_S  3
 
-#define RTC_IO_PAD_DAC2_REG          (DR_REG_RTCIO_BASE + 0x320)
+#define RTC_IO_PAD_DAC2_REG          (DR_REG_RTCIO_BASE + 0x330)
 /* RTC_IO_PDAC2_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: PDAC2_DRV*/
 #define RTC_IO_PDAC2_DRV  0x00000003
@@ -2040,7 +2061,7 @@ extern "C" {
 #define RTC_IO_PDAC2_DAC_V  0xFF
 #define RTC_IO_PDAC2_DAC_S  3
 
-#define RTC_IO_RTC_PAD19_REG          (DR_REG_RTCIO_BASE + 0x330)
+#define RTC_IO_RTC_PAD19_REG          (DR_REG_RTCIO_BASE + 0x340)
 /* RTC_IO_PAD19_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_PAD19_DRV  0x00000003
@@ -2096,7 +2117,7 @@ extern "C" {
 #define RTC_IO_PAD19_FUN_IE_V  0x1
 #define RTC_IO_PAD19_FUN_IE_S  13
 
-#define RTC_IO_RTC_PAD20_REG          (DR_REG_RTCIO_BASE + 0x340)
+#define RTC_IO_RTC_PAD20_REG          (DR_REG_RTCIO_BASE + 0x350)
 /* RTC_IO_PAD20_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
 /*description: DRV*/
 #define RTC_IO_PAD20_DRV  0x00000003
@@ -2152,7 +2173,63 @@ extern "C" {
 #define RTC_IO_PAD20_FUN_IE_V  0x1
 #define RTC_IO_PAD20_FUN_IE_S  13
 
-#define RTC_IO_EXT_WAKEUP0_REG          (DR_REG_RTCIO_BASE + 0x350)
+#define RTC_IO_RTC_PAD21_REG          (DR_REG_RTCIO_BASE + 0x360)
+/* RTC_IO_PAD21_DRV : R/W ;bitpos:[30:29] ;default: 2'd2 ; */
+/*description: DRV*/
+#define RTC_IO_PAD21_DRV  0x00000003
+#define RTC_IO_PAD21_DRV_M  ((RTC_IO_PAD21_DRV_V)<<(RTC_IO_PAD21_DRV_S))
+#define RTC_IO_PAD21_DRV_V  0x3
+#define RTC_IO_PAD21_DRV_S  29
+/* RTC_IO_PAD21_RDE : R/W ;bitpos:[28] ;default: 1'd1 ; */
+/*description: RDE*/
+#define RTC_IO_PAD21_RDE  (BIT(28))
+#define RTC_IO_PAD21_RDE_M  (BIT(28))
+#define RTC_IO_PAD21_RDE_V  0x1
+#define RTC_IO_PAD21_RDE_S  28
+/* RTC_IO_PAD21_RUE : R/W ;bitpos:[27] ;default: 1'd0 ; */
+/*description: RUE*/
+#define RTC_IO_PAD21_RUE  (BIT(27))
+#define RTC_IO_PAD21_RUE_M  (BIT(27))
+#define RTC_IO_PAD21_RUE_V  0x1
+#define RTC_IO_PAD21_RUE_S  27
+/* RTC_IO_PAD21_MUX_SEL : R/W ;bitpos:[19] ;default: 1'd0 ; */
+/*description: 1: use RTC GPIO 0: use digital GPIO*/
+#define RTC_IO_PAD21_MUX_SEL  (BIT(19))
+#define RTC_IO_PAD21_MUX_SEL_M  (BIT(19))
+#define RTC_IO_PAD21_MUX_SEL_V  0x1
+#define RTC_IO_PAD21_MUX_SEL_S  19
+/* RTC_IO_PAD21_FUN_SEL : R/W ;bitpos:[18:17] ;default: 2'd0 ; */
+/*description: function sel*/
+#define RTC_IO_PAD21_FUN_SEL  0x00000003
+#define RTC_IO_PAD21_FUN_SEL_M  ((RTC_IO_PAD21_FUN_SEL_V)<<(RTC_IO_PAD21_FUN_SEL_S))
+#define RTC_IO_PAD21_FUN_SEL_V  0x3
+#define RTC_IO_PAD21_FUN_SEL_S  17
+/* RTC_IO_PAD21_SLP_SEL : R/W ;bitpos:[16] ;default: 1'd0 ; */
+/*description: 1: enable sleep mode during sleep 0: no sleep mode*/
+#define RTC_IO_PAD21_SLP_SEL  (BIT(16))
+#define RTC_IO_PAD21_SLP_SEL_M  (BIT(16))
+#define RTC_IO_PAD21_SLP_SEL_V  0x1
+#define RTC_IO_PAD21_SLP_SEL_S  16
+/* RTC_IO_PAD21_SLP_IE : R/W ;bitpos:[15] ;default: 1'd0 ; */
+/*description: input enable in sleep mode*/
+#define RTC_IO_PAD21_SLP_IE  (BIT(15))
+#define RTC_IO_PAD21_SLP_IE_M  (BIT(15))
+#define RTC_IO_PAD21_SLP_IE_V  0x1
+#define RTC_IO_PAD21_SLP_IE_S  15
+/* RTC_IO_PAD21_SLP_OE : R/W ;bitpos:[14] ;default: 1'd0 ; */
+/*description: output enable in sleep mode*/
+#define RTC_IO_PAD21_SLP_OE  (BIT(14))
+#define RTC_IO_PAD21_SLP_OE_M  (BIT(14))
+#define RTC_IO_PAD21_SLP_OE_V  0x1
+#define RTC_IO_PAD21_SLP_OE_S  14
+/* RTC_IO_PAD21_FUN_IE : R/W ;bitpos:[13] ;default: 1'd0 ; */
+/*description: input enable in work mode*/
+#define RTC_IO_PAD21_FUN_IE  (BIT(13))
+#define RTC_IO_PAD21_FUN_IE_M  (BIT(13))
+#define RTC_IO_PAD21_FUN_IE_V  0x1
+#define RTC_IO_PAD21_FUN_IE_S  13
+
+#define RTC_IO_EXT_WAKEUP0_REG          (DR_REG_RTCIO_BASE + 0x370)
 /* RTC_IO_EXT_WAKEUP0_SEL : R/W ;bitpos:[31:27] ;default: 5'd0 ; */
 /*description: */
 #define RTC_IO_EXT_WAKEUP0_SEL  0x0000001F
@@ -2160,7 +2237,7 @@ extern "C" {
 #define RTC_IO_EXT_WAKEUP0_SEL_V  0x1F
 #define RTC_IO_EXT_WAKEUP0_SEL_S  27
 
-#define RTC_IO_XTL_EXT_CTR_REG          (DR_REG_RTCIO_BASE + 0x360)
+#define RTC_IO_XTL_EXT_CTR_REG          (DR_REG_RTCIO_BASE + 0x380)
 /* RTC_IO_XTL_EXT_CTR_SEL : R/W ;bitpos:[31:27] ;default: 5'd0 ; */
 /*description: select RTC GPIO 0 ~ 17 to control XTAL*/
 #define RTC_IO_XTL_EXT_CTR_SEL  0x0000001F
@@ -2168,7 +2245,7 @@ extern "C" {
 #define RTC_IO_XTL_EXT_CTR_SEL_V  0x1F
 #define RTC_IO_XTL_EXT_CTR_SEL_S  27
 
-#define RTC_IO_SAR_I2C_IO_REG          (DR_REG_RTCIO_BASE + 0x370)
+#define RTC_IO_SAR_I2C_IO_REG          (DR_REG_RTCIO_BASE + 0x390)
 /* RTC_IO_SAR_I2C_SDA_SEL : R/W ;bitpos:[31:30] ;default: 2'd0 ; */
 /*description: */
 #define RTC_IO_SAR_I2C_SDA_SEL  0x00000003
@@ -2188,8 +2265,8 @@ extern "C" {
 #define RTC_IO_SAR_DEBUG_BIT_SEL_V  0x1F
 #define RTC_IO_SAR_DEBUG_BIT_SEL_S  23
 
-#define RTC_IO_DATE_REG          (DR_REG_RTCIO_BASE + 0x4f0)
-/* RTC_IO_IO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1804270 ; */
+#define RTC_IO_DATE_REG          (DR_REG_RTCIO_BASE + 0x7f0)
+/* RTC_IO_IO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808030 ; */
 /*description: */
 #define RTC_IO_IO_DATE  0x0FFFFFFF
 #define RTC_IO_IO_DATE_M  ((RTC_IO_IO_DATE_V)<<(RTC_IO_IO_DATE_S))

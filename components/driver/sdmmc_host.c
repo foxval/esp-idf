@@ -28,6 +28,7 @@
 #include "sdmmc_private.h"
 #include "freertos/semphr.h"
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #define SDMMC_EVENT_QUEUE_LENGTH 32
 
 typedef struct {
@@ -657,4 +658,4 @@ static void sdmmc_isr(void* arg) {
         portYIELD_FROM_ISR();
     }
 }
-
+#endif

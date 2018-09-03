@@ -22,21 +22,8 @@ typedef volatile struct {
     uint32_t reserved_4;
     uint32_t reserved_8;
     uint32_t reserved_c;
-    union {
-        struct {
-            uint32_t reserved0:    24;
-            uint32_t func2_int:     1;
-            uint32_t reserved25:    7;
-        };
-        uint32_t val;
-    } func2_0;
-    union {
-        struct {
-            uint32_t func2_int_en:     1;
-            uint32_t reserved1:       31;
-        };
-        uint32_t val;
-    } func2_1;
+    uint32_t reserved_10;
+    uint32_t reserved_14;
     uint32_t reserved_18;
     uint32_t reserved_1c;
     union {
@@ -50,7 +37,7 @@ typedef volatile struct {
     uint32_t reserved_28;
     uint32_t reserved_2c;
     uint32_t reserved_30;
-    uint32_t gpio_status0;                                  /**/
+    uint32_t gpio_status0;                             /**/
     union {
         struct {
             uint32_t sdio_int1:     22;
@@ -58,7 +45,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } gpio_status1;
-    uint32_t gpio_in0;                                      /**/
+    uint32_t gpio_in0;                                 /**/
     union {
         struct {
             uint32_t sdio_in1:     22;
@@ -76,8 +63,8 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_token_rdata;
-    uint32_t slc0_pf;                                          /**/
-    uint32_t slc1_pf;                                          /**/
+    uint32_t slc0_pf;                                     /**/
+    uint32_t reserved_4c;
     union {
         struct {
             uint32_t tohost_bit0:                1;
@@ -110,38 +97,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_int_raw;
-    union {
-        struct {
-            uint32_t tohost_bit0:                     1;
-            uint32_t tohost_bit1:                     1;
-            uint32_t tohost_bit2:                     1;
-            uint32_t tohost_bit3:                     1;
-            uint32_t tohost_bit4:                     1;
-            uint32_t tohost_bit5:                     1;
-            uint32_t tohost_bit6:                     1;
-            uint32_t tohost_bit7:                     1;
-            uint32_t token0_1to0:                     1;
-            uint32_t token1_1to0:                     1;
-            uint32_t token0_0to1:                     1;
-            uint32_t token1_0to1:                     1;
-            uint32_t rx_sof:                          1;
-            uint32_t rx_eof:                          1;
-            uint32_t rx_start:                        1;
-            uint32_t tx_start:                        1;
-            uint32_t rx_udf:                          1;
-            uint32_t tx_ovf:                          1;
-            uint32_t rx_pf_valid:                     1;
-            uint32_t ext_bit0:                        1;
-            uint32_t ext_bit1:                        1;
-            uint32_t ext_bit2:                        1;
-            uint32_t ext_bit3:                        1;
-            uint32_t wifi_rx_new_packet:              1;
-            uint32_t rd_retry:                        1;
-            uint32_t bt_rx_new_packet:                1;
-            uint32_t reserved26:                      6;
-        };
-        uint32_t val;
-    } slc1_int_raw;
+    uint32_t reserved_54;
     union {
         struct {
             uint32_t tohost_bit0:               1;
@@ -174,38 +130,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_int_st;
-    union {
-        struct {
-            uint32_t tohost_bit0:                    1;
-            uint32_t tohost_bit1:                    1;
-            uint32_t tohost_bit2:                    1;
-            uint32_t tohost_bit3:                    1;
-            uint32_t tohost_bit4:                    1;
-            uint32_t tohost_bit5:                    1;
-            uint32_t tohost_bit6:                    1;
-            uint32_t tohost_bit7:                    1;
-            uint32_t token0_1to0:                    1;
-            uint32_t token1_1to0:                    1;
-            uint32_t token0_0to1:                    1;
-            uint32_t token1_0to1:                    1;
-            uint32_t rx_sof:                         1;
-            uint32_t rx_eof:                         1;
-            uint32_t rx_start:                       1;
-            uint32_t tx_start:                       1;
-            uint32_t rx_udf:                         1;
-            uint32_t tx_ovf:                         1;
-            uint32_t rx_pf_valid:                    1;
-            uint32_t ext_bit0:                       1;
-            uint32_t ext_bit1:                       1;
-            uint32_t ext_bit2:                       1;
-            uint32_t ext_bit3:                       1;
-            uint32_t wifi_rx_new_packet:             1;
-            uint32_t rd_retry:                       1;
-            uint32_t bt_rx_new_packet:               1;
-            uint32_t reserved26:                     6;
-        };
-        uint32_t val;
-    } slc1_int_st;
+    uint32_t reserved_5c;
     union {
         struct {
             uint32_t reg_slc0_len:      20;
@@ -269,10 +194,10 @@ typedef volatile struct {
     } conf_w3;
     union {
         struct {
-            uint32_t conf16:         8;                        /*SLC timeout value*/
-            uint32_t conf17:         8;                        /*SLC timeout enable*/
+            uint32_t conf16:         8;                   /*SLC timeout value*/
+            uint32_t conf17:         8;                   /*SLC timeout enable*/
             uint32_t conf18:         8;
-            uint32_t conf19:         8;                        /*Interrupt to target CPU*/
+            uint32_t conf19:         8;                   /*Interrupt to target CPU*/
         };
         uint32_t val;
     } conf_w4;
@@ -285,7 +210,13 @@ typedef volatile struct {
         };
         uint32_t val;
     } conf_w5;
-    uint32_t win_cmd;                                       /**/
+    union {
+        struct {
+            uint32_t win_cmd:        16;
+            uint32_t reserved16:     16;
+        };
+        uint32_t val;
+    } win_cmd;
     union {
         struct {
             uint32_t conf24:         8;
@@ -306,22 +237,22 @@ typedef volatile struct {
     } conf_w7;
     union {
         struct {
-            uint32_t reg_slc0_len0:20;
-            uint32_t reserved20:   12;
+            uint32_t reg_slc0_len0:      20;
+            uint32_t reg_slc0_len0_check:12;
         };
         uint32_t val;
     } pkt_len0;
     union {
         struct {
-            uint32_t reg_slc0_len1:20;
-            uint32_t reserved20:   12;
+            uint32_t reg_slc0_len1:      20;
+            uint32_t reg_slc0_len1_check:12;
         };
         uint32_t val;
     } pkt_len1;
     union {
         struct {
-            uint32_t reg_slc0_len2:20;
-            uint32_t reserved20:   12;
+            uint32_t reg_slc0_len2:      20;
+            uint32_t reg_slc0_len2_check:12;
         };
         uint32_t val;
     } pkt_len2;
@@ -397,18 +328,9 @@ typedef volatile struct {
         };
         uint32_t val;
     } conf_w15;
-    uint32_t check_sum0;                                    /**/
-    uint32_t check_sum1;                                    /**/
-    union {
-        struct {
-            uint32_t token0:          12;
-            uint32_t rx_pf_valid:      1;
-            uint32_t reserved13:       3;
-            uint32_t reg_token1:      12;
-            uint32_t rx_pf_eof:        4;
-        };
-        uint32_t val;
-    } slc1_token_rdata;
+    uint32_t check_sum0;                               /**/
+    uint32_t check_sum1;                               /**/
+    uint32_t reserved_c4;
     union {
         struct {
             uint32_t token0_wd:         12;
@@ -418,25 +340,14 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_token_wdata;
-    union {
-        struct {
-            uint32_t token0_wd:         12;
-            uint32_t reserved12:         4;
-            uint32_t token1_wd:         12;
-            uint32_t reserved28:         4;
-        };
-        uint32_t val;
-    } slc1_token_wdata;
+    uint32_t reserved_cc;
     union {
         struct {
             uint32_t slc0_token0_dec:     1;
             uint32_t slc0_token1_dec:     1;
             uint32_t slc0_token0_wr:      1;
             uint32_t slc0_token1_wr:      1;
-            uint32_t slc1_token0_dec:     1;
-            uint32_t slc1_token1_dec:     1;
-            uint32_t slc1_token0_wr:      1;
-            uint32_t slc1_token1_wr:      1;
+            uint32_t reserved4:           4;
             uint32_t slc0_len_wr:         1;
             uint32_t reserved9:          23;
         };
@@ -474,38 +385,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_int_clr;
-    union {
-        struct {
-            uint32_t tohost_bit0:                     1;
-            uint32_t tohost_bit1:                     1;
-            uint32_t tohost_bit2:                     1;
-            uint32_t tohost_bit3:                     1;
-            uint32_t tohost_bit4:                     1;
-            uint32_t tohost_bit5:                     1;
-            uint32_t tohost_bit6:                     1;
-            uint32_t tohost_bit7:                     1;
-            uint32_t token0_1to0:                     1;
-            uint32_t token1_1to0:                     1;
-            uint32_t token0_0to1:                     1;
-            uint32_t token1_0to1:                     1;
-            uint32_t rx_sof:                          1;
-            uint32_t rx_eof:                          1;
-            uint32_t rx_start:                        1;
-            uint32_t tx_start:                        1;
-            uint32_t rx_udf:                          1;
-            uint32_t tx_ovf:                          1;
-            uint32_t rx_pf_valid:                     1;
-            uint32_t ext_bit0:                        1;
-            uint32_t ext_bit1:                        1;
-            uint32_t ext_bit2:                        1;
-            uint32_t ext_bit3:                        1;
-            uint32_t wifi_rx_new_packet:              1;
-            uint32_t rd_retry:                        1;
-            uint32_t bt_rx_new_packet:                1;
-            uint32_t reserved26:                      6;
-        };
-        uint32_t val;
-    } slc1_int_clr;
+    uint32_t reserved_d8;
     union {
         struct {
             uint32_t tohost_bit0:                    1;
@@ -538,102 +418,9 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_func1_int_ena;
-    union {
-        struct {
-            uint32_t tohost_bit0:                         1;
-            uint32_t tohost_bit1:                         1;
-            uint32_t tohost_bit2:                         1;
-            uint32_t tohost_bit3:                         1;
-            uint32_t tohost_bit4:                         1;
-            uint32_t tohost_bit5:                         1;
-            uint32_t tohost_bit6:                         1;
-            uint32_t tohost_bit7:                         1;
-            uint32_t token0_1to0:                         1;
-            uint32_t token1_1to0:                         1;
-            uint32_t token0_0to1:                         1;
-            uint32_t token1_0to1:                         1;
-            uint32_t rx_sof:                              1;
-            uint32_t rx_eof:                              1;
-            uint32_t rx_start:                            1;
-            uint32_t tx_start:                            1;
-            uint32_t rx_udf:                              1;
-            uint32_t tx_ovf:                              1;
-            uint32_t rx_pf_valid:                         1;
-            uint32_t ext_bit0:                            1;
-            uint32_t ext_bit1:                            1;
-            uint32_t ext_bit2:                            1;
-            uint32_t ext_bit3:                            1;
-            uint32_t wifi_rx_new_packet:                  1;
-            uint32_t rd_retry:                            1;
-            uint32_t bt_rx_new_packet:                    1;
-            uint32_t reserved26:                          6;
-        };
-        uint32_t val;
-    } slc1_func1_int_ena;
-    union {
-        struct {
-            uint32_t tohost_bit0:                    1;
-            uint32_t tohost_bit1:                    1;
-            uint32_t tohost_bit2:                    1;
-            uint32_t tohost_bit3:                    1;
-            uint32_t tohost_bit4:                    1;
-            uint32_t tohost_bit5:                    1;
-            uint32_t tohost_bit6:                    1;
-            uint32_t tohost_bit7:                    1;
-            uint32_t token0_1to0:                    1;
-            uint32_t token1_1to0:                    1;
-            uint32_t token0_0to1:                    1;
-            uint32_t token1_0to1:                    1;
-            uint32_t rx_sof:                         1;
-            uint32_t rx_eof:                         1;
-            uint32_t rx_start:                       1;
-            uint32_t tx_start:                       1;
-            uint32_t rx_udf:                         1;
-            uint32_t tx_ovf:                         1;
-            uint32_t rx_pf_valid:                    1;
-            uint32_t ext_bit0:                       1;
-            uint32_t ext_bit1:                       1;
-            uint32_t ext_bit2:                       1;
-            uint32_t ext_bit3:                       1;
-            uint32_t rx_new_packet:                  1;
-            uint32_t rd_retry:                       1;
-            uint32_t gpio_sdio:                      1;
-            uint32_t reserved26:                     6;
-        };
-        uint32_t val;
-    } slc0_func2_int_ena;
-    union {
-        struct {
-            uint32_t tohost_bit0:                         1;
-            uint32_t tohost_bit1:                         1;
-            uint32_t tohost_bit2:                         1;
-            uint32_t tohost_bit3:                         1;
-            uint32_t tohost_bit4:                         1;
-            uint32_t tohost_bit5:                         1;
-            uint32_t tohost_bit6:                         1;
-            uint32_t tohost_bit7:                         1;
-            uint32_t token0_1to0:                         1;
-            uint32_t token1_1to0:                         1;
-            uint32_t token0_0to1:                         1;
-            uint32_t token1_0to1:                         1;
-            uint32_t rx_sof:                              1;
-            uint32_t rx_eof:                              1;
-            uint32_t rx_start:                            1;
-            uint32_t tx_start:                            1;
-            uint32_t rx_udf:                              1;
-            uint32_t tx_ovf:                              1;
-            uint32_t rx_pf_valid:                         1;
-            uint32_t ext_bit0:                            1;
-            uint32_t ext_bit1:                            1;
-            uint32_t ext_bit2:                            1;
-            uint32_t ext_bit3:                            1;
-            uint32_t wifi_rx_new_packet:                  1;
-            uint32_t rd_retry:                            1;
-            uint32_t bt_rx_new_packet:                    1;
-            uint32_t reserved26:                          6;
-        };
-        uint32_t val;
-    } slc1_func2_int_ena;
+    uint32_t reserved_e0;
+    uint32_t reserved_e4;
+    uint32_t reserved_e8;
     union {
         struct {
             uint32_t tohost_bit0:                1;
@@ -666,38 +453,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_int_ena;
-    union {
-        struct {
-            uint32_t tohost_bit0:                     1;
-            uint32_t tohost_bit1:                     1;
-            uint32_t tohost_bit2:                     1;
-            uint32_t tohost_bit3:                     1;
-            uint32_t tohost_bit4:                     1;
-            uint32_t tohost_bit5:                     1;
-            uint32_t tohost_bit6:                     1;
-            uint32_t tohost_bit7:                     1;
-            uint32_t token0_1to0:                     1;
-            uint32_t token1_1to0:                     1;
-            uint32_t token0_0to1:                     1;
-            uint32_t token1_0to1:                     1;
-            uint32_t rx_sof:                          1;
-            uint32_t rx_eof:                          1;
-            uint32_t rx_start:                        1;
-            uint32_t tx_start:                        1;
-            uint32_t rx_udf:                          1;
-            uint32_t tx_ovf:                          1;
-            uint32_t rx_pf_valid:                     1;
-            uint32_t ext_bit0:                        1;
-            uint32_t ext_bit1:                        1;
-            uint32_t ext_bit2:                        1;
-            uint32_t ext_bit3:                        1;
-            uint32_t wifi_rx_new_packet:              1;
-            uint32_t rd_retry:                        1;
-            uint32_t bt_rx_new_packet:                1;
-            uint32_t reserved26:                      6;
-        };
-        uint32_t val;
-    } slc1_int_ena;
+    uint32_t reserved_f0;
     union {
         struct {
             uint32_t infor:            20;
@@ -705,15 +461,9 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_rx_infor;
-    union {
-        struct {
-            uint32_t infor:            20;
-            uint32_t reserved20:       12;
-        };
-        uint32_t val;
-    } slc1_rx_infor;
-    uint32_t slc0_len_wd;                                       /**/
-    uint32_t apbwin_wdata;                                 /**/
+    uint32_t reserved_f8;
+    uint32_t slc0_len_wd;                                  /**/
+    uint32_t apbwin_wdata;                            /**/
     union {
         struct {
             uint32_t addr:            28;
@@ -724,7 +474,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } apbwin_conf;
-    uint32_t apbwin_rdata;                                 /**/
+    uint32_t apbwin_rdata;                            /**/
     union {
         struct {
             uint32_t bit7_clraddr:              9;
@@ -733,14 +483,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_rdclr;
-    union {
-        struct {
-            uint32_t bit7_clraddr:              9;
-            uint32_t bit6_clraddr:              9;
-            uint32_t reserved18:               14;
-        };
-        uint32_t val;
-    } slc1_rdclr;
+    uint32_t reserved_110;
     union {
         struct {
             uint32_t tohost_bit01:                1;
@@ -773,38 +516,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } slc0_int_ena1;
-    union {
-        struct {
-            uint32_t tohost_bit01:                     1;
-            uint32_t tohost_bit11:                     1;
-            uint32_t tohost_bit21:                     1;
-            uint32_t tohost_bit31:                     1;
-            uint32_t tohost_bit41:                     1;
-            uint32_t tohost_bit51:                     1;
-            uint32_t tohost_bit61:                     1;
-            uint32_t tohost_bit71:                     1;
-            uint32_t token0_1to01:                     1;
-            uint32_t token1_1to01:                     1;
-            uint32_t token0_0to11:                     1;
-            uint32_t token1_0to11:                     1;
-            uint32_t rx_sof1:                          1;
-            uint32_t rx_eof1:                          1;
-            uint32_t rx_start1:                        1;
-            uint32_t tx_start1:                        1;
-            uint32_t rx_udf1:                          1;
-            uint32_t tx_ovf1:                          1;
-            uint32_t rx_pf_valid1:                     1;
-            uint32_t ext_bit01:                        1;
-            uint32_t ext_bit11:                        1;
-            uint32_t ext_bit21:                        1;
-            uint32_t ext_bit31:                        1;
-            uint32_t wifi_rx_new_packet1:              1;
-            uint32_t rd_retry1:                        1;
-            uint32_t bt_rx_new_packet1:                1;
-            uint32_t reserved26:                       6;
-        };
-        uint32_t val;
-    } slc1_int_ena1;
+    uint32_t reserved_118;
     uint32_t reserved_11c;
     uint32_t reserved_120;
     uint32_t reserved_124;
@@ -828,8 +540,8 @@ typedef volatile struct {
     uint32_t reserved_16c;
     uint32_t reserved_170;
     uint32_t reserved_174;
-    uint32_t date;                                      /**/
-    uint32_t id;                                        /**/
+    uint32_t date;                                 /**/
+    uint32_t id;                                   /**/
     uint32_t reserved_180;
     uint32_t reserved_184;
     uint32_t reserved_188;

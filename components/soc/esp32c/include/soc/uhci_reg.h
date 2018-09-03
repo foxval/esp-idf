@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 #include "soc.h"
-#define REG_UHCI_BASE(i)         (DR_REG_UHCI0_BASE - (i) * 0x8000)
+#define REG_UHCI_BASE(i)         (DR_REG_UHCI0_BASE)
 #define UHCI_CONF0_REG(i)          (REG_UHCI_BASE(i) + 0x0)
 /* UHCI_UART_RX_BRK_EOF_EN : R/W ;bitpos:[23] ;default: 1'b0 ; */
 /*description: */

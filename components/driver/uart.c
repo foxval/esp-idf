@@ -555,12 +555,14 @@ esp_err_t uart_set_pin(uart_port_t uart_num, int tx_io_num, int rx_io_num, int r
             rts_sig = U1RTS_OUT_IDX;
             cts_sig = U1CTS_IN_IDX;
             break;
+#ifdef CONFIG_CHIP_IS_ESP32
         case UART_NUM_2:
             tx_sig = U2TXD_OUT_IDX;
             rx_sig = U2RXD_IN_IDX;
             rts_sig = U2RTS_OUT_IDX;
             cts_sig = U2CTS_IN_IDX;
             break;
+#endif
         case UART_NUM_MAX:
             default:
             tx_sig = U0TXD_OUT_IDX;

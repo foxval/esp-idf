@@ -102,11 +102,11 @@ typedef volatile struct {
     union {
         struct {
             uint32_t reserved0:             2;
-            uint32_t adc_arb_apb_force:     1;          /*adc2 arbiter force to enable apb controller*/
+            uint32_t adc_arb_apb_force:     1;          /*adc2 arbiter force to enableapb controller*/
             uint32_t adc_arb_rtc_force:     1;          /*adc2 arbiter force to enable rtc controller*/
             uint32_t adc_arb_wifi_force:    1;          /*adc2 arbiter force to enable wifi controller*/
             uint32_t adc_arb_grant_force:   1;          /*adc2 arbiter force grant*/
-            uint32_t adc_arb_apb_priority:  2;          /*Set adc2 arbiter apb priority*/
+            uint32_t adc_arb_apb_priority:  2;          /*Set adc2 arbiterapb priority*/
             uint32_t adc_arb_rtc_priority:  2;          /*Set adc2 arbiter rtc priority*/
             uint32_t adc_arb_wifi_priority: 2;          /*Set adc2 arbiter wifi priority*/
             uint32_t adc_arb_fix_priority:  1;          /*adc2 arbiter uses fixed priority*/

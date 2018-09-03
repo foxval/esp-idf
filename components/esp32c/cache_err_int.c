@@ -71,12 +71,14 @@ void esp_cache_err_int_init()
             DPORT_CACHE_IA_INT_APP_IRAM1);
     }
 #else
+#if 0
     DPORT_SET_PERI_REG_MASK(DPORT_PRO_CACHE_IA_INT_EN_REG,
         DPORT_CACHE_IA_INT_PRO_DRAM1 |
         DPORT_CACHE_IA_INT_PRO_DROM0 |
         DPORT_CACHE_IA_INT_PRO_IROM0 |
         DPORT_CACHE_IA_INT_PRO_IRAM0 |
         DPORT_CACHE_IA_INT_PRO_IRAM1);
+#endif
 #endif
     ESP_INTR_ENABLE(ETS_CACHEERR_INUM);
 }

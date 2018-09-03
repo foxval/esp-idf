@@ -1390,12 +1390,12 @@ extern "C" {
 #define RTC_CNTL_ENB_SCK_XTAL_M  (BIT(26))
 #define RTC_CNTL_ENB_SCK_XTAL_V  0x1
 #define RTC_CNTL_ENB_SCK_XTAL_S  26
-/* RTC_CNTL_DBG_ATTEN : R/W ;bitpos:[25:24] ;default: 2'b00 ; */
+/* RTC_CNTL_DBG_ATTEN : R/W ;bitpos:[25:22] ;default: 4'd0 ; */
 /*description: DBG_ATTEN*/
-#define RTC_CNTL_DBG_ATTEN  0x00000003
+#define RTC_CNTL_DBG_ATTEN  0x0000000F
 #define RTC_CNTL_DBG_ATTEN_M  ((RTC_CNTL_DBG_ATTEN_V)<<(RTC_CNTL_DBG_ATTEN_S))
-#define RTC_CNTL_DBG_ATTEN_V  0x3
-#define RTC_CNTL_DBG_ATTEN_S  24
+#define RTC_CNTL_DBG_ATTEN_V  0xF
+#define RTC_CNTL_DBG_ATTEN_S  22
 /* reserved for driver to check */
 #define RTC_CNTL_DBG_ATTEN_DEFAULT  3
 
@@ -2411,6 +2411,12 @@ extern "C" {
 #define RTC_CNTL_LOW_POWER_DIAG1_S  0
 
 #define RTC_CNTL_PAD_HOLD_REG          (DR_REG_RTCCNTL_BASE + 0x00d8)
+/* RTC_CNTL_PAD21_HOLD : R/W ;bitpos:[21] ;default: 1'b0 ; */
+/*description: */
+#define RTC_CNTL_PAD21_HOLD  (BIT(21))
+#define RTC_CNTL_PAD21_HOLD_M  (BIT(21))
+#define RTC_CNTL_PAD21_HOLD_V  0x1
+#define RTC_CNTL_PAD21_HOLD_S  21
 /* RTC_CNTL_PAD20_HOLD : R/W ;bitpos:[20] ;default: 1'b0 ; */
 /*description: */
 #define RTC_CNTL_PAD20_HOLD  (BIT(20))
@@ -2547,25 +2553,25 @@ extern "C" {
 #define RTC_CNTL_DIG_PAD_HOLD_S  0
 
 #define RTC_CNTL_EXT_WAKEUP1_REG          (DR_REG_RTCCNTL_BASE + 0x00e0)
-/* RTC_CNTL_EXT_WAKEUP1_STATUS_CLR : WO ;bitpos:[21] ;default: 1'd0 ; */
+/* RTC_CNTL_EXT_WAKEUP1_STATUS_CLR : WO ;bitpos:[22] ;default: 1'd0 ; */
 /*description: clear ext wakeup1 status*/
-#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR  (BIT(21))
-#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR_M  (BIT(21))
+#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR  (BIT(22))
+#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR_M  (BIT(22))
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR_V  0x1
-#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR_S  21
-/* RTC_CNTL_EXT_WAKEUP1_SEL : R/W ;bitpos:[20:0] ;default: 21'd0 ; */
+#define RTC_CNTL_EXT_WAKEUP1_STATUS_CLR_S  22
+/* RTC_CNTL_EXT_WAKEUP1_SEL : R/W ;bitpos:[21:0] ;default: 22'd0 ; */
 /*description: Bitmap to select RTC pads for ext wakeup1*/
-#define RTC_CNTL_EXT_WAKEUP1_SEL  0x001FFFFF
+#define RTC_CNTL_EXT_WAKEUP1_SEL  0x003FFFFF
 #define RTC_CNTL_EXT_WAKEUP1_SEL_M  ((RTC_CNTL_EXT_WAKEUP1_SEL_V)<<(RTC_CNTL_EXT_WAKEUP1_SEL_S))
-#define RTC_CNTL_EXT_WAKEUP1_SEL_V  0x1FFFFF
+#define RTC_CNTL_EXT_WAKEUP1_SEL_V  0x3FFFFF
 #define RTC_CNTL_EXT_WAKEUP1_SEL_S  0
 
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_REG          (DR_REG_RTCCNTL_BASE + 0x00e4)
-/* RTC_CNTL_EXT_WAKEUP1_STATUS : RO ;bitpos:[20:0] ;default: 21'd0 ; */
+/* RTC_CNTL_EXT_WAKEUP1_STATUS : RO ;bitpos:[21:0] ;default: 22'd0 ; */
 /*description: ext wakeup1 status*/
-#define RTC_CNTL_EXT_WAKEUP1_STATUS  0x001FFFFF
+#define RTC_CNTL_EXT_WAKEUP1_STATUS  0x003FFFFF
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_M  ((RTC_CNTL_EXT_WAKEUP1_STATUS_V)<<(RTC_CNTL_EXT_WAKEUP1_STATUS_S))
-#define RTC_CNTL_EXT_WAKEUP1_STATUS_V  0x1FFFFF
+#define RTC_CNTL_EXT_WAKEUP1_STATUS_V  0x3FFFFF
 #define RTC_CNTL_EXT_WAKEUP1_STATUS_S  0
 
 #define RTC_CNTL_BROWN_OUT_REG          (DR_REG_RTCCNTL_BASE + 0x00e8)
@@ -2923,12 +2929,6 @@ extern "C" {
 #define RTC_CNTL_TOUCH_DRANGE_M  ((RTC_CNTL_TOUCH_DRANGE_V)<<(RTC_CNTL_TOUCH_DRANGE_S))
 #define RTC_CNTL_TOUCH_DRANGE_V  0x3
 #define RTC_CNTL_TOUCH_DRANGE_S  2
-/* RTC_CNTL_TOUCH_DCUR : R/W ;bitpos:[1:0] ;default: 2'b00 ; */
-/*description: TOUCH_DCUR*/
-#define RTC_CNTL_TOUCH_DCUR  0x00000003
-#define RTC_CNTL_TOUCH_DCUR_M  ((RTC_CNTL_TOUCH_DCUR_V)<<(RTC_CNTL_TOUCH_DCUR_S))
-#define RTC_CNTL_TOUCH_DCUR_V  0x3
-#define RTC_CNTL_TOUCH_DCUR_S  0
 
 #define RTC_CNTL_TOUCH_SCAN_CTRL_REG          (DR_REG_RTCCNTL_BASE + 0x0110)
 /* RTC_CNTL_TOUCH_OUT_RING : R/W ;bitpos:[31:28] ;default: 4'hf ; */
@@ -3047,7 +3047,7 @@ extern "C" {
 #define RTC_CNTL_TOUCH_BASELINE_RESET_S  19
 
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0120)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1807161 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808090 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))

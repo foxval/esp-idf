@@ -27,7 +27,7 @@ extern "C" {
 #define PROCACHE_IMMU_ADDR_BASE 0x3FEC5000
 #define PROCACHE_IMMU_SIZE      0x400
 #define PROCACHE_DMMU_ADDR_BASE 0x3FEC5400
-#define PROCACHE_DMMU_SIZE      0x200
+#define PROCACHE_DMMU_SIZE      0x400
 /* Flash MMU table for PRO CPU */
 #define DPORT_PRO_FLASH_MMU_TABLE ((volatile uint32_t*) 0x3FEC5000)
 
