@@ -13,7 +13,11 @@ PYTHON ?= $(call dequote,$(CONFIG_PYTHON))
 # two commands that can be used from other components
 # to invoke esptool.py (with or without serial port args)
 #
+ifdef CONFIG_HARDWARE_IS_FPGA
+ESPTOOLPY_SRC := $(COMPONENT_PATH)/esptool_fpga.py
+else
 ESPTOOLPY_SRC := $(COMPONENT_PATH)/esptool/esptool.py
+endif
 ifdef CONFIG_CHIP_IS_ESP32C
 ESPTOOLPY := $(PYTHON) $(ESPTOOLPY_SRC) --chip esp32c --no-stub
 else
