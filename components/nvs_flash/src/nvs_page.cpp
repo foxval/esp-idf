@@ -124,7 +124,8 @@ esp_err_t Page::writeEntryData(const uint8_t* data, size_t size)
      * TODO: figure out how to make this platform-specific check nicer (probably by introducing
      * a platform-specific flash layer).
      */
-    if ((uint32_t) data < 0x3ff00000) {
+#include "soc/soc.h"
+    if ((uint32_t) data < SOC_BYTE_ACCESSIBLE_LOW || (uint32_t) data  >= SOC_BYTE_ACCESSIBLE_HIGH) {
         buf = (uint8_t*) malloc(size);
         if (!buf) {
             return ESP_ERR_NO_MEM;

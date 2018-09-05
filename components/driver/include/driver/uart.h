@@ -71,9 +71,9 @@ typedef enum {
  * @brief UART peripheral number
  */
 typedef enum {
-    UART_NUM_0 = 0x0,  /*!< UART base address 0x3ff40000*/
-    UART_NUM_1 = 0x1,  /*!< UART base address 0x3ff50000*/
-    UART_NUM_2 = 0x2,  /*!< UART base address 0x3ff6e000*/
+    UART_NUM_0 = 0x0,  /*!< UART base address 0x3ff40000 in ESP32, 0x3fe00000 in ESP32C*/
+    UART_NUM_1 = 0x1,  /*!< UART base address 0x3ff50000 in ESP32, 0x3fe10000 in ESP32C*/
+    UART_NUM_2 = 0x2,  /*!< UART base address 0x3ff6e000 in ESP32, invalid in ESP32C*/
     UART_NUM_MAX,
 } uart_port_t;
 

@@ -15,7 +15,7 @@
 
 #ifdef CONFIG_CHIP_IS_ESP32
 /*
-This test tests the 'fast' peripherial bus at 0x3ff40000. This bus is connected directly to the core, and as such
+This test tests the 'fast' peripherial bus at 0x3fe00000. This bus is connected directly to the core, and as such
 can receive 'speculative' reads, that is, reads that may or may not actually be executed in the code flow. This
 may mess with any FIFOs mapped in the region: if a byte gets dropped due to a missed speculative read, the fifo
 may advance to the next byte anyway.
@@ -99,7 +99,7 @@ static void tskTwo(void *pvParameters)
 TEST_CASE("Fast I/O bus test", "[hw][ignore]")
 {
     int i;
-    if ((REG_UART_BASE(0) >> 16) != 0x3ff4) {
+    if ((REG_UART_BASE(0) >> 16) != 0x3fe0) {
         printf("Error! Uart base isn't on fast bus.\n");
         TEST_ASSERT(0);
     }

@@ -56,30 +56,23 @@
 //}}
 
 #define PRO_CPU_NUM (0)
-#define APP_CPU_NUM (1)
 
-/* Overall memory map */
-#define SOC_IROM_LOW    0x40080000
-#define SOC_IROM_HIGH   0x40400000
-#define SOC_DROM_LOW    0x3F400000
-#define SOC_DROM_HIGH   0x3F800000
-#define SOC_RTC_IRAM_LOW  0x40070000
-#define SOC_RTC_IRAM_HIGH 0x40072000
-#define SOC_RTC_DATA_LOW  0x50000000
-#define SOC_RTC_DATA_HIGH 0x50002000
-#define SOC_EXTRAM_DATA_LOW 0x3F800000
-#define SOC_EXTRAM_DATA_HIGH 0x3FC00000
-
-//#define DR_REG_DPORT_BASE                       0x3ff00000
 #define DR_REG_SYSTEM_BASE                      0x3fec0000
 #define DR_REG_SENSITIVE_BASE                   0x3fec1000
 #define DR_REG_INTERRUPT_BASE                   0x3fec2000
+#define DR_REG_DMA_COPY_BASE                    0x3fec3000
 #define DR_REG_EXTMEM_BASE                      0x3fec4000
-#define DR_REG_AES_BASE                         0x3fec1000
-#define DR_REG_RSA_BASE                         0x3fec2000
-#define DR_REG_SHA_BASE                         0x3fec3000
-#define DR_REG_FLASH_MMU_TABLE_PRO              0x3fed0000
-#define DR_REG_DPORT_END                        0x3fec1FFC
+#define DR_REG_FLASH_MMU_TABLE_PRO              0x3fec5000
+#define DR_REG_AES_BASE                         0x3fec8000
+#define DR_REG_SHA_BASE                         0x3fec9000
+#define DR_REG_RSA_BASE                         0x3feca000
+#define DR_REG_SECURE_BOOT_BASE                 0x3fecb000
+#define DR_REG_HMAC_BASE                        0x3fecc000
+#define DR_REG_DIGITAL_SINGNATURE_BASE          0x3fecd000
+#define DR_REG_ASSIST_DEBUG_BASE                0x3fece000
+#define DR_REG_DEDICATED_GPIO_BASE              0x3fecf000
+#define DR_REG_INTRUSION_BASE                   0x3fed0000
+#define DR_REG_DPORT_END                        0x3fed3FFC
 #define DR_REG_UART_BASE                        0x3fe00000
 #define DR_REG_SPI1_BASE                        0x3fe02000
 #define DR_REG_SPI0_BASE                        0x3fe03000
@@ -94,10 +87,8 @@
 #define DR_REG_RTC_I2C_BASE                     0x3fe08C00
 #define DR_REG_IO_MUX_BASE                      0x3fe09000
 #define DR_REG_HINF_BASE                        0x3fe0B000
-#define DR_REG_UHCI1_BASE                       0x3fe0C000
 #define DR_REG_I2S_BASE                         0x3fe0F000
 #define DR_REG_UART1_BASE                       0x3fe10000
-#define DR_REG_BT_BASE                          0x3fe11000
 #define DR_REG_I2C_EXT_BASE                     0x3fe13000
 #define DR_REG_UHCI0_BASE                       0x3fe14000
 #define DR_REG_SLCHOST_BASE                     0x3fe15000
@@ -106,28 +97,18 @@
 #define DR_REG_SLC_BASE                         0x3fe18000
 #define DR_REG_LEDC_BASE                        0x3fe19000
 #define DR_REG_EFUSE_BASE                       0x3fe1A000
-#define DR_REG_SPI_ENCRYPT_BASE                 0x3fe1B000
 #define DR_REG_NRX_BASE                         0x3fe1CC00
 #define DR_REG_BB_BASE                          0x3fe1D000
-#define DR_REG_PWM_BASE                         0x3fe1E000
 #define DR_REG_TIMERGROUP0_BASE                 0x3fe1F000
 #define DR_REG_TIMERGROUP1_BASE                 0x3fe20000
-#define DR_REG_RTCMEM0_BASE                     0x3fe21000
-#define DR_REG_RTCMEM1_BASE                     0x3fe22000
-#define DR_REG_RTCMEM2_BASE                     0x3fe23000
+#define DR_REG_RTC_SLOWMEM_BASE                 0x3fe21000
 #define DR_REG_SPI2_BASE                        0x3fe24000
 #define DR_REG_SPI3_BASE                        0x3fe25000
 #define DR_REG_SYSCON_BASE                      0x3fe26000
 #define DR_REG_APB_CTRL_BASE                    0x3fe26000    /* Old name for SYSCON, to be removed */
 #define DR_REG_I2C1_EXT_BASE                    0x3fe27000
-#define DR_REG_SDMMC_BASE                       0x3fe28000
-#define DR_REG_EMAC_BASE                        0x3fe29000
-#define DR_REG_PWM1_BASE                        0x3fe2C000
-#define DR_REG_I2S1_BASE                        0x3fe2D000
-#define DR_REG_UART2_BASE                       0x3fe2E000
-#define DR_REG_PWM2_BASE                        0x3fe2F000
-#define DR_REG_PWM3_BASE                        0x3fe30000
-#define PERIPHS_SPI_ENCRYPT_BASEADDR            DR_REG_SPI_ENCRYPT_BASE
+#define DR_REG_SPI4_BASE                        0x3fe36000
+#define DR_REG_USB_WRAP_BASE                    0x3fe39000
 
 //Registers Operation {{
 #define ETS_UNCACHED_ADDR(addr) (addr)
@@ -267,16 +248,17 @@
 //}}
 
 //Periheral Clock {{
-#define  APB_CLK_FREQ_ROM                            ( 26*1000000 )
+#define  APB_CLK_FREQ_ROM                            ( 40*1000000 )
 #define  CPU_CLK_FREQ_ROM                            APB_CLK_FREQ_ROM
+#define  UART_CLK_FREQ_ROM                           APB_CLK_FREQ_ROM
 #define  CPU_CLK_FREQ                                APB_CLK_FREQ
 #define  APB_CLK_FREQ                                ( 40*1000000 )       //unit: Hz
 #define  REF_CLK_FREQ                                ( 1000000 )
 #define  UART_CLK_FREQ                               APB_CLK_FREQ
 #define  WDT_CLK_FREQ                                APB_CLK_FREQ
-#define  TIMER_CLK_FREQ                              (40000000>>4) //80MHz divided by 16
+#define  TIMER_CLK_FREQ                              (80000000>>4) //80MHz divided by 16
 #define  SPI_CLK_DIV                                 4
-#define  TICKS_PER_US_ROM                            26              // CPU is 80MHz
+#define  TICKS_PER_US_ROM                            40              // CPU is 80MHz
 //}}
 
 /* Overall memory map */
@@ -290,6 +272,8 @@
 #define SOC_RTC_IRAM_HIGH 0x40072000
 #define SOC_RTC_DATA_LOW  0x50000000
 #define SOC_RTC_DATA_HIGH 0x50002000
+#define SOC_EXTRAM_DATA_LOW 0x3F800000
+#define SOC_EXTRAM_DATA_HIGH 0x3FC00000
 
 //First and last words of the D/IRAM region, for both the DRAM address as well as the IRAM alias.
 #define SOC_DIRAM_IRAM_LOW    0x40020000
