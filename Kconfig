@@ -44,8 +44,14 @@ choice CHIP_FAMILY
 config CHIP_IS_ESP32
     bool "esp32"
 config CHIP_IS_ESP32C
-    bool "chip7.2.2"
+    bool "esp32c"
 endchoice
+
+config CHIP_NAME
+    string
+    default "esp32" if CHIP_IS_ESP32
+    default "esp32c" if CHIP_IS_ESP32C
+    default "unknown"
 
 choice HARDWARE_INSTANCE
     prompt "Hardware Instance"

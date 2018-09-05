@@ -373,6 +373,9 @@ export CC CXX LD AR OBJCOPY SIZE
 
 PYTHON=$(call dequote,$(CONFIG_PYTHON))
 
+CHIP_NAME:=$(call dequote,$(CONFIG_CHIP_NAME)))
+export CHIP_NAME
+
 # the app is the main executable built by the project
 APP_ELF:=$(BUILD_DIR_BASE)/$(PROJECT_NAME).elf
 APP_MAP:=$(APP_ELF:.elf=.map)
