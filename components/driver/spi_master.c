@@ -58,10 +58,11 @@ queue and re-enabling the interrupt will trigger the interrupt again, which can 
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
 #include "esp_heap_caps.h"
+#include "sdkconfig.h"
+#include "cas.h"
 
-#if 0
 typedef struct spi_device_t spi_device_t;
-typedef typeof(SPI1.clock) spi_clock_reg_t;
+typedef typeof(GPSPI2.clock) spi_clock_reg_t;
 
 #define NO_CS 3     //Number of CS pins per SPI host
 
@@ -99,6 +100,7 @@ typedef struct {
     int dma_chan;
     int max_transfer_sz;
     spi_bus_config_t bus_cfg;
+    int id;
 #ifdef CONFIG_PM_ENABLE
     esp_pm_lock_handle_t pm_lock;
 #endif
@@ -119,7 +121,7 @@ struct spi_device_t {
     spi_host_t *host;
 };
 
-static spi_host_t *spihost[3];
+static spi_host_t *spihost[SPI_PERIPH_NUM];
 
 
 static const char *SPI_TAG = "spi_master";
@@ -128,6 +130,7 @@ static const char *SPI_TAG = "spi_master";
         ESP_LOGE(SPI_TAG,"%s(%d): "str, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
         return (ret_val); \
     }
+
 
 
 static void spi_intr(void *arg);
@@ -141,7 +144,11 @@ esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus
     SPI_CHECK(host!=SPI_HOST, "SPI1 is not supported", ESP_ERR_NOT_SUPPORTED);
 
     SPI_CHECK(host>=SPI_HOST && host<=VSPI_HOST, "invalid host", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     SPI_CHECK( dma_chan >= 0 && dma_chan <= 2, "invalid dma channel", ESP_ERR_INVALID_ARG );
+#elif defined CONFIG_CHIP_IS_ESP32C
+    SPI_CHECK( dma_chan==0 || dma_chan==(int)host, "the host can only use its own DMA in esp32c", ESP_ERR_INVALID_ARG );
+#endif
 
     spi_chan_claimed=spicommon_periph_claim(host);
     SPI_CHECK(spi_chan_claimed, "host already in use", ESP_ERR_INVALID_STATE);
@@ -161,6 +168,8 @@ esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus
     }
     memset(spihost[host], 0, sizeof(spi_host_t));
     memcpy( &spihost[host]->bus_cfg, bus_config, sizeof(spi_bus_config_t));
+
+    spihost[host]->id = host;
 #ifdef CONFIG_PM_ENABLE
     err = esp_pm_lock_create(ESP_PM_APB_FREQ_MAX, 0, "spi_master",
             &spihost[host]->pm_lock);
@@ -176,6 +185,13 @@ esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus
         goto cleanup;
     }
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+    if (host==VSPI_HOST) {
+        DPORT_SET_PERI_REG_BITS(DPORT_SPI_SHARED_DMA_SEL_REG, DPORT_SPI_SHARED_DMA_SEL_M, 1, DPORT_SPI_SHARED_DMA_SEL_S);
+    }
+#elif defined CONFIG_CHIP_IS_ESP32
+    DPORT_SET_PERI_REG_BITS(DPORT_SPI_DMA_CHAN_SEL_REG, 3, dma_chan, (host * 2));
+#endif
     spihost[host]->dma_chan=dma_chan;
     if (dma_chan == 0) {
         spihost[host]->max_transfer_sz = 32;
@@ -215,6 +231,7 @@ esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus
     spihost[host]->hw->ctrl2.val=0;
 
     //Disable unneeded ints
+#ifdef CONFIG_CHIP_IS_ESP32
     spihost[host]->hw->slave.rd_buf_done=0;
     spihost[host]->hw->slave.wr_buf_done=0;
     spihost[host]->hw->slave.rd_sta_done=0;
@@ -223,6 +240,7 @@ esp_err_t spi_bus_initialize(spi_host_device_t host, const spi_bus_config_t *bus
     spihost[host]->hw->slave.wr_buf_inten=0;
     spihost[host]->hw->slave.rd_sta_inten=0;
     spihost[host]->hw->slave.wr_sta_inten=0;
+#endif
 
     //Force a transaction done interrupt. This interrupt won't fire yet because we initialized the SPI interrupt as
     //disabled.  This way, we can just enable the SPI interrupt and the interrupt handler will kick in, handling
@@ -309,6 +327,14 @@ int spi_get_freq_limit(bool gpio_is_used, int input_delay_ns)
     return APB_CLK_FREQ/(apb_period_n+1);
 }
 
+static void spi_bus_init_ddrclk_io(spi_host_device_t host, int ddrclk_io_num)
+{
+    gpio_matrix_out(ddrclk_io_num, spi_periph_signal[host].spidqs_out, false, false);
+    gpio_matrix_in(ddrclk_io_num, spi_periph_signal[host].spidqs_in, false);
+    PIN_INPUT_ENABLE(GPIO_PIN_MUX_REG[ddrclk_io_num]);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[ddrclk_io_num], PIN_FUNC_GPIO);
+}
+
 /*
  Add a device. This allocates a CS line for the device, allocates memory for the device structure and hooks
  up the CS pin to whatever is specified.
@@ -330,6 +356,9 @@ esp_err_t spi_bus_add_device(spi_host_device_t host, const spi_device_interface_
     for (freecs=0; freecs<NO_CS; freecs++) {
         //See if this slot is free; reserve if it is by putting a dummy pointer in the slot. We use an atomic compare&swap to make this thread-safe.
         if (__sync_bool_compare_and_swap(&spihost[host]->device[freecs], NULL, (spi_device_t *)1)) break;
+
+
+
     }
     SPI_CHECK(freecs!=NO_CS, "no free cs pins for host", ESP_ERR_NOT_FOUND);
     //The hardware looks like it would support this, but actually setting cs_ena_pretrans when transferring in full
@@ -380,18 +409,35 @@ Specify ``SPI_DEVICE_NO_DUMMY`` to ignore this checking. Then you can output dat
         gpio_set_direction(dev_config->spics_io_num, GPIO_MODE_OUTPUT);
         spicommon_cs_initialize(host, dev_config->spics_io_num, freecs, !(spihost[host]->flags&SPICOMMON_BUSFLAG_NATIVE_PINS));
     }
+
+
+#ifdef CONFIG_CHIP_IS_ESP32
+#define PIN_REG pin
+#elif defined CONFIG_CHIP_IS_ESP32C
+#define PIN_REG misc
+#endif
+
+#ifdef CONFIG_CHIP_IS_ESP32
+    //as not supported in esp32c
     if (dev_config->flags&SPI_DEVICE_CLK_AS_CS) {
-        spihost[host]->hw->pin.master_ck_sel |= (1<<freecs);
+        spihost[host]->hw->PIN_REG.master_ck_sel |= (1<<freecs);
     } else {
-        spihost[host]->hw->pin.master_ck_sel &= (1<<freecs);
+        spihost[host]->hw->PIN_REG.master_ck_sel &= (1<<freecs);
     }
+#endif
+
     if (dev_config->flags&SPI_DEVICE_POSITIVE_CS) {
-        spihost[host]->hw->pin.master_cs_pol |= (1<<freecs);
+        spihost[host]->hw->PIN_REG.master_cs_pol |= (1<<freecs);
     } else {
-        spihost[host]->hw->pin.master_cs_pol &= (1<<freecs);
+        spihost[host]->hw->PIN_REG.master_cs_pol &= (1<<freecs);
     }
+#ifdef CONFIG_CHIP_IS_ESP32
     spihost[host]->hw->ctrl2.mosi_delay_mode = 0;
     spihost[host]->hw->ctrl2.mosi_delay_num = 0;
+#elif defined CONFIG_CHIP_IS_ESP32C
+    spihost[host]->hw->dout_mode.dout0_mode = 0;
+    spihost[host]->hw->dout_num.dout0_num = 0;
+#endif
     *handle=dev;
     ESP_LOGD(SPI_TAG, "SPI%d: New device added to CS%d, effective clock: %dkHz", host, freecs, dev->clk_cfg.eff_clk/1000);
     return ESP_OK;
@@ -415,7 +461,7 @@ esp_err_t spi_bus_remove_device(spi_device_handle_t handle)
     SPI_CHECK(handle->host->cur_cs == NO_CS || handle->host->device[handle->host->cur_cs]!=handle, "Have unfinished transactions", ESP_ERR_INVALID_STATE);
     SPI_CHECK(uxQueueMessagesWaiting(handle->ret_queue)==0, "Have unfinished transactions", ESP_ERR_INVALID_STATE);
 
-    //return 
+    //return
     int spics_io_num = handle->cfg.spics_io_num;
     if (spics_io_num >= 0) spicommon_cs_free_io(spics_io_num);
 
@@ -528,6 +574,7 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
                 if (len>32) len=32;
                 memcpy(&host->cur_trans_buf.buffer_to_rcv[x/32], &word, (len+7)/8);
             }
+
         }
         //Call post-transaction callback, if any
         if (host->device[host->cur_cs]->cfg.post_cb) host->device[host->cur_cs]->cfg.post_cb(cur_trans);
@@ -573,45 +620,70 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
 
             //Configure polarity
             if (dev->cfg.mode==0) {
-                host->hw->pin.ck_idle_edge=0;
+                host->hw->PIN_REG.ck_idle_edge=0;
                 host->hw->user.ck_out_edge=0;
             } else if (dev->cfg.mode==1) {
-                host->hw->pin.ck_idle_edge=0;
+                host->hw->PIN_REG.ck_idle_edge=0;
                 host->hw->user.ck_out_edge=1;
             } else if (dev->cfg.mode==2) {
-                host->hw->pin.ck_idle_edge=1;
+                host->hw->PIN_REG.ck_idle_edge=1;
                 host->hw->user.ck_out_edge=1;
             } else if (dev->cfg.mode==3) {
-                host->hw->pin.ck_idle_edge=1;
+                host->hw->PIN_REG.ck_idle_edge=1;
                 host->hw->user.ck_out_edge=0;
             }
             //Configure misc stuff
             host->hw->user.doutdin=(dev->cfg.flags & SPI_DEVICE_HALFDUPLEX)?0:1;
             host->hw->user.sio=(dev->cfg.flags & SPI_DEVICE_3WIRE)?1:0;
 
+#ifdef ESP32_VER_ESP32
             host->hw->ctrl2.setup_time=dev->cfg.cs_ena_pretrans-1;
             host->hw->user.cs_setup=dev->cfg.cs_ena_pretrans?1:0;
             //set hold_time to 0 will not actually append delay to CS
             //set it to 1 since we do need at least one clock of hold time in most cases
-            host->hw->ctrl2.hold_time=dev->cfg.cs_ena_posttrans;
+            host->hw->ctrl2.hold_time=dev->cfg.cs_ena_posttrans-1;
             if ( host->hw->ctrl2.hold_time == 0 ) host->hw->ctrl2.hold_time = 1;
             host->hw->user.cs_hold=1;
+#elif defined CONFIG_CHIP_IS_ESP32C
+            host->hw->ctrl2.cs_setup_time=dev->cfg.cs_ena_pretrans-1;
+            ESP_EARLY_LOGE("setup", "%d (%d)", host->hw->user.cs_setup, host->hw->ctrl2.cs_setup_time);
+            host->hw->user.cs_setup=dev->cfg.cs_ena_pretrans?1:0;
+            host->hw->ctrl2.cs_hold_time=dev->cfg.cs_ena_posttrans;
+            host->hw->user.cs_hold=(dev->cfg.cs_ena_posttrans)?1:0;
+#endif
+            //configure the ddrclk pin
+            /*
+            if (dev->cfg.flags & SPI_DEVICE_DDRCLK) {
+                gpio_matrix_out(host->bus_cfg.sclk_io_num, spi_periph_signal[host->id].spicd_out, false, false);
+            } else {
+                gpio_matrix_out(host->bus_cfg.sclk_io_num, spi_periph_signal[host->id].spiclk_out, false, false);
+            }
+            */
 
             //Configure CS pin
-            host->hw->pin.cs0_dis=(i==0)?0:1;
-            host->hw->pin.cs1_dis=(i==1)?0:1;
-            host->hw->pin.cs2_dis=(i==2)?0:1;
+            host->hw->PIN_REG.cs0_dis=(i==0)?0:1;
+            host->hw->PIN_REG.cs1_dis=(i==1)?0:1;
+            host->hw->PIN_REG.cs2_dis=(i==2)?0:1;
         }
         host->prev_cs = i;
         //Reset SPI peripheral
         host->hw->dma_conf.val |= SPI_OUT_RST|SPI_IN_RST|SPI_AHBM_RST|SPI_AHBM_FIFO_RST;
         host->hw->dma_out_link.start=0;
         host->hw->dma_in_link.start=0;
+#ifdef CONFIG_CHIP_IS_ESP32C
+        host->hw->dma_in_link.dma_rx_ena = 0;
+        assert(host->hw->dma_in_link.dma_rx_ena==0);
+        //host->hw->dma_conf.dma_rx_ena = 0;
+#endif
         host->hw->dma_conf.val &= ~(SPI_OUT_RST|SPI_IN_RST|SPI_AHBM_RST|SPI_AHBM_FIFO_RST);
         host->hw->dma_conf.out_data_burst_en=1;
+        host->hw->dma_conf.indscr_burst_en=1;
+        host->hw->dma_conf.outdscr_burst_en=1;
         //Set up QIO/DIO if needed
         host->hw->ctrl.val &= ~(SPI_FREAD_DUAL|SPI_FREAD_QUAD|SPI_FREAD_DIO|SPI_FREAD_QIO);
         host->hw->user.val &= ~(SPI_FWRITE_DUAL|SPI_FWRITE_QUAD|SPI_FWRITE_DIO|SPI_FWRITE_QIO);
+
+#ifdef CONFIG_CHIP_IS_ESP32
         if (trans->flags & SPI_TRANS_MODE_DIO) {
             if (trans->flags & SPI_TRANS_MODE_DIOQIO_ADDR) {
                 host->hw->ctrl.fread_dio=1;
@@ -631,6 +703,23 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
             }
             host->hw->ctrl.fastrd_mode=1;
         }
+#elif defined CONFIG_CHIP_IS_ESP32C
+        if (trans->flags & SPI_TRANS_MODE_DIO) {
+            if (trans->flags & SPI_TRANS_MODE_DIOQIO_ADDR) {
+                //host->hw->ctrl.fread_dio=1;
+            } else {
+                host->hw->ctrl.fread_dual=1;
+                host->hw->user.fwrite_dual=1;
+            }
+        } else if (trans->flags & SPI_TRANS_MODE_QIO) {
+            if (trans->flags & SPI_TRANS_MODE_DIOQIO_ADDR) {
+                //host->hw->ctrl.fread_qio=1;
+            } else {
+                host->hw->ctrl.fread_quad=1;
+                host->hw->user.fwrite_quad=1;
+            }
+        }
+#endif
 
         //Fill DMA descriptors
         int extra_dummy=0;
@@ -649,11 +738,13 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
                 extra_dummy=dev->clk_cfg.dummy_num;
             }
         } else {
+#ifdef CONFIG_CHIP_IS_ESP32
             //DMA temporary workaround: let RX DMA work somehow to avoid the issue in ESP32 v0/v1 silicon
             if (host->dma_chan != 0 ) {
                 host->hw->dma_in_link.addr=0;
-                host->hw->dma_in_link.start=1;
+                host->hw->dma_in_link.start=0;
             }
+#endif
         }
 
 
@@ -679,35 +770,59 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
 
         //SPI iface needs to be configured for a delay in some cases.
         //configure dummy bits
+#ifdef CONFIG_CHIP_IS_ESP32
         host->hw->user.usr_dummy=(dev->cfg.dummy_bits+extra_dummy)?1:0;
         host->hw->user1.usr_dummy_cyclelen=dev->cfg.dummy_bits+extra_dummy-1;
+#else
+        host->hw->user.usr_dummy=0;
+        host->hw->user1.usr_dummy_cyclelen=0;
+#endif
 
-        int miso_long_delay = 0;
+
+        int dins_delay_num;
+        int dins_delay_mode = 0;
         if (dev->clk_cfg.miso_delay<0) {
+            dins_delay_num = 0;
             //if the data comes too late, delay half a SPI clock to improve reading
-            miso_long_delay = 1;
-            host->hw->ctrl2.miso_delay_num = 0;
+            if (dev->cfg.mode==0) {
+                dins_delay_mode=2;
+            } else if (dev->cfg.mode==1) {
+                dins_delay_mode=1;
+            } else if (dev->cfg.mode==2) {
+                dins_delay_mode=1;
+            } else if (dev->cfg.mode==3) {
+                dins_delay_mode=2;
+            }
         } else {
+            dins_delay_mode = 0;
             //if the data is so fast that dummy_bit is used, delay some apb clocks to meet the timing
-            host->hw->ctrl2.miso_delay_num = (extra_dummy? dev->clk_cfg.miso_delay: 0);
+            int extra_dummy = 0;
+            dins_delay_num = (extra_dummy? dev->clk_cfg.miso_delay: 0);
         }
 
-        if (dev->cfg.mode==0) {
-            host->hw->ctrl2.miso_delay_mode=miso_long_delay?2:0;
-        } else if (dev->cfg.mode==1) {
-            host->hw->ctrl2.miso_delay_mode=miso_long_delay?1:0;
-        } else if (dev->cfg.mode==2) {
-            host->hw->ctrl2.miso_delay_mode=miso_long_delay?1:0;
-        } else if (dev->cfg.mode==3) {
-            host->hw->ctrl2.miso_delay_mode=miso_long_delay?2:0;
-        }
+#ifdef CONFIG_CHIP_IS_ESP32
+        host->hw->ctrl2.miso_delay_mode = dins_delay_mode;
+        host->hw->ctrl2.miso_delay_num = dins_delay_num;
+#elif defined CONFIG_CHIP_IS_ESP32C
+        host->hw->din_num.din0_num = 1;
+        host->hw->din_num.din1_num = 1;
+#endif
 
-        host->hw->mosi_dlen.usr_mosi_dbitlen=trans->length-1;
+
+#ifdef CONFIG_CHIP_IS_ESP32
+#define MISO_DBITLEN_FIELD  usr_miso_dbitlen
+#define MOSI_DBITLEN_FIELD  usr_mosi_dbitlen
+#elif defined CONFIG_CHIP_IS_ESP32C
+#define MISO_DBITLEN_FIELD  usr_miso_bit_len
+#define MOSI_DBITLEN_FIELD  usr_mosi_bit_len
+#endif
+
+        host->hw->mosi_dlen.MOSI_DBITLEN_FIELD=trans->length-1;
         if ( dev->cfg.flags & SPI_DEVICE_HALFDUPLEX ) {
-            host->hw->miso_dlen.usr_miso_dbitlen=trans->rxlength-1;
+            host->hw->miso_dlen.MISO_DBITLEN_FIELD=trans->rxlength-1;
         } else {
             //rxlength is not used in full-duplex mode
-            host->hw->miso_dlen.usr_miso_dbitlen=trans->length-1;
+            host->hw->miso_dlen.MISO_DBITLEN_FIELD=trans->length-1;
         }
 
         //Configure bit sizes, load addr and command
@@ -745,6 +860,14 @@ static void SPI_MASTER_ISR_ATTR spi_intr(void *arg)
 
         //Call pre-transmission callback, if any
         if (dev->cfg.pre_cb) dev->cfg.pre_cb(trans);
+        /*
+        if (trans->flags & SPI_TRANS_SET_CD) {
+            host->hw->spr_cfg1.sop_dc_mode = 1;
+        } else {
+            host->hw->spr_cfg1.sop_dc_mode = 0;
+        }
+        */
+
         //Kick off transfer
         host->hw->cmd.usr=1;
     }
@@ -766,8 +889,10 @@ esp_err_t SPI_MASTER_ATTR spi_device_queue_trans(spi_device_handle_t handle, spi
     //check working mode
     SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (handle->cfg.flags & SPI_DEVICE_3WIRE)), "incompatible iface params", ESP_ERR_INVALID_ARG);
     SPI_CHECK(!((trans_desc->flags & (SPI_TRANS_MODE_DIO|SPI_TRANS_MODE_QIO)) && (!(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX))), "incompatible iface params", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     SPI_CHECK( !(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX) || handle->host->dma_chan == 0 || !(trans_desc->flags & SPI_TRANS_USE_RXDATA || trans_desc->rx_buffer != NULL)
         || !(trans_desc->flags & SPI_TRANS_USE_TXDATA || trans_desc->tx_buffer!=NULL), "SPI half duplex mode does not support using DMA with both MOSI and MISO phases.", ESP_ERR_INVALID_ARG );
+#endif
     //In Full duplex mode, default rxlength to be the same as length, if not filled in.
     // set rxlength to length is ok, even when rx buffer=NULL
     if (trans_desc->rxlength==0 && !(handle->cfg.flags & SPI_DEVICE_HALFDUPLEX)) {
@@ -785,7 +910,11 @@ esp_err_t SPI_MASTER_ATTR spi_device_queue_trans(spi_device_handle_t handle, spi
         //if not use RXDATA neither rx_buffer, buffer_to_rcv assigned to NULL
         trans_buf.buffer_to_rcv = trans_desc->rx_buffer;
     }
-    if ( trans_buf.buffer_to_rcv && handle->host->dma_chan && (!esp_ptr_dma_capable( trans_buf.buffer_to_rcv ) || ((int)trans_buf.buffer_to_rcv%4!=0)) ) {
+    if ( trans_buf.buffer_to_rcv && handle->host->dma_chan && (!esp_ptr_dma_capable( trans_buf.buffer_to_rcv )
+#ifdef CONFIG_CHIP_IS_ESP32
+    || ((int)trans_buf.buffer_to_rcv%4!=0)
+#endif
+    ) ) {
         //if rxbuf in the desc not DMA-capable, malloc a new one. The rx buffer need to be length of multiples of 32 bits to avoid heap corruption.
         ESP_LOGV( SPI_TAG, "Allocate RX buffer for DMA" );
         trans_buf.buffer_to_rcv = heap_caps_malloc((trans_desc->rxlength+31)/8, MALLOC_CAP_DMA);
@@ -890,4 +1019,3 @@ esp_err_t SPI_MASTER_ATTR spi_device_transmit(spi_device_handle_t handle, spi_tr
     assert(ret_trans==trans_desc);
     return ESP_OK;
 }
-#endif

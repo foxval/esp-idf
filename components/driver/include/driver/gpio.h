@@ -111,52 +111,54 @@ extern "C" {
 #define GPIO_PIN_REG_38         IO_MUX_GPIO38_REG
 #define GPIO_PIN_REG_39         IO_MUX_GPIO39_REG
 #else
-#define GPIO_PIN_REG_0          IOMUX_REG_GPIO0
-#define GPIO_PIN_REG_1          IOMUX_REG_GPIO1
-#define GPIO_PIN_REG_2          IOMUX_REG_GPIO2
-#define GPIO_PIN_REG_3          IOMUX_REG_GPIO3
-#define GPIO_PIN_REG_4          IOMUX_REG_GPIO4
-#define GPIO_PIN_REG_5          IOMUX_REG_GPIO5
-#define GPIO_PIN_REG_6          IOMUX_REG_GPIO6
-#define GPIO_PIN_REG_7          IOMUX_REG_GPIO7
-#define GPIO_PIN_REG_8          IOMUX_REG_GPIO8
-#define GPIO_PIN_REG_9          IOMUX_REG_GPIO9
-#define GPIO_PIN_REG_10          IOMUX_REG_GPIO10
-#define GPIO_PIN_REG_11          IOMUX_REG_GPIO11
-#define GPIO_PIN_REG_12          IOMUX_REG_GPIO12
-#define GPIO_PIN_REG_13          IOMUX_REG_GPIO13
-#define GPIO_PIN_REG_14          IOMUX_REG_GPIO14
-#define GPIO_PIN_REG_15          IOMUX_REG_GPIO15
-#define GPIO_PIN_REG_16          IOMUX_REG_GPIO16
-#define GPIO_PIN_REG_17          IOMUX_REG_GPIO17
-#define GPIO_PIN_REG_18          IOMUX_REG_GPIO18
-#define GPIO_PIN_REG_19          IOMUX_REG_GPIO19
-#define GPIO_PIN_REG_20          IOMUX_REG_GPIO20
-#define GPIO_PIN_REG_21          IOMUX_REG_GPIO21
-#define GPIO_PIN_REG_22          IOMUX_REG_GPIO22
-#define GPIO_PIN_REG_23          IOMUX_REG_GPIO23
-#define GPIO_PIN_REG_24          IOMUX_REG_GPIO24
-#define GPIO_PIN_REG_25          IOMUX_REG_GPIO25
-#define GPIO_PIN_REG_26          IOMUX_REG_GPIO26
-#define GPIO_PIN_REG_27          IOMUX_REG_GPIO27
-#define GPIO_PIN_REG_28          IOMUX_REG_GPIO28
-#define GPIO_PIN_REG_29          IOMUX_REG_GPIO29
-#define GPIO_PIN_REG_30          IOMUX_REG_GPIO30
-#define GPIO_PIN_REG_31          IOMUX_REG_GPIO31
-#define GPIO_PIN_REG_32          IOMUX_REG_GPIO32
-#define GPIO_PIN_REG_33          IOMUX_REG_GPIO33
-#define GPIO_PIN_REG_34          IOMUX_REG_GPIO34
-#define GPIO_PIN_REG_35          IOMUX_REG_GPIO35
-#define GPIO_PIN_REG_36          IOMUX_REG_GPIO36
-#define GPIO_PIN_REG_37          IOMUX_REG_GPIO37
-#define GPIO_PIN_REG_38          IOMUX_REG_GPIO38
-#define GPIO_PIN_REG_39          IOMUX_REG_GPIO39
-#define GPIO_PIN_REG_40          IOMUX_REG_GPIO40
-#define GPIO_PIN_REG_41          IOMUX_REG_GPIO41
-#define GPIO_PIN_REG_42          IOMUX_REG_GPIO42
-#define GPIO_PIN_REG_43          IOMUX_REG_GPIO43
-#define GPIO_PIN_REG_44          IOMUX_REG_GPIO44
-#define GPIO_PIN_REG_45          IOMUX_REG_GPIO45
+#define GPIO_PIN_REG_0          IO_MUX_GPIO0_REG
+#define GPIO_PIN_REG_1          IO_MUX_GPIO1_REG
+#define GPIO_PIN_REG_2          IO_MUX_GPIO2_REG
+#define GPIO_PIN_REG_3          IO_MUX_GPIO3_REG
+#define GPIO_PIN_REG_4          IO_MUX_GPIO4_REG
+#define GPIO_PIN_REG_5          IO_MUX_GPIO5_REG
+#define GPIO_PIN_REG_6          IO_MUX_GPIO6_REG
+#define GPIO_PIN_REG_7          IO_MUX_GPIO7_REG
+#define GPIO_PIN_REG_8          IO_MUX_GPIO8_REG
+#define GPIO_PIN_REG_9          IO_MUX_GPIO9_REG
+#define GPIO_PIN_REG_10          IO_MUX_GPIO10_REG
+#define GPIO_PIN_REG_11          IO_MUX_GPIO11_REG
+#define GPIO_PIN_REG_12          IO_MUX_GPIO12_REG
+#define GPIO_PIN_REG_13          IO_MUX_GPIO13_REG
+#define GPIO_PIN_REG_14          IO_MUX_GPIO14_REG
+#define GPIO_PIN_REG_15          IO_MUX_GPIO15_REG
+#define GPIO_PIN_REG_16          IO_MUX_GPIO16_REG
+#define GPIO_PIN_REG_17          IO_MUX_GPIO17_REG
+#define GPIO_PIN_REG_18          IO_MUX_GPIO18_REG
+#define GPIO_PIN_REG_19          IO_MUX_GPIO19_REG
+#define GPIO_PIN_REG_20          IO_MUX_GPIO20_REG
+#define GPIO_PIN_REG_21          IO_MUX_GPIO21_REG
+#define GPIO_PIN_REG_22          IO_MUX_GPIO22_REG
+#define GPIO_PIN_REG_23          IO_MUX_GPIO23_REG
+#define GPIO_PIN_REG_24          IO_MUX_GPIO24_REG
+#define GPIO_PIN_REG_25          IO_MUX_GPIO25_REG
+#define GPIO_PIN_REG_26          IO_MUX_GPIO26_REG
+#define GPIO_PIN_REG_27          IO_MUX_GPIO27_REG
+#define GPIO_PIN_REG_28          IO_MUX_GPIO28_REG
+#define GPIO_PIN_REG_29          IO_MUX_GPIO29_REG
+#define GPIO_PIN_REG_30          IO_MUX_GPIO30_REG
+#define GPIO_PIN_REG_31          IO_MUX_GPIO31_REG
+#define GPIO_PIN_REG_32          IO_MUX_GPIO32_REG
+#define GPIO_PIN_REG_33          IO_MUX_GPIO33_REG
+#define GPIO_PIN_REG_34          IO_MUX_GPIO34_REG
+#define GPIO_PIN_REG_35          IO_MUX_GPIO35_REG
+#define GPIO_PIN_REG_36          IO_MUX_GPIO36_REG
+#define GPIO_PIN_REG_37          IO_MUX_GPIO37_REG
+#define GPIO_PIN_REG_38          IO_MUX_GPIO38_REG
+#define GPIO_PIN_REG_39          IO_MUX_GPIO39_REG
+#define GPIO_PIN_REG_40          IO_MUX_GPIO40_REG
+#define GPIO_PIN_REG_41          IO_MUX_GPIO41_REG
+#define GPIO_PIN_REG_42          IO_MUX_GPIO42_REG
+#define GPIO_PIN_REG_43          IO_MUX_GPIO43_REG
+#define GPIO_PIN_REG_44          IO_MUX_GPIO44_REG
+#define GPIO_PIN_REG_45          IO_MUX_GPIO45_REG
+#define GPIO_PIN_REG_46          IO_MUX_GPIO46_REG
+#define GPIO_PIN_REG_47          IO_MUX_GPIO47_REG
 #endif
 
 #define GPIO_APP_CPU_INTR_ENA      (BIT(0))
@@ -171,12 +173,24 @@ extern "C" {
 #define GPIO_MODE_DEF_OD              (BIT2)
 
 
-#define GPIO_PIN_COUNT              40
 /** @endcond */
 
-extern const uint32_t GPIO_PIN_MUX_REG[GPIO_PIN_COUNT];
+#ifdef CONFIG_CHIP_IS_ESP32
+
+#define GPIO_PIN_COUNT              40
 #define GPIO_IS_VALID_GPIO(gpio_num)      ((gpio_num < GPIO_PIN_COUNT && GPIO_PIN_MUX_REG[gpio_num] != 0))   /*!< Check whether it is a valid GPIO number */
 #define GPIO_IS_VALID_OUTPUT_GPIO(gpio_num)      ((GPIO_IS_VALID_GPIO(gpio_num)) && (gpio_num < 34))         /*!< Check whether it can be a valid GPIO number of output mode */
+
+#elif defined CONFIG_CHIP_IS_ESP32C
+
+#define GPIO_PIN_COUNT              48
+#define GPIO_IS_VALID_GPIO(gpio_num)      ((gpio_num < GPIO_PIN_COUNT && GPIO_PIN_MUX_REG[gpio_num] != 0))   /*!< Check whether it is a valid GPIO number */
+#define GPIO_IS_VALID_OUTPUT_GPIO(gpio_num)      ((GPIO_IS_VALID_GPIO(gpio_num)) && (gpio_num < 46))         /*!< Check whether it can be a valid GPIO number of output mode */
+
+#endif
+
+
+extern const uint32_t GPIO_PIN_MUX_REG[GPIO_PIN_COUNT];
 
 typedef enum {
     GPIO_NUM_0 = 0,     /*!< GPIO0, input and output */
@@ -221,7 +235,19 @@ typedef enum {
     GPIO_NUM_37 = 37,   /*!< GPIO37, input mode only */
     GPIO_NUM_38 = 38,   /*!< GPIO38, input mode only */
     GPIO_NUM_39 = 39,   /*!< GPIO39, input mode only */
+#ifdef CONFIG_CHIP_IS_ESP32
     GPIO_NUM_MAX = 40,
+#elif defined CONFIG_CHIP_IS_ESP32C
+    GPIO_NUM_40 = 40,   /*!< GPIO40, input mode only */
+    GPIO_NUM_41 = 41,   /*!< GPIO41, input mode only */
+    GPIO_NUM_42 = 42,   /*!< GPIO42, input mode only */
+    GPIO_NUM_43 = 43,   /*!< GPIO43, input mode only */
+    GPIO_NUM_44 = 44,   /*!< GPIO44, input mode only */
+    GPIO_NUM_45 = 45,   /*!< GPIO45, input mode only */
+    GPIO_NUM_46 = 46,   /*!< GPIO46, input mode only */
+    GPIO_NUM_47 = 47,   /*!< GPIO47, input mode only */
+    GPIO_NUM_MAX = 48,
+#endif
 /** @endcond */
 } gpio_num_t;
 

@@ -31,6 +31,7 @@ static const char* GPIO_TAG = "gpio";
         return (ret_val); \
     }
 
+#ifdef CONFIG_CHIP_IS_ESP32
 const uint32_t GPIO_PIN_MUX_REG[GPIO_PIN_COUNT] = {
     IO_MUX_GPIO0_REG,
     IO_MUX_GPIO1_REG,
@@ -73,6 +74,58 @@ const uint32_t GPIO_PIN_MUX_REG[GPIO_PIN_COUNT] = {
     IO_MUX_GPIO38_REG,
     IO_MUX_GPIO39_REG,
 };
+#elif defined CONFIG_CHIP_IS_ESP32C
+const uint32_t GPIO_PIN_MUX_REG[GPIO_PIN_COUNT] = {
+    IO_MUX_GPIO0_REG,
+    IO_MUX_GPIO1_REG,
+    IO_MUX_GPIO2_REG,
+    IO_MUX_GPIO3_REG,
+    IO_MUX_GPIO4_REG,
+    IO_MUX_GPIO5_REG,
+    IO_MUX_GPIO6_REG,
+    IO_MUX_GPIO7_REG,
+    IO_MUX_GPIO8_REG,
+    IO_MUX_GPIO9_REG,
+    IO_MUX_GPIO10_REG,
+    IO_MUX_GPIO11_REG,
+    IO_MUX_GPIO12_REG,
+    IO_MUX_GPIO13_REG,
+    IO_MUX_GPIO14_REG,
+    IO_MUX_GPIO15_REG,
+    IO_MUX_GPIO16_REG,
+    IO_MUX_GPIO17_REG,
+    IO_MUX_GPIO18_REG,
+    IO_MUX_GPIO19_REG,
+    IO_MUX_GPIO20_REG,
+    IO_MUX_GPIO21_REG,
+    0,
+    0,
+    0,
+    0,
+    IO_MUX_GPIO26_REG,
+    IO_MUX_GPIO27_REG,
+    IO_MUX_GPIO28_REG,
+    IO_MUX_GPIO29_REG,
+    IO_MUX_GPIO30_REG,
+    IO_MUX_GPIO31_REG,
+    IO_MUX_GPIO32_REG,
+    IO_MUX_GPIO33_REG,
+    IO_MUX_GPIO34_REG,
+    IO_MUX_GPIO35_REG,
+    IO_MUX_GPIO36_REG,
+    IO_MUX_GPIO37_REG,
+    IO_MUX_GPIO38_REG,
+    IO_MUX_GPIO39_REG,
+    IO_MUX_GPIO40_REG,
+    IO_MUX_GPIO41_REG,
+    IO_MUX_GPIO42_REG,
+    IO_MUX_GPIO43_REG,
+    IO_MUX_GPIO44_REG,
+    IO_MUX_GPIO45_REG,
+    IO_MUX_GPIO46_REG,
+    0,
+};
+#endif
 
 typedef struct {
     gpio_isr_t fn;   /*!< isr function */
@@ -247,7 +300,11 @@ esp_err_t gpio_set_pull_mode(gpio_num_t gpio_num, gpio_pull_mode_t pull)
 esp_err_t gpio_set_direction(gpio_num_t gpio_num, gpio_mode_t mode)
 {
     GPIO_CHECK(GPIO_IS_VALID_GPIO(gpio_num), "GPIO number error", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     if (gpio_num >= 34 && (mode & GPIO_MODE_DEF_OUTPUT)) {
+#elif defined CONFIG_CHIP_IS_ESP32C
+    if (gpio_num >= 46 && (mode & GPIO_MODE_DEF_OUTPUT)) {
+#endif
         ESP_LOGE(GPIO_TAG, "io_num=%d can only be input", gpio_num);
         return ESP_ERR_INVALID_ARG;
     }

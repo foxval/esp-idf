@@ -37,8 +37,8 @@
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
 #include "esp_heap_caps.h"
+#include "sdkconfig.h"
 
-#if 0
 static const char *SPI_TAG = "spi_slave";
 #define SPI_CHECK(a, str, ret_val) \
     if (!(a)) { \
@@ -76,7 +76,11 @@ esp_err_t spi_slave_initialize(spi_host_device_t host, const spi_bus_config_t *b
     esp_err_t err;
     //We only support HSPI/VSPI, period.
     SPI_CHECK(VALID_HOST(host), "invalid host", ESP_ERR_INVALID_ARG);
+#ifdef CONFIG_CHIP_IS_ESP32
     SPI_CHECK( dma_chan >= 0 && dma_chan <= 2, "invalid dma channel", ESP_ERR_INVALID_ARG );
+#elif defined CONFIG_CHIP_IS_ESP32C
+    SPI_CHECK( dma_chan == 0 || dma_chan == host, "invalid dma channel", ESP_ERR_INVALID_ARG );
+#endif
 
     spi_chan_claimed=spicommon_periph_claim(host);
     SPI_CHECK(spi_chan_claimed, "host already in use", ESP_ERR_INVALID_STATE);
@@ -150,9 +154,13 @@ esp_err_t spi_slave_initialize(spi_host_device_t host, const spi_bus_config_t *b
     spihost[host]->hw->clock.val = 0;
     spihost[host]->hw->user.val = 0;
     spihost[host]->hw->ctrl.val = 0;
+
+#ifdef CONFIG_CHIP_IS_ESP32
     spihost[host]->hw->slave.wr_rd_buf_en = 1; //no sure if needed
+#endif
     spihost[host]->hw->user.doutdin = 1; //we only support full duplex
     spihost[host]->hw->user.sio = 0;
+    spihost[host]->hw->user.tx_start_bit = 7;
     spihost[host]->hw->slave.slave_mode = 1;
     spihost[host]->hw->dma_conf.val |= SPI_OUT_RST | SPI_IN_RST | SPI_AHBM_RST | SPI_AHBM_FIFO_RST;
     spihost[host]->hw->dma_out_link.start = 0;
@@ -163,26 +171,55 @@ esp_err_t spi_slave_initialize(spi_host_device_t host, const spi_bus_config_t *b
     spihost[host]->hw->slave.sync_reset = 0;
 
 
+#ifdef CONFIG_CHIP_IS_ESP32
     bool nodelay = true;
+#elif defined CONFIG_CHIP_IS_ESP32C
+    bool nodelay = false;
+#endif
     spihost[host]->hw->ctrl.rd_bit_order = (slave_config->flags & SPI_SLAVE_RXBIT_LSBFIRST) ? 1 : 0;
     spihost[host]->hw->ctrl.wr_bit_order = (slave_config->flags & SPI_SLAVE_TXBIT_LSBFIRST) ? 1 : 0;
+
+#ifdef CONFIG_CHIP_IS_ESP32
     if (slave_config->mode == 0) {
         spihost[host]->hw->pin.ck_idle_edge = 0;
         spihost[host]->hw->user.ck_i_edge = 1;
-        spihost[host]->hw->ctrl2.miso_delay_mode = nodelay ? 0 : 2;
+        spihost[host]->hw->ctrl2.miso_delay_mode=nodelay?0:2;
     } else if (slave_config->mode == 1) {
         spihost[host]->hw->pin.ck_idle_edge = 0;
         spihost[host]->hw->user.ck_i_edge = 0;
-        spihost[host]->hw->ctrl2.miso_delay_mode = nodelay ? 0 : 1;
+        spihost[host]->hw->ctrl2.miso_delay_mode=nodelay?0:1;
     } else if (slave_config->mode == 2) {
         spihost[host]->hw->pin.ck_idle_edge = 1;
         spihost[host]->hw->user.ck_i_edge = 0;
-        spihost[host]->hw->ctrl2.miso_delay_mode = nodelay ? 0 : 1;
+        spihost[host]->hw->ctrl2.miso_delay_mode=nodelay?0:1;
     } else if (slave_config->mode == 3) {
         spihost[host]->hw->pin.ck_idle_edge = 1;
         spihost[host]->hw->user.ck_i_edge = 1;
-        spihost[host]->hw->ctrl2.miso_delay_mode = nodelay ? 0 : 2;
+        spihost[host]->hw->ctrl2.miso_delay_mode=nodelay?0:2;
     }
+#elif defined CONFIG_CHIP_IS_ESP32C
+    if (slave_config->mode == 0) {
+        spihost[host]->hw->misc.ck_idle_edge = 0;
+        spihost[host]->hw->user.rsck_i_edge = 0;
+        spihost[host]->hw->user.tsck_i_edge = 0;
+        spihost[host]->hw->ctrl1.clk_mode_13 = 0;
+    } else if (slave_config->mode == 1) {
+        spihost[host]->hw->misc.ck_idle_edge = 0;
+        spihost[host]->hw->user.rsck_i_edge = 1;
+        spihost[host]->hw->user.tsck_i_edge = 1;
+        spihost[host]->hw->ctrl1.clk_mode_13 = 1;
+    } else if (slave_config->mode == 2) {
+        spihost[host]->hw->misc.ck_idle_edge = 1;
+        spihost[host]->hw->user.rsck_i_edge = 1;
+        spihost[host]->hw->user.tsck_i_edge = 1;
+        spihost[host]->hw->ctrl1.clk_mode_13 = 0;
+    } else if (slave_config->mode == 3) {
+        spihost[host]->hw->misc.ck_idle_edge = 1;
+        spihost[host]->hw->user.rsck_i_edge = 0;
+        spihost[host]->hw->user.tsck_i_edge = 0;
+        spihost[host]->hw->ctrl1.clk_mode_13 = 1;
+    }
+#endif
 
     //Reset DMA
     spihost[host]->hw->dma_conf.val |= SPI_OUT_RST | SPI_IN_RST | SPI_AHBM_RST | SPI_AHBM_FIFO_RST;
@@ -191,6 +228,7 @@ esp_err_t spi_slave_initialize(spi_host_device_t host, const spi_bus_config_t *b
     spihost[host]->hw->dma_conf.val &= ~(SPI_OUT_RST | SPI_IN_RST | SPI_AHBM_RST | SPI_AHBM_FIFO_RST);
 
     //Disable unneeded ints
+#ifdef CONFIG_CHIP_IS_ESP32
     spihost[host]->hw->slave.rd_buf_done = 0;
     spihost[host]->hw->slave.wr_buf_done = 0;
     spihost[host]->hw->slave.rd_sta_done = 0;
@@ -199,6 +237,7 @@ esp_err_t spi_slave_initialize(spi_host_device_t host, const spi_bus_config_t *b
     spihost[host]->hw->slave.wr_buf_inten = 0;
     spihost[host]->hw->slave.rd_sta_inten = 0;
     spihost[host]->hw->slave.wr_sta_inten = 0;
+#endif
 
     //Force a transaction done interrupt. This interrupt won't fire yet because we initialized the SPI interrupt as
     //disabled.  This way, we can just enable the SPI interrupt and the interrupt handler will kick in, handling
@@ -345,10 +384,15 @@ static void IRAM_ATTR spi_intr(void *arg)
         //when data of cur_trans->length are all sent, the slv_rdata_bit
         //will be the length sent-1 (i.e. cur_trans->length-1 ), otherwise 
         //the length sent.
+
+#ifdef CONFIG_CHIP_IS_ESP32
         host->cur_trans->trans_len = host->hw->slv_rd_bit.slv_rdata_bit;
         if ( host->cur_trans->trans_len == host->cur_trans->length - 1 ) {
             host->cur_trans->trans_len++;
         }
+#elif defined CONFIG_CHIP_IS_ESP32C
+        host->cur_trans->trans_len = host->hw->slv_rd_byte.slv_rdata_bit * 8;
+#endif
 
         if (host->dma_chan == 0 && host->cur_trans->rx_buffer) {
             //Copy result out
@@ -392,9 +436,13 @@ static void IRAM_ATTR spi_intr(void *arg)
         //No packet waiting. Disable interrupt.
         esp_intr_disable(host->intr);
     } else {
-        //We have a transaction. Send it.
-        host->hw->slave.trans_done = 0; //clear int bit
+//        //We have a transaction. Send it.
+//        host->hw->slave.trans_done = 0; //clear int bit
+
+
         host->cur_trans = trans;
+        //host->hw->slave.trans_done = 1; //clear int bit
+
 
         if (host->dma_chan != 0) {
             spicommon_dmaworkaround_transfer_active(host->dma_chan);
@@ -406,10 +454,13 @@ static void IRAM_ATTR spi_intr(void *arg)
             host->hw->dma_conf.indscr_burst_en = 0;
             host->hw->dma_conf.outdscr_burst_en = 0;
 
+            host->hw->slave.sync_reset = 1;
+            host->hw->slave.sync_reset = 0;
             //Fill DMA descriptors
             if (trans->rx_buffer) {
                 host->hw->user.usr_miso_highpart = 0;
                 spicommon_setup_dma_desc_links(host->dmadesc_rx, ((trans->length + 7) / 8), trans->rx_buffer, true);
+                host->hw->dma_in_link.restart = 1;
                 host->hw->dma_in_link.addr = (int)(&host->dmadesc_rx[0]) & 0xFFFFF;
                 host->hw->dma_in_link.start = 1;
             }
@@ -417,12 +468,11 @@ static void IRAM_ATTR spi_intr(void *arg)
             if (trans->tx_buffer) {
                 spicommon_setup_dma_desc_links(host->dmadesc_tx, (trans->length + 7) / 8, trans->tx_buffer, false);
                 host->hw->user.usr_mosi_highpart = 0;
+                host->hw->dma_out_link.restart = 1;
                 host->hw->dma_out_link.addr = (int)(&host->dmadesc_tx[0]) & 0xFFFFF;
                 host->hw->dma_out_link.start = 1;
             }
 
-            host->hw->slave.sync_reset = 1;
-            host->hw->slave.sync_reset = 0;
 
         } else {
             //No DMA. Turn off SPI and copy data to transmit buffers.
@@ -442,18 +492,26 @@ static void IRAM_ATTR spi_intr(void *arg)
             }
         }
 
-        host->hw->slv_rd_bit.slv_rdata_bit = 0;
+        host->hw->slave.trans_done = 0; //clear int bit
+#ifdef CONFIG_CHIP_IS_ESP32
+#define MISO_DBITLEN_FIELD  usr_miso_dbitlen
+#define MOSI_DBITLEN_FIELD  usr_mosi_dbitlen
+#elif defined CONFIG_CHIP_IS_ESP32C
+#define MISO_DBITLEN_FIELD  usr_miso_bit_len
+#define MOSI_DBITLEN_FIELD  usr_mosi_bit_len
+#endif
+
+        //host->hw->RD_BIT_REG.slv_rdata_bit = 0;
         host->hw->slv_wrbuf_dlen.bit_len = trans->length - 1;
         host->hw->slv_rdbuf_dlen.bit_len = trans->length - 1;
-        host->hw->mosi_dlen.usr_mosi_dbitlen = trans->length - 1;
-        host->hw->miso_dlen.usr_miso_dbitlen = trans->length - 1;
+        host->hw->mosi_dlen.MOSI_DBITLEN_FIELD = trans->length - 1;
+        host->hw->miso_dlen.MISO_DBITLEN_FIELD = trans->length - 1;
         host->hw->user.usr_mosi = (trans->tx_buffer == NULL) ? 0 : 1;
         host->hw->user.usr_miso = (trans->rx_buffer == NULL) ? 0 : 1;
 
         //Kick off transfer
-        host->hw->cmd.usr = 1;
+        //host->hw->cmd.usr = 1;
         if (host->cfg.post_setup_cb) host->cfg.post_setup_cb(trans);
     }
     if (do_yield) portYIELD_FROM_ISR();
 }
-#endif

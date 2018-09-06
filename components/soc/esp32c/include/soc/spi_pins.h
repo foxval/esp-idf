@@ -15,25 +15,26 @@
 #ifndef _SOC_SPI_PINS_H_
 #define _SOC_SPI_PINS_H_
 
-#define SPI_IOMUX_PIN_NUM_MISO  31
+#define SPI_PERIPH_NUM          4
+
+#define SPI_FUNC_NUM            2
+#define SPI_IOMUX_PIN_NUM_HD    27
+#define SPI_IOMUX_PIN_NUM_CS    29
 #define SPI_IOMUX_PIN_NUM_MOSI  32
 #define SPI_IOMUX_PIN_NUM_CLK   30
-#define SPI_IOMUX_PIN_NUM_CS    29
+#define SPI_IOMUX_PIN_NUM_MISO  31
 #define SPI_IOMUX_PIN_NUM_WP    28
-#define SPI_IOMUX_PIN_NUM_HD    27
+//TODO: add the next slot
 
-#define HSPI_IOMUX_PIN_NUM_MISO 37
-#define HSPI_IOMUX_PIN_NUM_MOSI 35
-#define HSPI_IOMUX_PIN_NUM_CLK  36
-#define HSPI_IOMUX_PIN_NUM_CS   34
-#define HSPI_IOMUX_PIN_NUM_WP   38
-#define HSPI_IOMUX_PIN_NUM_HD   33
+#define FSPI_FUNC_NUM           0
+#define FSPI_IOMUX_PIN_NUM_HD   9
+#define FSPI_IOMUX_PIN_NUM_CS   10
+#define FSPI_IOMUX_PIN_NUM_MOSI 11
+#define FSPI_IOMUX_PIN_NUM_CLK  12
+#define FSPI_IOMUX_PIN_NUM_MISO 13
+#define FSPI_IOMUX_PIN_NUM_WP   14
+//TODO: add the next slot
 
-#define VSPI_IOMUX_PIN_NUM_MISO 13
-#define VSPI_IOMUX_PIN_NUM_MOSI 11
-#define VSPI_IOMUX_PIN_NUM_CLK  12
-#define VSPI_IOMUX_PIN_NUM_CS   10
-#define VSPI_IOMUX_PIN_NUM_WP   14
-#define VSPI_IOMUX_PIN_NUM_HD   9
+//HSPI and VSPI have no iomux pins
 
-#endif /* _SOC_SPI_PINS_H_ */
+#endif

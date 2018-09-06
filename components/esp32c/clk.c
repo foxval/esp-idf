@@ -99,12 +99,12 @@ void esp_clk_init(void)
     // Wait for UART TX to finish, otherwise some UART output will be lost
     // when switching APB frequency
     uart_tx_wait_idle(CONFIG_CONSOLE_UART_NUM);
-    
+
     uint32_t freq_before = rtc_clk_cpu_freq_value(rtc_clk_cpu_freq_get()) / MHZ ;
-    
+
     rtc_clk_cpu_freq_set(freq);
 
-    // Re calculate the ccount to make time calculation correct. 
+    // Re calculate the ccount to make time calculation correct.
     uint32_t freq_after = CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ;
     XTHAL_SET_CCOUNT( XTHAL_GET_CCOUNT() * freq_after / freq_before );
 }
@@ -192,6 +192,7 @@ void rtc_clk_select_rtc_slow_clk()
 void esp_perip_clk_init(void)
 {
     uint32_t common_perip_clk, hwcrypto_perip_clk, wifi_bt_sdio_clk = 0;
+    uint32_t common_perip_clk1 = 0;
 
 #if CONFIG_FREERTOS_UNICORE
     RESET_REASON rst_reas[1];
@@ -241,13 +242,16 @@ void esp_perip_clk_init(void)
                               DPORT_LEDC_CLK_EN |
                               DPORT_TIMERGROUP1_CLK_EN |
                               DPORT_SPI3_CLK_EN |
+                              DPORT_SPI4_CLK_EN |
                               DPORT_PWM0_CLK_EN |
                               DPORT_CAN_CLK_EN |
                               DPORT_PWM1_CLK_EN |
                               DPORT_I2S1_CLK_EN |
-                              DPORT_SPI_DMA0_CLK_EN |
+                              DPORT_SPI2_DMA_CLK_EN |
+                              DPORT_SPI3_DMA_CLK_EN |
                               DPORT_PWM2_CLK_EN |
                               DPORT_PWM3_CLK_EN;
+        common_perip_clk1 = DPORT_SPI_SHARED_DMA_CLK_EN;
         hwcrypto_perip_clk = DPORT_PERI_EN_AES |
                                 DPORT_PERI_EN_SHA |
                                 DPORT_PERI_EN_RSA |
@@ -282,9 +286,12 @@ void esp_perip_clk_init(void)
                         DPORT_RMT_CLK_EN |
                         DPORT_UHCI1_CLK_EN |
                         DPORT_SPI3_CLK_EN |
+                        DPORT_SPI4_CLK_EN |
                         DPORT_I2C_EXT1_CLK_EN |
                         DPORT_I2S1_CLK_EN |
-                        DPORT_SPI_DMA0_CLK_EN;
+                        DPORT_SPI2_DMA_CLK_EN |
+                        DPORT_SPI3_DMA_CLK_EN;
+    common_perip_clk1 = DPORT_SPI_SHARED_DMA_CLK_EN;
 
 #if CONFIG_SPIRAM_SPEED_80M && CONFIG_CHIP_IS_ESP32
 //80MHz SPIRAM uses SPI3 as well; it's initialized before this is called. Because it is used in
@@ -308,6 +315,9 @@ void esp_perip_clk_init(void)
     /* Disable some peripheral clocks. */
     DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, common_perip_clk);
     DPORT_SET_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, common_perip_clk);
+
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_CLK_EN1_REG, common_perip_clk1);
+    DPORT_SET_PERI_REG_MASK(DPORT_PERIP_RST_EN1_REG, common_perip_clk1);
 
     /* Disable hardware crypto clocks. */
     DPORT_CLEAR_PERI_REG_MASK(DPORT_PERI_CLK_EN_REG, hwcrypto_perip_clk);

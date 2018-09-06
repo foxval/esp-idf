@@ -35,7 +35,6 @@ extern "C" {
 
 #define GPIO_REG_READ(reg)              READ_PERI_REG(reg)
 #define GPIO_REG_WRITE(reg, val)        WRITE_PERI_REG(reg, val)
-#define GPIO_PIN_COUNT                  40
 #define GPIO_ID_PIN0                    0
 #define GPIO_ID_PIN(n)                  (GPIO_ID_PIN0+(n))
 #define GPIO_PIN_ADDR(i)                (GPIO_PIN0_REG + i*4)

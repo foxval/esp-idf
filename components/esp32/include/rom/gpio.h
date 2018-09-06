@@ -15,11 +15,14 @@
 #ifndef _ROM_GPIO_H_
 #define _ROM_GPIO_H_
 
+
 #include <stdint.h>
 #include <stdbool.h>
 
 #include "esp_attr.h"
 #include "soc/gpio_reg.h"
+
+#ifdef CONFIG_CHIP_IS_ESP32
 
 #ifdef __cplusplus
 extern "C" {
@@ -298,6 +301,8 @@ void gpio_pad_hold(uint8_t gpio_num);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif /* _ROM_GPIO_H_ */

@@ -18,6 +18,7 @@
 #include "freertos/xtensa_api.h"
 #include "soc/dport_reg.h"
 #include "driver/periph_ctrl.h"
+#include "sdkconfig.h"
 
 static portMUX_TYPE periph_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
@@ -97,16 +98,26 @@ static uint32_t get_clk_en_mask(periph_module_t periph)
             return DPORT_PCNT_CLK_EN;
         case PERIPH_SPI_MODULE:
             return DPORT_SPI01_CLK_EN;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_HSPI_MODULE:
             return DPORT_SPI2_CLK_EN;
         case PERIPH_VSPI_MODULE:
             return DPORT_SPI3_CLK_EN;
-#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_SPI_DMA_MODULE:
             return DPORT_SPI_DMA_CLK_EN;
 #else
-        case PERIPH_SPI_DMA_MODULE:
-            return DPORT_SPI_DMA0_CLK_EN;
+        case PERIPH_FSPI_MODULE:
+            return DPORT_SPI2_CLK_EN;
+        case PERIPH_HSPI_MODULE:
+            return DPORT_SPI3_CLK_EN;
+        case PERIPH_VSPI_MODULE:
+            return DPORT_SPI4_CLK_EN;
+        case PERIPH_SPI2_DMA_MODULE:
+            return DPORT_SPI2_DMA_CLK_EN;
+        case PERIPH_SPI3_DMA_MODULE:
+            return DPORT_SPI3_DMA_CLK_EN;
+        case PERIPH_SPI_SHARED_DMA_MODULE:
+            return DPORT_SPI_SHARED_DMA_CLK_EN;
 #endif
         case PERIPH_SDMMC_MODULE:
             return DPORT_WIFI_CLK_SDIO_HOST_EN;
@@ -179,16 +190,26 @@ static uint32_t get_rst_en_mask(periph_module_t periph)
             return DPORT_PCNT_RST;
         case PERIPH_SPI_MODULE:
             return DPORT_SPI01_RST;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_HSPI_MODULE:
             return DPORT_SPI2_RST;
         case PERIPH_VSPI_MODULE:
             return DPORT_SPI3_RST;
-#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_SPI_DMA_MODULE:
             return DPORT_SPI_DMA_RST;
 #else
-        case PERIPH_SPI_DMA_MODULE:
-            return DPORT_SPI_DMA0_RST;
+        case PERIPH_FSPI_MODULE:
+            return DPORT_SPI2_RST;
+        case PERIPH_HSPI_MODULE:
+            return DPORT_SPI3_RST;
+        case PERIPH_VSPI_MODULE:
+            return DPORT_SPI4_RST;
+        case PERIPH_SPI2_DMA_MODULE:
+            return DPORT_SPI2_DMA_RST;
+        case PERIPH_SPI3_DMA_MODULE:
+            return DPORT_SPI3_DMA_RST;
+        case PERIPH_SPI_SHARED_DMA_MODULE:
+            return DPORT_SPI_SHARED_DMA_RST;
 #endif
         case PERIPH_SDMMC_MODULE:
             return DPORT_SDIO_HOST_RST;
@@ -209,7 +230,7 @@ static uint32_t get_rst_en_mask(periph_module_t periph)
     }
 }
 
-static bool is_wifi_clk_peripheral(periph_module_t periph)
+static uint32_t get_clk_en_reg(periph_module_t periph)
 {
     /* A small subset of peripherals use WIFI_CLK_EN_REG and
        CORE_RST_EN_REG for their clock & reset registers */
@@ -223,20 +244,34 @@ static bool is_wifi_clk_peripheral(periph_module_t periph)
     case PERIPH_WIFI_BT_COMMON_MODULE:
     case PERIPH_BT_BASEBAND_MODULE:
     case PERIPH_BT_LC_MODULE:
-        return true;
+        return DPORT_WIFI_CLK_EN_REG ;
+    case PERIPH_SPI_SHARED_DMA_MODULE:
+        return DPORT_PERIP_CLK_EN1_REG;
     default:
-        return false;
+        return DPORT_PERIP_CLK_EN_REG;
     }
-}
-
-static uint32_t get_clk_en_reg(periph_module_t periph)
-{
-    return is_wifi_clk_peripheral(periph) ? DPORT_WIFI_CLK_EN_REG : DPORT_PERIP_CLK_EN_REG;
 }
 
 static uint32_t get_rst_en_reg(periph_module_t periph)
 {
-    return is_wifi_clk_peripheral(periph) ? DPORT_CORE_RST_EN_REG : DPORT_PERIP_RST_EN_REG;
+    /* A small subset of peripherals use WIFI_CLK_EN_REG and
+       CORE_RST_EN_REG for their clock & reset registers */
+    switch(periph) {
+    case PERIPH_SDMMC_MODULE:
+    case PERIPH_SDIO_SLAVE_MODULE:
+    case PERIPH_EMAC_MODULE:
+    case PERIPH_RNG_MODULE:
+    case PERIPH_WIFI_MODULE:
+    case PERIPH_BT_MODULE:
+    case PERIPH_WIFI_BT_COMMON_MODULE:
+    case PERIPH_BT_BASEBAND_MODULE:
+    case PERIPH_BT_LC_MODULE:
+        return DPORT_CORE_RST_EN_REG;
+    case PERIPH_SPI_SHARED_DMA_MODULE:
+        return DPORT_PERIP_CLK_EN1_REG;
+    default:
+        return DPORT_PERIP_RST_EN_REG;
+    }
 }
 
 

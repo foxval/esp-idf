@@ -42,10 +42,13 @@ typedef enum {
     PERIPH_UHCI1_MODULE,
     PERIPH_RMT_MODULE,
     PERIPH_PCNT_MODULE,
-    PERIPH_SPI_MODULE,
-    PERIPH_HSPI_MODULE,
-    PERIPH_VSPI_MODULE,
-    PERIPH_SPI_DMA_MODULE,
+    PERIPH_SPI_MODULE,  //SPI1
+    PERIPH_FSPI_MODULE, //SPI2
+    PERIPH_HSPI_MODULE, //SPI3
+    PERIPH_VSPI_MODULE, //SPI4
+    PERIPH_SPI2_DMA_MODULE,
+    PERIPH_SPI3_DMA_MODULE,
+    PERIPH_SPI_SHARED_DMA_MODULE,   //this DMA is shared by SPI1 and SPI4
     PERIPH_SDMMC_MODULE,
     PERIPH_SDIO_SLAVE_MODULE,
     PERIPH_CAN_MODULE,
@@ -149,10 +152,10 @@ typedef enum {
     ETS_SPI0_REJECT_CACHE_INTR_SOURCE,          /**< interrupt of SPI0 Cache access rejected, LEVEL*/
     ETS_SPI1_REJECT_CPU_INTR_SOURCE,            /**< interrupt of SPI1 access rejected, LEVEL*/
     ETS_DMA_COPY_INTR_SOURCE,                   /**< interrupt of DMA copy, LEVEL*/
-    ETS_SPI4_DMA_INRT_SOURCE,                   /**< interrupt of SPI4 DMA, LEVEL*/
+    ETS_SPI4_DMA_INTR_SOURCE,                   /**< interrupt of SPI4 DMA, LEVEL*/
     ETS_SPI4_INTR_SOURCE,                       /**< interrupt of SPI4, LEVEL*/
     ETS_MAX_INTR_SOURCE,                        /**< number of interrupt sources */
-    
+
 } periph_interrput_t;
 
 #ifdef __cplusplus

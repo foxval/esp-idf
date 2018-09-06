@@ -466,7 +466,6 @@ extern "C" {
 #define DPORT_TIMERS_CLK_EN_M  (BIT(0))
 #define DPORT_TIMERS_CLK_EN_V  0x1
 #define DPORT_TIMERS_CLK_EN_S  0
-#define DPORT_SPI_DMA0_CLK_EN DPORT_SPI2_DMA_CLK_EN
 
 #define DPORT_PERIP_CLK_EN1_REG          (DR_REG_SYSTEM_BASE + 0x04C)
 /* DPORT_SPI_SHARED_DMA_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
@@ -670,7 +669,6 @@ extern "C" {
 #define DPORT_TIMERS_RST_M  (BIT(0))
 #define DPORT_TIMERS_RST_V  0x1
 #define DPORT_TIMERS_RST_S  0
-#define DPORT_SPI_DMA0_RST DPORT_SPI2_DMA_RST
 
 #define DPORT_PERIP_RST_EN1_REG          (DR_REG_SYSTEM_BASE + 0x054)
 /* DPORT_SPI_SHARED_DMA_RST : R/W ;bitpos:[0] ;default: 1'b0 ; */
