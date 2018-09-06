@@ -60,8 +60,8 @@ TEST_CASE("Spiram cache flush on mmap", "[spiram][ignore]")
     mem[0]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
     mem[1]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
 #else
-    mem[0]=(void*)0x3f800000;
-    mem[1]=(void*)0x3f800000+TSTSZ;
+    mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
+    mem[1]=(void*)SOC_EXTRAM_DATA_LOW+TSTSZ;
 #endif
     assert(mem[0]);
     assert(mem[1]);
@@ -106,8 +106,8 @@ TEST_CASE("Spiram cache flush on write/read", "[spiram][ignore]")
     mem[0]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
     mem[1]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
 #else
-    mem[0]=(void*)0x3f800000;
-    mem[1]=(void*)0x3f800000+TSTSZ;
+    mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
+    mem[1]=(void*)SOC_EXTRAM_DATA_LOW+TSTSZ;
 #endif
     assert(mem[0]);
     assert(mem[1]);
@@ -149,7 +149,7 @@ IRAM_ATTR TEST_CASE("Spiram memcmp weirdness at 80MHz", "[spiram][ignore]") {
 #if CONFIG_SPIRAM_USE_CAPS_ALLOC
     char *mem2=heap_caps_malloc(0x10000, MALLOC_CAP_SPIRAM);
 #else
-    char *mem2=(void*)0x3f800000;
+    char *mem2=(void*)SOC_EXTRAM_DATA_LOW;
 #endif
 
 #if !CONFIG_SPIRAM_SPEED_80M

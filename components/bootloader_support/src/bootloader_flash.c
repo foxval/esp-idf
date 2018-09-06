@@ -84,8 +84,8 @@ static const char *TAG = "bootloader_flash";
 /* Use first 50 blocks in MMU for bootloader_mmap,
    50th block for bootloader_flash_read
 */
-#define MMU_BLOCK0_VADDR  0x3f400000
-#define MMU_BLOCK50_VADDR 0x3f720000
+#define MMU_BLOCK0_VADDR  SOC_DROM_LOW
+#define MMU_BLOCK50_VADDR (SOC_DROM_LOW + 0x320000)
 #define MMU_FLASH_MASK    0xffff0000
 #define MMU_BLOCK_SIZE    0x00010000
 

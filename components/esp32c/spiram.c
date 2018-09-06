@@ -210,9 +210,9 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     }
 #endif
 #else
-    Cache_WriteBack_Addr(0, 0x3f800000, 0x400000);
+    Cache_WriteBack_Addr(0, SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW);
 #ifndef CONFIG_FREERTOS_UNICORE
-    Cache_WriteBack_Addr(1, 0x3f800000, 0x400000);
+    Cache_WriteBack_Addr(1, SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW);
 #endif
 #endif
 

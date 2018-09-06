@@ -73,7 +73,7 @@ Because of requirements in the coalescing code which merges adjacent regions, th
 from low to high start address.
 */
 const soc_memory_region_t soc_memory_regions[] = {
-    { 0x3F800000, 0x400000, 15, 0}, //SPI SRAM, if available
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW, 15, 0}, //SPI SRAM, if available
     { 0x3FFD0000, 0x4000, 0, 0},// 0x40090000}, //pool 8 <- can be remapped to ROM, used for MAC dump
     { 0x3FFD4000, 0x4000, 0, 0},// 0x40094000}, //pool 7 <- can be used for MAC dump
     { 0x3FFD8000, 0x4000, 0, 0},// 0x40098000}, //pool 6 blk 1 <- can be used as trace memory
@@ -141,7 +141,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 #endif
 #endif
 
-    { 0x3f800000, 0x3fC00000 }, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
 };
 
 const size_t soc_reserved_region_count = sizeof(soc_reserved_regions)/sizeof(soc_reserved_region_t);
