@@ -93,9 +93,13 @@ void ref_clock_init()
     RMT.conf_ch[REF_CLOCK_RMT_CHANNEL].conf1.tx_start = 1;
 
     // Route signal to PCNT
+#ifdef CONFIG_CHIP_IS_ESP32
     int pcnt_sig_idx = (REF_CLOCK_PCNT_UNIT < 5) ?
             PCNT_SIG_CH0_IN0_IDX + 4 * REF_CLOCK_PCNT_UNIT :
             PCNT_SIG_CH0_IN5_IDX + 4 * (REF_CLOCK_PCNT_UNIT - 5);
+#elif defined CONFIG_CHIP_IS_ESP32C
+    int pcnt_sig_idx = PCNT_SIG_CH0_IN0_IDX + 4 * REF_CLOCK_PCNT_UNIT;
+#endif
     gpio_matrix_in(REF_CLOCK_GPIO, pcnt_sig_idx, false);
     if (REF_CLOCK_GPIO != 20) {
         PIN_INPUT_ENABLE(GPIO_PIN_MUX_REG[REF_CLOCK_GPIO]);
