@@ -149,7 +149,7 @@ typedef volatile struct {
             uint32_t reserved4: 28;
         };
         uint32_t val;
-    } int_st_timers;
+    } int_st;
     union {
         struct {
             uint32_t t0:         1;                   /*interrupt when timer0 alarm*/
@@ -159,7 +159,7 @@ typedef volatile struct {
             uint32_t reserved4: 28;
         };
         uint32_t val;
-    } int_clr_timers;
+    } int_clr;
     uint32_t reserved_a8;
     uint32_t reserved_ac;
     uint32_t reserved_b0;

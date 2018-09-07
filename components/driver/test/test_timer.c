@@ -21,9 +21,9 @@ static void test_timer_group0_isr(void *para)
     alarm_flag = true;
     if (TIMERG0.hw_timer[timer_idx].config.autoreload == 1) {
         if (timer_idx == 0) {
-            TIMERG0.int_clr_timers.t0 = 1;
+            TIMERG0.int_clr.t0 = 1;
         } else {
-            TIMERG0.int_clr_timers.t1 = 1;
+            TIMERG0.int_clr.t1 = 1;
         }
         ets_printf("This is TG0 timer[%d] reload-timer alarm!\n", timer_idx);
         timer_get_counter_value(TIMER_GROUP_0, timer_idx, &timer_val);
@@ -31,9 +31,9 @@ static void test_timer_group0_isr(void *para)
         ets_printf("time: %.8f S\n", time);
     } else {
         if (timer_idx == 0) {
-            TIMERG0.int_clr_timers.t0 = 1;
+            TIMERG0.int_clr.t0 = 1;
         } else {
-            TIMERG0.int_clr_timers.t1 = 1;
+            TIMERG0.int_clr.t1 = 1;
         }
         ets_printf("This is TG0 timer[%d] count-up-timer alarm!\n", timer_idx);
         timer_get_counter_value(TIMER_GROUP_0, timer_idx, &timer_val);
@@ -55,9 +55,9 @@ static void test_timer_group1_isr(void *para)
     alarm_flag = true;
     if (TIMERG1.hw_timer[timer_idx].config.autoreload == 1) {
         if (timer_idx == 0) {
-            TIMERG1.int_clr_timers.t0 = 1;
+            TIMERG1.int_clr.t0 = 1;
         } else {
-            TIMERG1.int_clr_timers.t1 = 1;
+            TIMERG1.int_clr.t1 = 1;
         }
         ets_printf("This is TG1 timer[%d] reload-timer alarm!\n", timer_idx);
         timer_get_counter_value(TIMER_GROUP_1, timer_idx, &timer_val);
@@ -65,9 +65,9 @@ static void test_timer_group1_isr(void *para)
         ets_printf("time: %.8f S\n", time);
     } else {
         if (timer_idx == 0) {
-            TIMERG1.int_clr_timers.t0 = 1;
+            TIMERG1.int_clr.t0 = 1;
         } else {
-            TIMERG1.int_clr_timers.t1 = 1;
+            TIMERG1.int_clr.t1 = 1;
         }
         ets_printf("This is TG1 timer[%d] count-up-timer alarm!\n", timer_idx);
         timer_get_counter_value(TIMER_GROUP_1, timer_idx, &timer_val);

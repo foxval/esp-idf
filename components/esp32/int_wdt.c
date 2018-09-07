@@ -86,7 +86,7 @@ void esp_int_wdt_init() {
     TIMERG1.wdt_config0.en=1;
     TIMERG1.wdt_feed=1;
     TIMERG1.wdt_wprotect=0;
-    TIMERG1.int_clr_timers.wdt=1;
+    TIMERG1.int_clr.wdt=1;
     timer_group_intr_enable(TIMER_GROUP_1, TIMG_WDT_INT_ENA_M);
 }
 
