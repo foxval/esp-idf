@@ -78,8 +78,10 @@ esp_err_t bootloader_init()
         int *sp = get_sp();
         assert(&_bss_start <= &_bss_end);
         assert(&_data_start <= &_data_end);
+#ifdef CONFIG_CHIP_IS_ESP32
         assert(sp < &_bss_start);
         assert(sp < &_data_start);
+#endif
     }
 #endif
 

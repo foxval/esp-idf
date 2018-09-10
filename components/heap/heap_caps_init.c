@@ -53,17 +53,26 @@ void heap_caps_enable_nonos_stack_heaps()
 }
 
 //Modify regions array to disable the given range of memory.
-static void disable_mem_region(soc_memory_region_t *regions, intptr_t from, intptr_t to)
+static void disable_mem_region(soc_memory_region_t *regions, intptr_t dis_from, intptr_t dis_to)
 {
     //Align from and to on word boundaries
-    from = from & ~3;
-    to = (to + 3) & ~3;
+    dis_from = dis_from & ~3;
+    dis_to = (dis_to + 3) & ~3;
 
     for (int i = 0; i < soc_memory_region_count; i++) {
         soc_memory_region_t *region = &regions[i];
 
         intptr_t regStart = region->start;
         intptr_t regEnd = region->start + region->size;
+        intptr_t from;
+        intptr_t to;
+        if (dis_from >= 0x40000000 && regEnd < 0x40000000 && region->iram_address != 0) {
+            from = dis_from - (region->iram_address - region->start);
+            to = dis_to - (region->iram_address - region->start);
+        } else {
+            from = dis_from;
+            to = dis_to;
+        }
         if (regStart >= from && regEnd <= to) {
             //Entire region falls in the range. Disable entirely.
             regions[i].type = -1;

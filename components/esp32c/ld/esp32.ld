@@ -51,7 +51,7 @@ MEMORY
      additional static memory temporarily cannot be used.
   */
   dram0_0_seg (RW) :                 org = 0x3FFD0000 + CONFIG_BT_RESERVE_DRAM,
-                                     len = 0x20000 - CONFIG_BT_RESERVE_DRAM
+                                     len = 0x28000 - CONFIG_BT_RESERVE_DRAM
 
   /* Flash mapped constant data */
   drom0_0_seg (R) :                  org = 0x3F400018, len = 0x400000-0x18

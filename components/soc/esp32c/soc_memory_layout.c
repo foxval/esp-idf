@@ -74,29 +74,38 @@ from low to high start address.
 */
 const soc_memory_region_t soc_memory_regions[] = {
     { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW, 15, 0}, //SPI SRAM, if available
-    { 0x3FFD0000, 0x4000, 0, 0},// 0x40090000}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x3FFD4000, 0x4000, 0, 0},// 0x40094000}, //pool 7 <- can be used for MAC dump
-    { 0x3FFD8000, 0x4000, 0, 0},// 0x40098000}, //pool 6 blk 1 <- can be used as trace memory
-    { 0x3FFDC000, 0x4000, 0, 0},// 0x4009C000}, //pool 6 blk 0 <- can be used as trace memory
-    { 0x3FFE0000, 0x4000, 0, 0},// 0x400AC000}, //pool 9 blk 1
-    { 0x3FFE4000, 0x4000, 0, 0},// 0x400A8000}, //pool 9 blk 0
-    { 0x3FFE8000, 0x4000, 0, 0},// 0x400A8000}, //pool 6 blk 1 <- can be used as trace memory
-    { 0x3FFEC000, 0x4000, 0, 0},// 0x400AC000}, //pool 6 blk 0 <- can be used as trace memory
-    { 0x3FFF0000, 0x4000, 0, 0},// 0x400B0000}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x3FFF4000, 0x4000, 0, 0},// 0x400B4000}, //pool 7 <- can be used for MAC dump
-    { 0x3FFF8000, 0x4000, 0, 0},// 0x400B8000}, //pool 6 blk 1 <- can be used as trace memory
-    { 0x3FFFC000, 0x4000, 0, 0},// 0x400BC000}, //pool 6 blk 0 <- can be used as trace memory
-    { 0x40028000, 0x4000, 2, 0}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x4002C000, 0x4000, 2, 0}, //pool 7 <- can be used for MAC dump
-    { 0x40030000, 0x4000, 2, 0}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x40034000, 0x4000, 2, 0}, //pool 7 <- can be used for MAC dump
-    { 0x40038000, 0x4000, 2, 0}, //pool 6 blk 1 <- can be used as trace memory
-    { 0x4003C000, 0x4000, 2, 0} //pool 6 blk 0 <- can be used as trace memory
+#ifdef CONFIG_MIN_ICACHE
+    { 0x3FFB2000, 0x2000, 0, 0x400B2000}, //Block 1, can be use as I/D cache memory
+#endif
+#ifndef CONFIG_SPIRAM_SUPPORT 
+    { 0x3FFB4000, 0x2000, 0, 0x400B4000}, //Block 2, can be use as D cache memory
+    { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#endif
+    { 0x3FFB8000, 0x4000, 0, 0x40028000}, //Block 4,  can be remapped to ROM, can be used as trace memory
+    { 0x3FFBC000, 0x4000, 0, 0x4002C000}, //Block 5,  can be remapped to ROM, can be used as trace memory
+    { 0x3FFC0000, 0x4000, 0, 0x40030000}, //Block 6,  can be used as trace memory
+    { 0x3FFC4000, 0x4000, 0, 0x40034000}, //Block 7,  can be used as trace memory
+    { 0x3FFC8000, 0x4000, 0, 0x40038000}, //Block 8,  can be used as trace memory
+    { 0x3FFCC000, 0x4000, 0, 0x4003C000}, //Block 9,  can be used as trace memory
+
+    { 0x3FFD0000, 0x4000, 0, 0x40040000}, //Block 10,  can be used as trace memory
+    { 0x3FFD4000, 0x4000, 0, 0x40044000}, //Block 11,  can be used as trace memory
+    { 0x3FFD8000, 0x4000, 0, 0x40048000}, //Block 12,  can be used as trace memory
+    { 0x3FFDC000, 0x4000, 0, 0x4004C000}, //Block 13,  can be used as trace memory
+    { 0x3FFE0000, 0x4000, 0, 0x40050000}, //Block 14,  can be used as trace memory
+    { 0x3FFE4000, 0x4000, 0, 0x40054000}, //Block 15,  can be used as trace memory
+    { 0x3FFE8000, 0x4000, 0, 0x40058000}, //Block 16,  can be used as trace memory
+    { 0x3FFEC000, 0x4000, 0, 0x4005C000}, //Block 17,  can be used as trace memory
+    { 0x3FFF0000, 0x4000, 0, 0x40060000}, //Block 18,  can be used for MAC dump, can be used as trace memory
+    { 0x3FFF4000, 0x4000, 0, 0x40064000}, //Block 19,  can be used for MAC dump, can be used as trace memory
+    { 0x3FFF8000, 0x4000, 0, 0x40068000}, //Block 20,  can be used for MAC dump, can be used as trace memory
+    { 0x3FFFC000, 0x4000, 0, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory
 };
 
 const size_t soc_memory_region_count = sizeof(soc_memory_regions)/sizeof(soc_memory_region_t);
 
 
+extern int _data_start_xtos;
 /* Reserved memory regions
 
    These are removed from the soc_memory_regions array when heaps are created.
@@ -120,9 +129,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
        will go and write metadata at the start and end of all regions. For the ESP32, these linked
        list entries happen to end up in a region that is not touched by the stack; they can be placed safely there.
     */
-
-    { 0x3fff2000, 0x3fff5000 }, //Reserve ROM PRO data region
-    { 0x3fff0000, 0x3fff2000 }, //Reserve ROM PRO data region
+    { 0x3fffc000, &_data_start_xtos}, //Reserve ROM PRO data region
 //    { 0x3ffe4000, 0x3ffe4350 }, //Reserve ROM APP data region
 
 #if CONFIG_BT_ENABLED
