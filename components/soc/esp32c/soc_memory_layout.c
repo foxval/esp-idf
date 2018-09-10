@@ -80,8 +80,6 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFDC000, 0x4000, 0, 0},// 0x4009C000}, //pool 6 blk 0 <- can be used as trace memory
     { 0x3FFE0000, 0x4000, 0, 0},// 0x400AC000}, //pool 9 blk 1
     { 0x3FFE4000, 0x4000, 0, 0},// 0x400A8000}, //pool 9 blk 0
-    { 0x3FFE0000, 0x4000, 0, 0},// 0x400A0000}, //pool 8 <- can be remapped to ROM, used for MAC dump
-    { 0x3FFE4000, 0x4000, 0, 0},// 0x400A4000}, //pool 7 <- can be used for MAC dump
     { 0x3FFE8000, 0x4000, 0, 0},// 0x400A8000}, //pool 6 blk 1 <- can be used as trace memory
     { 0x3FFEC000, 0x4000, 0, 0},// 0x400AC000}, //pool 6 blk 0 <- can be used as trace memory
     { 0x3FFF0000, 0x4000, 0, 0},// 0x400B0000}, //pool 8 <- can be remapped to ROM, used for MAC dump

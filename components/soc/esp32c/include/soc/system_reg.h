@@ -274,12 +274,12 @@ extern "C" {
 
 #define DPORT_PERIP_CLK_EN_REG DPORT_PERIP_CLK_EN0_REG
 #define DPORT_PERIP_CLK_EN0_REG          (DR_REG_SYSTEM_BASE + 0x048)
-/* DPORT_G1SPI01_CLK_EN : R/W ;bitpos:[31] ;default: 1'h1 ; */
+/* DPORT_SPI4_CLK_EN : R/W ;bitpos:[31] ;default: 1'h1 ; */
 /*description: */
-#define DPORT_G1SPI01_CLK_EN  (BIT(31))
-#define DPORT_G1SPI01_CLK_EN_M  (BIT(31))
-#define DPORT_G1SPI01_CLK_EN_V  0x1
-#define DPORT_G1SPI01_CLK_EN_S  31
+#define DPORT_SPI4_CLK_EN  (BIT(31))
+#define DPORT_SPI4_CLK_EN_M  (BIT(31))
+#define DPORT_SPI4_CLK_EN_V  0x1
+#define DPORT_SPI4_CLK_EN_S  31
 /* DPORT_ADC2_ARB_CLK_EN : R/W ;bitpos:[30] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_ADC2_ARB_CLK_EN  (BIT(30))
@@ -454,20 +454,18 @@ extern "C" {
 #define DPORT_UART_CLK_EN_M  (BIT(2))
 #define DPORT_UART_CLK_EN_V  0x1
 #define DPORT_UART_CLK_EN_S  2
-/* DPORT_G0SPI01_CLK_EN : R/W ;bitpos:[1] ;default: 1'b1 ; */
+/* DPORT_SPI01_CLK_EN : R/W ;bitpos:[1] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_G0SPI01_CLK_EN  (BIT(1))
-#define DPORT_G0SPI01_CLK_EN_M  (BIT(1))
-#define DPORT_G0SPI01_CLK_EN_V  0x1
-#define DPORT_G0SPI01_CLK_EN_S  1
+#define DPORT_SPI01_CLK_EN  (BIT(1))
+#define DPORT_SPI01_CLK_EN_M  (BIT(1))
+#define DPORT_SPI01_CLK_EN_V  0x1
+#define DPORT_SPI01_CLK_EN_S  1
 /* DPORT_TIMERS_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_TIMERS_CLK_EN  (BIT(0))
 #define DPORT_TIMERS_CLK_EN_M  (BIT(0))
 #define DPORT_TIMERS_CLK_EN_V  0x1
 #define DPORT_TIMERS_CLK_EN_S  0
-
-#define DPORT_SPI01_CLK_EN DPORT_G1SPI01_CLK_EN
 #define DPORT_SPI_DMA0_CLK_EN DPORT_SPI2_DMA_CLK_EN
 
 #define DPORT_PERIP_CLK_EN1_REG          (DR_REG_SYSTEM_BASE + 0x04C)
@@ -480,12 +478,12 @@ extern "C" {
 
 #define DPORT_PERIP_RST_EN_REG DPORT_PERIP_RST_EN0_REG
 #define DPORT_PERIP_RST_EN0_REG          (DR_REG_SYSTEM_BASE + 0x050)
-/* DPORT_G1SPI01_RST : R/W ;bitpos:[31] ;default: 1'h0 ; */
+/* DPORT_SPI4_RST : R/W ;bitpos:[31] ;default: 1'h0 ; */
 /*description: */
-#define DPORT_G1SPI01_RST  (BIT(31))
-#define DPORT_G1SPI01_RST_M  (BIT(31))
-#define DPORT_G1SPI01_RST_V  0x1
-#define DPORT_G1SPI01_RST_S  31
+#define DPORT_SPI4_RST  (BIT(31))
+#define DPORT_SPI4_RST_M  (BIT(31))
+#define DPORT_SPI4_RST_V  0x1
+#define DPORT_SPI4_RST_S  31
 /* DPORT_ADC2_ARB_RST : R/W ;bitpos:[30] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_ADC2_ARB_RST  (BIT(30))
@@ -660,19 +658,18 @@ extern "C" {
 #define DPORT_UART_RST_M  (BIT(2))
 #define DPORT_UART_RST_V  0x1
 #define DPORT_UART_RST_S  2
-/* DPORT_G0SPI01_RST : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* DPORT_SPI01_RST : R/W ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_G0SPI01_RST  (BIT(1))
-#define DPORT_G0SPI01_RST_M  (BIT(1))
-#define DPORT_G0SPI01_RST_V  0x1
-#define DPORT_G0SPI01_RST_S  1
+#define DPORT_SPI01_RST  (BIT(1))
+#define DPORT_SPI01_RST_M  (BIT(1))
+#define DPORT_SPI01_RST_V  0x1
+#define DPORT_SPI01_RST_S  1
 /* DPORT_TIMERS_RST : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_TIMERS_RST  (BIT(0))
 #define DPORT_TIMERS_RST_M  (BIT(0))
 #define DPORT_TIMERS_RST_V  0x1
 #define DPORT_TIMERS_RST_S  0
-#define DPORT_SPI01_RST DPORT_G1SPI01_RST
 #define DPORT_SPI_DMA0_RST DPORT_SPI2_DMA_RST
 
 #define DPORT_PERIP_RST_EN1_REG          (DR_REG_SYSTEM_BASE + 0x054)

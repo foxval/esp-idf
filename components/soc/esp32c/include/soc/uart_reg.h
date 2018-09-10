@@ -926,27 +926,27 @@ extern "C" {
 #define UART_RS485_EN_S  0
 
 #define UART_AT_CMD_PRECNT_REG(i)          (REG_UART_BASE(i) + 0x4c)
-/* UART_PRE_IDLE_NUM : R/W ;bitpos:[11:0] ;default: 12'h901 ; */
+/* UART_PRE_IDLE_NUM : R/W ;bitpos:[15:0] ;default: 16'h901 ; */
 /*description: */
-#define UART_PRE_IDLE_NUM  0x00000FFF
+#define UART_PRE_IDLE_NUM  0x0000FFFF
 #define UART_PRE_IDLE_NUM_M  ((UART_PRE_IDLE_NUM_V)<<(UART_PRE_IDLE_NUM_S))
-#define UART_PRE_IDLE_NUM_V  0xFFF
+#define UART_PRE_IDLE_NUM_V  0xFFFF
 #define UART_PRE_IDLE_NUM_S  0
 
 #define UART_AT_CMD_POSTCNT_REG(i)          (REG_UART_BASE(i) + 0x50)
-/* UART_POST_IDLE_NUM : R/W ;bitpos:[11:0] ;default: 12'h901 ; */
+/* UART_POST_IDLE_NUM : R/W ;bitpos:[15:0] ;default: 16'h901 ; */
 /*description: */
-#define UART_POST_IDLE_NUM  0x00000FFF
+#define UART_POST_IDLE_NUM  0x0000FFFF
 #define UART_POST_IDLE_NUM_M  ((UART_POST_IDLE_NUM_V)<<(UART_POST_IDLE_NUM_S))
-#define UART_POST_IDLE_NUM_V  0xFFF
+#define UART_POST_IDLE_NUM_V  0xFFFF
 #define UART_POST_IDLE_NUM_S  0
 
 #define UART_AT_CMD_GAPTOUT_REG(i)          (REG_UART_BASE(i) + 0x54)
-/* UART_RX_GAP_TOUT : R/W ;bitpos:[7:0] ;default: 8'd11 ; */
+/* UART_RX_GAP_TOUT : R/W ;bitpos:[15:0] ;default: 16'd11 ; */
 /*description: */
-#define UART_RX_GAP_TOUT  0x000000FF
+#define UART_RX_GAP_TOUT  0x0000FFFF
 #define UART_RX_GAP_TOUT_M  ((UART_RX_GAP_TOUT_V)<<(UART_RX_GAP_TOUT_S))
-#define UART_RX_GAP_TOUT_V  0xFF
+#define UART_RX_GAP_TOUT_V  0xFFFF
 #define UART_RX_GAP_TOUT_S  0
 
 #define UART_AT_CMD_CHAR_REG(i)          (REG_UART_BASE(i) + 0x58)
@@ -1054,7 +1054,7 @@ extern "C" {
 #define UART_NEGEDGE_MIN_CNT_S  0
 
 #define UART_DATE_REG(i)          (REG_UART_BASE(i) + 0x74)
-/* UART_DATE : R/W ;bitpos:[31:0] ;default: 32'h18073000 ; */
+/* UART_DATE : R/W ;bitpos:[31:0] ;default: 32'h18082800 ; */
 /*description: */
 #define UART_DATE  0xFFFFFFFF
 #define UART_DATE_M  ((UART_DATE_V)<<(UART_DATE_S))
