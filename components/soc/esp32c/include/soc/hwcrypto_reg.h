@@ -24,16 +24,24 @@
 #define RSA_MEM_Y_BLOCK_BASE          ((DR_REG_RSA_BASE)+0x400)
 #define RSA_MEM_X_BLOCK_BASE          ((DR_REG_RSA_BASE)+0x600)
 
+/* Configuration registers */
 #define RSA_M_DASH_REG                (DR_REG_RSA_BASE + 0x800)
-#define RSA_MODEXP_MODE_REG           (DR_REG_RSA_BASE + 0x804)
-#define RSA_START_MODEXP_REG          (DR_REG_RSA_BASE + 0x808)
-#define RSA_MULT_MODE_REG             (DR_REG_RSA_BASE + 0x80c)
-#define RSA_MULT_START_REG            (DR_REG_RSA_BASE + 0x810)
+#define RSA_LENGTH_REG                (DR_REG_RSA_BASE + 0x804)
+#define RSA_CONSTANT_TIME_DISABLE_REG (DR_REG_RSA_BASE + 0x820)
+#define RSA_SEARCH_OPEN_REG           (DR_REG_RSA_BASE + 0x824)
+#define RSA_SEARCH_POS_REG            (DR_REG_RSA_BASE + 0x828)
 
-#define RSA_INTERRUPT_REG             (DR_REG_RSA_BASE + 0x814)
+/* Initialization registers */
+#define RSA_QUERY_CLEAN_REG           (DR_REG_RSA_BASE + 0x808)
 
-#define RSA_CLEAN_REG                 (DR_REG_RSA_BASE + 0x818)
+/* Calculation start registers */
+#define RSA_MODEXP_START_REG          (DR_REG_RSA_BASE + 0x80c)
+#define RSA_MOD_MULT_START_REG        (DR_REG_RSA_BASE + 0x810)
+#define RSA_MULT_START_REG            (DR_REG_RSA_BASE + 0x814)
 
+/* Interrupt registers */
+#define RSA_QUERY_INTERRUPT_REG       (DR_REG_RSA_BASE + 0x818)
+#define RSA_CLEAR_INTERRUPT_REG       (DR_REG_RSA_BASE + 0x81C)
 
 /* SHA acceleration registers */
 #define SHA_MODE_REG                  ((DR_REG_SHA_BASE) + 0x00)

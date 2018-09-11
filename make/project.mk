@@ -373,7 +373,7 @@ export CC CXX LD AR OBJCOPY SIZE
 
 PYTHON=$(call dequote,$(CONFIG_PYTHON))
 
-CHIP_NAME:=$(call dequote,$(CONFIG_CHIP_NAME)))
+CHIP_NAME:=$(call dequote,$(CONFIG_CHIP_NAME))
 export CHIP_NAME
 
 # the app is the main executable built by the project
