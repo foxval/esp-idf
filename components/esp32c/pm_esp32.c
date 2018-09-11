@@ -35,6 +35,9 @@
 #include "pm_trace.h"
 #include "esp_timer_impl.h"
 #include "esp32/pm.h"
+#if CONFIG_FREERTOS_USE_TICKLESS_IDLE
+#include "esp_wifi_internal.h"
+#endif
 
 /* CCOMPARE update timeout, in CPU cycles. Any value above ~600 cycles will work
  * for the purpose of detecting a deadlock.
@@ -314,7 +317,9 @@ static void IRAM_ATTR on_freq_update(uint32_t old_ticks_per_us, uint32_t ticks_p
 
     int core_id = xPortGetCoreID();
     if (s_rtos_lock_handle[core_id] != NULL) {
+#ifdef CONFIG_CHIP_IS_ESP32
         ESP_PM_TRACE_ENTER(CCOMPARE_UPDATE, core_id);
+#endif
         /* ccount_div and ccount_mul are used in esp_pm_impl_update_ccompare
          * to calculate new CCOMPARE value.
          */
@@ -341,7 +346,9 @@ static void IRAM_ATTR on_freq_update(uint32_t old_ticks_per_us, uint32_t ticks_p
 
         s_ccount_mul = 0;
         s_ccount_div = 0;
+#ifdef CONFIG_CHIP_IS_ESP32
         ESP_PM_TRACE_EXIT(CCOMPARE_UPDATE, core_id);
+#endif
     }
 }
 
@@ -380,7 +387,11 @@ static void IRAM_ATTR do_switch(pm_mode_t new_mode)
     if (!config_changed) {
         old_freq = s_cpu_freq_by_mode[s_mode];
     } else {
-        old_freq = rtc_clk_cpu_freq_get();
+#ifndef CONFIG_HARDWARE_IS_FPGA
+    	old_freq = rtc_clk_cpu_freq_get();
+#else
+        old_freq = RTC_CPU_FREQ_80M;
+#endif
     }
 
     if (new_freq != old_freq) {
@@ -389,7 +400,9 @@ static void IRAM_ATTR do_switch(pm_mode_t new_mode)
 
         bool switch_down = new_ticks_per_us < old_ticks_per_us;
 
+#ifdef CONFIG_CHIP_IS_ESP32
         ESP_PM_TRACE_ENTER(FREQ_SWITCH, core_id);
+#endif
         if (switch_down) {
             on_freq_update(old_ticks_per_us, new_ticks_per_us);
         }
@@ -397,7 +410,9 @@ static void IRAM_ATTR do_switch(pm_mode_t new_mode)
         if (!switch_down) {
             on_freq_update(old_ticks_per_us, new_ticks_per_us);
         }
+#ifdef CONFIG_CHIP_IS_ESP32
         ESP_PM_TRACE_EXIT(FREQ_SWITCH, core_id);
+#endif
     }
 
     portENTER_CRITICAL_ISR(&s_switch_lock);
@@ -446,13 +461,17 @@ void esp_pm_impl_idle_hook()
         s_core_idle[core_id] = true;
     }
     portEXIT_CRITICAL_NESTED(state);
+#ifdef CONFIG_CHIP_IS_ESP32
     ESP_PM_TRACE_ENTER(IDLE, core_id);
+#endif
 }
 
 void IRAM_ATTR esp_pm_impl_isr_hook()
 {
     int core_id = xPortGetCoreID();
+#ifdef CONFIG_CHIP_IS_ESP32
     ESP_PM_TRACE_ENTER(ISR_HOOK, core_id);
+#endif
 #if portNUM_PROCESSORS == 2
     if (s_need_update_ccompare[core_id]) {
         update_ccompare();
@@ -463,7 +482,9 @@ void IRAM_ATTR esp_pm_impl_isr_hook()
 #else
     leave_idle();
 #endif // portNUM_PROCESSORS == 2
+#ifdef CONFIG_CHIP_IS_ESP32
     ESP_PM_TRACE_EXIT(ISR_HOOK, core_id);
+#endif
 }
 
 #if CONFIG_FREERTOS_USE_TICKLESS_IDLE
@@ -472,7 +493,7 @@ bool IRAM_ATTR vApplicationSleep( TickType_t xExpectedIdleTime )
 {
     bool result = false;
     portENTER_CRITICAL(&s_switch_lock);
-    if (s_mode == PM_MODE_LIGHT_SLEEP && !s_is_switching) {
+    if (s_mode == PM_MODE_LIGHT_SLEEP && !s_is_switching && esp_wifi_is_tsf_active() == false) {
         /* Calculate how much we can sleep */
         int64_t next_esp_timer_alarm = esp_timer_get_next_alarm();
         int64_t now = esp_timer_get_time();
@@ -487,11 +508,19 @@ bool IRAM_ATTR vApplicationSleep( TickType_t xExpectedIdleTime )
 #endif
             /* Enter sleep */
             int core_id = xPortGetCoreID();
+#ifdef CONFIG_CHIP_IS_ESP32
             ESP_PM_TRACE_ENTER(SLEEP, core_id);
+#elif defined CONFIG_CHIP_IS_ESP32C
+            ESP_PM_TRACE_ENTER(IDLE, core_id);
+#endif
             int64_t sleep_start = esp_timer_get_time();
             esp_light_sleep_start();
             int64_t slept_us = esp_timer_get_time() - sleep_start;
+#ifdef CONFIG_CHIP_IS_ESP32
             ESP_PM_TRACE_EXIT(SLEEP, core_id);
+#elif defined CONFIG_CHIP_IS_ESP32C
+            ESP_PM_TRACE_EXIT(IDLE, core_id);
+#endif
 
             uint32_t slept_ticks = slept_us / (portTICK_PERIOD_MS * 1000LL);
             if (slept_ticks > 0) {

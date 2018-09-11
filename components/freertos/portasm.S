@@ -271,9 +271,11 @@ _frxt_timer_int:
     ENTRY(16)
 
     #ifdef CONFIG_PM_TRACE
+    #ifdef CONFIG_CHIP_IS_ESP32
     movi a6, 1 /* = ESP_PM_TRACE_TICK */
     getcoreid a7
     call4 esp_pm_trace_enter
+    #endif // CONFIG_CHIP_IS_ESP32
     #endif // CONFIG_PM_TRACE
 
 .L_xt_timer_int_catchup:
@@ -316,9 +318,11 @@ _frxt_timer_int:
     blt     a2, a4, .L_xt_timer_int_catchup  /* repeat while diff > divisor */
 
 #ifdef CONFIG_PM_TRACE
+#ifdef CONFIG_CHIP_IS_ESP32
     movi a6, 1 /* = ESP_PM_TRACE_TICK */
     getcoreid a7
     call4 esp_pm_trace_exit
+#endif // CONFIG_CHIP_IS_ESP32
 #endif // CONFIG_PM_TRACE
 
     RET(16)

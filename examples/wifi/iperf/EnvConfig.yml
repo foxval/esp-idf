@@ -1,0 +1,9 @@
+Example_ShieldBox:
+  ap_list:
+    - ssid: "huawei"
+      password: ""
+      outlet: 1
+  attenuator_port: "/dev/ttyUSB1"
+  iperf: "/dev/ttyUSB0"
+  pc_nic: "eth0"
+

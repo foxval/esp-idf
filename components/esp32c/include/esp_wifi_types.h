@@ -319,7 +319,7 @@ typedef struct {
     unsigned stbc:2;              /**< Space Time Block Code(STBC). 0: non STBC packet; 1: STBC packet */
     unsigned fec_coding:1;        /**< Flag is set for 11n packets which are LDPC */
     unsigned sgi:1;               /**< Short Guide Interval(SGI). 0: Long GI; 1: Short GI */
-    signed noise_floor:8;         /**< noise floor of Radio Frequency Module(RF). unit: 0.25dBm*/
+    unsigned :8;                  /**< reserve */
     unsigned ampdu_cnt:8;         /**< ampdu cnt */
     unsigned channel:4;           /**< primary channel on which this packet is received */
     unsigned secondary_channel:4; /**< secondary channel on which this packet is received. 0: none; 1: above; 2: below */
@@ -328,6 +328,8 @@ typedef struct {
     unsigned :32;                 /**< reserve */
     unsigned :31;                 /**< reserve */
     unsigned ant:1;               /**< antenna number from which this packet is received. 0: WiFi antenna 0; 1: WiFi antenna 1 */
+    signed noise_floor:8;         /**< noise floor of Radio Frequency Module(RF). unit: 0.25dBm*/
+    unsigned :24;
     unsigned sig_len:12;          /**< length of packet including Frame Check Sequence(FCS) */
     unsigned :12;                 /**< reserve */
     unsigned rx_state:8;          /**< state of the packet. 0: no error; others: error numbers which are not public */
@@ -402,7 +404,7 @@ typedef struct {
     wifi_pkt_rx_ctrl_t rx_ctrl;/**< received packet radio metadata header of the CSI data */
     uint8_t mac[6];            /**< source MAC address of the CSI data */
     bool last_word_invalid;    /**< last four bytes of the CSI data is invalid or not */
-    uint8_t *buf;              /**< buffer of CSI data */
+    int8_t *buf;              /**< buffer of CSI data */
     uint16_t len;              /**< length of CSI data */
 } wifi_csi_info_t;
 

@@ -149,6 +149,8 @@ esp_err_t esp_wifi_internal_osi_funcs_md5_check(const char *md5);
   */
 esp_err_t esp_wifi_internal_crypto_funcs_md5_check(const char *md5);
 
+bool esp_wifi_is_tsf_active(void);
+
 /**
   * @brief     Allocate a chunk of memory for WiFi driver
   *

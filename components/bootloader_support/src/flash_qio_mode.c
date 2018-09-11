@@ -202,6 +202,13 @@ static esp_err_t enable_qio_mode(read_status_fn_t read_status_fn,
     uint32_t status;
     const uint32_t spiconfig = ets_efuse_get_spiconfig();
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+    uint8_t g_rom_spiflash_dummy_len_plus_bak = g_rom_spiflash_dummy_len_plus[1];
+    g_rom_spiflash_dummy_len_plus[1] = 0;
+#endif
+#endif
+
 #ifdef CONFIG_CHIP_IS_ESP32
     if (spiconfig != EFUSE_SPICONFIG_SPI_DEFAULTS && spiconfig != EFUSE_SPICONFIG_HSPI_DEFAULTS) {
         // spiconfig specifies a custom efuse pin configuration. This config defines all pins -except- WP,
@@ -243,6 +250,12 @@ static esp_err_t enable_qio_mode(read_status_fn_t read_status_fn,
     }
 
     ESP_LOGD(TAG, "Enabling QIO mode...");
+
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+    g_rom_spiflash_dummy_len_plus[1] = g_rom_spiflash_dummy_len_plus_bak;
+#endif
+#endif
 
     esp_rom_spiflash_read_mode_t mode;
 #if CONFIG_FLASHMODE_QOUT

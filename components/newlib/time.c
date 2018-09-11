@@ -46,6 +46,10 @@
 #define WITH_FRC 1
 #endif
 
+#ifdef CONFIG_HARDWARE_IS_FPGA
+static uint32_t s_slowclk_cal = 0;
+#endif
+
 #ifdef WITH_RTC
 static uint64_t get_rtc_time_us()
 {
@@ -236,12 +240,20 @@ void esp_clk_slowclk_cal_set(uint32_t new_cal)
     uint64_t boot_time_adj = get_boot_time() + boot_time_diff;
     set_boot_time(boot_time_adj);
 #endif // WITH_RTC
+#ifndef CONFIG_HARDWARE_IS_FPGA
     REG_WRITE(RTC_SLOW_CLK_CAL_REG, new_cal);
+#else
+    s_slowclk_cal = new_cal;
+#endif
 }
 
 uint32_t esp_clk_slowclk_cal_get()
 {
+#ifndef CONFIG_HARDWARE_IS_FPGA
     return REG_READ(RTC_SLOW_CLK_CAL_REG);
+#else
+    return s_slowclk_cal;
+#endif
 }
 
 void esp_set_time_from_rtc()

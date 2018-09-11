@@ -61,6 +61,7 @@ typedef enum {
     ESP_SLEEP_WAKEUP_TIMER,        //!< Wakeup caused by timer
     ESP_SLEEP_WAKEUP_TOUCHPAD,     //!< Wakeup caused by touchpad
     ESP_SLEEP_WAKEUP_ULP,          //!< Wakeup caused by ULP program
+    ESP_SLEEP_WAKEUP_MAC,          //!< Wakeup caused by WiFi MAC
 } esp_sleep_source_t;
 
 /* Leave this type define for compatibility */
@@ -198,6 +199,14 @@ esp_err_t esp_sleep_enable_ext1_wakeup(uint64_t mask, esp_sleep_ext1_wakeup_mode
  * @return bit mask, if GPIOn caused wakeup, BIT(n) will be set
  */
 uint64_t esp_sleep_get_ext1_wakeup_status();
+
+/**
+ * @brief Enable wakeup by WiFi MAC
+ * @return
+ *      - ESP_OK on success
+ *      - ESP_ERR_INVALID_STATE invalid for ESP32
+ */
+esp_err_t esp_sleep_enable_mac_wakeup();
 
 /**
  * @brief Set power down mode for an RTC power domain in sleep mode

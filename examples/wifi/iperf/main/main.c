@@ -70,12 +70,14 @@ static void initialize_console()
 
 void app_main(void)
 {
+#if 0
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK( ret );
+#endif
  
     initialise_wifi();
     initialize_console();
@@ -84,6 +86,7 @@ void app_main(void)
     esp_console_register_help_command();
     register_wifi();
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
     /* Prompt to be printed before each line.
      * This can be customized, made dynamic, etc.
      */
@@ -114,6 +117,21 @@ void app_main(void)
         prompt = "esp32> ";
 #endif //CONFIG_LOG_COLORS
     }
+#else
+    const char* prompt = "esp32> ";
+
+    printf("\n ==================================================\n");
+    printf(" |       Steps to test WiFi throughput            |\n");
+    printf(" |                                                |\n");
+    printf(" |  1. Print 'help' to gain overview of commands  |\n");
+    printf(" |  2. Configure device to station or soft-AP     |\n");
+    printf(" |  3. Setup WiFi connection                      |\n");
+    printf(" |  4. Run iperf to test UDP/TCP RX/TX throughput |\n");
+    printf(" |                                                |\n");
+    printf(" =================================================\n\n");
+
+    linenoiseSetDumbMode(1);
+#endif
 
     /* Main loop */
     while(true) {

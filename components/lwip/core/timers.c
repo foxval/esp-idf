@@ -296,7 +296,7 @@ void sys_timeouts_init(void)
   sys_timeout(AUTOIP_TMR_INTERVAL, autoip_timer, NULL);
 #endif /* LWIP_AUTOIP */
 #if LWIP_IGMP
-  sys_timeout(IGMP_TMR_INTERVAL, igmp_timer, NULL);
+  //sys_timeout(IGMP_TMR_INTERVAL, igmp_timer, NULL);
 #endif /* LWIP_IGMP */
 #endif /* LWIP_IPV4 */
 
@@ -305,12 +305,12 @@ void sys_timeouts_init(void)
 #endif /* LWIP_DNS */
 
 #if LWIP_IPV6
-  sys_timeout(ND6_TMR_INTERVAL, nd6_timer, NULL);
+  //sys_timeout(ND6_TMR_INTERVAL, nd6_timer, NULL);
 #if LWIP_IPV6_REASS
-  sys_timeout(IP6_REASS_TMR_INTERVAL, ip6_reass_timer, NULL);
+  //sys_timeout(IP6_REASS_TMR_INTERVAL, ip6_reass_timer, NULL);
 #endif /* LWIP_IPV6_REASS */
 #if LWIP_IPV6_MLD
-  sys_timeout(MLD6_TMR_INTERVAL, mld6_timer, NULL);
+  //sys_timeout(MLD6_TMR_INTERVAL, mld6_timer, NULL);
 #endif /* LWIP_IPV6_MLD */
 #endif /* LWIP_IPV6 */
 

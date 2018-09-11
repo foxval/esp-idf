@@ -17,6 +17,9 @@
 #include "esp_log.h"
 #include "esp_wifi_internal.h"
 #include "esp_pm.h"
+#ifdef CONFIG_CHIP_IS_ESP32C
+#include "pm_trace.h"
+#endif
 #include "soc/rtc.h"
 #include "esp_mesh.h"
 
@@ -40,11 +43,17 @@ esp_err_t esp_wifi_init(const wifi_init_config_t *config)
 {
 #ifdef CONFIG_PM_ENABLE
     if (s_wifi_modem_sleep_lock == NULL) {
+#ifndef CONFIG_HARDWARE_IS_FPGA
         esp_err_t err = esp_pm_lock_create(ESP_PM_APB_FREQ_MAX, 0, "wifi",
                 &s_wifi_modem_sleep_lock);
+#else
+        esp_err_t err = esp_pm_lock_create(ESP_PM_CPU_FREQ_MAX, 0, "wifi",
+                &s_wifi_modem_sleep_lock);
+#endif
         if (err != ESP_OK) {
             return err;
         }
+        esp_sleep_enable_mac_wakeup();
     }
 #endif
     esp_event_set_default_wifi_handlers();
@@ -55,6 +64,10 @@ esp_err_t esp_wifi_init(const wifi_init_config_t *config)
 void wifi_apb80m_request(void)
 {
     assert(s_wifi_modem_sleep_lock);
+#ifdef CONFIG_CHIP_IS_ESP32C
+    int core_id = xPortGetCoreID();
+    ESP_PM_TRACE_EXIT(WIFI, core_id);
+#endif
     esp_pm_lock_acquire(s_wifi_modem_sleep_lock);
     if (rtc_clk_apb_freq_get() != APB_CLK_FREQ) {
         ESP_LOGE(__func__, "WiFi needs 80MHz APB frequency to work, but got %dHz", rtc_clk_apb_freq_get());
@@ -65,5 +78,9 @@ void wifi_apb80m_release(void)
 {
     assert(s_wifi_modem_sleep_lock);
     esp_pm_lock_release(s_wifi_modem_sleep_lock);
+#ifdef CONFIG_CHIP_IS_ESP32C
+    int core_id = xPortGetCoreID();
+    ESP_PM_TRACE_ENTER(WIFI, core_id);
+#endif
 }
 #endif //CONFIG_PM_ENABLE

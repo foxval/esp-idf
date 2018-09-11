@@ -312,7 +312,7 @@ class IperfTestUtility(object):
         except subprocess.CalledProcessError:
             pass
         self.dut.write("restart")
-        self.dut.expect("esp32>")
+        self.dut.expect("esp32>", timeout=30)
         self.dut.write("scan {}".format(self.ap_ssid))
         for _ in range(SCAN_RETRY_COUNT):
             try:
@@ -438,7 +438,7 @@ class IperfTestUtility(object):
         :return: True or False
         """
         self.dut.write("restart")
-        self.dut.expect("esp32>")
+        self.dut.expect("esp32>", timeout=30)
         for _ in range(WAIT_AP_POWER_ON_TIMEOUT // SCAN_TIMEOUT):
             try:
                 self.dut.write("scan {}".format(self.ap_ssid))
@@ -569,27 +569,16 @@ def test_wifi_throughput_vs_rssi(env, extra_data):
         "udp_rx": TestResult("udp", "rx", BEST_PERFORMANCE_CONFIG),
     }
 
-    # 1. build config
-    build_iperf_with_config(BEST_PERFORMANCE_CONFIG)
-
     # 2. get DUT and download
     dut = env.get_dut("iperf", "examples/wifi/iperf")
-    dut.start_app()
-    dut.expect("esp32>")
+    dut.write("restart")
+    dut.expect("esp32>", timeout=30)
 
     # 3. run test for each required att value
     for ap_info in ap_list:
         test_utility = IperfTestUtility(dut, BEST_PERFORMANCE_CONFIG, ap_info["ssid"], ap_info["password"],
                                         pc_nic_ip, pc_iperf_log_file, test_result)
-
-        PowerControl.Control.control_rest(apc_ip, ap_info["outlet"], "OFF")
-        PowerControl.Control.control(apc_ip, {ap_info["outlet"]: "ON"})
         Attenuator.set_att(att_port, 0)
-
-        if not test_utility.wait_ap_power_on():
-            Utility.console_log("[{}] failed to power on, skip testing this AP"
-                                .format(ap_info["ssid"]), color="red")
-            continue
 
         for atten_val in ATTEN_VALUE_LIST:
             assert Attenuator.set_att(att_port, atten_val) is True
@@ -658,6 +647,4 @@ def test_wifi_throughput_basic(env, extra_data):
 
 
 if __name__ == '__main__':
-    test_wifi_throughput_basic(env_config_file="EnvConfig.yml")
-    test_wifi_throughput_with_different_configs(env_config_file="EnvConfig.yml")
     test_wifi_throughput_vs_rssi(env_config_file="EnvConfig.yml")

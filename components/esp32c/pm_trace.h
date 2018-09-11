@@ -16,6 +16,7 @@
 
 #include "sdkconfig.h"
 
+#ifdef CONFIG_CHIP_IS_ESP32
 typedef enum {
     ESP_PM_TRACE_IDLE,
     ESP_PM_TRACE_TICK,
@@ -25,10 +26,25 @@ typedef enum {
     ESP_PM_TRACE_SLEEP,
     ESP_PM_TRACE_TYPE_MAX
 } esp_pm_trace_event_t;
+#elif defined CONFIG_CHIP_IS_ESP32C
+typedef enum {
+    ESP_PM_TRACE_WIFI,
+    ESP_PM_TRACE_IDLE,
+    ESP_PM_TRACE_SLEEP,
+    ESP_PM_TRACE_REJECT,
+    ESP_PM_TRACE_TBTT,
+    ESP_PM_TRACE_BEACON,
+    ESP_PM_TRACE_ISR,
+    ESP_PM_TRACE_TYPE_MAX
+} esp_pm_trace_event_t;
+#endif
 
 void esp_pm_trace_init();
 void esp_pm_trace_enter(esp_pm_trace_event_t event, int core_id);
 void esp_pm_trace_exit(esp_pm_trace_event_t event, int core_id);
+#ifdef CONFIG_CHIP_IS_ESP32C
+void esp_pm_trace_test(void);
+#endif
 
 #ifdef CONFIG_PM_TRACE
 
