@@ -26,33 +26,7 @@
 extern "C" {
 #endif
 
-//Registers Operation {{
-
-// The _DPORT_xxx register read macros access DPORT memory directly (as opposed to
-// DPORT_REG_READ which applies SMP-safe protections).
-//
-// There are several ways to read the DPORT registers:
-// 1) Use DPORT_REG_READ versions to be SMP-safe in IDF apps.
-//    This method uses the pre-read APB implementation(*) without stall other CPU.
-//    This is beneficial for single readings.
-// 2) If you want to make a sequence of DPORT reads to buffer,
-//    use dport_read_buffer(buff_out, address, num_words),
-//    it is the faster method and it doesn't stop other CPU.
-// 3) If you want to make a sequence of DPORT reads, but you don't want to stop other CPU
-//    and you want to do it faster then you need use DPORT_SEQUENCE_REG_READ().
-//    The difference from the first is that the user himself must disable interrupts while DPORT reading.
-//    Note that disable interrupt need only if the chip has two cores.
-// 4) If you want to make a sequence of DPORT reads,
-//    use DPORT_STALL_OTHER_CPU_START() macro explicitly
-//    and then use _DPORT_REG_READ macro while other CPU is stalled.
-//    After completing read operations, use DPORT_STALL_OTHER_CPU_END().
-//    This method uses stall other CPU while reading DPORT registers.
-//    Useful for compatibility, as well as for large consecutive readings.
-//    This method is slower, but must be used if ROM functions or 
-//    other code is called which accesses DPORT without any other workaround.
-// *) The pre-readable APB register before reading the DPORT register
-//    helps synchronize the operation of the two CPUs,
-//    so that reading on different CPUs no longer causes random errors APB register.
+// ESP32C is single core and does not have DPORT bug, so these macros are all same as the non-DPORT versions
 
 // _DPORT_REG_WRITE & DPORT_REG_WRITE are equivalent.
 #define _DPORT_REG_READ(_r)        (*(volatile uint32_t *)(_r))
@@ -61,63 +35,8 @@ extern "C" {
 // Write value to DPORT register (does not require protecting)
 #define DPORT_REG_WRITE(_r, _v)   _DPORT_REG_WRITE((_r), (_v))
 
-#ifdef CONFIG_CHIP_IS_ESP32
-/**
- * @brief Read value from register, SMP-safe version.
- *
- * This method uses the pre-reading of the APB register before reading the register of the DPORT.
- * This implementation is useful for reading DORT registers for single reading without stall other CPU.
- * There is disable/enable interrupt.
- *
- * @param reg Register address
- * @return Value
- */
-static inline uint32_t IRAM_ATTR DPORT_REG_READ(uint32_t reg)
-{
-#if defined(BOOTLOADER_BUILD) || defined(CONFIG_FREERTOS_UNICORE) || !defined(ESP_PLATFORM)
-    return _DPORT_REG_READ(reg);
-#else
-    return esp_dport_access_reg_read(reg);
-#endif
-}
-
-/**
- * @brief Read value from register, NOT SMP-safe version.
- *
- * This method uses the pre-reading of the APB register before reading the register of the DPORT.
- * There is not disable/enable interrupt.
- * The difference from DPORT_REG_READ() is that the user himself must disable interrupts while DPORT reading.
- * This implementation is useful for reading DORT registers in loop without stall other CPU. Note the usage example.
- * The recommended way to read registers sequentially without stall other CPU
- * is to use the method esp_dport_read_buffer(buff_out, address, num_words). It allows you to read registers in the buffer.
- *
- * \code{c}
- * // This example shows how to use it.
- * { // Use curly brackets to limit the visibility of variables in macros DPORT_INTERRUPT_DISABLE/RESTORE.
- *     DPORT_INTERRUPT_DISABLE(); // Disable interrupt only on current CPU.
- *     for (i = 0; i < max; ++i) {
- *        array[i] = DPORT_SEQUENCE_REG_READ(Address + i * 4); // reading DPORT registers
- *     }
- *     DPORT_INTERRUPT_RESTORE(); // restore the previous interrupt level
- * }
- * \endcode
- *
- * @param reg Register address
- * @return Value
- */
-static inline uint32_t IRAM_ATTR DPORT_SEQUENCE_REG_READ(uint32_t reg)
-{
-#if defined(BOOTLOADER_BUILD) || defined(CONFIG_FREERTOS_UNICORE) || !defined(ESP_PLATFORM)
-    return _DPORT_REG_READ(reg);
-#else
-    return esp_dport_access_sequence_reg_read(reg);
-#endif
-}
-#else
-//esp32c do not has this bug, and esp32c is single core chip
 #define DPORT_REG_READ(_r)    _DPORT_REG_READ(_r)
 #define DPORT_SEQUENCE_REG_READ(_r)    _DPORT_REG_READ(_r)
-#endif
 
 //get bit or get bits from register
 #define DPORT_REG_GET_BIT(_r, _b)  (DPORT_REG_READ(_r) & (_b))
@@ -161,28 +80,7 @@ static inline uint32_t IRAM_ATTR DPORT_SEQUENCE_REG_READ(uint32_t reg)
 #define _DPORT_REG_SET_BIT(_r, _b)  _DPORT_REG_WRITE((_r), (_DPORT_REG_READ(_r)|(_b)))
 #define _DPORT_REG_CLR_BIT(_r, _b)  _DPORT_REG_WRITE((_r), (_DPORT_REG_READ(_r) & (~(_b))))
 
-#ifdef CONFIG_CHIP_IS_ESP32
-/**
- * @brief Read value from register, SMP-safe version.
- *
- * This method uses the pre-reading of the APB register before reading the register of the DPORT.
- * This implementation is useful for reading DORT registers for single reading without stall other CPU.
- *
- * @param reg Register address
- * @return Value
- */
-static inline uint32_t IRAM_ATTR DPORT_READ_PERI_REG(uint32_t reg)
-{
-#if defined(BOOTLOADER_BUILD) || defined(CONFIG_FREERTOS_UNICORE) || !defined(ESP_PLATFORM)
-    return _DPORT_REG_READ(reg);
-#else
-    return esp_dport_access_reg_read(reg);
-#endif
-}
-#else
-//esp32c do not has this bug, and esp32c is single core chip
 #define DPORT_READ_PERI_REG(addr)       _DPORT_READ_PERI_REG(addr)
-#endif
 
 //write value to register
 #define DPORT_WRITE_PERI_REG(addr, val) _DPORT_WRITE_PERI_REG((addr), (val))
