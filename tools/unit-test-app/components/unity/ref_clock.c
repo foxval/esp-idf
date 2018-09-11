@@ -58,6 +58,9 @@ static volatile uint32_t s_milliseconds;
 
 void ref_clock_init()
 {
+#ifdef CONFIG_CHIP_IS_ESP32C
+    assert(0 && "ref_clock_init not implemented for ESP32C yet");
+#else
     assert(s_intr_handle == NULL && "already initialized");
 
     // Route RMT output to GPIO matrix
@@ -124,6 +127,7 @@ void ref_clock_init()
     ESP_ERROR_CHECK(esp_intr_alloc(ETS_PCNT_INTR_SOURCE, ESP_INTR_FLAG_IRAM, pcnt_isr, NULL, &s_intr_handle));
     PCNT.int_clr.val = BIT(REF_CLOCK_PCNT_UNIT);
     PCNT.int_ena.val = BIT(REF_CLOCK_PCNT_UNIT);
+#endif
 }
 
 static void IRAM_ATTR pcnt_isr(void* arg)
