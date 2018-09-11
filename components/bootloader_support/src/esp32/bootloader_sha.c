@@ -17,46 +17,9 @@
 #include <assert.h>
 #include <sys/param.h>
 
-#ifndef BOOTLOADER_BUILD
-// App version is a wrapper around mbedTLS SHA API
-#include <mbedtls/sha256.h>
-
-bootloader_sha256_handle_t bootloader_sha256_start()
-{
-    mbedtls_sha256_context *ctx = (mbedtls_sha256_context *)malloc(sizeof(mbedtls_sha256_context));
-    if (!ctx) {
-        return NULL;
-    }
-    mbedtls_sha256_init(ctx);
-    assert(mbedtls_sha256_starts_ret(ctx, false) == 0);
-    return ctx;
-}
-
-void bootloader_sha256_data(bootloader_sha256_handle_t handle, const void *data, size_t data_len)
-{
-    assert(handle != NULL);
-    mbedtls_sha256_context *ctx = (mbedtls_sha256_context *)handle;
-    assert(mbedtls_sha256_update_ret(ctx, data, data_len) == 0);
-}
-
-void bootloader_sha256_finish(bootloader_sha256_handle_t handle, uint8_t *digest)
-{
-    assert(handle != NULL);
-    mbedtls_sha256_context *ctx = (mbedtls_sha256_context *)handle;
-    if (digest != NULL) {
-        assert(mbedtls_sha256_finish_ret(ctx, digest) == 0);
-    }
-    mbedtls_sha256_free(ctx);
-    free(handle);
-}
-
-#else // Bootloader version
-
 #include "rom/sha.h"
 #include "soc/dport_reg.h"
 #include "soc/hwcrypto_reg.h"
-
-#include "rom/ets_sys.h" // TO REMOVE
 
 static uint32_t words_hashed;
 
@@ -64,20 +27,6 @@ static uint32_t words_hashed;
 static const size_t BLOCK_WORDS = (64/sizeof(uint32_t));
 // Words in final SHA256 digest
 static const size_t DIGEST_WORDS = (32/sizeof(uint32_t));
-
-#ifdef CONFIG_CHIP_IS_ESP32C
-void ets_sha_enable()
-{
-    DPORT_REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
-    DPORT_REG_CLR_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
-}
-
-void ets_sha_disable()
-{
-    DPORT_REG_SET_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_SHA | DPORT_PERI_EN_SECUREBOOT);
-    DPORT_REG_CLR_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_SHA);
-}
-#endif
 
 bootloader_sha256_handle_t bootloader_sha256_start()
 {
@@ -176,5 +125,3 @@ void bootloader_sha256_finish(bootloader_sha256_handle_t handle, uint8_t *digest
     }
     asm volatile ("memw");
 }
-
-#endif

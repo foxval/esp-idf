@@ -123,6 +123,12 @@ static void tskRunSHA256Test(void *pvParameters)
 
 TEST_CASE("mbedtls SHA multithreading", "[mbedtls]")
 {
+#ifndef CONFIG_HARDWARE_IS_FPGA
+    const size_t timeout = 20000;
+#else
+    const size_t timeout = 10000;
+#endif
+
     done_sem = xSemaphoreCreateCounting(4, 0);
     xTaskCreate(tskRunSHA1Test, "SHA1Task1", SHA_TASK_STACK_SIZE, NULL, 3, NULL);
     xTaskCreate(tskRunSHA1Test, "SHA1Task2", SHA_TASK_STACK_SIZE, NULL, 3, NULL);
@@ -130,7 +136,7 @@ TEST_CASE("mbedtls SHA multithreading", "[mbedtls]")
     xTaskCreate(tskRunSHA256Test, "SHA256Task2", SHA_TASK_STACK_SIZE, NULL, 3, NULL);
 
     for(int i = 0; i < 4; i++) {
-        if(!xSemaphoreTake(done_sem, 10000/portTICK_PERIOD_MS)) {
+        if(!xSemaphoreTake(done_sem, timeout/portTICK_PERIOD_MS)) {
             TEST_FAIL_MESSAGE("done_sem not released by test task");
         }
     }
@@ -139,7 +145,12 @@ TEST_CASE("mbedtls SHA multithreading", "[mbedtls]")
 
 void tskRunSHASelftests(void *param)
 {
-    for (int i = 0; i < 5; i++) {
+#ifndef CONFIG_HARDWARE_IS_FPGA
+    const int NUM_PASSES = 5;
+#else
+    const int NUM_PASSES = 3;
+#endif
+    for (int i = 0; i < NUM_PASSES; i++) {
         if(mbedtls_sha1_self_test(1)) {
             printf("SHA1 self-tests failed.\n");
             while(1) {}
@@ -170,7 +181,11 @@ TEST_CASE("mbedtls SHA self-tests multithreaded", "[mbedtls]")
     xTaskCreate(tskRunSHASelftests, "SHASelftests1", SHA_TASK_STACK_SIZE, NULL, 3, NULL);
     xTaskCreate(tskRunSHASelftests, "SHASelftests2", SHA_TASK_STACK_SIZE, NULL, 3, NULL);
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
     const int TIMEOUT_MS = 20000;
+#else
+    const int TIMEOUT_MS = 40000;
+#endif
 
     for(int i = 0; i < 2; i++) {
         if(!xSemaphoreTake(done_sem, TIMEOUT_MS/portTICK_PERIOD_MS)) {

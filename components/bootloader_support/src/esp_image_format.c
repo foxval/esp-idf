@@ -545,9 +545,6 @@ static esp_err_t verify_simple_hash(bootloader_sha256_handle_t sha_handle, esp_i
         ESP_LOGE(TAG, "Image hash failed - image is corrupt");
         debug_log_hash(hash, "Expected hash");
         bootloader_munmap(hash);
-#ifdef CONFIG_CHIP_IS_ESP32C
-        return ESP_OK;
-#endif
         return ESP_ERR_IMAGE_INVALID;
     }
 
@@ -559,9 +556,9 @@ static esp_err_t verify_simple_hash(bootloader_sha256_handle_t sha_handle, esp_i
 static void debug_log_hash(const uint8_t *image_hash, const char *label)
 {
 #if BOOT_LOG_LEVEL >= LOG_LEVEL_DEBUG
-        char hash_print[sizeof(image_hash)*2 + 1];
-        hash_print[sizeof(image_hash)*2] = 0;
-        for (int i = 0; i < sizeof(image_hash); i++) {
+        char hash_print[HASH_LEN*2 + 1];
+        hash_print[HASH_LEN*2] = 0;
+        for (int i = 0; i < HASH_LEN; i++) {
             for (int shift = 0; shift < 2; shift++) {
                 uint8_t nibble = (image_hash[i] >> (shift ? 0 : 4)) & 0x0F;
                 if (nibble < 10) {

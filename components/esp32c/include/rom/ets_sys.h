@@ -56,6 +56,8 @@ typedef enum {
     ETS_FAILED = 1  /**< return failed in ets*/
 } ETS_STATUS;
 
+typedef ETS_STATUS ets_status_t;
+
 typedef uint32_t ETSSignal;
 typedef uint32_t ETSParam;
 

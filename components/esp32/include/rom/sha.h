@@ -34,15 +34,14 @@ typedef struct SHAContext {
     uint32_t total_input_bits[4];
 } SHA_CTX;
 
-enum SHA_TYPE {
+typedef enum {
     SHA1 = 0,
     SHA2_256,
     SHA2_384,
     SHA2_512,
 
-
     SHA_INVALID = -1,
-};
+} SHA_TYPE;
 
 void ets_sha_init(SHA_CTX *ctx);
 
@@ -50,9 +49,9 @@ void ets_sha_enable(void);
 
 void ets_sha_disable(void);
 
-void ets_sha_update(SHA_CTX *ctx, enum SHA_TYPE type, const uint8_t *input, size_t input_bits);
+void ets_sha_update(SHA_CTX *ctx, SHA_TYPE type, const uint8_t *input, size_t input_bits);
 
-void ets_sha_finish(SHA_CTX *ctx, enum SHA_TYPE type, uint8_t *output);
+void ets_sha_finish(SHA_CTX *ctx, SHA_TYPE type, uint8_t *output);
 
 #ifdef __cplusplus
 }

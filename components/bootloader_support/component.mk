@@ -9,6 +9,12 @@ endif
 
 COMPONENT_SRCDIRS := src
 
+ifndef IS_BOOTLOADER_BUILD
+COMPONENT_SRCDIRS += src/idf  # idf sub-directory contains platform agnostic IDF versions
+else
+COMPONENT_SRCDIRS += src/$(CHIP_NAME)  # one sub-dir per chip
+endif
+
 #
 # Secure boot signing key support
 #

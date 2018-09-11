@@ -24,35 +24,47 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "rom/ets_sys.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct SHAContext {
-    bool start;
-    uint32_t total_input_bits[4];
-} SHA_CTX;
-
-enum SHA_TYPE {
+typedef enum {
     SHA1 = 0,
+    SHA2_224,
     SHA2_256,
     SHA2_384,
     SHA2_512,
+    SHA2_512224,
+    SHA2_512256,
+    SHA2_512T,
+    SHA_TYPE_MAX
+} SHA_TYPE;
 
-
-    SHA_INVALID = -1,
-};
-
-void ets_sha_init(SHA_CTX *ctx);
+typedef struct SHAContext {
+    bool start;
+    SHA_TYPE type;
+    uint32_t state[16];             // For SHA1/SHA224/SHA256, used 8, other used 16
+    unsigned char buffer[128];      // For SHA1/SHA224/SHA256, used 64, other used 128
+    uint32_t total_bits[4];
+} SHA_CTX;
 
 void ets_sha_enable(void);
 
 void ets_sha_disable(void);
 
-void ets_sha_update(SHA_CTX *ctx, enum SHA_TYPE type, const uint8_t *input, size_t input_bits);
+ets_status_t ets_sha_init(SHA_CTX *ctx, SHA_TYPE type);
 
-void ets_sha_finish(SHA_CTX *ctx, enum SHA_TYPE type, uint8_t *output);
+ets_status_t ets_sha_starts(SHA_CTX *ctx, uint16_t sha512_t);
+
+void ets_sha_get_state(SHA_CTX *ctx);
+
+void ets_sha_process(SHA_CTX *ctx, const unsigned char *input, bool *ctx_in_hardware);
+
+void ets_sha_update(SHA_CTX *ctx, const unsigned char *input, uint32_t input_bytes, bool *ctx_in_hardware, bool update_ctx);
+
+ets_status_t ets_sha_finish(SHA_CTX *ctx, unsigned char *output, bool ctx_in_hardware);
 
 #ifdef __cplusplus
 }

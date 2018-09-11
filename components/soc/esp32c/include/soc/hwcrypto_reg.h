@@ -34,28 +34,27 @@
 
 #define RSA_CLEAN_REG                 (DR_REG_RSA_BASE + 0x818)
 
+
 /* SHA acceleration registers */
-#define SHA_TEXT_BASE          ((DR_REG_SHA_BASE) + 0x00)
+#define SHA_MODE_REG                  ((DR_REG_SHA_BASE) + 0x00)
 
-#define SHA_1_START_REG         ((DR_REG_SHA_BASE) + 0x80)
-#define SHA_1_CONTINUE_REG      ((DR_REG_SHA_BASE) + 0x84)
-#define SHA_1_LOAD_REG          ((DR_REG_SHA_BASE) + 0x88)
-#define SHA_1_BUSY_REG          ((DR_REG_SHA_BASE) + 0x8c)
+#define SHA_MODE_SHA1 0
+#define SHA_MODE_SHA224 1
+#define SHA_MODE_SHA256 2
+#define SHA_MODE_SHA384 3
+#define SHA_MODE_SHA512 4
+#define SHA_MODE_SHA512_224 5
+#define SHA_MODE_SHA512_256 6
+#define SHA_MODE_SHA512_T 7
 
-#define SHA_256_START_REG       ((DR_REG_SHA_BASE) + 0x90)
-#define SHA_256_CONTINUE_REG    ((DR_REG_SHA_BASE) + 0x94)
-#define SHA_256_LOAD_REG        ((DR_REG_SHA_BASE) + 0x98)
-#define SHA_256_BUSY_REG        ((DR_REG_SHA_BASE) + 0x9c)
+#define SHA_T_STRING_REG              ((DR_REG_SHA_BASE) + 0x04)
+#define SHA_T_LENGTH_REG              ((DR_REG_SHA_BASE) + 0x08)
+#define SHA_START_REG                 ((DR_REG_SHA_BASE) + 0x0c)
+#define SHA_CONTINUE_REG              ((DR_REG_SHA_BASE) + 0x10)
+#define SHA_BUSY_REG                  ((DR_REG_SHA_BASE) + 0x14)
 
-#define SHA_384_START_REG       ((DR_REG_SHA_BASE) + 0xa0)
-#define SHA_384_CONTINUE_REG    ((DR_REG_SHA_BASE) + 0xa4)
-#define SHA_384_LOAD_REG        ((DR_REG_SHA_BASE) + 0xa8)
-#define SHA_384_BUSY_REG        ((DR_REG_SHA_BASE) + 0xac)
-
-#define SHA_512_START_REG       ((DR_REG_SHA_BASE) + 0xb0)
-#define SHA_512_CONTINUE_REG    ((DR_REG_SHA_BASE) + 0xb4)
-#define SHA_512_LOAD_REG        ((DR_REG_SHA_BASE) + 0xb8)
-#define SHA_512_BUSY_REG        ((DR_REG_SHA_BASE) + 0xbc)
+#define SHA_H_BASE                    ((DR_REG_SHA_BASE) + 0x40)
+#define SHA_M_BASE                    ((DR_REG_SHA_BASE) + 0x80)
 
 /* AES acceleration registers */
 #define AES_START_REG           ((DR_REG_AES_BASE) + 0x00)

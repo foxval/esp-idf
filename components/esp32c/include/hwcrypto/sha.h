@@ -44,7 +44,7 @@ extern "C" {
 #endif
 
 /* Defined in rom/sha.h */
-typedef enum SHA_TYPE esp_sha_type;
+typedef SHA_TYPE esp_sha_type;
 
 /** @brief Calculate SHA1 or SHA2 sum of some data, using hardware SHA engine
  *
