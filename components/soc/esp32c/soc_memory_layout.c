@@ -39,14 +39,16 @@ The prioritised capabilities work roughly like this:
 
 */
 const soc_memory_type_desc_t soc_memory_types[] = {
-    //Type 0: Plain ole D-port RAM
+    //Type 0: DRAM
     { "DRAM", { MALLOC_CAP_8BIT|MALLOC_CAP_DEFAULT, MALLOC_CAP_INTERNAL|MALLOC_CAP_DMA|MALLOC_CAP_32BIT, 0 }, false, false},
-    //Type 1: Plain ole D-port RAM which has an alias on the I-port
+    // Type 1: DRAM used for startup stacks
+    { "DRAM", { MALLOC_CAP_8BIT|MALLOC_CAP_DEFAULT, MALLOC_CAP_INTERNAL|MALLOC_CAP_DMA|MALLOC_CAP_32BIT, 0 }, false, true},
+    //Type 2: DRAM which has an alias on the I-port
     //(This DRAM is also the region used by ROM during startup)
     { "D/IRAM", { 0, MALLOC_CAP_DMA|MALLOC_CAP_8BIT|MALLOC_CAP_INTERNAL|MALLOC_CAP_DEFAULT, MALLOC_CAP_32BIT|MALLOC_CAP_EXEC }, true, true},
-    //Type 2: IRAM
+    //Type 3: IRAM
     { "IRAM", { MALLOC_CAP_EXEC|MALLOC_CAP_32BIT|MALLOC_CAP_INTERNAL, 0, 0 }, false, false},
-    //Type 3-8: PID 2-7 IRAM
+    //Type 4-9: PID 2-7 IRAM
     { "PID2IRAM", { MALLOC_CAP_PID2|MALLOC_CAP_INTERNAL, 0, MALLOC_CAP_EXEC|MALLOC_CAP_32BIT }, false, false},
     { "PID3IRAM", { MALLOC_CAP_PID3|MALLOC_CAP_INTERNAL, 0, MALLOC_CAP_EXEC|MALLOC_CAP_32BIT }, false, false},
     { "PID4IRAM", { MALLOC_CAP_PID4|MALLOC_CAP_INTERNAL, 0, MALLOC_CAP_EXEC|MALLOC_CAP_32BIT }, false, false},
@@ -99,7 +101,7 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFF0000, 0x4000, 0, 0x40060000}, //Block 18,  can be used for MAC dump, can be used as trace memory
     { 0x3FFF4000, 0x4000, 0, 0x40064000}, //Block 19,  can be used for MAC dump, can be used as trace memory
     { 0x3FFF8000, 0x4000, 0, 0x40068000}, //Block 20,  can be used for MAC dump, can be used as trace memory
-    { 0x3FFFC000, 0x4000, 0, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory
+    { 0x3FFFC000, 0x4000, 1, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory, used for startup stack
 };
 
 const size_t soc_memory_region_count = sizeof(soc_memory_regions)/sizeof(soc_memory_region_t);
@@ -114,23 +116,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 //    { 0x40070000, 0x40078000 }, //CPU0 cache region
 //    { 0x40078000, 0x40080000 }, //CPU1 cache region
 
-    /* Warning: The ROM stack is located in the 0x3ffe0000 area. We do not specifically disable that area here because
-       after the scheduler has started, the ROM stack is not used anymore by anything. We handle it instead by not allowing
-       any mallocs memory regions with the startup_stack flag set (these are the IRAM/DRAM region) until the
-       scheduler has started.
-
-       The 0x3ffe0000 region also contains static RAM for various ROM functions. The following lines
-       reserve the regions for UART and ETSC, so these functions are usable. Libraries like xtos, which are
-       not usable in FreeRTOS anyway, are commented out in the linker script so they cannot be used; we
-       do not disable their memory regions here and they will be used as general purpose heap memory.
-
-       Enabling the heap allocator for this region but disabling allocation here until FreeRTOS is started up
-       is a somewhat risky action in theory, because on initializing the allocator, the multi_heap implementation
-       will go and write metadata at the start and end of all regions. For the ESP32, these linked
-       list entries happen to end up in a region that is not touched by the stack; they can be placed safely there.
-    */
-    { 0x3fffc000, &_data_start_xtos}, //Reserve ROM PRO data region
-//    { 0x3ffe4000, 0x3ffe4350 }, //Reserve ROM APP data region
+    { 0x3fffc000, (intptr_t)&_data_start_xtos}, //ROM data region
 
 #if CONFIG_BT_ENABLED
     { 0x3ffb0000, 0x3ffc0000 }, //Reserve BT hardware shared memory & BT data region
