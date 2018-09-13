@@ -54,7 +54,7 @@ MEMORY
                                      len = 0x28000 - CONFIG_BT_RESERVE_DRAM
 
   /* Flash mapped constant data */
-  drom0_0_seg (R) :                  org = 0x3F400018, len = 0x400000-0x18
+  drom0_0_seg (R) :                  org = 0x3F000018, len = 0x400000-0x18
 
   /* (See iram0_2_seg for meaning of 0x18 offset in the above.) */
 

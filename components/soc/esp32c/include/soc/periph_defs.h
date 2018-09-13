@@ -23,7 +23,11 @@ typedef enum {
     PERIPH_LEDC_MODULE = 0,
     PERIPH_UART0_MODULE,
     PERIPH_UART1_MODULE,
+#ifdef CONFIG_CHIP_IS_ESP32
     PERIPH_UART2_MODULE,
+#else
+    PERIPH_USB_MODULE,
+#endif
     PERIPH_I2C0_MODULE,
     PERIPH_I2C1_MODULE,
     PERIPH_I2S0_MODULE,
@@ -83,14 +87,13 @@ typedef enum {
     ETS_GPIO_NMI_SOURCE,                        /**< interrupt of GPIO, NMI*/
     ETS_GPIO_INTR_SOURCE2,                      /**< interrupt of GPIO, level*/
     ETS_GPIO_NMI_SOURCE2,                       /**< interrupt of GPIO, NMI*/
-    ETS_ALONE_GPIO_INTR_SOURCE,                 /**< interrupt of alone GPIO, level*/
+    ETS_DEDICATED_GPIO_INTR_SOURCE,                 /**< interrupt of dedicated GPIO, level*/
     ETS_FROM_CPU_INTR0_SOURCE,                  /**< interrupt0 generated from a CPU, level*/ /* Used for FreeRTOS */
     ETS_FROM_CPU_INTR1_SOURCE,                  /**< interrupt1 generated from a CPU, level*/ /* Used for FreeRTOS */
     ETS_FROM_CPU_INTR2_SOURCE,                  /**< interrupt2 generated from a CPU, level*/ /* Used for DPORT Access */
     ETS_FROM_CPU_INTR3_SOURCE,                  /**< interrupt3 generated from a CPU, level*/ /* Used for DPORT Access */
 
-    ETS_SPI0_INTR_SOURCE = 32,                  /**< interrupt of SPI0, level, SPI0 is for Cache Access, do not use this*/
-    ETS_SPI1_INTR_SOURCE,                       /**< interrupt of SPI1, level, SPI1 is for flash read/write, do not use this*/
+    ETS_SPI1_INTR_SOURCE = 32,                       /**< interrupt of SPI1, level, SPI1 is for flash read/write, do not use this*/
     ETS_SPI2_INTR_SOURCE,                       /**< interrupt of SPI2, level*/
     ETS_SPI3_INTR_SOURCE,                       /**< interrupt of SPI3, level*/
     ETS_I2S0_INTR_SOURCE,                       /**< interrupt of I2S0, level*/
@@ -105,8 +108,9 @@ typedef enum {
     ETS_PWM3_INTR_SOURCE,                       /**< interruot of PWM3, level*/
     ETS_LEDC_INTR_SOURCE,                       /**< interrupt of LED PWM, level*/
     ETS_EFUSE_INTR_SOURCE,                      /**< interrupt of efuse, level, not likely to use*/
+    ETS_CAN_INTR_SOURCE ,                       /**< interrupt of can, level*/
 
-    ETS_CAN_INTR_SOURCE = 48,                   /**< interrupt of can, level*/
+    ETS_USB_INTR_SOURCE = 48,                   /**< interrupt of USB, level*/
     ETS_RTC_CORE_INTR_SOURCE,                   /**< interrupt of rtc core, level, include rtc watchdog*/
     ETS_RMT_INTR_SOURCE,                        /**< interrupt of remote controller, level*/
     ETS_PCNT_INTR_SOURCE,                       /**< interrupt of pluse count, level*/
@@ -129,29 +133,24 @@ typedef enum {
     ETS_TG1_WDT_EDGE_INTR_SOURCE,               /**< interrupt of TIMER_GROUP1, WATCHDOG, EDGE*/
     ETS_TG1_LACT_EDGE_INTR_SOURCE,              /**< interrupt of TIMER_GROUP0, LACT, EDGE*/
     ETS_CACHE_IA_INTR_SOURCE,                   /**< interrupt of Cache Invalied Access, LEVEL*/
-    ETS_SYSTIMER_TARGET0_EDGE_INTR_SOURCE,      /**< */
-    ETS_SYSTIMER_TARGET1_EDGE_INTR_SOURCE,      /**< */
-    ETS_SYSTIMER_TARGET2_EDGE_INTR_SOURCE,      /**< */
+    ETS_SYSTIMER_TARGET0_EDGE_INTR_SOURCE,      /**< interrupt of system timer 0, EDGE*/
+    ETS_SYSTIMER_TARGET1_EDGE_INTR_SOURCE,      /**< interrupt of system timer 1, EDGE*/
+    ETS_SYSTIMER_TARGET2_EDGE_INTR_SOURCE,      /**< interrupt of system timer 2, EDGE*/
     ETS_ASSIST_DEBUG_INTR_SOURCE,               /**< interrupt of Assist debug module, LEVEL*/
-    ETS_PMS_PRO_IRAM0_ILG_INTR_SOURCE,          /**< */
-    ETS_PMS_PRO_DRAM0_ILG_INTR_SOURCE,          /**< */
-    ETS_PMS_PRO_DPORT_ILG_INTR_SOURCE,          /**< */
-    ETS_PMS_PRO_AHB_ILG_INTR_SOURCE,            /**< */
-    ETS_PMS_PRO_CACHE_ILG_INTR_SOURCE,          /**< */
-    ETS_PMS_DMA_APB_I_ILG_INTR_SOURCE,          /**< */
+    ETS_PMS_PRO_IRAM0_ILG_INTR_SOURCE,          /**< interrupt of illegal IRAM1 access, LEVEL*/
+    ETS_PMS_PRO_DRAM0_ILG_INTR_SOURCE,          /**< interrupt of illegal DRAM0 access, LEVEL*/
+    ETS_PMS_PRO_DPORT_ILG_INTR_SOURCE,          /**< interrupt of illegal DPORT access, LEVEL*/
+    ETS_PMS_PRO_AHB_ILG_INTR_SOURCE,            /**< interrupt of illegal AHB access, LEVEL*/
+    ETS_PMS_PRO_CACHE_ILG_INTR_SOURCE,          /**< interrupt of illegal CACHE access, LEVEL*/
+    ETS_PMS_DMA_APB_I_ILG_INTR_SOURCE,          /**< interrupt of illegal APB access, LEVEL*/
 
-    ETS_PMS_DMA_RX_I_ILG_INTR_SOURCE = 80,      /**< */
-    ETS_PMS_DMA_TX_I_ILG_INTR_SOURCE,           /**< */
-    ETS_PMS_G0SPI0_REJECT_CACHE_INTR_SOURCE,    /**< */
-    ETS_PMS_G0SPI1_REJECT_CPU_INTR_SOURCE,      /**< */
-    ETS_PMS_G1SPI0_REJECT_CACHE_INTR_SOURCE,    /**< */
-
-    ETS_PMS_G1SPI1_REJECT_CPU_INTR_SOURCE,      /**< */
-    ETS_G1SPI_INTR_SOURCE0,                     /**< */
-    ETS_G1SPI_INTR_SOURCE1,                     /**< */
-    ETS_G1SPI1_DMA_INTR_SOURCE,                 /**< */
-    ETS_DMA_COPY_INTR_SOURCE,                   /**< */
-    ETS_MAX_INTR_SOURCE,
+    ETS_PMS_DMA_RX_I_ILG_INTR_SOURCE = 80,      /**< interrupt of illegal DMA RX access, LEVEL*/
+    ETS_PMS_DMA_TX_I_ILG_INTR_SOURCE,           /**< interrupt of illegal DMA TX access, LEVEL*/
+    ETS_SPI0_REJECT_CACHE_INTR_SOURCE,          /**< interrupt of SPI0 Cache access rejected, LEVEL*/
+    ETS_SPI1_REJECT_CPU_INTR_SOURCE,            /**< interrupt of SPI1 access rejected, LEVEL*/
+    ETS_DMA_COPY_INTR_SOURCE,                   /**< interrupt of DMA copy, LEVEL*/
+    ETS_SPI4_DMA_INRT_SOURCE,                   /**< interrupt of SPI4 DMA, LEVEL*/
+    ETS_MAX_INTR_SOURCE,                        /**< number of interrupt sources */
     
 } periph_interrput_t;
 

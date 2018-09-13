@@ -43,8 +43,8 @@ extern "C" {
   *                          RTC  Memory & Store Register usage
   *************************************************************************************
   *     rtc memory addr         type    size            usage
-  *     0x3fe21000(0x50000000)  Slow    SIZE_CP         Co-Processor code/Reset Entry
-  *     0x3fe21000+SIZE_CP      Slow    8192-SIZE_CP
+  *     0x3f421000(0x50000000)  Slow    SIZE_CP         Co-Processor code/Reset Entry
+  *     0x3f421000+SIZE_CP      Slow    8192-SIZE_CP
   *
   *     0x3ff80000(0x40070000)  Fast    8192            deep sleep entry code
   *

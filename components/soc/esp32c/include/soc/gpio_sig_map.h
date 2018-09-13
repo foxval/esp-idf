@@ -7,23 +7,17 @@
 #define SPICLK_OUT_IDX			SPICLK_OUT_MUX_IDX
 #define CLK_I2S_IDX			    CLK_I2S_MUX_IDX
 
-#define SPICLK_IN_IDX			0
-#define SPICLK_OUT_MUX_IDX			0
-#define SPIQ_IN_IDX			1
-#define SPIQ_OUT_IDX			1
-#define SPID_IN_IDX			2
-#define SPID_OUT_IDX			2
-#define SPIHD_IN_IDX			3
-#define SPIHD_OUT_IDX			3
-#define SPIWP_IN_IDX			4
-#define SPIWP_OUT_IDX			4
-#define SPICS0_IN_IDX			5
+#define SPIQ_IN_IDX			0
+#define SPIQ_OUT_IDX			0
+#define SPID_IN_IDX			1
+#define SPID_OUT_IDX			1
+#define SPIHD_IN_IDX			2
+#define SPIHD_OUT_IDX			2
+#define SPIWP_IN_IDX			3
+#define SPIWP_OUT_IDX			3
+#define SPICLK_OUT_MUX_IDX			4
 #define SPICS0_OUT_IDX			5
-#define SPICS1_IN_IDX			6
 #define SPICS1_OUT_IDX			6
-#define SPICS2_IN_IDX			7
-#define SPICS2_OUT_IDX			7
-#define SPICD_OUT_IDX			8
 #define FSPICD_OUT_IDX			9
 #define SPI3_CD_OUT_IDX			10
 #define SPI4_CD_OUT_IDX			11
@@ -187,7 +181,6 @@
 #define CAN_TX_IDX			123
 #define CAN_BUS_OFF_ON_IDX			124
 #define CAN_CLKOUT_IDX			125
-#define SUBSPICLK_IN_IDX			126
 #define SUBSPICLK_OUT_MUX_IDX			126
 #define SUBSPIQ_IN_IDX			127
 #define SUBSPIQ_OUT_IDX			127
@@ -197,9 +190,7 @@
 #define SUBSPIHD_OUT_IDX			129
 #define SUBSPIWP_IN_IDX			130
 #define SUBSPIWP_OUT_IDX			130
-#define SUBSPICS0_IN_IDX			131
 #define SUBSPICS0_OUT_IDX			131
-#define SUBSPICS1_IN_IDX			132
 #define SUBSPICS1_OUT_IDX			132
 #define I2S0I_DATA_IN0_IDX			143
 #define I2S0O_DATA_OUT0_IDX			143
@@ -291,4 +282,4 @@
 #define PRO_ALONEGPIO_OUT7_IDX			242
 #define CLK_I2S_MUX_IDX			251
 #define SIG_GPIO_OUT_IDX            256
-#define GPIO_MAP_DATE_IDX			0x18081100
+#define GPIO_MAP_DATE_IDX			0x18090401

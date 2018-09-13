@@ -134,14 +134,21 @@ typedef volatile struct {
     union {
         struct {
             uint32_t peri_io_swap: 8;
-            uint32_t g0spi0_hold:  1;
-            uint32_t g0spi1_hold:  1;
+            uint32_t spi0_hold:    1;
+            uint32_t spi1_hold:    1;
             uint32_t reserved10:   3;
-            uint32_t g0spi_prior:  1;
+            uint32_t spi_prior:    1;
             uint32_t reserved14:  18;
         };
         uint32_t val;
     } host_inf_sel;
+    union {
+        struct {
+            uint32_t ext_mem_pms_lock: 1;
+            uint32_t reserved1:       31;
+        };
+        uint32_t val;
+    } ext_mem_pms_lock;
     union {
         struct {
             uint32_t flash_ace0_attr: 3;
@@ -264,24 +271,24 @@ typedef volatile struct {
     } sram_ace3_size;
     union {
         struct {
-            uint32_t g0spi0_reject_int: 1;
-            uint32_t g0spi0_reject_clr: 1;
-            uint32_t g0spi0_reject_cde: 5;
-            uint32_t reserved7:        25;
+            uint32_t spi0_reject_int: 1;
+            uint32_t spi0_reject_clr: 1;
+            uint32_t spi0_reject_cde: 5;
+            uint32_t reserved7:      25;
         };
         uint32_t val;
-    } g0spi0_pms_ctrl;
-    uint32_t g0spi0_reject_addr;                        /**/
+    } spi0_pms_ctrl;
+    uint32_t spi0_reject_addr;                          /**/
     union {
         struct {
-            uint32_t g0spi1_reject_int: 1;
-            uint32_t g0spi1_reject_clr: 1;
-            uint32_t g0spi1_reject_cde: 5;
-            uint32_t reserved7:        25;
+            uint32_t spi1_reject_int: 1;
+            uint32_t spi1_reject_clr: 1;
+            uint32_t spi1_reject_cde: 5;
+            uint32_t reserved7:      25;
         };
         uint32_t val;
-    } g0spi1_pms_ctrl;
-    uint32_t g0spi1_reject_addr;                        /**/
+    } spi1_pms_ctrl;
+    uint32_t spi1_reject_addr;                          /**/
     union {
         struct {
             uint32_t sdio_win_access_en: 1;
@@ -289,9 +296,20 @@ typedef volatile struct {
         };
         uint32_t val;
     } sdio_ctrl;
-    uint32_t reserved_c0;
-    uint32_t reserved_c4;
-    uint32_t reserved_c8;
+    union {
+        struct {
+            uint32_t redcy_sig0: 31;
+            uint32_t redcy_andor: 1;
+        };
+        uint32_t val;
+    } redcy_sig0;
+    union {
+        struct {
+            uint32_t redcy_sig1:  31;
+            uint32_t redcy_nandor: 1;
+        };
+        uint32_t val;
+    } redcy_sig1;
     uint32_t reserved_cc;
     uint32_t reserved_d0;
     uint32_t reserved_d4;

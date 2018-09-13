@@ -48,12 +48,16 @@ static void rtc_brownout_isr_handler()
 
 void esp_brownout_init()
 {
+#ifdef CONFIG_CHIP_IS_ESP32
     REG_WRITE(RTC_CNTL_BROWN_OUT_REG,
             RTC_CNTL_BROWN_OUT_ENA /* Enable BOD */
             | RTC_CNTL_BROWN_OUT_PD_RF_ENA /* Automatically power down RF */
             /* Reset timeout must be set to >1 even if BOR feature is not used */
             | (2 << RTC_CNTL_BROWN_OUT_RST_WAIT_S)
             | (BROWNOUT_DET_LVL << RTC_CNTL_DBROWN_OUT_THRES_S));
+#else
+    //TODO, chip7.2.2 will use i2c inteface to configure brown out threshold
+#endif
 
     ESP_ERROR_CHECK( rtc_isr_register(rtc_brownout_isr_handler, NULL, RTC_CNTL_BROWN_OUT_INT_ENA_M) );
 

@@ -322,12 +322,12 @@ extern "C" {
 #define DPORT_UART_MEM_CLK_EN_M  (BIT(24))
 #define DPORT_UART_MEM_CLK_EN_V  0x1
 #define DPORT_UART_MEM_CLK_EN_S  24
-/* DPORT_UART2_CLK_EN : R/W ;bitpos:[23] ;default: 1'b1 ; */
+/* DPORT_USB_CLK_EN : R/W ;bitpos:[23] ;default: 1'b1 ; */
 /*description: */
-#define DPORT_UART2_CLK_EN  (BIT(23))
-#define DPORT_UART2_CLK_EN_M  (BIT(23))
-#define DPORT_UART2_CLK_EN_V  0x1
-#define DPORT_UART2_CLK_EN_S  23
+#define DPORT_USB_CLK_EN  (BIT(23))
+#define DPORT_USB_CLK_EN_M  (BIT(23))
+#define DPORT_USB_CLK_EN_V  0x1
+#define DPORT_USB_CLK_EN_S  23
 /* DPORT_SPI2_DMA_CLK_EN : R/W ;bitpos:[22] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_SPI2_DMA_CLK_EN  (BIT(22))
@@ -526,12 +526,12 @@ extern "C" {
 #define DPORT_UART_MEM_RST_M  (BIT(24))
 #define DPORT_UART_MEM_RST_V  0x1
 #define DPORT_UART_MEM_RST_S  24
-/* DPORT_UART2_RST : R/W ;bitpos:[23] ;default: 1'b0 ; */
+/* DPORT_USB_RST : R/W ;bitpos:[23] ;default: 1'b0 ; */
 /*description: */
-#define DPORT_UART2_RST  (BIT(23))
-#define DPORT_UART2_RST_M  (BIT(23))
-#define DPORT_UART2_RST_V  0x1
-#define DPORT_UART2_RST_S  23
+#define DPORT_USB_RST  (BIT(23))
+#define DPORT_USB_RST_M  (BIT(23))
+#define DPORT_USB_RST_V  0x1
+#define DPORT_USB_RST_S  23
 /* DPORT_SPI2_DMA_RST : R/W ;bitpos:[22] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_SPI2_DMA_RST  (BIT(22))
@@ -957,7 +957,21 @@ extern "C" {
 #define DPORT_RTC_MEM_CRC_RES_V  0xFFFFFFFF
 #define DPORT_RTC_MEM_CRC_RES_S  0
 
-#define SYSTEM_CLOCK_GATE_REG          (DR_REG_SYSTEM_BASE + 0x098)
+#define DPORT_REDUNDANT_ECO_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x098)
+/* DPORT_REDUNDANT_ECO_RESULT : RO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_REDUNDANT_ECO_RESULT  (BIT(1))
+#define DPORT_REDUNDANT_ECO_RESULT_M  (BIT(1))
+#define DPORT_REDUNDANT_ECO_RESULT_V  0x1
+#define DPORT_REDUNDANT_ECO_RESULT_S  1
+/* DPORT_REDUNDANT_ECO_DRIVE : R/W ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_REDUNDANT_ECO_DRIVE  (BIT(0))
+#define DPORT_REDUNDANT_ECO_DRIVE_M  (BIT(0))
+#define DPORT_REDUNDANT_ECO_DRIVE_V  0x1
+#define DPORT_REDUNDANT_ECO_DRIVE_S  0
+
+#define SYSTEM_CLOCK_GATE_REG          (DR_REG_SYSTEM_BASE + 0x09C)
 /* SYSTEM_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define SYSTEM_CLK_EN  (BIT(0))
@@ -966,7 +980,7 @@ extern "C" {
 #define SYSTEM_CLK_EN_S  0
 
 #define SYSTEM_DATE_REG          (DR_REG_SYSTEM_BASE + 0xFFC)
-/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1808160 ; */
+/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809130 ; */
 /*description: */
 #define SYSTEM_DATE  0x0FFFFFFF
 #define SYSTEM_DATE_M  ((SYSTEM_DATE_V)<<(SYSTEM_DATE_S))

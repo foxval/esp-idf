@@ -20,7 +20,7 @@
 const spi_signal_conn_t spi_periph_signal[3] = {
     {
         .spiclk_out = SPICLK_OUT_IDX,
-        .spiclk_in = SPICLK_IN_IDX,
+        .spiclk_in = 0,/* SPI clock is not an input signal*/
         .spid_out = SPID_OUT_IDX,
         .spiq_out = SPIQ_OUT_IDX,
         .spiwp_out = SPIWP_OUT_IDX,
@@ -29,8 +29,8 @@ const spi_signal_conn_t spi_periph_signal[3] = {
         .spiq_in = SPIQ_IN_IDX,
         .spiwp_in = SPIWP_IN_IDX,
         .spihd_in = SPIHD_IN_IDX,
-        .spics_out = {SPICS0_OUT_IDX, SPICS1_OUT_IDX, SPICS2_OUT_IDX},
-        .spics_in = SPICS0_IN_IDX,
+        .spics_out = {SPICS0_OUT_IDX, SPICS1_OUT_IDX},/* SPI0/1 do not have CS2 now */
+        .spics_in = 0,/* SPI cs is not an input signal*/
         .spiclk_iomux_pin = SPI_IOMUX_PIN_NUM_CLK,
         .spid_iomux_pin = SPI_IOMUX_PIN_NUM_MOSI,
         .spiq_iomux_pin = SPI_IOMUX_PIN_NUM_MISO,

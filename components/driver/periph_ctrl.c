@@ -62,8 +62,13 @@ static uint32_t get_clk_en_mask(periph_module_t periph)
             return DPORT_UART_CLK_EN;
         case PERIPH_UART1_MODULE:
             return DPORT_UART1_CLK_EN;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_UART2_MODULE:
             return DPORT_UART2_CLK_EN;
+#else
+        case PERIPH_USB_MODULE:
+            return DPORT_USB_CLK_EN;
+#endif
         case PERIPH_I2C0_MODULE:
             return DPORT_I2C_EXT0_CLK_EN;
         case PERIPH_I2C1_MODULE:
@@ -139,8 +144,13 @@ static uint32_t get_rst_en_mask(periph_module_t periph)
             return DPORT_UART_RST;
         case PERIPH_UART1_MODULE:
             return DPORT_UART1_RST;
+#ifdef CONFIG_CHIP_IS_ESP32
         case PERIPH_UART2_MODULE:
             return DPORT_UART2_RST;
+#else
+        case PERIPH_USB_MODULE:
+            return DPORT_USB_RST;
+#endif
         case PERIPH_I2C0_MODULE:
             return DPORT_I2C_EXT0_RST;
         case PERIPH_I2C1_MODULE:

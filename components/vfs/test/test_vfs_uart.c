@@ -39,7 +39,7 @@ static void fwrite_str_loopback(const char* str, size_t size)
 static void flush_stdin_stdout()
 {
     vTaskDelay(10 / portTICK_PERIOD_MS);
-    char *bitbucket = (char*) 0x3f000000;
+    char *bitbucket = (char*) 0x3f400000;
     while (fread(bitbucket, 1, 128, stdin) > 0) {
         ;
     }

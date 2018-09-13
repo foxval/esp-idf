@@ -637,7 +637,11 @@ esp_err_t uart_param_config(uart_port_t uart_num, const uart_config_t *uart_conf
     } else if(uart_num == UART_NUM_1) {
         periph_module_enable(PERIPH_UART1_MODULE);
     } else if(uart_num == UART_NUM_2) {
+#ifdef CONFIG_CHIP_IS_ESP32
         periph_module_enable(PERIPH_UART2_MODULE);
+#else
+        return ESP_FAIL;
+#endif
     }
     r = uart_set_hw_flow_ctrl(uart_num, uart_config->flow_ctrl, uart_config->rx_flow_ctrl_thresh);
     if (r != ESP_OK) return r;
@@ -1382,7 +1386,11 @@ esp_err_t uart_driver_delete(uart_port_t uart_num)
        } else if(uart_num == UART_NUM_1) {
            periph_module_disable(PERIPH_UART1_MODULE);
        } else if(uart_num == UART_NUM_2) {
+#ifdef CONFIG_CHIP_IS_ESP32
            periph_module_disable(PERIPH_UART2_MODULE);
+#else
+           return ESP_FAIL;
+#endif
        }
     }
     return ESP_OK;
