@@ -168,6 +168,10 @@ void heap_caps_init()
         heap->start = region->start;
         heap->end = region->start + region->size;
         vPortCPUInitializeMutex(&heap->heap_mux);
+
+        ESP_EARLY_LOGI(TAG, "At %08X len %08X (%d KiB): %s",
+                       region->start, region->size, region->size / 1024, type->name);
+
         if (type->startup_stack) {
             /* Will be registered when OS scheduler starts */
             heap->heap = NULL;
@@ -175,9 +179,6 @@ void heap_caps_init()
             register_heap(heap);
         }
         SLIST_NEXT(heap, next) = NULL;
-
-        ESP_EARLY_LOGI(TAG, "At %08X len %08X (%d KiB): %s",
-                       region->start, region->size, region->size / 1024, type->name);
     }
 
     assert(heap_idx == num_heaps);
