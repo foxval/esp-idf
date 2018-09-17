@@ -19,16 +19,15 @@
 #ifndef _BT_TRACE_H_
 #define _BT_TRACE_H_
 
-#include "sdkconfig.h"
-
 #include <stdio.h>
+#include "bt_user_config.h"
 #include "stack/bt_types.h"
 
 #ifndef LOG_LOCAL_LEVEL
 #ifndef BOOTLOADER_BUILD
-#define LOG_LOCAL_LEVEL  CONFIG_LOG_DEFAULT_LEVEL
+#define LOG_LOCAL_LEVEL  UC_LOG_DEFAULT_LEVEL
 #else
-#define LOG_LOCAL_LEVEL  CONFIG_LOG_BOOTLOADER_LEVEL
+#define LOG_LOCAL_LEVEL  UC_LOG_BOOTLOADER_LEVEL
 #endif
 #endif
 
@@ -70,7 +69,7 @@ inline void trc_dump_buffer(const char *prefix, uint8_t *data, uint16_t len)
 
     for (i = 0; i < len; i+=16) {
         printf("%02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x, %02x\r\n",
-                *(data + i), *(data + i + 1), *(data + i + 2), *(data + i + 3), *(data + i + 4), *(data + i + 5), *(data + i + 6), *(data + i + 7), 
+                *(data + i), *(data + i + 1), *(data + i + 2), *(data + i + 3), *(data + i + 4), *(data + i + 5), *(data + i + 6), *(data + i + 7),
                 *(data + i + 8), *(data + i + 9), *(data + i + 10), *(data + i + 11), *(data + i + 12), *(data + i + 13), *(data + i + 14), *(data + i + 15));
     }
     printf("\r\n");
@@ -216,135 +215,31 @@ inline void trc_dump_buffer(const char *prefix, uint8_t *data, uint16_t len)
 
 // btla-specific ++
 /* Core Stack default trace levels */
-#ifdef  CONFIG_HCI_INITIAL_TRACE_LEVEL
-#define HCI_INITIAL_TRACE_LEVEL             CONFIG_HCI_INITIAL_TRACE_LEVEL
-#else
-#define HCI_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_BTM_INITIAL_TRACE_LEVEL
-#define BTM_INITIAL_TRACE_LEVEL             CONFIG_BTM_INITIAL_TRACE_LEVEL
-#else
-#define BTM_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_L2CAP_INITIAL_TRACE_LEVEL
-#define L2CAP_INITIAL_TRACE_LEVEL           CONFIG_L2CAP_INITIAL_TRACE_LEVEL
-#else
-#define L2CAP_INITIAL_TRACE_LEVEL           BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_RFCOMM_INITIAL_TRACE_LEVEL
-#define RFCOMM_INITIAL_TRACE_LEVEL          CONFIG_RFCOMM_INITIAL_TRACE_LEVEL
-#else
-#define RFCOMM_INITIAL_TRACE_LEVEL          BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_SDP_INITIAL_TRACE_LEVEL
-#define SDP_INITIAL_TRACE_LEVEL             CONFIG_SDP_INITIAL_TRACE_LEVEL
-#else
-#define SDP_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_GAP_INITIAL_TRACE_LEVEL
-#define GAP_INITIAL_TRACE_LEVEL             CONFIG_GAP_INITIAL_TRACE_LEVEL
-#else
-#define GAP_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_BNEP_INITIAL_TRACE_LEVEL
-#define BNEP_INITIAL_TRACE_LEVEL            CONFIG_BNEP_INITIAL_TRACE_LEVEL
-#else
-#define BNEP_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_PAN_INITIAL_TRACE_LEVEL
-#define PAN_INITIAL_TRACE_LEVEL             CONFIG_PAN_INITIAL_TRACE_LEVEL
-#else
-#define PAN_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_A2D_INITIAL_TRACE_LEVEL
-#define A2D_INITIAL_TRACE_LEVEL             CONFIG_A2D_INITIAL_TRACE_LEVEL
-#else
-#define A2D_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_AVDT_INITIAL_TRACE_LEVEL
-#define AVDT_INITIAL_TRACE_LEVEL            CONFIG_AVDT_INITIAL_TRACE_LEVEL
-#else
-#define AVDT_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_AVCT_INITIAL_TRACE_LEVEL
-#define AVCT_INITIAL_TRACE_LEVEL            CONFIG_AVCT_INITIAL_TRACE_LEVEL
-#else
-#define AVCT_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_AVRC_INITIAL_TRACE_LEVEL
-#define AVRC_INITIAL_TRACE_LEVEL            CONFIG_AVRC_INITIAL_TRACE_LEVEL
-#else
-#define AVRC_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_MCA_INITIAL_TRACE_LEVEL
-#define MCA_INITIAL_TRACE_LEVEL             CONFIG_MCA_INITIAL_TRACE_LEVEL
-#else
-#define MCA_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_HID_INITIAL_TRACE_LEVEL
-#define HID_INITIAL_TRACE_LEVEL             CONFIG_HID_INITIAL_TRACE_LEVEL
-#else
-#define HID_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_APPL_INITIAL_TRACE_LEVEL
-#define APPL_INITIAL_TRACE_LEVEL            CONFIG_APPL_INITIAL_TRACE_LEVEL
-#else
-#define APPL_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_GATT_INITIAL_TRACE_LEVEL
-#define GATT_INITIAL_TRACE_LEVEL            CONFIG_GATT_INITIAL_TRACE_LEVEL
-#else
-#define GATT_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_SMP_INITIAL_TRACE_LEVEL
-#define SMP_INITIAL_TRACE_LEVEL             CONFIG_SMP_INITIAL_TRACE_LEVEL
-#else
-#define SMP_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_BTIF_INITIAL_TRACE_LEVEL
-#define BTIF_INITIAL_TRACE_LEVEL            CONFIG_BTIF_INITIAL_TRACE_LEVEL
-#else
-#define BTIF_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_BTC_INITIAL_TRACE_LEVEL
-#define BTC_INITIAL_TRACE_LEVEL             CONFIG_BTC_INITIAL_TRACE_LEVEL
-#else
-#define BTC_INITIAL_TRACE_LEVEL             BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_OSI_INITIAL_TRACE_LEVEL
-#define OSI_INITIAL_TRACE_LEVEL            CONFIG_OSI_INITIAL_TRACE_LEVEL
-#else
-#define OSI_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
-
-#ifdef  CONFIG_BLUFI_INITIAL_TRACE_LEVEL
-#define BLUFI_INITIAL_TRACE_LEVEL            CONFIG_BLUFI_INITIAL_TRACE_LEVEL
-#else
-#define BLUFI_INITIAL_TRACE_LEVEL            BT_TRACE_LEVEL_WARNING
-#endif
+#define HCI_INITIAL_TRACE_LEVEL             UC_HCI_INITIAL_TRACE_LEVEL
+#define BTM_INITIAL_TRACE_LEVEL             UC_BTM_INITIAL_TRACE_LEVEL
+#define L2CAP_INITIAL_TRACE_LEVEL           UC_L2CAP_INITIAL_TRACE_LEVEL
+#define RFCOMM_INITIAL_TRACE_LEVEL          UC_RFCOMM_INITIAL_TRACE_LEVEL
+#define SDP_INITIAL_TRACE_LEVEL             UC_SDP_INITIAL_TRACE_LEVEL
+#define GAP_INITIAL_TRACE_LEVEL             UC_GAP_INITIAL_TRACE_LEVEL
+#define BNEP_INITIAL_TRACE_LEVEL            UC_BNEP_INITIAL_TRACE_LEVEL
+#define PAN_INITIAL_TRACE_LEVEL             UC_PAN_INITIAL_TRACE_LEVEL
+#define A2D_INITIAL_TRACE_LEVEL             UC_A2D_INITIAL_TRACE_LEVEL
+#define AVDT_INITIAL_TRACE_LEVEL            UC_AVDT_INITIAL_TRACE_LEVEL
+#define AVCT_INITIAL_TRACE_LEVEL            UC_AVCT_INITIAL_TRACE_LEVEL
+#define AVRC_INITIAL_TRACE_LEVEL            UC_AVRC_INITIAL_TRACE_LEVEL
+#define MCA_INITIAL_TRACE_LEVEL             UC_MCA_INITIAL_TRACE_LEVEL
+#define HID_INITIAL_TRACE_LEVEL             UC_HID_INITIAL_TRACE_LEVEL
+#define APPL_INITIAL_TRACE_LEVEL            UC_APPL_INITIAL_TRACE_LEVEL
+#define GATT_INITIAL_TRACE_LEVEL            UC_GATT_INITIAL_TRACE_LEVEL
+#define SMP_INITIAL_TRACE_LEVEL             UC_SMP_INITIAL_TRACE_LEVEL
+#define BTIF_INITIAL_TRACE_LEVEL            UC_BTIF_INITIAL_TRACE_LEVEL
+#define BTC_INITIAL_TRACE_LEVEL             UC_BTC_INITIAL_TRACE_LEVEL
+#define OSI_INITIAL_TRACE_LEVEL             UC_OSI_INITIAL_TRACE_LEVEL
+#define BLUFI_INITIAL_TRACE_LEVEL           UC_BLUFI_INITIAL_TRACE_LEVEL
 
 // btla-specific --
 
-#if !CONFIG_BT_STACK_NO_LOG
+#if !UC_BT_STACK_NO_LOG
 #define LOG_ERROR(format, ... )             {if (LOG_LOCAL_LEVEL >= ESP_LOG_ERROR)    esp_log_write(ESP_LOG_ERROR,   "BT_LOG", LOG_FORMAT(E, format), esp_log_timestamp(), "BT_LOG", ##__VA_ARGS__); }
 #define LOG_WARN(format, ... )              {if (LOG_LOCAL_LEVEL >= ESP_LOG_WARN)     esp_log_write(ESP_LOG_WARN,    "BT_LOG", LOG_FORMAT(W, format), esp_log_timestamp(), "BT_LOG", ##__VA_ARGS__); }
 #define LOG_INFO(format, ... )              {if (LOG_LOCAL_LEVEL >= ESP_LOG_INFO)     esp_log_write(ESP_LOG_INFO,    "BT_LOG", LOG_FORMAT(I, format), esp_log_timestamp(), "BT_LOG", ##__VA_ARGS__); }
@@ -522,157 +417,157 @@ extern UINT8 btif_trace_level;
 #define BLUFI_TRACE_VERBOSE(fmt, args...)    {if (BLUFI_INITIAL_TRACE_LEVEL >= BT_TRACE_LEVEL_VERBOSE && BT_LOG_LEVEL_CHECK(BLUFI,VERBOSE)) BT_PRINT_V("BT_BLUFI", fmt, ## args);}
 
 #else
-#define LOG_ERROR(fmt, args...)            
-#define LOG_WARN(fmt, args...)             
-#define LOG_INFO(fmt, args...)             
-#define LOG_DEBUG(fmt, args...)            
-#define LOG_VERBOSE(fmt, args...)          
+#define LOG_ERROR(fmt, args...)
+#define LOG_WARN(fmt, args...)
+#define LOG_INFO(fmt, args...)
+#define LOG_DEBUG(fmt, args...)
+#define LOG_VERBOSE(fmt, args...)
 
 /* Define tracing for the HCI unit
 */
-#define HCI_TRACE_ERROR(fmt, args...)      
-#define HCI_TRACE_WARNING(fmt, args...)    
-#define HCI_TRACE_EVENT(fmt, args...)      
-#define HCI_TRACE_DEBUG(fmt, args...)      
+#define HCI_TRACE_ERROR(fmt, args...)
+#define HCI_TRACE_WARNING(fmt, args...)
+#define HCI_TRACE_EVENT(fmt, args...)
+#define HCI_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for BTM
 */
-#define BTM_TRACE_ERROR(fmt, args...)      
-#define BTM_TRACE_WARNING(fmt, args...)    
-#define BTM_TRACE_API(fmt, args...)        
-#define BTM_TRACE_EVENT(fmt, args...)      
-#define BTM_TRACE_DEBUG(fmt, args...)      
+#define BTM_TRACE_ERROR(fmt, args...)
+#define BTM_TRACE_WARNING(fmt, args...)
+#define BTM_TRACE_API(fmt, args...)
+#define BTM_TRACE_EVENT(fmt, args...)
+#define BTM_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for the L2CAP unit
 */
-#define L2CAP_TRACE_ERROR(fmt, args...)    
-#define L2CAP_TRACE_WARNING(fmt, args...)  
-#define L2CAP_TRACE_API(fmt, args...)      
-#define L2CAP_TRACE_EVENT(fmt, args...)    
-#define L2CAP_TRACE_DEBUG(fmt, args...)    
+#define L2CAP_TRACE_ERROR(fmt, args...)
+#define L2CAP_TRACE_WARNING(fmt, args...)
+#define L2CAP_TRACE_API(fmt, args...)
+#define L2CAP_TRACE_EVENT(fmt, args...)
+#define L2CAP_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for the SDP unit
 */
-#define SDP_TRACE_ERROR(fmt, args...)      
-#define SDP_TRACE_WARNING(fmt, args...)    
-#define SDP_TRACE_API(fmt, args...)        
-#define SDP_TRACE_EVENT(fmt, args...)      
-#define SDP_TRACE_DEBUG(fmt, args...)      
+#define SDP_TRACE_ERROR(fmt, args...)
+#define SDP_TRACE_WARNING(fmt, args...)
+#define SDP_TRACE_API(fmt, args...)
+#define SDP_TRACE_EVENT(fmt, args...)
+#define SDP_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for the RFCOMM unit
 */
-#define RFCOMM_TRACE_ERROR(fmt, args...)   
-#define RFCOMM_TRACE_WARNING(fmt, args...) 
-#define RFCOMM_TRACE_API(fmt, args...)     
-#define RFCOMM_TRACE_EVENT(fmt, args...)   
-#define RFCOMM_TRACE_DEBUG(fmt, args...)   
+#define RFCOMM_TRACE_ERROR(fmt, args...)
+#define RFCOMM_TRACE_WARNING(fmt, args...)
+#define RFCOMM_TRACE_API(fmt, args...)
+#define RFCOMM_TRACE_EVENT(fmt, args...)
+#define RFCOMM_TRACE_DEBUG(fmt, args...)
 
 /* Generic Access Profile traces */
-#define GAP_TRACE_ERROR(fmt, args...)      
-#define GAP_TRACE_EVENT(fmt, args...)      
-#define GAP_TRACE_API(fmt, args...)        
-#define GAP_TRACE_WARNING(fmt, args...)    
+#define GAP_TRACE_ERROR(fmt, args...)
+#define GAP_TRACE_EVENT(fmt, args...)
+#define GAP_TRACE_API(fmt, args...)
+#define GAP_TRACE_WARNING(fmt, args...)
 
 /* define traces for HID Host */
-#define HIDH_TRACE_ERROR(fmt, args...)     
-#define HIDH_TRACE_WARNING(fmt, args...)   
-#define HIDH_TRACE_API(fmt, args...)       
-#define HIDH_TRACE_EVENT(fmt, args...)     
-#define HIDH_TRACE_DEBUG(fmt, args...)     
+#define HIDH_TRACE_ERROR(fmt, args...)
+#define HIDH_TRACE_WARNING(fmt, args...)
+#define HIDH_TRACE_API(fmt, args...)
+#define HIDH_TRACE_EVENT(fmt, args...)
+#define HIDH_TRACE_DEBUG(fmt, args...)
 
 /* define traces for BNEP */
 
-#define BNEP_TRACE_ERROR(fmt, args...)     
-#define BNEP_TRACE_WARNING(fmt, args...)   
-#define BNEP_TRACE_API(fmt, args...)       
-#define BNEP_TRACE_EVENT(fmt, args...)     
-#define BNEP_TRACE_DEBUG(fmt, args...)     
+#define BNEP_TRACE_ERROR(fmt, args...)
+#define BNEP_TRACE_WARNING(fmt, args...)
+#define BNEP_TRACE_API(fmt, args...)
+#define BNEP_TRACE_EVENT(fmt, args...)
+#define BNEP_TRACE_DEBUG(fmt, args...)
 
 /* define traces for PAN */
 
-#define PAN_TRACE_ERROR(fmt, args...)      
-#define PAN_TRACE_WARNING(fmt, args...)    
-#define PAN_TRACE_API(fmt, args...)        
-#define PAN_TRACE_EVENT(fmt, args...)      
-#define PAN_TRACE_DEBUG(fmt, args...)      
+#define PAN_TRACE_ERROR(fmt, args...)
+#define PAN_TRACE_WARNING(fmt, args...)
+#define PAN_TRACE_API(fmt, args...)
+#define PAN_TRACE_EVENT(fmt, args...)
+#define PAN_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for the A2DP profile
 */
-#define A2D_TRACE_ERROR(fmt, args...)      
-#define A2D_TRACE_WARNING(fmt, args...)    
-#define A2D_TRACE_EVENT(fmt, args...)      
-#define A2D_TRACE_DEBUG(fmt, args...)      
-#define A2D_TRACE_API(fmt, args...)        
+#define A2D_TRACE_ERROR(fmt, args...)
+#define A2D_TRACE_WARNING(fmt, args...)
+#define A2D_TRACE_EVENT(fmt, args...)
+#define A2D_TRACE_DEBUG(fmt, args...)
+#define A2D_TRACE_API(fmt, args...)
 
 /* AVDTP
 */
-#define AVDT_TRACE_ERROR(fmt, args...)     
-#define AVDT_TRACE_WARNING(fmt, args...)   
-#define AVDT_TRACE_EVENT(fmt, args...)     
-#define AVDT_TRACE_DEBUG(fmt, args...)     
-#define AVDT_TRACE_API(fmt, args...)       
+#define AVDT_TRACE_ERROR(fmt, args...)
+#define AVDT_TRACE_WARNING(fmt, args...)
+#define AVDT_TRACE_EVENT(fmt, args...)
+#define AVDT_TRACE_DEBUG(fmt, args...)
+#define AVDT_TRACE_API(fmt, args...)
 
 /* Define tracing for the AVCTP protocol
 */
-#define AVCT_TRACE_ERROR(fmt, args...)     
-#define AVCT_TRACE_WARNING(fmt, args...)   
-#define AVCT_TRACE_EVENT(fmt, args...)     
-#define AVCT_TRACE_DEBUG(fmt, args...)     
-#define AVCT_TRACE_API(fmt, args...)       
+#define AVCT_TRACE_ERROR(fmt, args...)
+#define AVCT_TRACE_WARNING(fmt, args...)
+#define AVCT_TRACE_EVENT(fmt, args...)
+#define AVCT_TRACE_DEBUG(fmt, args...)
+#define AVCT_TRACE_API(fmt, args...)
 
 /* Define tracing for the AVRCP profile
 */
-#define AVRC_TRACE_ERROR(fmt, args...)     
-#define AVRC_TRACE_WARNING(fmt, args...)   
-#define AVRC_TRACE_EVENT(fmt, args...)     
-#define AVRC_TRACE_DEBUG(fmt, args...)     
-#define AVRC_TRACE_API(fmt, args...)       
+#define AVRC_TRACE_ERROR(fmt, args...)
+#define AVRC_TRACE_WARNING(fmt, args...)
+#define AVRC_TRACE_EVENT(fmt, args...)
+#define AVRC_TRACE_DEBUG(fmt, args...)
+#define AVRC_TRACE_API(fmt, args...)
 
 /* MCAP
 */
-#define MCA_TRACE_ERROR(fmt, args...)      
-#define MCA_TRACE_WARNING(fmt, args...)    
-#define MCA_TRACE_EVENT(fmt, args...)      
-#define MCA_TRACE_DEBUG(fmt, args...)      
-#define MCA_TRACE_API(fmt, args...)        
+#define MCA_TRACE_ERROR(fmt, args...)
+#define MCA_TRACE_WARNING(fmt, args...)
+#define MCA_TRACE_EVENT(fmt, args...)
+#define MCA_TRACE_DEBUG(fmt, args...)
+#define MCA_TRACE_API(fmt, args...)
 
 /* Define tracing for the ATT/GATT unit
 */
-#define GATT_TRACE_ERROR(fmt, args...)     
-#define GATT_TRACE_WARNING(fmt, args...)   
-#define GATT_TRACE_API(fmt, args...)       
-#define GATT_TRACE_EVENT(fmt, args...)     
-#define GATT_TRACE_DEBUG(fmt, args...)     
+#define GATT_TRACE_ERROR(fmt, args...)
+#define GATT_TRACE_WARNING(fmt, args...)
+#define GATT_TRACE_API(fmt, args...)
+#define GATT_TRACE_EVENT(fmt, args...)
+#define GATT_TRACE_DEBUG(fmt, args...)
 
 /* Define tracing for the SMP unit
 */
-#define SMP_TRACE_ERROR(fmt, args...)      
-#define SMP_TRACE_WARNING(fmt, args...)    
-#define SMP_TRACE_API(fmt, args...)        
-#define SMP_TRACE_EVENT(fmt, args...)      
-#define SMP_TRACE_DEBUG(fmt, args...)      
+#define SMP_TRACE_ERROR(fmt, args...)
+#define SMP_TRACE_WARNING(fmt, args...)
+#define SMP_TRACE_API(fmt, args...)
+#define SMP_TRACE_EVENT(fmt, args...)
+#define SMP_TRACE_DEBUG(fmt, args...)
 
 extern UINT8 btif_trace_level;
 
 // define traces for application
-#define BTIF_TRACE_ERROR(fmt, args...)     
-#define BTIF_TRACE_WARNING(fmt, args...)   
-#define BTIF_TRACE_API(fmt, args...)       
-#define BTIF_TRACE_EVENT(fmt, args...)     
-#define BTIF_TRACE_DEBUG(fmt, args...)     
-#define BTIF_TRACE_VERBOSE(fmt, args...)   
+#define BTIF_TRACE_ERROR(fmt, args...)
+#define BTIF_TRACE_WARNING(fmt, args...)
+#define BTIF_TRACE_API(fmt, args...)
+#define BTIF_TRACE_EVENT(fmt, args...)
+#define BTIF_TRACE_DEBUG(fmt, args...)
+#define BTIF_TRACE_VERBOSE(fmt, args...)
 
 /* define traces for application */
 
-#define APPL_TRACE_ERROR(fmt, args...)     
-#define APPL_TRACE_WARNING(fmt, args...)   
-#define APPL_TRACE_API(fmt, args...)       
-#define APPL_TRACE_EVENT(fmt, args...)     
-#define APPL_TRACE_DEBUG(fmt, args...)     
-#define APPL_TRACE_VERBOSE(fmt, args...)   
+#define APPL_TRACE_ERROR(fmt, args...)
+#define APPL_TRACE_WARNING(fmt, args...)
+#define APPL_TRACE_API(fmt, args...)
+#define APPL_TRACE_EVENT(fmt, args...)
+#define APPL_TRACE_DEBUG(fmt, args...)
+#define APPL_TRACE_VERBOSE(fmt, args...)
 
 /* define traces for BTC */
-#define BTC_TRACE_ERROR(fmt, args...) 
+#define BTC_TRACE_ERROR(fmt, args...)
 #define BTC_TRACE_WARNING(fmt, args...)
 #define BTC_TRACE_API(fmt, args...)
 #define BTC_TRACE_EVENT(fmt, args...)
@@ -680,7 +575,7 @@ extern UINT8 btif_trace_level;
 #define BTC_TRACE_VERBOSE(fmt, args...)
 
 /* define traces for OSI */
-#define OSI_TRACE_ERROR(fmt, args...) 
+#define OSI_TRACE_ERROR(fmt, args...)
 #define OSI_TRACE_WARNING(fmt, args...)
 #define OSI_TRACE_API(fmt, args...)
 #define OSI_TRACE_EVENT(fmt, args...)
@@ -688,13 +583,13 @@ extern UINT8 btif_trace_level;
 #define OSI_TRACE_VERBOSE(fmt, args...)
 
 /* define traces for BLUFI */
-#define BLUFI_TRACE_ERROR(fmt, args...) 
+#define BLUFI_TRACE_ERROR(fmt, args...)
 #define BLUFI_TRACE_WARNING(fmt, args...)
 #define BLUFI_TRACE_API(fmt, args...)
 #define BLUFI_TRACE_EVENT(fmt, args...)
 #define BLUFI_TRACE_DEBUG(fmt, args...)
 #define BLUFI_TRACE_VERBOSE(fmt, args...)
-#endif  ///CONFIG_BT_STACK_NO_LOG
+#endif  ///!UC_BT_STACK_NO_LOG
 
 
 /* Simplified Trace Helper Macro

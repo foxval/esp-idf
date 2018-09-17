@@ -34,25 +34,25 @@
 #include "bdroid_buildcfg.h"
 #endif
 
-#include "sdkconfig.h"
+#include "bt_user_config.h"
 #include "stack/bt_types.h"   /* This must be defined AFTER buildcfg.h */
 
 #include "stack/dyn_mem.h"    /* defines static and/or dynamic memory for components */
 
 
 /* OS Configuration from User config (eg: sdkconfig) */
-#if CONFIG_BLUEDROID_PINNED_TO_CORE
-#define TASK_PINNED_TO_CORE         (CONFIG_BLUEDROID_PINNED_TO_CORE < portNUM_PROCESSORS ? CONFIG_BLUEDROID_PINNED_TO_CORE : tskNO_AFFINITY)
-#else
-#define TASK_PINNED_TO_CORE         (0)
-#endif
+#define TASK_PINNED_TO_CORE         UC_TASK_PINNED_TO_CORE
+#define BT_TASK_MAX_PRIORITIES      configMAX_PRIORITIES
+#define BT_BTC_TASK_STACK_SIZE      UC_BTC_TASK_STACK_SIZE
+#define A2DP_SINK_TASK_STACK_SIZE   UC_A2DP_SINK_TASK_STACK_SIZE
+#define A2DP_SOURCE_TASK_STACK_SIZE UC_A2DP_SOURCE_TASK_STACK_SIZE
 
 /******************************************************************************
 **
 ** Classic BT features
 **
 ******************************************************************************/
-#if CONFIG_CLASSIC_BT_ENABLED
+#if (UC_CLASSIC_BT_ENABLED == TRUE)
 #define CLASSIC_BT_INCLUDED         TRUE
 #define BTC_SM_INCLUDED             TRUE
 #define BTC_PRF_QUEUE_INCLUDED      TRUE
@@ -62,7 +62,7 @@
 #define SDP_INCLUDED                TRUE
 #define BT_SSP_INCLUDED             TRUE
 
-#if CONFIG_A2DP_ENABLE
+#if (UC_A2DP_ENABLED == TRUE)
 #define BTA_AR_INCLUDED             TRUE
 #define BTA_AV_INCLUDED             TRUE
 #define AVDT_INCLUDED               TRUE
@@ -75,15 +75,15 @@
 #define SBC_DEC_INCLUDED            TRUE
 #define BTC_AV_SRC_INCLUDED         TRUE
 #define SBC_ENC_INCLUDED            TRUE
-#endif /* CONFIG_A2DP_ENABLE */
+#endif /* UC_A2DP_ENABLED */
 
-#if CONFIG_BT_SPP_ENABLED
+#if (UC_BT_SPP_ENABLED == TRUE)
 #define RFCOMM_INCLUDED             TRUE
 #define BTA_JV_INCLUDED             TRUE
 #define BTC_SPP_INCLUDED            TRUE
-#endif /* CONFIG_BT_SPP_ENABLED */
+#endif /* UC_BT_SPP_ENABLED */
 
-#if CONFIG_HFP_CLIENT_ENABLE
+#if (UC_HFP_CLIENT_ENABLED == TRUE)
 #define BTC_HF_CLIENT_INCLUDED      TRUE
 #define BTA_HF_INCLUDED             TRUE
 #ifndef RFCOMM_INCLUDED
@@ -95,53 +95,49 @@
 #ifndef BTM_MAX_SCO_LINKS
 #define BTM_MAX_SCO_LINKS           (1)
 #endif
-#endif  /* CONFIG_HFP_HF_ENABLE */
+#endif  /* UC_HFP_HF_ENABLED */
 
-#endif /* #if CONFIG_CLASSIC_BT_ENABLED */
+#endif /* UC_CLASSIC_BT_ENABLED */
 
 #ifndef CLASSIC_BT_INCLUDED
 #define CLASSIC_BT_INCLUDED         FALSE
 #endif /* CLASSIC_BT_INCLUDED */
-
-#ifndef CONFIG_GATTC_CACHE_NVS_FLASH
-#define CONFIG_GATTC_CACHE_NVS_FLASH         FALSE
-#endif /* CONFIG_GATTC_CACHE_NVS_FLASH */
 
 /******************************************************************************
 **
 ** BLE features
 **
 ******************************************************************************/
-#if (CONFIG_GATTS_ENABLE)
+#if (UC_GATTS_ENABLED ==TRUE)
 #define GATTS_INCLUDED              TRUE
 #else
 #define GATTS_INCLUDED              FALSE
-#endif /* CONFIG_GATTS_ENABLE */
+#endif /* UC_GATTS_ENABLED */
 
-#if (CONFIG_GATTC_ENABLE)
+#if (UC_GATTC_ENABLED ==TRUE)
 #define GATTC_INCLUDED              TRUE
 #else
 #define GATTC_INCLUDED              FALSE
-#endif  /* CONFIG_GATTC_ENABLE */
+#endif  /* UC_GATTC_ENABLED */
 
-#if (CONFIG_GATTC_ENABLE && CONFIG_GATTC_CACHE_NVS_FLASH)
-#define GATTC_CACHE_NVS              TRUE
+#if (UC_GATTC_ENABLED == TRUE && UC_GATTC_CACHE_NVS_FLASH_ENABLED == TRUE)
+#define GATTC_CACHE_NVS             TRUE
 #else
-#define GATTC_CACHE_NVS              FALSE
-#endif  /* CONFIG_GATTC_CACHE_NVS_FLASH */
+#define GATTC_CACHE_NVS             FALSE
+#endif  /* UC_GATTC_ENABLED && UC_GATTC_CACHE_NVS_FLASH_ENABLED */
 
-#if (CONFIG_SMP_ENABLE)
+#if (UC_SMP_ENABLED == TRUE)
 #define SMP_INCLUDED              TRUE
 #define BLE_PRIVACY_SPT           TRUE
 #else
 #define SMP_INCLUDED              FALSE
 #define BLE_PRIVACY_SPT           FALSE
-#endif  /* CONFIG_SMP_ENABLE */
+#endif  /* UC_SMP_ENABLE */
 
-#if (CONFIG_BT_ACL_CONNECTIONS)
-#define MAX_ACL_CONNECTIONS  CONFIG_BT_ACL_CONNECTIONS
-#define GATT_MAX_PHY_CHANNEL CONFIG_BT_ACL_CONNECTIONS
-#endif  /* CONFIG_BT_ACL_CONNECTIONS */
+#ifdef UC_BT_ACL_CONNECTIONS
+#define MAX_ACL_CONNECTIONS         UC_BT_ACL_CONNECTIONS
+#define GATT_MAX_PHY_CHANNEL        UC_BT_ACL_CONNECTIONS
+#endif  /* UC_BT_ACL_CONNECTIONS */
 
 //------------------Added from bdroid_buildcfg.h---------------------
 #ifndef L2CAP_EXTFEA_SUPPORTED_MASK
@@ -297,7 +293,7 @@
 #endif
 
 #ifndef BTA_AVRCP_FF_RW_SUPPORT
-#define BTA_AVRCP_FF_RW_SUPPORT FALSE//TRUE
+#define BTA_AVRCP_FF_RW_SUPPORT FALSE
 #endif
 
 #ifndef BTA_AG_SCO_PKT_TYPES
@@ -313,17 +309,17 @@
 #endif
 
 #ifndef BTA_AV_CO_CP_SCMS_T
-#define BTA_AV_CO_CP_SCMS_T  FALSE//FALSE
+#define BTA_AV_CO_CP_SCMS_T  FALSE
 #endif
 
 #ifndef QUEUE_CONGEST_SIZE
 #define  QUEUE_CONGEST_SIZE    40
 #endif
 
-#ifndef CONFIG_BLE_HOST_QUEUE_CONGESTION_CHECK
-#define SCAN_QUEUE_CONGEST_CHECK  FALSE
+#if UC_BLE_HOST_QUEUE_CONGESTION_CHECK == 1
+#define SCAN_QUEUE_CONGEST_CHECK  TRUE
 #else
-#define SCAN_QUEUE_CONGEST_CHECK  CONFIG_BLE_HOST_QUEUE_CONGESTION_CHECK
+#define SCAN_QUEUE_CONGEST_CHECK  FALSE
 #endif
 
 #ifndef CONFIG_GATTS_SEND_SERVICE_CHANGE_MODE
@@ -334,7 +330,7 @@
 
 /* This feature is used to eanble interleaved scan*/
 #ifndef BTA_HOST_INTERLEAVE_SEARCH
-#define BTA_HOST_INTERLEAVE_SEARCH FALSE//FALSE
+#define BTA_HOST_INTERLEAVE_SEARCH FALSE
 #endif
 
 #ifndef BT_USE_TRACES
@@ -362,7 +358,7 @@
 #endif
 
 #ifndef BTIF_DM_OOB_TEST
-#define BTIF_DM_OOB_TEST  FALSE//TRUE
+#define BTIF_DM_OOB_TEST  FALSE
 #endif
 
 // How long to wait before activating sniff mode after entering the
@@ -547,11 +543,11 @@
 
 /* Includes SCO if TRUE */
 #ifndef BTM_SCO_HCI_INCLUDED
-#if CONFIG_HFP_AUDIO_DATA_PATH_HCI
+#if UC_AUDIO_DATA_PATH_HCI
 #define BTM_SCO_HCI_INCLUDED            TRUE       /* TRUE includes SCO over HCI code */
 #else
 #define BTM_SCO_HCI_INCLUDED            FALSE
-#endif /* CONFIG_HFP_AUDIO_DATA_PATH_HCI */
+#endif /* UC_HFP_AUDIO_DATA_PATH_HCI */
 #endif
 
 /* Includes WBS if TRUE */
@@ -1067,7 +1063,7 @@
 #endif
 
 #ifndef ATT_DEBUG
-#define ATT_DEBUG           FALSE//TRUE
+#define ATT_DEBUG           FALSE
 #endif
 
 #ifndef BLE_PERIPHERAL_MODE_SUPPORT
@@ -1469,12 +1465,12 @@ Range: 2 octets
 ******************************************************************************/
 
 #ifndef BNEP_INCLUDED
-#define BNEP_INCLUDED               FALSE//TRUE
+#define BNEP_INCLUDED               FALSE
 #endif
 
 /* BNEP status API call is used mainly to get the L2CAP handle */
 #ifndef BNEP_SUPPORTS_STATUS_API
-#define BNEP_SUPPORTS_STATUS_API            FALSE//TRUE
+#define BNEP_SUPPORTS_STATUS_API            FALSE
 #endif
 
 /*
@@ -1482,7 +1478,7 @@ Range: 2 octets
 ** we will do an authentication check again on the new role
 */
 #ifndef BNEP_DO_AUTH_FOR_ROLE_SWITCH
-#define BNEP_DO_AUTH_FOR_ROLE_SWITCH        FALSE//TRUE
+#define BNEP_DO_AUTH_FOR_ROLE_SWITCH        FALSE
 #endif
 
 
@@ -1595,22 +1591,22 @@ Range: 2 octets
 
 /* This will enable the PANU role */
 #ifndef PAN_SUPPORTS_ROLE_PANU
-#define PAN_SUPPORTS_ROLE_PANU              FALSE//TRUE
+#define PAN_SUPPORTS_ROLE_PANU              FALSE
 #endif
 
 /* This will enable the GN role */
 #ifndef PAN_SUPPORTS_ROLE_GN
-#define PAN_SUPPORTS_ROLE_GN                FALSE//TRUE
+#define PAN_SUPPORTS_ROLE_GN                FALSE
 #endif
 
 /* This will enable the NAP role */
 #ifndef PAN_SUPPORTS_ROLE_NAP
-#define PAN_SUPPORTS_ROLE_NAP               FALSE//TRUE
+#define PAN_SUPPORTS_ROLE_NAP               FALSE
 #endif
 
 /* This is just for debugging purposes */
 #ifndef PAN_SUPPORTS_DEBUG_DUMP
-#define PAN_SUPPORTS_DEBUG_DUMP             FALSE//TRUE
+#define PAN_SUPPORTS_DEBUG_DUMP             FALSE
 #endif
 
 /* Maximum number of PAN connections allowed */
@@ -1932,7 +1928,7 @@ The maximum number of payload octets that the local device can receive in a sing
 ******************************************************************************/
 
 #ifndef HCILP_INCLUDED
-#define HCILP_INCLUDED                  FALSE//TRUE
+#define HCILP_INCLUDED                  FALSE
 #endif
 
 /******************************************************************************
@@ -1974,7 +1970,7 @@ The maximum number of payload octets that the local device can receive in a sing
 #endif
 
 #ifndef BTA_DM_AVOID_A2DP_ROLESWITCH_ON_INQUIRY
-#define BTA_DM_AVOID_A2DP_ROLESWITCH_ON_INQUIRY FALSE//TRUE
+#define BTA_DM_AVOID_A2DP_ROLESWITCH_ON_INQUIRY FALSE
 #endif
 
 /******************************************************************************
@@ -1985,7 +1981,25 @@ The maximum number of payload octets that the local device can receive in a sing
 
 /* Enable/disable BTSnoop memory logging */
 #ifndef BTSNOOP_MEM
-#define BTSNOOP_MEM FALSE//TRUE
+#define BTSNOOP_MEM FALSE
+#endif
+
+#if UC_HEAP_MEMORY_DEBUG
+#define HEAP_MEMORY_DEBUG   TRUE
+#else
+#define HEAP_MEMORY_DEBUG   FALSE
+#endif
+
+#if UC_HEAP_ALLOCATION_FROM_SPIRAM_FIRST
+#define HEAP_ALLOCATION_FROM_SPIRAM_FIRST TRUE
+#else
+#define HEAP_ALLOCATION_FROM_SPIRAM_FIRST FALSE
+#endif
+
+#if UC_BT_BLE_DYNAMIC_ENV_MEMORY
+#define BT_BLE_DYNAMIC_ENV_MEMORY   TRUE
+#else
+#define BT_BLE_DYNAMIC_ENV_MEMORY   FALSE
 #endif
 
 #include "common/bt_trace.h"
