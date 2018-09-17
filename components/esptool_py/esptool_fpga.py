@@ -21,38 +21,8 @@ import esptool, serial
 
 esptool.SYNC_TIMEOUT = 0.2
 
-def fpga_connect_attempt(self, mode='ignored', esp32r0_delay=False):
-    self._port.setDTR(True)   # IO0 High
-    self._port.setRTS(True)   # EN=LOW, chip in reset
-    time.sleep(0.1)
-    self._port.setRTS(False)  # chip out of reset
+# sync a bit slower for 10M fpga images (shouldn't cause problems for faster images)
+esptool.ESPLoader.ESP_ROM_BAUD = 57600
 
-    print("Waiting for FPGA reset to complete...")
-    p = self._port
-    saved_timeout = self._port.timeout
-
-    p.timeout=4
-    for max_lines in range(20):
-        l = p.readline().strip()
-        if len(l):
-            print(l)
-        if b"boot:" in l:  # probably a boot mode line
-            if b"DOWNLOAD_BOOT" in l:
-                # correct mode!
-                for tries in range(10):
-                    try:
-                        time.sleep(0.25)
-                        self.flush_input()
-                        self._port.flushOutput()
-                        self.sync()
-                        print("Synced with FPGA")
-                        return
-                    except esptool.FatalError as e:
-                        pass
-                raise esptool.FatalError("Failed to sync")
-            else:
-                raise esptool.FatalError("Wrong boot mode!")
-
-esptool.ESPLoader._connect_attempt = fpga_connect_attempt
 esptool.main()
 
