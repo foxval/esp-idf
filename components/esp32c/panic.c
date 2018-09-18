@@ -240,6 +240,7 @@ void panicHandler(XtExcFrame *frame)
     panicPutStr(" panic'ed (");
     panicPutStr(reason);
     panicPutStr(")\r\n");
+#ifdef PANIC_COMPLETE_IN_ESP32C
     if (frame->exccause == PANIC_RSN_DEBUGEXCEPTION) {
         int debugRsn;
         asm("rsr.debugcause %0":"=r"(debugRsn));
@@ -296,6 +297,7 @@ void panicHandler(XtExcFrame *frame)
         setFirstBreakpoint(frame->pc);
         return;
     }
+#endif
     commonErrorHandler(frame);
 }
 
@@ -314,6 +316,7 @@ void xt_unhandled_exception(XtExcFrame *frame)
             panicPutStr("Unknown");
         }
         panicPutStr(")");
+#ifdef PANIC_COMPLETE_IN_ESP32C
         if (esp_cpu_in_ocd_debug_mode()) {
             panicPutStr(" at pc=");
             panicPutHex(frame->pc);
@@ -331,6 +334,7 @@ void xt_unhandled_exception(XtExcFrame *frame)
             setFirstBreakpoint(frame->pc);
             return;
         }
+#endif
         panicPutStr(". Exception was unhandled.\r\n");
     }
     commonErrorHandler(frame);
