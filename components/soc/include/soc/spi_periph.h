@@ -24,6 +24,7 @@
 #include "soc/spi_reg.h"
 #endif
 #include "soc/spi_struct.h"
+#include "soc/spi_mem_struct.h"
 #include "soc/gpio_sig_map.h"
 
 #ifdef __cplusplus

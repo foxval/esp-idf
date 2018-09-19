@@ -27,9 +27,9 @@ esp_rom_spiflash_result_t esp_rom_spiflash_wait_idle(esp_rom_spiflash_chip_t *sp
     uint32_t status;
 
     //wait for spi control ready
-    while ((REG_READ(SPI_EXT2_REG(1)) & SPI_ST)) {
+    while ((REG_READ(SPI_MEM_FSM_REG(1)) & SPI_MEM_ST)) {
     }
-    while ((REG_READ(SPI_EXT2_REG(0)) & SPI_ST)) {
+    while ((REG_READ(SPI_MEM_FSM_REG(0)) & SPI_MEM_ST)) {
     }
     //wait for flash status ready
     if ( ESP_ROM_SPIFLASH_RESULT_OK != esp_rom_spiflash_read_status(spi, &status)) {
@@ -67,12 +67,12 @@ esp_rom_spiflash_result_t esp_rom_spiflash_unlock()
     status &= ESP_ROM_SPIFLASH_QE;
 
     esp_rom_spiflash_wait_idle(&g_rom_spiflash_chip);
-    REG_WRITE(SPI_CMD_REG(SPI_IDX), SPI_FLASH_WREN);
-    while (REG_READ(SPI_CMD_REG(SPI_IDX)) != 0) {
+    REG_WRITE(SPI_MEM_CMD_REG(SPI_IDX), SPI_MEM_FLASH_WREN);
+    while (REG_READ(SPI_MEM_CMD_REG(SPI_IDX)) != 0) {
     }
     esp_rom_spiflash_wait_idle(&g_rom_spiflash_chip);
+    SET_PERI_REG_MASK(SPI_MEM_CTRL_REG(SPI_IDX), SPI_MEM_WRSR_2B);
 
-    SET_PERI_REG_MASK(SPI_CTRL_REG(SPI_IDX), SPI_WRSR_2B);
     if (esp_rom_spiflash_write_status(&g_rom_spiflash_chip, status) != ESP_ROM_SPIFLASH_RESULT_OK) {
         return ESP_ROM_SPIFLASH_RESULT_ERR;
     }
@@ -94,7 +94,7 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_erase_chip_internal(esp_rom_sp
     esp_rom_spiflash_wait_idle(spi);
 
     // Chip erase.
-    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_CE);
+    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_CE);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
 
     // check erase is finished.
@@ -118,7 +118,7 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_erase_sector_internal(esp_rom_
     // flash write is always 1 line currently
     // sector erase  4Kbytes erase is sector erase.
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, addr & 0xffffff);
-    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_SE);
+    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_SE);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
     REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
@@ -136,7 +136,7 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_erase_block_internal(esp_rom_s
     CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
     // sector erase  4Kbytes erase is sector erase.
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, addr & 0xffffff);
-    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_BE);
+    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_BE);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
     REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
@@ -194,7 +194,7 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_program_page_internal(esp_rom_
 
         uint32_t back_up = REG_READ(PERIPHS_SPI_FLASH_CTRL);
         CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
-        WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_PP);
+        WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_PP);
         while ( READ_PERI_REG(PERIPHS_SPI_FLASH_CMD ) != 0 );
         REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
@@ -226,9 +226,9 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_read_data(esp_rom_spiflash_chi
     while (temp_length > 0) {
         if (temp_length >= ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM) {
             //WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, temp_addr |(ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM << ESP_ROM_SPIFLASH_BYTES_LEN));
-            REG_WRITE(SPI_MISO_DLEN_REG(1),  ((ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM << 3) - 1) << SPI_USR_MISO_DBITLEN_S);
+            REG_WRITE(SPI_MEM_MISO_DLEN_REG(1),  ((ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM << 3) - 1) << SPI_MEM_USR_MISO_DBITLEN_S);
             WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, temp_addr << 8);
-            REG_WRITE(PERIPHS_SPI_FLASH_CMD, SPI_USR);
+            REG_WRITE(PERIPHS_SPI_FLASH_CMD, SPI_MEM_USR);
             while (REG_READ(PERIPHS_SPI_FLASH_CMD) != 0);
 
             for (i = 0; i < (ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM >> 2); i++) {
@@ -239,8 +239,8 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_read_data(esp_rom_spiflash_chi
         } else {
             //WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, temp_addr |(temp_length << ESP_ROM_SPIFLASH_BYTES_LEN ));
             WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, temp_addr << 8);
-            REG_WRITE(SPI_MISO_DLEN_REG(1),  ((ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM << 3) - 1) << SPI_USR_MISO_DBITLEN_S);
-            REG_WRITE(PERIPHS_SPI_FLASH_CMD, SPI_USR);
+            REG_WRITE(SPI_MEM_MISO_DLEN_REG(1),  ((ESP_ROM_SPIFLASH_BUFF_BYTE_READ_NUM << 3) - 1) << SPI_MEM_USR_MISO_DBITLEN_S);
+            REG_WRITE(PERIPHS_SPI_FLASH_CMD, SPI_MEM_USR);
             while (REG_READ(PERIPHS_SPI_FLASH_CMD) != 0);
 
             remain_word_num = (0 == (temp_length & 0x3)) ? (temp_length >> 2) : (temp_length >> 2) + 1;
@@ -263,7 +263,7 @@ esp_rom_spiflash_result_t esp_rom_spiflash_read_status(esp_rom_spiflash_chip_t *
     if (g_rom_spiflash_dummy_len_plus[1] == 0) {
         while (ESP_ROM_SPIFLASH_BUSY_FLAG == (status_value & ESP_ROM_SPIFLASH_BUSY_FLAG)) {
             WRITE_PERI_REG(PERIPHS_SPI_FLASH_STATUS, 0);       // clear regisrter
-            WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_RDSR);
+            WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_RDSR);
             while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
 
             status_value = READ_PERI_REG(PERIPHS_SPI_FLASH_STATUS) & (spi->status_mask);
@@ -295,7 +295,7 @@ esp_rom_spiflash_result_t esp_rom_spiflash_write_status(esp_rom_spiflash_chip_t 
 
     // update status value by status_value
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_STATUS, status_value);    // write status regisrter
-    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_WRSR);
+    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_WRSR);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
     esp_rom_spiflash_wait_idle(spi);
 
@@ -309,7 +309,7 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_enable_write(esp_rom_spiflash_
     esp_rom_spiflash_wait_idle(spi);
 
     //enable write
-    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_WREN);     // enable write operation
+    WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_MEM_FLASH_WREN);     // enable write operation
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
 
     // make sure the flash is ready for writing
@@ -322,40 +322,40 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_enable_write(esp_rom_spiflash_
 
 static void spi_cache_mode_switch(uint32_t  modebit)
 {
-    if ((modebit & SPI_FREAD_QIO) && (modebit & SPI_FASTRD_MODE)) {
-        REG_CLR_BIT(SPI_USER_REG(0), SPI_USR_MOSI);
-        REG_SET_BIT(SPI_USER_REG(0), SPI_USR_MISO | SPI_USR_DUMMY | SPI_USR_ADDR);
-        REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_ADDR_BITLEN, SPI0_R_QIO_ADDR_BITSLEN);
-        REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, SPI0_R_QIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
-        REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0xEB);
-    } else if (modebit & SPI_FASTRD_MODE) {
-        REG_CLR_BIT(SPI_USER_REG(0), SPI_USR_MOSI);
-        REG_SET_BIT(SPI_USER_REG(0), SPI_USR_MISO | SPI_USR_DUMMY | SPI_USR_ADDR);
-        REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_ADDR_BITLEN, SPI0_R_FAST_ADDR_BITSLEN);
-        if ((modebit & SPI_FREAD_QUAD)) {
-            REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0x6B);
-            REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
-        } else if ((modebit & SPI_FREAD_DIO)) {
-            REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, SPI0_R_DIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
-            REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0xBB);
-        } else if ((modebit & SPI_FREAD_DUAL)) {
-            REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
-            REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0x3B);
+    if ((modebit & SPI_MEM_FREAD_QIO) && (modebit & SPI_MEM_FASTRD_MODE)) {
+        REG_CLR_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MOSI);
+        REG_SET_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MISO | SPI_MEM_USR_DUMMY | SPI_MEM_USR_ADDR);
+        REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_ADDR_BITLEN, SPI0_R_QIO_ADDR_BITSLEN);
+        REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, SPI0_R_QIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
+        REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0xEB);
+    } else if (modebit & SPI_MEM_FASTRD_MODE) {
+        REG_CLR_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MOSI);
+        REG_SET_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MISO | SPI_MEM_USR_DUMMY | SPI_MEM_USR_ADDR);
+        REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_ADDR_BITLEN, SPI0_R_FAST_ADDR_BITSLEN);
+        if ((modebit & SPI_MEM_FREAD_QUAD)) {
+            REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0x6B);
+            REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
+        } else if ((modebit & SPI_MEM_FREAD_DIO)) {
+            REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, SPI0_R_DIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
+            REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0xBB);
+        } else if ((modebit & SPI_MEM_FREAD_DUAL)) {
+            REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
+            REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0x3B);
         } else {
-            REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
-            REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0x0B);
+            REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, SPI0_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[0]);
+            REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0x0B);
         }
     } else {
-        REG_CLR_BIT(SPI_USER_REG(0), SPI_USR_MOSI);
+        REG_CLR_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MOSI);
         if (g_rom_spiflash_dummy_len_plus[0] == 0) {
-            REG_CLR_BIT(SPI_USER_REG(0), SPI_USR_DUMMY);
+            REG_CLR_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_DUMMY);
         } else {
-            REG_SET_BIT(SPI_USER_REG(0), SPI_USR_DUMMY);
-            REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN, g_rom_spiflash_dummy_len_plus[0] - 1);
+            REG_SET_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_DUMMY);
+            REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN, g_rom_spiflash_dummy_len_plus[0] - 1);
         }
-        REG_SET_BIT(SPI_USER_REG(0), SPI_USR_MISO | SPI_USR_ADDR);
-        REG_SET_FIELD(SPI_USER1_REG(0), SPI_USR_ADDR_BITLEN, SPI0_R_SIO_ADDR_BITSLEN);
-        REG_SET_FIELD(SPI_USER2_REG(0), SPI_USR_COMMAND_VALUE, 0x03);
+        REG_SET_BIT(SPI_MEM_USER_REG(0), SPI_MEM_USR_MISO | SPI_MEM_USR_ADDR);
+        REG_SET_FIELD(SPI_MEM_USER1_REG(0), SPI_MEM_USR_ADDR_BITLEN, SPI0_R_SIO_ADDR_BITSLEN);
+        REG_SET_FIELD(SPI_MEM_USER2_REG(0), SPI_MEM_USR_COMMAND_VALUE, 0x03);
     }
 
 }
@@ -387,26 +387,26 @@ esp_rom_spiflash_result_t esp_rom_spiflash_config_readmode(esp_rom_spiflash_read
 {
     uint32_t  modebit;
 
-    while ((REG_READ(SPI_EXT2_REG(1)) & SPI_ST)) {
+    while ((REG_READ(SPI_MEM_FSM_REG(1)) & SPI_MEM_ST)) {
     }
-    while ((REG_READ(SPI_EXT2_REG(0)) & SPI_ST)) {
+    while ((REG_READ(SPI_MEM_FSM_REG(0)) & SPI_MEM_ST)) {
     }
     //clear old mode bit
-    CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_FREAD_QIO | SPI_FREAD_QUAD | SPI_FREAD_DIO | SPI_FREAD_DUAL | SPI_FASTRD_MODE);
-    CLEAR_PERI_REG_MASK(SPI_CTRL_REG(0), SPI_FREAD_QIO | SPI_FREAD_QUAD | SPI_FREAD_DIO | SPI_FREAD_DUAL | SPI_FASTRD_MODE);
+    CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
+    CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(0), SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
     //configure read mode
     switch (mode) {
-    case ESP_ROM_SPIFLASH_QIO_MODE   :  modebit = SPI_FREAD_QIO  | SPI_FASTRD_MODE; break;
-    case ESP_ROM_SPIFLASH_QOUT_MODE  :  modebit = SPI_FREAD_QUAD | SPI_FASTRD_MODE; break;
-    case ESP_ROM_SPIFLASH_DIO_MODE   :  modebit = SPI_FREAD_DIO  | SPI_FASTRD_MODE; break;
-    case ESP_ROM_SPIFLASH_DOUT_MODE  :  modebit = SPI_FREAD_DUAL | SPI_FASTRD_MODE; break;
-    case ESP_ROM_SPIFLASH_FASTRD_MODE:  modebit = SPI_FASTRD_MODE; break;
+    case ESP_ROM_SPIFLASH_QIO_MODE   :  modebit = SPI_MEM_FREAD_QIO  | SPI_MEM_FASTRD_MODE; break;
+    case ESP_ROM_SPIFLASH_QOUT_MODE  :  modebit = SPI_MEM_FREAD_QUAD | SPI_MEM_FASTRD_MODE; break;
+    case ESP_ROM_SPIFLASH_DIO_MODE   :  modebit = SPI_MEM_FREAD_DIO  | SPI_MEM_FASTRD_MODE; break;
+    case ESP_ROM_SPIFLASH_DOUT_MODE  :  modebit = SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE; break;
+    case ESP_ROM_SPIFLASH_FASTRD_MODE:  modebit = SPI_MEM_FASTRD_MODE; break;
     case ESP_ROM_SPIFLASH_SLOWRD_MODE:  modebit = 0; break;
     default : modebit = 0;
     }
 
     SET_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, modebit);
-    SET_PERI_REG_MASK(SPI_CTRL_REG(0), modebit);
+    SET_PERI_REG_MASK(SPI_MEM_CTRL_REG(0), modebit);
     spi_cache_mode_switch(modebit);
 
     return  ESP_ROM_SPIFLASH_RESULT_OK;
@@ -428,8 +428,8 @@ esp_rom_spiflash_result_t esp_rom_spiflash_erase_chip()
 esp_rom_spiflash_result_t esp_rom_spiflash_erase_block(uint32_t block_num)
 {
     // flash write is always 1 line currently
-    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
+    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
 
     //check program size
     if (block_num >= ((g_rom_spiflash_chip.chip_size) / (g_rom_spiflash_chip.block_size))) {
@@ -449,8 +449,8 @@ esp_rom_spiflash_result_t esp_rom_spiflash_erase_block(uint32_t block_num)
 esp_rom_spiflash_result_t esp_rom_spiflash_erase_sector(uint32_t sector_num)
 {
     // flash write is always 1 line currently
-    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
+    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
 
     //check program size
     if (sector_num >= ((g_rom_spiflash_chip.chip_size) / (g_rom_spiflash_chip.sector_size))) {
@@ -475,8 +475,8 @@ esp_rom_spiflash_result_t esp_rom_spiflash_write(uint32_t target, const uint32_t
     uint8_t    i;
 
     // flash write is always 1 line currently
-    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
+    REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+    REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, ESP_ROM_SPIFLASH_W_SIO_ADDR_BITSLEN);
 
     //check program size
     if ( (target + len) > (g_rom_spiflash_chip.chip_size)) {
@@ -547,54 +547,54 @@ esp_rom_spiflash_result_t esp_rom_spiflash_read(uint32_t target, uint32_t *dest_
     // QIO or SIO, non-QIO regard as SIO
     uint32_t modebit;
     modebit = READ_PERI_REG(PERIPHS_SPI_FLASH_CTRL);
-    if ((modebit & SPI_FREAD_QIO) && (modebit & SPI_FASTRD_MODE)) {
-        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MOSI);
-        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MISO | SPI_USR_DUMMY | SPI_USR_ADDR);
-        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, SPI1_R_QIO_ADDR_BITSLEN);
-        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_DUMMY_CYCLELEN, SPI1_R_QIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[1]);
-        //REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0xEB);
-        REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0xEB);
-    } else if (modebit & SPI_FASTRD_MODE) {
-        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MOSI);
-        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MISO | SPI_USR_ADDR);
-        if (modebit & SPI_FREAD_DIO) {
+    if ((modebit & SPI_MEM_FREAD_QIO) && (modebit & SPI_MEM_FASTRD_MODE)) {
+        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MOSI);
+        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MISO | SPI_MEM_USR_DUMMY | SPI_MEM_USR_ADDR);
+        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, SPI1_R_QIO_ADDR_BITSLEN);
+        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_DUMMY_CYCLELEN, SPI1_R_QIO_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[1]);
+        //REG_SET_FIELD(PERIPHS_SPI_SPI_MEM_H_USRREG2, SPI_USR_COMMAND_VALUE, 0xEB);
+        REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0xEB);
+    } else if (modebit & SPI_MEM_FASTRD_MODE) {
+        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MOSI);
+        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MISO | SPI_MEM_USR_ADDR);
+        if (modebit & SPI_MEM_FREAD_DIO) {
             if (g_rom_spiflash_dummy_len_plus[1] == 0) {
-                REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, SPI1_R_DIO_ADDR_BITSLEN);
-                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0xBB);
+                REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, SPI1_R_DIO_ADDR_BITSLEN);
+                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0xBB);
             } else {
-                REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, SPI1_R_DIO_ADDR_BITSLEN);
-                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_DUMMY_CYCLELEN, g_rom_spiflash_dummy_len_plus[1] - 1);
-                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0xBB);
+                REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, SPI1_R_DIO_ADDR_BITSLEN);
+                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_DUMMY_CYCLELEN, g_rom_spiflash_dummy_len_plus[1] - 1);
+                REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_MEM_USR_COMMAND_VALUE, 0xBB);
             }
         } else {
-            if ((modebit & SPI_FREAD_QUAD)) {
+            if ((modebit & SPI_MEM_FREAD_QUAD)) {
                 //REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0x6B);
-                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0x6B);
-            } else if ((modebit & SPI_FREAD_DUAL)) {
+                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0x6B);
+            } else if ((modebit & SPI_MEM_FREAD_DUAL)) {
                 //REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0x3B);
-                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0x3B);
+                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0x3B);
             } else {
                 //REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0x0B);
-                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0x0B);
+                REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0x0B);
             }
-            REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, SPI1_R_FAST_ADDR_BITSLEN);
-            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_DUMMY_CYCLELEN, SPI1_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[1]);
+            REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, SPI1_R_FAST_ADDR_BITSLEN);
+            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_DUMMY_CYCLELEN, SPI1_R_FAST_DUMMY_CYCLELEN + g_rom_spiflash_dummy_len_plus[1]);
         }
     } else {
-        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MOSI);
+        REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MOSI);
         if (g_rom_spiflash_dummy_len_plus[1] == 0) {
-            REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
+            REG_CLR_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
         } else {
-            REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_DUMMY);
-            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_DUMMY_CYCLELEN,  g_rom_spiflash_dummy_len_plus[1] - 1);
+            REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_DUMMY);
+            REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_DUMMY_CYCLELEN,  g_rom_spiflash_dummy_len_plus[1] - 1);
         }
-        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_USR_MISO | SPI_USR_ADDR);
-        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_USR_ADDR_BITLEN, SPI1_R_SIO_ADDR_BITSLEN);
+        REG_SET_BIT(PERIPHS_SPI_FLASH_USRREG, SPI_MEM_USR_MISO | SPI_MEM_USR_ADDR);
+        REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG1, SPI_MEM_USR_ADDR_BITLEN, SPI1_R_SIO_ADDR_BITSLEN);
         //REG_SET_FIELD(PERIPHS_SPI_FLASH_USRREG2, SPI_USR_COMMAND_VALUE, 0x03);
-        REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_USR_COMMAND_BITLEN_S) | 0x03);
+        REG_WRITE(PERIPHS_SPI_FLASH_USRREG2, (0x7 << SPI_MEM_USR_COMMAND_BITLEN_S) | 0x03);
     }
 
     if ( ESP_ROM_SPIFLASH_RESULT_OK != esp_rom_spiflash_read_data(&g_rom_spiflash_chip, target, dest_addr, len)) {

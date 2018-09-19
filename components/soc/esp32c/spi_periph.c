@@ -40,7 +40,7 @@ const spi_signal_conn_t spi_periph_signal[3] = {
         .irq = ETS_SPI1_INTR_SOURCE,
         .irq_dma = ETS_SPI1_DMA_INTR_SOURCE,
         .module = PERIPH_SPI_MODULE,
-        .hw = &SPI1
+        .hw = &SPIMEM1
     }, {
 #if CONFIG_CHIP_IS_ESP32
         .spiclk_out = HSPICLK_OUT_IDX,

@@ -18,12 +18,12 @@
 #include "esp_err.h"
 #include "rom/spi_flash.h"
 #include "rom/efuse.h"
-#include "soc/spi_struct.h"
+#include "soc/spi_mem_struct.h"
 #include "soc/efuse_reg.h"
 #include "sdkconfig.h"
 
 /* SPI flash controller */
-#define SPIFLASH SPI1
+#define SPIFLASH SPIMEM1
 
 /* SPI commands (actual on-wire commands not SPI controller bitmasks)
    Suitable for use with the execute_flash_command static function.
@@ -249,7 +249,7 @@ static void write_status_16b_wrsr(unsigned new_status)
 static uint32_t execute_flash_command(uint8_t command, uint32_t mosi_data, uint8_t mosi_len, uint8_t miso_len)
 {
     uint32_t old_ctrl_reg = SPIFLASH.ctrl.val;
-    SPIFLASH.ctrl.val = SPI_WP_REG_M; // keep WP high while idle, otherwise leave DIO mode
+    SPIFLASH.ctrl.val = SPI_MEM_WP_REG_M; // keep WP high while idle, otherwise leave DIO mode
     SPIFLASH.user.usr_dummy = 0;
     SPIFLASH.user.usr_addr = 0;
     SPIFLASH.user.usr_command = 1;
@@ -257,9 +257,9 @@ static uint32_t execute_flash_command(uint8_t command, uint32_t mosi_data, uint8
 
     SPIFLASH.user2.usr_command_value = command;
     SPIFLASH.user.usr_miso = miso_len > 0;
-    SPIFLASH.miso_dlen.usr_miso_dbitlen = miso_len ? (miso_len - 1) : 0;
+    SPIFLASH.miso_dlen.usr_miso_bit_len = miso_len ? (miso_len - 1) : 0;
     SPIFLASH.user.usr_mosi = mosi_len > 0;
-    SPIFLASH.mosi_dlen.usr_mosi_dbitlen = mosi_len ? (mosi_len - 1) : 0;
+    SPIFLASH.mosi_dlen.usr_mosi_bit_len = mosi_len ? (mosi_len - 1) : 0;
     SPIFLASH.data_buf[0] = mosi_data;
 
     if (g_rom_spiflash_dummy_len_plus[1]) {

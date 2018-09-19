@@ -39,6 +39,7 @@
 #include "soc/timer_group_reg.h"
 #include "soc/gpio_reg.h"
 #include "soc/gpio_sig_map.h"
+#include "soc/spi_mem_reg.h"
 
 #include "sdkconfig.h"
 #include "esp_image_format.h"
@@ -259,16 +260,16 @@ static void print_flash_info(const esp_image_header_t* phdr)
 
     /* SPI mode could have been set to QIO during boot already,
        so test the SPI registers not the flash header */
-    uint32_t spi_ctrl = REG_READ(SPI_CTRL_REG(0));
-    if (spi_ctrl & SPI_FREAD_QIO) {
+    uint32_t spi_ctrl = REG_READ(SPI_MEM_CTRL_REG(0));
+    if (spi_ctrl & SPI_MEM_FREAD_QIO) {
         str = "QIO";
-    } else if (spi_ctrl & SPI_FREAD_QUAD) {
+    } else if (spi_ctrl & SPI_MEM_FREAD_QUAD) {
         str = "QOUT";
-    } else if (spi_ctrl & SPI_FREAD_DIO) {
+    } else if (spi_ctrl & SPI_MEM_FREAD_DIO) {
         str = "DIO";
-    } else if (spi_ctrl & SPI_FREAD_DUAL) {
+    } else if (spi_ctrl & SPI_MEM_FREAD_DUAL) {
         str = "DOUT";
-    } else if (spi_ctrl & SPI_FASTRD_MODE) {
+    } else if (spi_ctrl & SPI_MEM_FASTRD_MODE) {
         str = "FAST READ";
     } else {
         str = "SLOW READ";
@@ -358,15 +359,15 @@ static void IRAM_ATTR flash_gpio_configure(const esp_image_header_t* pfhdr)
         case ESP_IMAGE_SPI_SPEED_80M:
             g_rom_spiflash_dummy_len_plus[0] = FLASH_IO_MATRIX_DUMMY_80M;
             g_rom_spiflash_dummy_len_plus[1] = FLASH_IO_MATRIX_DUMMY_80M;
-            SET_PERI_REG_BITS(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + FLASH_IO_MATRIX_DUMMY_80M,
-                    SPI_USR_DUMMY_CYCLELEN_S);  //DUMMY
+            SET_PERI_REG_BITS(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + FLASH_IO_MATRIX_DUMMY_80M,
+                    SPI_MEM_USR_DUMMY_CYCLELEN_S);  //DUMMY
             drv = 3;
             break;
         case ESP_IMAGE_SPI_SPEED_40M:
             g_rom_spiflash_dummy_len_plus[0] = FLASH_IO_MATRIX_DUMMY_40M;
             g_rom_spiflash_dummy_len_plus[1] = FLASH_IO_MATRIX_DUMMY_40M;
-            SET_PERI_REG_BITS(SPI_USER1_REG(0), SPI_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + FLASH_IO_MATRIX_DUMMY_40M,
-                    SPI_USR_DUMMY_CYCLELEN_S);  //DUMMY
+            SET_PERI_REG_BITS(SPI_MEM_USER1_REG(0), SPI_MEM_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + FLASH_IO_MATRIX_DUMMY_40M,
+                    SPI_MEM_USR_DUMMY_CYCLELEN_S);  //DUMMY
             break;
         default:
             break;
