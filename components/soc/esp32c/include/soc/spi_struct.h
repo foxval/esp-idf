@@ -59,7 +59,7 @@ typedef volatile struct {
             uint32_t clk_mode_13:   1;                    /*{CPOL  CPHA} 1: support spi clk mode 1 and 3  first edge output data B[0]/B[7]*/
             uint32_t rsck_data_out: 1;                    /*It saves half a cycle when tsck is the same as rsck. 1: output data at rsck posedge   0: output data at tsck posedge*/
             uint32_t w16_17_wr_ena: 1;                    /*1:reg_buf[16] [17] can be written   0:reg_buf[16] [17] can not  be written.*/
-            uint32_t reserved4:    10;                    /*reserved*/
+            uint32_t reserved5:     9;                    /*reserved*/
             uint32_t cs_hold_delay: 6;                    /*SPI cs signal is delayed by spi clock cycles.*/
             uint32_t reserved20:   12;
         };
@@ -178,7 +178,11 @@ typedef volatile struct {
             uint32_t rd_dma_done:      1;                 /*The interrupt raw bit for the completion of dma read operation in the slave mode.*/
             uint32_t wr_dma_done:      1;                 /*The interrupt raw bit for the completion of dma write operation in the slave mode.*/
             uint32_t trans_done:       1;                 /*The interrupt raw bit for the completion of any operation in both the master mode and the slave mode.*/
-            uint32_t int_en:           5;                 /*Interrupt enable bits for the below 5 sources*/
+            uint32_t rd_buf_inten:     1;                   /*The interrupt enable bit for the completion of read-buffer operation in the slave mode.*/
+            uint32_t wr_buf_inten:     1;                   /*The interrupt enable bit for the completion of write-buffer operation in the slave mode.*/
+            uint32_t rd_sta_inten:     1;                   /*The interrupt enable bit for the completion of read-status operation in the slave mode.*/
+            uint32_t wr_sta_inten:     1;                   /*The interrupt enable bit for the completion of write-status operation in the slave mode.*/
+            uint32_t trans_inten:      1;                   /*The interrupt enable bit for the completion of any operation in both the master mode and the slave mode.*/
             uint32_t reserved10:       7;                 /*reserved*/
             uint32_t last_command:     3;                 /*In the slave mode it is the value of command.*/
             uint32_t reserved20:       3;                 /*reserved*/
@@ -657,9 +661,13 @@ typedef volatile struct {
         uint32_t val;
     } date;
 } spi_dev_t;
-extern spi_dev_t GPSPI2;
-extern spi_dev_t GPSPI3;
-extern spi_dev_t GPSPI4;
+extern spi_dev_t GPSPI2;   //FSPI
+extern spi_dev_t GPSPI3;   //HSPI
+extern spi_dev_t GPSPI4;   //VSPI
+
+_Static_assert(sizeof(spi_dev_t)==0x400, "***invalid spi");
+
+
 #ifdef __cplusplus
 }
 #endif
