@@ -27,6 +27,11 @@ typedef enum {
     PSRAM_CACHE_MAX,
 } psram_cache_mode_t;
 
+typedef enum {
+    PSRAM_SIZE_32MBITS = 0,
+    PSRAM_SIZE_64MBITS = 1,
+    PSRAM_SIZE_MAX,
+} psram_size_t;
 
 /*
 See the TRM, chapter PID/MPU/MMU, header 'External RAM' for the definitions of these modes.
@@ -40,6 +45,14 @@ typedef enum {
     PSRAM_VADDR_MODE_LOWHIGH,  ///< App and pro CPU share external RAM caches: pro CPU has low 2M, app CPU has high 2M
     PSRAM_VADDR_MODE_EVENODD,  ///< App and pro CPU share external RAM caches: pro CPU does even 32yte ranges, app does odd ones.
 } psram_vaddr_mode_t;
+
+/**
+ * @brief get psram size
+ * @return
+ *     - PSRAM_SIZE_MAX if psram not enabled or not valid
+ *     - PSRAM size
+ */
+psram_size_t psram_get_size();
 
 /**
  * @brief psram cache enable function
