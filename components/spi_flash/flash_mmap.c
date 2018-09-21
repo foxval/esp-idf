@@ -259,7 +259,11 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
 #if CONFIG_SPIRAM_SUPPORT
         esp_spiram_writeback_cache();
 #endif
+#ifdef CONFIG_CHIP_IS_ESP32
         Cache_Flush(0);
+#else
+        Cache_Invalidate_ICache_All(0);
+#endif
 #ifndef CONFIG_FREERTOS_UNICORE
         Cache_Flush(1);
 #endif
@@ -389,7 +393,11 @@ static inline IRAM_ATTR bool update_written_pages(size_t start_addr, size_t leng
 #if CONFIG_SPIRAM_SUPPORT
             esp_spiram_writeback_cache();
 #endif
+#ifdef CONFIG_CHIP_IS_ESP32
             Cache_Flush(0);
+#else
+            Cache_Invalidate_ICache_All(0);
+#endif
 #ifndef CONFIG_FREERTOS_UNICORE
             Cache_Flush(1);
 #endif

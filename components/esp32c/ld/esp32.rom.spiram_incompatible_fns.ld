@@ -1,8 +1,7 @@
-PROVIDE ( cache_flash_mmu_set_rom = cache_flash_mmu_set );
-PROVIDE ( Cache_Flush_rom = Cache_Flush );
+PROVIDE ( cache_ibus_mmu_set_rom = cache_ibus_mmu_set );
 PROVIDE ( Cache_Read_Disable_rom = Cache_Read_Disable );
 PROVIDE ( Cache_Read_Enable_rom = Cache_Read_Enable );
-PROVIDE ( cache_sram_mmu_set_rom = cache_sram_mmu_set );
+PROVIDE ( cache_dbus_mmu_set_rom = cache_dbus_mmu_set );
 PROVIDE ( g_rom_spiflash_dummy_len_plus = dummy_len_plus);
 PROVIDE ( g_ticks_per_us_pro = g_ticks_per_us );
 PROVIDE ( g_rom_flashchip = SPI_flashchip_data );

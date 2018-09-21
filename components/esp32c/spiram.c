@@ -97,7 +97,7 @@ void IRAM_ATTR esp_spiram_init_cache()
     //Enable external RAM in MMU
     cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 32, 128 );
 #else
-    cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 64, 64 );
+    Cache_Dbus_MMU_Set( 0, DPORT_MMU_ACCESS_SPIRAM, SOC_EXTRAM_DATA_LOW, 0, 64, 64 );
 #endif
     //Flush and enable icache for APP CPU
 #if !CONFIG_FREERTOS_UNICORE

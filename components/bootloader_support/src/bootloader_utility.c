@@ -441,7 +441,11 @@ static void set_cache_and_start_app(
 {
     ESP_LOGD(TAG, "configure drom and irom and start");
     Cache_Read_Disable( 0 );
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Flush( 0 );
+#else
+    Cache_Invalidate_ICache_All(0);
+#endif
 
     /* Clear the MMU entries that are already set up,
        so the new app only has the mappings it creates.
@@ -452,7 +456,11 @@ static void set_cache_and_start_app(
 
     uint32_t drom_page_count = (drom_size + 64*1024 - 1) / (64*1024); // round up to 64k
     ESP_LOGV(TAG, "d mmu set paddr=%08x vaddr=%08x size=%d n=%d", drom_addr & 0xffff0000, drom_load_addr & 0xffff0000, drom_size, drom_page_count );
+#ifdef CONFIG_CHIP_IS_ESP32
     int rc = cache_flash_mmu_set( 0, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
+#else
+    int rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
+#endif
     ESP_LOGV(TAG, "rc=%d", rc );
 #if !CONFIG_FREERTOS_UNICORE
     rc = cache_flash_mmu_set( 1, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
@@ -460,7 +468,11 @@ static void set_cache_and_start_app(
 #endif
     uint32_t irom_page_count = (irom_size + 64*1024 - 1) / (64*1024); // round up to 64k
     ESP_LOGV(TAG, "i mmu set paddr=%08x vaddr=%08x size=%d n=%d", irom_addr & 0xffff0000, irom_load_addr & 0xffff0000, irom_size, irom_page_count );
+#ifdef CONFIG_CHIP_IS_ESP32
     rc = cache_flash_mmu_set( 0, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
+#else
+    rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
+#endif
     ESP_LOGV(TAG, "rc=%d", rc );
 #if !CONFIG_FREERTOS_UNICORE
     rc = cache_flash_mmu_set( 1, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );

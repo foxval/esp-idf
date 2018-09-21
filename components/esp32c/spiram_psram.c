@@ -515,32 +515,6 @@ void IRAM_ATTR psram_spi_init(psram_spi_num_t spi_num, psram_cache_mode_t mode)
     memset((void*)SPI_W0_REG(spi_num), 0, 16 * 4);
 }
 
-typedef enum {
-    CACHE_MEMORY_INVALID = 0,
-    CACHE_MEMORY_ICACHE_LOW = BIT(0),
-    CACHE_MEMORY_ICACHE_HIGH = BIT(1),
-    CACHE_MEMORY_DCACHE_LOW = BIT(2),
-    CACHE_MEMORY_DCACHE_HIGH = BIT(3),
-} cache_layout_t;
-
-typedef enum {
-    CACHE_SET_SIZE_8KB = 0,
-    CACHE_SET_SIZE_16KB = 1,
-} cache_size_t;
-
-typedef enum {
-    CACHE_WAYS_4WAYS = 0,
-    CACHE_WAYS_8WAYS = 1,
-} cache_ways_t;
-
-typedef enum {
-    CACHE_LINE_SIZE_16B = 0,
-    CACHE_LINE_SIZE_32B = 1,
-    CACHE_LINE_SIZE_64B = 2,
-} cache_line_size_t;
-
-extern void Cache_Allocate_SRAM(cache_layout_t sram0_layout, cache_layout_t sram1_layout, cache_layout_t sram2_layout);
-
 /*
  * Psram mode init will overwrite original flash speed mode, so that it is possible to change psram and flash speed after OTA.
  * Flash read mode(QIO/QOUT/DIO/DOUT) will not be changed in app bin. It is decided by bootloader, OTA can not change this mode.
@@ -931,19 +905,12 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
     DPORT_SET_PERI_REG_BITS(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CMMU_SRAM_PAGE_MODE, 0, DPORT_APP_CMMU_SRAM_PAGE_MODE_S);
 #endif
 #else
-    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DROM0);
-    //Cache connect to SRAM, first 8K SRAM for ICache, 16KB SRAM for DCache
-    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_DCACHE_HIGH);
-    //Set Cache to 4 ways
-    REG_SET_FIELD(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_MODE, CACHE_WAYS_4WAYS);
-    REG_SET_FIELD(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_SETSIZE_MODE, CACHE_SET_SIZE_8KB);
-    //Cache Line size, 32byte
-    REG_SET_FIELD(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_BLOCKSIZE_MODE, CACHE_LINE_SIZE_32B);
-    //invalidate Dcache
-    WRITE_PERI_REG(DPORT_PRO_DCACHE_MEM_SYNC0_REG, 0);
-    SET_PERI_REG_BITS(DPORT_PRO_DCACHE_MEM_SYNC1_REG, DPORT_PRO_DCACHE_MEMSYNC_SIZE, 1, DPORT_PRO_DCACHE_MEMSYNC_SIZE_S);
-    SET_PERI_REG_MASK(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_INVALIDATE_ENA);
-    while(!REG_GET_BIT(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_INVALIDATE_DONE));
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DPORT | DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1);
+
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_DCACHE_HIGH, CACHE_MEMORY_INVALID);
+    Cache_Set_DCache_Mode(CACHE_SIZE_16KB, CACHE_8WAYS_ASSOC, CACHE_LINE_SIZE_64B);
+    Cache_Invalidate_ICache_All(0);
 
     DPORT_SET_PERI_REG_MASK(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_ENABLE);
 #endif

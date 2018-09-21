@@ -94,7 +94,11 @@ esp_err_t bootloader_init()
 #if !CONFIG_FREERTOS_UNICORE
     Cache_Read_Disable(1);
 #endif
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Flush(0);
+#else
+    Cache_Invalidate_ICache_All(0);
+#endif
 #if !CONFIG_FREERTOS_UNICORE
     Cache_Flush(1);
 #endif
@@ -215,7 +219,11 @@ static void update_flash_config(const esp_image_header_t* pfhdr)
     esp_rom_spiflash_config_param(g_rom_flashchip.device_id, size * 0x100000, 0x10000, 0x1000, 0x100, 0xffff);
     // TODO: set mode
     // TODO: set frequency
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Flush(0);
+#else
+    Cache_Invalidate_ICache_All(0);
+#endif
     Cache_Read_Enable( 0 );
 }
 
