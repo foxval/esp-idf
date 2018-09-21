@@ -171,3 +171,11 @@ TEST_CASE("test MPI modexp", "[bignum]")
     test_bignum_modexp("04", "2", "2", "9");
 }
 
+TEST_CASE("test MPI modexp X==M", "[bignum]")
+{
+    test_bignum_modexp("00", "A854928543", "103821", "A854928543");
+    test_bignum_modexp("00", "11", "08", "11");
+    test_bignum_modexp("00", "BBBBBBBB", "3",
+                             "BBBBBBBB");
+}
+

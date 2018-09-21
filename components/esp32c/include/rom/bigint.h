@@ -29,31 +29,19 @@
 extern "C" {
 #endif
 
-//TODO: add comment here
 void ets_bigint_enable(void);
 
 void ets_bigint_disable(void);
 
+int ets_bigint_multiply(const uint32_t *x, const uint32_t *y, uint32_t len_words);
+
+int ets_bigint_modmult(const uint32_t *x, const uint32_t *y, const uint32_t *m, uint32_t m_dash, const uint32_t *rb, uint32_t len_words);
+
+int ets_bigint_modexp(const uint32_t *x, const uint32_t *y, const uint32_t *m, uint32_t m_dash, const uint32_t *rb, bool constant_time, uint32_t len_words);
+
 void ets_bigint_wait_finish(void);
 
-bool ets_bigint_mod_power_prepare(uint32_t *x, uint32_t *y, uint32_t *m,
-                                  uint32_t m_dash, uint32_t *rb, uint32_t len, bool again);
-
-bool ets_bigint_mod_power_getz(uint32_t *z, uint32_t len);
-
-bool ets_bigint_mult_prepare(uint32_t *x, uint32_t *y, uint32_t len);
-
-bool ets_bigint_mult_getz(uint32_t *z, uint32_t len);
-
-bool ets_bigint_montgomery_mult_prepare(uint32_t *x, uint32_t *y, uint32_t *m,
-                                        uint32_t m_dash, uint32_t len, bool again);
-
-bool ets_bigint_montgomery_mult_getz(uint32_t *z, uint32_t len);
-
-bool ets_bigint_mod_mult_prepare(uint32_t *x, uint32_t *y, uint32_t *m,
-                                 uint32_t m_dash, uint32_t *rb, uint32_t len, bool again);
-
-bool ets_bigint_mod_mult_getz(uint32_t *m, uint32_t *z, uint32_t len);
+int ets_bigint_getz(uint32_t *z, uint32_t len_words);
 
 #ifdef __cplusplus
 }
