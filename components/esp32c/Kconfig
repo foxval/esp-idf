@@ -78,12 +78,17 @@ choice SPIRAM_TYPE
 
 config SPIRAM_TYPE_ESPPSRAM32
     bool "ESP-PSRAM32 or IS25WP032"
+
+config SPIRAM_TYPE_ESPPSRAM64
+    bool "ESP-PSRAM64 or IS25WP064"
 endchoice
 
 config SPIRAM_SIZE
     int
     default 4194304 if SPIRAM_TYPE_ESPPSRAM32
+    default 8388608 if SPIRAM_TYPE_ESPPSRAM64
     default 0
+    range 0 11075584
 
 config SPIRAM_INSTRUCTION_SIZE
     int "Size of SPI RAM used to map to instructions"

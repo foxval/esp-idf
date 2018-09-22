@@ -454,7 +454,7 @@ static void set_cache_and_start_app(
         DPORT_PRO_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
     }
 
-    uint32_t drom_page_count = (drom_size + 64*1024 - 1) / (64*1024); // round up to 64k
+    uint32_t drom_page_count = (drom_size + (drom_load_addr & 0xffff) + 64*1024 - 1) / (64*1024); // round up to 64k
     ESP_LOGV(TAG, "d mmu set paddr=%08x vaddr=%08x size=%d n=%d", drom_addr & 0xffff0000, drom_load_addr & 0xffff0000, drom_size, drom_page_count );
 #ifdef CONFIG_CHIP_IS_ESP32
     int rc = cache_flash_mmu_set( 0, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
@@ -466,11 +466,29 @@ static void set_cache_and_start_app(
     rc = cache_flash_mmu_set( 1, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
     ESP_LOGV(TAG, "rc=%d", rc );
 #endif
-    uint32_t irom_page_count = (irom_size + 64*1024 - 1) / (64*1024); // round up to 64k
+    uint32_t irom_page_count = (irom_size + (irom_load_addr &0xffff) + 64*1024 - 1) / (64*1024); // round up to 64k
     ESP_LOGV(TAG, "i mmu set paddr=%08x vaddr=%08x size=%d n=%d", irom_addr & 0xffff0000, irom_load_addr & 0xffff0000, irom_size, irom_page_count );
 #ifdef CONFIG_CHIP_IS_ESP32
     rc = cache_flash_mmu_set( 0, 0, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
 #else
+    uint32_t iram1_used = 0, irom0_used = 0;
+    if (irom_load_addr + irom_size > IRAM1_ADDRESS_LOW) {
+        iram1_used = 1;
+    }
+    if (irom_load_addr + irom_size > IROM0_ADDRESS_LOW) {
+        irom0_used = 1;
+    }
+    if(iram1_used || irom0_used) {
+        rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40000000, 0, 64, 64);
+        rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40400000, 0, 64, 64);
+        REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_I_SOURCE_PRO_IRAM1);
+        REG_CLR_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_IRAM1);
+        if(irom0_used) {
+            rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40800000, 0, 64, 64);
+            REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_I_SOURCE_PRO_IROM0);
+            REG_CLR_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_IROM0);
+        }
+    }
     rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
 #endif
     ESP_LOGV(TAG, "rc=%d", rc );

@@ -414,7 +414,7 @@ static void IRAM_ATTR flash_gpio_configure(const esp_image_header_t* pfhdr)
             PIN_FUNC_SELECT(PERIPHS_IO_MUX_SD_CLK_U, FUNC_SD_CLK_SPICLK);
             SET_PERI_REG_BITS(PERIPHS_IO_MUX_SD_CLK_U, FUN_DRV, drv, FUN_DRV_S);
 
-            #if CONFIG_SPIRAM_TYPE_ESPPSRAM32
+            #if CONFIG_SPIRAM_TYPE_ESPPSRAM32 || CONFIG_SPIRAM_TYPE_ESPPSRAM64
             uint32_t flash_id = g_rom_flashchip.device_id;
             if (flash_id == FLASH_ID_GD25LQ32C) {
                 // Set drive ability for 1.8v flash in 80Mhz.
@@ -467,7 +467,7 @@ static void IRAM_ATTR flash_gpio_configure(const esp_image_header_t* pfhdr)
             PIN_FUNC_SELECT(PERIPHS_IO_MUX_SPICLK_U, FUNC_SPICLK_SPICLK);
             SET_PERI_REG_BITS(PERIPHS_IO_MUX_SPICLK_U, FUN_DRV, drv, FUN_DRV_S);
 
-            #if CONFIG_SPIRAM_TYPE_ESPPSRAM32
+            #if CONFIG_SPIRAM_TYPE_ESPPSRAM32 || CONFIG_SPIRAM_TYPE_ESPPSRAM64
             uint32_t flash_id = g_rom_flashchip.device_id;
             if (flash_id == FLASH_ID_GD25LQ32C) {
                 // Set drive ability for 1.8v flash in 80Mhz.

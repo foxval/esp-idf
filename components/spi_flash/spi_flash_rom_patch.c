@@ -248,6 +248,8 @@ esp_rom_spiflash_result_t esp_rom_spiflash_read_status(esp_rom_spiflash_chip_t *
 {
     uint32_t status_value = ESP_ROM_SPIFLASH_BUSY_FLAG;
 
+    uint32_t back_up = REG_READ(PERIPHS_SPI_FLASH_CTRL);
+    CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
     if (g_rom_spiflash_dummy_len_plus[1] == 0) {
         while (ESP_ROM_SPIFLASH_BUSY_FLAG == (status_value & ESP_ROM_SPIFLASH_BUSY_FLAG)) {
             WRITE_PERI_REG(PERIPHS_SPI_FLASH_STATUS, 0);       // clear regisrter
@@ -262,6 +264,8 @@ esp_rom_spiflash_result_t esp_rom_spiflash_read_status(esp_rom_spiflash_chip_t *
         }
     }
     *status = status_value;
+     REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
+
 
     return ESP_ROM_SPIFLASH_RESULT_OK;
 }

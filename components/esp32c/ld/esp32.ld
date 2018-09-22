@@ -32,7 +32,7 @@ MEMORY
 
   /* Even though the segment name is iram, it is actually mapped to flash
   */
-  iram0_2_seg (RX) :                 org = 0x40080018, len = 0x380000-0x18
+  iram0_2_seg (RX) :                 org = 0x40080018, len = 0xb80000-0x18
 
   /*
     (0x18 offset above is a convenience for the app binary image generation. Flash cache has 64KB pages. The .bin file
@@ -54,7 +54,7 @@ MEMORY
                                      len = 0x28000 - CONFIG_BT_RESERVE_DRAM
 
   /* Flash mapped constant data */
-  drom0_0_seg (R) :                  org = 0x3F000018, len = 0x400000-0x18
+  drom0_0_seg (R) :                  org = 0x3F000018, len = 0x3f0000-0x18
 
   /* (See iram0_2_seg for meaning of 0x18 offset in the above.) */
 

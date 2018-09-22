@@ -81,11 +81,11 @@ esp_err_t bootloader_flash_erase_sector(size_t sector)
 
 static const char *TAG = "bootloader_flash";
 
-/* Use first 50 blocks in MMU for bootloader_mmap,
-   50th block for bootloader_flash_read
+/* Use first 63 blocks in MMU for bootloader_mmap,
+   63th block for bootloader_flash_read
 */
 #define MMU_BLOCK0_VADDR  SOC_DROM_LOW
-#define MMU_BLOCK50_VADDR (SOC_DROM_LOW + 0x320000)
+#define MMU_BLOCK63_VADDR (SOC_DROM_LOW + 0x3f0000)
 #define MMU_FLASH_MASK    0xffff0000
 #define MMU_BLOCK_SIZE    0x00010000
 
@@ -100,8 +100,8 @@ const void *bootloader_mmap(uint32_t src_addr, uint32_t size)
         ESP_LOGE(TAG, "tried to bootloader_mmap twice");
         return NULL; /* can't map twice */
     }
-    if (size > 0x320000) {
-        /* Allow mapping up to 50 of the 51 available MMU blocks (last one used for reads) */
+    if (size > 0x3f0000) {
+        /* Allow mapping up to 63 of the 64 available MMU blocks (last one used for reads) */
         ESP_LOGE(TAG, "bootloader_mmap excess size %x", size);
         return NULL;
     }
@@ -180,7 +180,7 @@ static esp_err_t bootloader_flash_read_allow_decrypt(size_t src_addr, void *dest
 {
     uint32_t *dest_words = (uint32_t *)dest;
 
-    /* Use the 51st MMU mapping to read from flash in 64KB blocks.
+    /* Use the 63th MMU mapping to read from flash in 64KB blocks.
        (MMU will transparently decrypt if encryption is enabled.)
     */
     for (int word = 0; word < size / 4; word++) {
@@ -197,9 +197,9 @@ static esp_err_t bootloader_flash_read_allow_decrypt(size_t src_addr, void *dest
 #endif
             ESP_LOGD(TAG, "mmu set block paddr=0x%08x (was 0x%08x)", map_at, current_read_mapping);
 #ifdef CONFIG_CHIP_IS_ESP32
-            int e = cache_flash_mmu_set(0, 0, MMU_BLOCK50_VADDR, map_at, 64, 1);
+            int e = cache_flash_mmu_set(0, 0, MMU_BLOCK63_VADDR, map_at, 64, 1);
 #else
-            int e = Cache_Ibus_MMU_Set(0, DPORT_MMU_ACCESS_FLASH, MMU_BLOCK50_VADDR, map_at, 64, 1);
+            int e = Cache_Ibus_MMU_Set(0, DPORT_MMU_ACCESS_FLASH, MMU_BLOCK63_VADDR, map_at, 64, 1);
 #endif
             if (e != 0) {
                 ESP_LOGE(TAG, "cache_flash_mmu_set failed: %d\n", e);
@@ -209,7 +209,7 @@ static esp_err_t bootloader_flash_read_allow_decrypt(size_t src_addr, void *dest
             current_read_mapping = map_at;
             Cache_Read_Enable(0);
         }
-        map_ptr = (uint32_t *)(MMU_BLOCK50_VADDR + (word_src - map_at));
+        map_ptr = (uint32_t *)(MMU_BLOCK63_VADDR + (word_src - map_at));
         dest_words[word] = *map_ptr;
     }
     return ESP_OK;
