@@ -150,6 +150,7 @@ typedef enum {
     ETS_SPI1_REJECT_CPU_INTR_SOURCE,            /**< interrupt of SPI1 access rejected, LEVEL*/
     ETS_DMA_COPY_INTR_SOURCE,                   /**< interrupt of DMA copy, LEVEL*/
     ETS_SPI4_DMA_INRT_SOURCE,                   /**< interrupt of SPI4 DMA, LEVEL*/
+    ETS_SPI4_INTR_SOURCE,                       /**< interrupt of SPI4, LEVEL*/
     ETS_MAX_INTR_SOURCE,                        /**< number of interrupt sources */
     
 } periph_interrput_t;

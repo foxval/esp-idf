@@ -272,8 +272,13 @@
 #define SOC_RTC_IRAM_HIGH 0x40072000
 #define SOC_RTC_DATA_LOW  0x50000000
 #define SOC_RTC_DATA_HIGH 0x50002000
+#ifdef CONFIG_SPIRAM_SUPPORT
 #define SOC_EXTRAM_DATA_LOW 0x3F500000
 #define SOC_EXTRAM_DATA_HIGH (0x3F500000 + CONFIG_SPIRAM_SIZE)
+#else
+#define SOC_EXTRAM_DATA_LOW 0x3F500000
+#define SOC_EXTRAM_DATA_HIGH 0x3F500000
+#endif
 
 //First and last words of the D/IRAM region, for both the DRAM address as well as the IRAM alias.
 #define SOC_DIRAM_IRAM_LOW    0x40020000
