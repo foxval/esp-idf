@@ -65,11 +65,13 @@
 #define SHA_M_BASE                    ((DR_REG_SHA_BASE) + 0x80)
 
 /* AES acceleration registers */
-#define AES_START_REG           ((DR_REG_AES_BASE) + 0x00)
-#define AES_IDLE_REG            ((DR_REG_AES_BASE) + 0x04)
-#define AES_MODE_REG            ((DR_REG_AES_BASE) + 0x08)
-#define AES_KEY_BASE            ((DR_REG_AES_BASE) + 0x10)
-#define AES_TEXT_BASE           ((DR_REG_AES_BASE) + 0x30)
-#define AES_ENDIAN              ((DR_REG_AES_BASE) + 0x40)
+#define AES_MODE_REG            ((DR_REG_AES_BASE) + 0x40)
+#define AES_ENDIAN_REG          ((DR_REG_AES_BASE) + 0x44)
+#define AES_TRIGGER_REG         ((DR_REG_AES_BASE) + 0x48)
+#define AES_STATE_REG           ((DR_REG_AES_BASE) + 0x4c)
+
+#define AES_KEY_BASE            ((DR_REG_AES_BASE) + 0x00)
+#define AES_TEXT_IN_BASE        ((DR_REG_AES_BASE) + 0x20)
+#define AES_TEXT_OUT_BASE       ((DR_REG_AES_BASE) + 0x30)
 
 #endif

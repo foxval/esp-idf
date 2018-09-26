@@ -37,14 +37,14 @@
 #include "soc/cpu.h"
 #include <stdio.h>
 
+#define AES_BLOCK_BYTES 16
 
 /* AES uses a spinlock mux not a lock as the underlying block operation
-   only takes 208 cycles (to write key & compute block), +600 cycles
-   for DPORT protection but +3400 cycles again if you use a full sized lock.
+   only takes a small number of cycles, much less than using
+   a mutex for this.
 
    For CBC, CFB, etc. this may mean that interrupts are disabled for a longer
-   period of time for bigger lengths. However at the moment this has to happen
-   anyway due to DPORT protection...
+   period of time for bigger data lengths.
 */
 static portMUX_TYPE aes_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
@@ -54,22 +54,21 @@ void esp_aes_acquire_hardware( void )
     portENTER_CRITICAL(&aes_spinlock);
 
     /* Enable AES hardware */
-    DPORT_REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_AES);
-    /* Clear reset on digital signature & secure boot units,
+    REG_SET_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_AES);
+    /* Clear reset on digital signature unit,
        otherwise AES unit is held in reset also. */
-    DPORT_REG_CLR_BIT(DPORT_PERI_RST_EN_REG,
-                       DPORT_PERI_EN_AES
-                       | DPORT_PERI_EN_DIGITAL_SIGNATURE
-                       | DPORT_PERI_EN_SECUREBOOT);
+    REG_CLR_BIT(DPORT_PERI_RST_EN_REG,
+                DPORT_PERI_EN_AES
+                | DPORT_PERI_EN_DIGITAL_SIGNATURE);
 }
 
 void esp_aes_release_hardware( void )
 {
     /* Disable AES hardware */
-    DPORT_REG_SET_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_AES);
+    REG_SET_BIT(DPORT_PERI_RST_EN_REG, DPORT_PERI_EN_AES);
     /* Don't return other units to reset, as this pulls
        reset on RSA & SHA units, respectively. */
-    DPORT_REG_CLR_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_AES);
+    REG_CLR_BIT(DPORT_PERI_CLK_EN_REG, DPORT_PERI_EN_AES);
 
     portEXIT_CRITICAL(&aes_spinlock);
 }
@@ -115,7 +114,7 @@ static inline void esp_aes_setkey_hardware( esp_aes_context *ctx, int mode)
     unsigned mode_reg_base = (mode == ESP_AES_ENCRYPT) ? 0 : MODE_DECRYPT_BIT;
 
     memcpy((uint32_t *)AES_KEY_BASE, ctx->key, ctx->key_bytes);
-    DPORT_REG_WRITE(AES_MODE_REG, mode_reg_base + ((ctx->key_bytes / 8) - 2));
+    REG_WRITE(AES_MODE_REG, mode_reg_base + ((ctx->key_bytes / 8) - 2));
 }
 
 /* Run a single 16 byte block of AES, using the hardware engine.
@@ -124,17 +123,12 @@ static inline void esp_aes_setkey_hardware( esp_aes_context *ctx, int mode)
  */
 static inline void esp_aes_block(const void *input, void *output)
 {
-    const uint32_t *input_words = (const uint32_t *)input;
-    uint32_t *output_words = (uint32_t *)output;
-    uint32_t *mem_block = (uint32_t *)AES_TEXT_BASE;
+    memcpy((void *)AES_TEXT_IN_BASE, input, AES_BLOCK_BYTES);
 
-    for(int i = 0; i < 4; i++) {
-        mem_block[i] = input_words[i];
-    }
+    REG_WRITE(AES_TRIGGER_REG, 1);
+    while (REG_READ(AES_STATE_REG) != 0) { }
 
-    DPORT_REG_WRITE(AES_START_REG, 1);
-    while (DPORT_REG_READ(AES_IDLE_REG) != 1) { }
-    esp_dport_access_read_buffer(output_words, (uint32_t)&mem_block[0], 4);
+    memcpy(output, (void *)AES_TEXT_OUT_BASE, AES_BLOCK_BYTES);
 }
 
 /*
