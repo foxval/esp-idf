@@ -62,7 +62,7 @@ from low to high start address.
 */
 const soc_memory_region_t soc_memory_regions[] = {
 #ifdef CONFIG_SPIRAM_SUPPORT
-    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW, 4, 0}, //SPI SRAM, if available
+    { SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE, 4, 0}, //SPI SRAM, if available
 #endif
 #ifdef CONFIG_MIN_ICACHE
     { 0x3FFB2000, 0x2000, 0, 0x400B2000}, //Block 1, can be use as I/D cache memory
@@ -121,7 +121,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 #endif
 
 #ifdef CONFIG_SPIRAM_SUPPORT
-    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
 #endif
 };
 

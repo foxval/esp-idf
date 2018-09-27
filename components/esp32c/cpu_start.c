@@ -349,9 +349,9 @@ void start_cpu0_default(void)
 
     do_global_ctors();
 #if CONFIG_INT_WDT
-    esp_int_wdt_init();
+    //esp_int_wdt_init();
     //Initialize the interrupt watch dog for CPU0.
-    esp_int_wdt_cpu_init();
+    //esp_int_wdt_cpu_init();
 #endif
     //esp_cache_err_int_init();
     esp_crosscore_int_init();
@@ -404,7 +404,7 @@ void start_cpu1_default(void)
 #endif
 #if CONFIG_INT_WDT
     //Initialize the interrupt watch dog for CPU1.
-    esp_int_wdt_cpu_init();
+    //esp_int_wdt_cpu_init();
 #endif
     //Take care putting stuff here: if asked, FreeRTOS will happily tell you the scheduler
     //has started, but it isn't active *on this CPU* yet.
@@ -454,12 +454,13 @@ static void main_task(void* args)
 
     //Initialize task wdt if configured to do so
 #ifdef CONFIG_TASK_WDT_PANIC
-    ESP_ERROR_CHECK(esp_task_wdt_init(CONFIG_TASK_WDT_TIMEOUT_S, true))
+    //ESP_ERROR_CHECK(esp_task_wdt_init(CONFIG_TASK_WDT_TIMEOUT_S, true))
 #elif CONFIG_TASK_WDT
-    ESP_ERROR_CHECK(esp_task_wdt_init(CONFIG_TASK_WDT_TIMEOUT_S, false))
+    //ESP_ERROR_CHECK(esp_task_wdt_init(CONFIG_TASK_WDT_TIMEOUT_S, false))
 #endif
 
     //Add IDLE 0 to task wdt
+#if 0
 #ifdef CONFIG_TASK_WDT_CHECK_IDLE_TASK_CPU0
     TaskHandle_t idle_0 = xTaskGetIdleTaskHandleForCPU(0);
     if(idle_0 != NULL){
@@ -472,6 +473,7 @@ static void main_task(void* args)
     if(idle_1 != NULL){
         ESP_ERROR_CHECK(esp_task_wdt_add(idle_1))
     }
+#endif
 #endif
 
     app_main();

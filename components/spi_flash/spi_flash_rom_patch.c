@@ -113,10 +113,14 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_erase_sector_internal(esp_rom_
 
     esp_rom_spiflash_wait_idle(spi);
 
+    uint32_t back_up = REG_READ(PERIPHS_SPI_FLASH_CTRL);
+    CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
+    // flash write is always 1 line currently
     // sector erase  4Kbytes erase is sector erase.
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, addr & 0xffffff);
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_SE);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
+    REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
     esp_rom_spiflash_wait_idle(spi);
 
@@ -128,10 +132,13 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_erase_block_internal(esp_rom_s
 {
     esp_rom_spiflash_wait_idle(spi);
 
+    uint32_t back_up = REG_READ(PERIPHS_SPI_FLASH_CTRL);
+    CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
     // sector erase  4Kbytes erase is sector erase.
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_ADDR, addr & 0xffffff);
     WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_BE);
     while (READ_PERI_REG(PERIPHS_SPI_FLASH_CMD) != 0);
+    REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
     esp_rom_spiflash_wait_idle(spi);
 
@@ -185,8 +192,11 @@ static esp_rom_spiflash_result_t esp_rom_spiflash_program_page_internal(esp_rom_
             temp_bl = 0;
         }
 
+        uint32_t back_up = REG_READ(PERIPHS_SPI_FLASH_CTRL);
+        CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
         WRITE_PERI_REG(PERIPHS_SPI_FLASH_CMD, SPI_FLASH_PP);
         while ( READ_PERI_REG(PERIPHS_SPI_FLASH_CMD ) != 0 );
+        REG_WRITE(PERIPHS_SPI_FLASH_CTRL, back_up);
 
         esp_rom_spiflash_wait_idle(spi);
     }

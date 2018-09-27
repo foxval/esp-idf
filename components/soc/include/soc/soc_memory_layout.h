@@ -78,7 +78,7 @@ inline static bool IRAM_ATTR esp_ptr_byte_accessible(const void *p)
     bool r;
     r = ((intptr_t)p >= SOC_BYTE_ACCESSIBLE_LOW && (intptr_t)p < SOC_BYTE_ACCESSIBLE_HIGH);
 #if CONFIG_SPIRAM_SUPPORT
-    r |= ((intptr_t)p >= SOC_EXTRAM_DATA_LOW && (intptr_t)p < SOC_EXTRAM_DATA_HIGH);
+    r |= ((intptr_t)p >= SOC_EXTRAM_DATA_LOW && (intptr_t)p < (SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE));
 #endif
     return r;
 }

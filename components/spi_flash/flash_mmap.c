@@ -41,11 +41,26 @@
 
 #define REGIONS_COUNT 4
 #define PAGES_PER_REGION 64
+#ifdef CONFIG_CHIP_IS_ESP32
+#define IROM0_PAGES_START 64
+#define IROM0_PAGES_END 256
+#define DROM0_PAGES_START 0
+#define DROM0_PAGES_END 64
+#else
+#define IROM0_PAGES_START (PRO_CACHE_IBUS0_MMU_START / sizeof(uint32_t))
+#define IROM0_PAGES_END (PRO_CACHE_IBUS2_MMU_END / sizeof(uint32_t))
+#define DROM0_PAGES_START (Cache_Drom0_Using_ICache()? PRO_CACHE_IBUS3_MMU_START / sizeof(uint32_t) : PRO_CACHE_DBUS3_MMU_START / sizeof(uint32_t))
+#define DROM0_PAGES_END (Cache_Drom0_Using_ICache()? PRO_CACHE_IBUS3_MMU_END / sizeof(uint32_t) : PRO_CACHE_DBUS3_MMU_END / sizeof(uint32_t))
+#endif
+#define MMU_ADDR_MASK DPORT_MMU_ADDRESS_MASK
+#define IROM0_PAGES_NUM (IROM0_PAGES_END - IROM0_PAGES_START)
+#define DROM0_PAGES_NUM (DROM0_PAGES_END - DROM0_PAGES_START)
+#define PAGES_LIMIT (DROM0_PAGES_END > DROM0_PAGES_END ? DROM0_PAGES_END:DROM0_PAGES_END)
 #define INVALID_ENTRY_VAL DPORT_FLASH_MMU_TABLE_INVALID_VAL
 #define VADDR0_START_ADDR SOC_DROM_LOW
 #define VADDR1_START_ADDR 0x40000000
 #define VADDR1_FIRST_USABLE_ADDR SOC_IROM_LOW
-#define PRO_IRAM0_FIRST_USABLE_PAGE ((VADDR1_FIRST_USABLE_ADDR - VADDR1_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + 64)
+#define PRO_IRAM0_FIRST_USABLE_PAGE ((VADDR1_FIRST_USABLE_ADDR - VADDR1_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + IROM0_PAGES_START)
 
 /* Ensure pages in a region haven't been marked as written via
    spi_flash_mark_modified_region(). If the page has
@@ -107,13 +122,13 @@ static void IRAM_ATTR get_mmu_region(spi_flash_mmap_memory_t memory, int* out_be
 {
     if (memory == SPI_FLASH_MMAP_DATA) {
         // Vaddr0
-        *out_begin = 0;
-        *out_size = 64;
+        *out_begin = DROM0_PAGES_START;
+        *out_size = DROM0_PAGES_NUM;
         *region_addr = VADDR0_START_ADDR;
     } else {
         // only part of VAddr1 is usable, so adjust for that
         *out_begin = PRO_IRAM0_FIRST_USABLE_PAGE;
-        *out_size = 3 * 64 - *out_begin;
+        *out_size = IROM0_PAGES_END - *out_begin;
         *region_addr = VADDR1_FIRST_USABLE_ADDR;
     }
 }
@@ -153,7 +168,7 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
         return ESP_ERR_INVALID_ARG;
     }
     for (int i = 0; i < page_count; i++) {
-        if (pages[i] < 0 || pages[i]*SPI_FLASH_MMU_PAGE_SIZE >= g_rom_flashchip.chip_size) {
+        if (pages[i] < 0 || (pages[i] & MMU_ADDR_MASK)*SPI_FLASH_MMU_PAGE_SIZE >= g_rom_flashchip.chip_size) {
             return ESP_ERR_INVALID_ARG;
         }
     }
@@ -166,7 +181,7 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
 
     did_flush = 0;
     for (int i = 0; i < page_count; i++) {
-        if (spi_flash_ensure_unmodified_region(pages[i]*SPI_FLASH_MMU_PAGE_SIZE, SPI_FLASH_MMU_PAGE_SIZE)) {
+        if (spi_flash_ensure_unmodified_region((pages[i] & MMU_ADDR_MASK)*SPI_FLASH_MMU_PAGE_SIZE, SPI_FLASH_MMU_PAGE_SIZE)) {
             did_flush = 1;
         }
     }
@@ -416,16 +431,15 @@ uint32_t spi_flash_cache2phys(const void *cached)
     if (c >= VADDR1_START_ADDR && c < VADDR1_FIRST_USABLE_ADDR) {
         /* IRAM address, doesn't map to flash */
         return SPI_FLASH_CACHE2PHYS_FAIL;
-    }
-    else if (c < VADDR1_FIRST_USABLE_ADDR) {
+    } else if (c < VADDR1_FIRST_USABLE_ADDR) {
         /* expect cache is in DROM */
-        cache_page = (c - VADDR0_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE;
+        cache_page = (c - VADDR0_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + DROM0_PAGES_START;
     } else {
         /* expect cache is in IROM */
-        cache_page = (c - VADDR1_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + 64;
+        cache_page = (c - VADDR1_START_ADDR) / SPI_FLASH_MMU_PAGE_SIZE + IROM0_PAGES_START;
     }
 
-    if (cache_page >= 256) {
+    if (cache_page >= PAGES_LIMIT) {
         /* cached address was not in IROM or DROM */
         return SPI_FLASH_CACHE2PHYS_FAIL;
     }
@@ -434,7 +448,7 @@ uint32_t spi_flash_cache2phys(const void *cached)
         /* page is not mapped */
         return SPI_FLASH_CACHE2PHYS_FAIL;
     }
-    uint32_t phys_offs = phys_page * SPI_FLASH_MMU_PAGE_SIZE;
+    uint32_t phys_offs = (phys_page & MMU_ADDR_MASK)* SPI_FLASH_MMU_PAGE_SIZE;
     return phys_offs | (c & (SPI_FLASH_MMU_PAGE_SIZE-1));
 }
 
@@ -446,15 +460,15 @@ const void *spi_flash_phys2cache(uint32_t phys_offs, spi_flash_mmap_memory_t mem
     intptr_t base;
 
     if (memory == SPI_FLASH_MMAP_DATA) {
-        start = 0;
-        end = 64;
+        start = DROM0_PAGES_START;
+        end = DROM0_PAGES_END;
         base = VADDR0_START_ADDR;
-        page_delta = 0;
+        page_delta = DROM0_PAGES_START > IROM0_PAGES_START ? DROM0_PAGES_START : 0;
     } else {
         start = PRO_IRAM0_FIRST_USABLE_PAGE;
-        end = 256;
+        end = IROM0_PAGES_END;
         base = VADDR1_START_ADDR;
-        page_delta = 64;
+        page_delta = DROM0_PAGES_START > IROM0_PAGES_START ? 0: IROM0_PAGES_START;
     }
     DPORT_INTERRUPT_DISABLE();
     for (int i = start; i < end; i++) {

@@ -73,7 +73,7 @@ Because of requirements in the coalescing code which merges adjacent regions, th
 from low to high start address.
 */
 const soc_memory_region_t soc_memory_regions[] = {
-    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW, 15, 0}, //SPI SRAM, if available
+    { SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE, 15, 0}, //SPI SRAM, if available
     { 0x3FFAE000, 0x2000, 0, 0}, //pool 16 <- used for rom code
     { 0x3FFB0000, 0x8000, 0, 0}, //pool 15 <- if BT is enabled, used as BT HW shared memory
     { 0x3FFB8000, 0x8000, 0, 0}, //pool 14 <- if BT is enabled, used data memory for BT ROM functions.
@@ -164,7 +164,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 #endif
 #endif
 
-    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
 };
 
 const size_t soc_reserved_region_count = sizeof(soc_reserved_regions)/sizeof(soc_reserved_region_t);
