@@ -58,20 +58,6 @@ extern "C" {
 #define SPI_RD_BIT_ORDER_M  (BIT(25))
 #define SPI_RD_BIT_ORDER_V  0x1
 #define SPI_RD_BIT_ORDER_S  25
-/* SPI_FREAD_QIO : R/W ;bitpos:[24] ;default: 1'b0 ; */
-/*description: In the read operations address phase and read-data phase apply
- 4 signals. 1: enable 0: disable.*/
-#define SPI_FREAD_QIO  (BIT(24))
-#define SPI_FREAD_QIO_M  (BIT(24))
-#define SPI_FREAD_QIO_V  0x1
-#define SPI_FREAD_QIO_S  24
-/* SPI_FREAD_DIO : R/W ;bitpos:[23] ;default: 1'b0 ; */
-/*description: In the read operations address phase and read-data phase apply
- 2 signals. 1: enable 0: disable.*/
-#define SPI_FREAD_DIO  (BIT(23))
-#define SPI_FREAD_DIO_M  (BIT(23))
-#define SPI_FREAD_DIO_V  0x1
-#define SPI_FREAD_DIO_S  23
 /* SPI_WP_REG : R/W ;bitpos:[21] ;default: 1'b1 ; */
 /*description: Write protect signal output when SPI is idle.  1: output high  0: output low.*/
 #define SPI_WP_REG  (BIT(21))
@@ -120,6 +106,18 @@ extern "C" {
 #define SPI_FCMD_DUAL_M  (BIT(7))
 #define SPI_FCMD_DUAL_V  0x1
 #define SPI_FCMD_DUAL_S  7
+/* SPI_FADDR_QUAD : R/W ;bitpos:[6] ;default: 1'b0 ; */
+/*description: Apply 4 signals during addr phase 1:enable 0: disable*/
+#define SPI_FADDR_QUAD  (BIT(6))
+#define SPI_FADDR_QUAD_M  (BIT(6))
+#define SPI_FADDR_QUAD_V  0x1
+#define SPI_FADDR_QUAD_S  6
+/* SPI_FADDR_DUAL : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: Apply 2 signals during addr phase 1:enable 0: disable*/
+#define SPI_FADDR_DUAL  (BIT(5))
+#define SPI_FADDR_DUAL_M  (BIT(5))
+#define SPI_FADDR_DUAL_V  0x1
+#define SPI_FADDR_DUAL_S  5
 /* SPI_DUMMY_OUT : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: In the dummy phase the signal level of spi is output by the spi controller.*/
 #define SPI_DUMMY_OUT  (BIT(3))
@@ -410,7 +408,7 @@ extern "C" {
 #define SPI_DOUTDIN_S  0
 
 #define SPI_USER1_REG(i)          (REG_SPI_BASE(i) + 0x01C)
-/* SPI_USR_ADDR_BITLEN : RO ;bitpos:[31:26] ;default: 6'd23 ; */
+/* SPI_USR_ADDR_BITLEN : R/W ;bitpos:[31:26] ;default: 6'd23 ; */
 /*description: The length in bits of address phase. The register value shall be (bit_num-1).*/
 #define SPI_USR_ADDR_BITLEN  0x0000003F
 #define SPI_USR_ADDR_BITLEN_M  ((SPI_USR_ADDR_BITLEN_V)<<(SPI_USR_ADDR_BITLEN_S))
@@ -545,13 +543,7 @@ extern "C" {
 #define SPI_TRANS_CNT_M  ((SPI_TRANS_CNT_V)<<(SPI_TRANS_CNT_S))
 #define SPI_TRANS_CNT_V  0xF
 #define SPI_TRANS_CNT_S  23
-/* SPI_SLV_LAST_COMMAND : RO ;bitpos:[19:17] ;default: 3'b0 ; */
-/*description: In the slave mode it is the value of command.*/
-#define SPI_SLV_LAST_COMMAND  0x00000007
-#define SPI_SLV_LAST_COMMAND_M  ((SPI_SLV_LAST_COMMAND_V)<<(SPI_SLV_LAST_COMMAND_S))
-#define SPI_SLV_LAST_COMMAND_V  0x7
-#define SPI_SLV_LAST_COMMAND_S  17
-/* SPI_INT_EN : R/W ;bitpos:[9:5] ;default: 5'b1_0000 ; */
+/* SPI_INT_EN : R/W ;bitpos:[9:5] ;default: 5'b1_1111 ; */
 /*description: Interrupt enable bits for the below 5 sources*/
 #define SPI_INT_EN  0x0000001F
 #define SPI_INT_EN_M  ((SPI_INT_EN_V)<<(SPI_INT_EN_S))
@@ -564,36 +556,27 @@ extern "C" {
 #define SPI_TRANS_DONE_M  (BIT(4))
 #define SPI_TRANS_DONE_V  0x1
 #define SPI_TRANS_DONE_S  4
-/* SPI_SLV_WR_DMA_DONE : R/W ;bitpos:[3] ;default: 1'b0 ; */
-/*description: The interrupt raw bit for the completion of dma write operation
- in the slave mode.*/
-#define SPI_SLV_WR_DMA_DONE  (BIT(3))
-#define SPI_SLV_WR_DMA_DONE_M  (BIT(3))
-#define SPI_SLV_WR_DMA_DONE_V  0x1
-#define SPI_SLV_WR_DMA_DONE_S  3
-/* SPI_SLV_RD_DMA_DONE : R/W ;bitpos:[2] ;default: 1'b0 ; */
-/*description: The interrupt raw bit for the completion of dma read operation
- in the slave mode.*/
-#define SPI_SLV_RD_DMA_DONE  (BIT(2))
-#define SPI_SLV_RD_DMA_DONE_M  (BIT(2))
-#define SPI_SLV_RD_DMA_DONE_V  0x1
-#define SPI_SLV_RD_DMA_DONE_S  2
-/* SPI_SLV_WR_BUF_DONE : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: The interrupt raw bit for the completion of write-buffer operation
- in the slave mode.*/
-#define SPI_SLV_WR_BUF_DONE  (BIT(1))
-#define SPI_SLV_WR_BUF_DONE_M  (BIT(1))
-#define SPI_SLV_WR_BUF_DONE_V  0x1
-#define SPI_SLV_WR_BUF_DONE_S  1
-/* SPI_SLV_RD_BUF_DONE : R/W ;bitpos:[0] ;default: 1'b0 ; */
-/*description: The interrupt raw bit for the completion of read-buffer operation
- in the slave mode.*/
-#define SPI_SLV_RD_BUF_DONE  (BIT(0))
-#define SPI_SLV_RD_BUF_DONE_M  (BIT(0))
-#define SPI_SLV_RD_BUF_DONE_V  0x1
-#define SPI_SLV_RD_BUF_DONE_S  0
 
 #define SPI_SLAVE1_REG(i)          (REG_SPI_BASE(i) + 0x038)
+/* SPI_SLV_LAST_ADDR : R/W ;bitpos:[21:15] ;default: 7'b0 ; */
+/*description: In the slave mode it is the value of address.*/
+#define SPI_SLV_LAST_ADDR  0x0000007F
+#define SPI_SLV_LAST_ADDR_M  ((SPI_SLV_LAST_ADDR_V)<<(SPI_SLV_LAST_ADDR_S))
+#define SPI_SLV_LAST_ADDR_V  0x7F
+#define SPI_SLV_LAST_ADDR_S  15
+/* SPI_SLV_LAST_COMMAND : R/W ;bitpos:[14:12] ;default: 3'b0 ; */
+/*description: In the slave mode it is the value of command.*/
+#define SPI_SLV_LAST_COMMAND  0x00000007
+#define SPI_SLV_LAST_COMMAND_M  ((SPI_SLV_LAST_COMMAND_V)<<(SPI_SLV_LAST_COMMAND_S))
+#define SPI_SLV_LAST_COMMAND_V  0x7
+#define SPI_SLV_LAST_COMMAND_S  12
+/* SPI_SLV_WR_DMA_DONE : R/W ;bitpos:[11] ;default: 1'b0 ; */
+/*description: The interrupt raw bit for the completion of dma write operation
+ in the slave mode.*/
+#define SPI_SLV_WR_DMA_DONE  (BIT(11))
+#define SPI_SLV_WR_DMA_DONE_M  (BIT(11))
+#define SPI_SLV_WR_DMA_DONE_V  0x1
+#define SPI_SLV_WR_DMA_DONE_S  11
 /* SPI_SLV_WR_ADDR_BYTELEN : R/W ;bitpos:[7:4] ;default: 4'h0 ; */
 /*description: In the slave mode it is the address length in bytes for write-buffer
  operation. The register value shall be byte_num.*/
@@ -610,6 +593,13 @@ extern "C" {
 #define SPI_SLV_RD_ADDR_BYTELEN_S  0
 
 #define SPI_SLAVE2_REG(i)          (REG_SPI_BASE(i) + 0x03C)
+/* SPI_SLV_RD_DMA_DONE : R/W ;bitpos:[8] ;default: 1'b0 ; */
+/*description: The interrupt raw bit for the completion of dma read operation
+ in the slave mode.*/
+#define SPI_SLV_RD_DMA_DONE  (BIT(8))
+#define SPI_SLV_RD_DMA_DONE_M  (BIT(8))
+#define SPI_SLV_RD_DMA_DONE_V  0x1
+#define SPI_SLV_RD_DMA_DONE_S  8
 /* SPI_SLV_WR_DUMMY_BYTELEN : R/W ;bitpos:[7:4] ;default: 4'h0 ; */
 /*description: In the slave mode it is the length in spi_clk byte cycles of
  dummy phase for write operations.*/
@@ -626,6 +616,13 @@ extern "C" {
 #define SPI_SLV_RD_DUMMY_BYTELEN_S  0
 
 #define SPI_SLV_WRBUF_DLEN_REG(i)          (REG_SPI_BASE(i) + 0x040)
+/* SPI_SLV_WR_BUF_DONE : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: The interrupt raw bit for the completion of write-buffer operation
+ in the slave mode.*/
+#define SPI_SLV_WR_BUF_DONE  (BIT(24))
+#define SPI_SLV_WR_BUF_DONE_M  (BIT(24))
+#define SPI_SLV_WR_BUF_DONE_V  0x1
+#define SPI_SLV_WR_BUF_DONE_S  24
 /* SPI_SLV_WRBUF_DBITLEN : R/W ;bitpos:[23:0] ;default: 24'h0 ; */
 /*description: In the slave mode it is the length in bits for write-buffer operations.
  The register value shall be (bit_num-1).*/
@@ -635,6 +632,13 @@ extern "C" {
 #define SPI_SLV_WRBUF_DBITLEN_S  0
 
 #define SPI_SLV_RDBUF_DLEN_REG(i)          (REG_SPI_BASE(i) + 0x044)
+/* SPI_SLV_RD_BUF_DONE : R/W ;bitpos:[24] ;default: 1'b0 ; */
+/*description: The interrupt raw bit for the completion of read-buffer operation
+ in the slave mode.*/
+#define SPI_SLV_RD_BUF_DONE  (BIT(24))
+#define SPI_SLV_RD_BUF_DONE_M  (BIT(24))
+#define SPI_SLV_RD_BUF_DONE_V  0x1
+#define SPI_SLV_RD_BUF_DONE_S  24
 /* SPI_SLV_RDBUF_DBITLEN : R/W ;bitpos:[23:0] ;default: 24'h0 ; */
 /*description: In the slave mode it is the length in bits for read-buffer operations.
  The register value shall be (bit_num-1).*/
@@ -650,8 +654,6 @@ extern "C" {
 #define SPI_SLV_RDATA_BIT_M  ((SPI_SLV_RDATA_BIT_V)<<(SPI_SLV_RDATA_BIT_S))
 #define SPI_SLV_RDATA_BIT_V  0xFFFFFF
 #define SPI_SLV_RDATA_BIT_S  0
-
-#define SPI_TX_CRC_REG(i)          (REG_SPI_BASE(i) + 0x04C)
 
 #define SPI_FSM_REG(i)          (REG_SPI_BASE(i) + 0x050)
 /* SPI_ST : RO ;bitpos:[2:0] ;default: 3'b0 ; */
@@ -682,13 +684,13 @@ extern "C" {
 #define SPI_HOLD_VAL_REG_M  (BIT(2))
 #define SPI_HOLD_VAL_REG_V  0x1
 #define SPI_HOLD_VAL_REG_S  2
-/* SPI_HOLD_ENA : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
+/* SPI_INT_HOLD_ENA : R/W ;bitpos:[1:0] ;default: 2'b0 ; */
 /*description: This register is for two SPI masters to share the same cs clock
  and data signals. The bits of one SPI are set  if the other SPI is busy  the SPI will be hold. 1(3): hold at  idle  phase 2: hold at  prepare  phase.*/
-#define SPI_HOLD_ENA  0x00000003
-#define SPI_HOLD_ENA_M  ((SPI_HOLD_ENA_V)<<(SPI_HOLD_ENA_S))
-#define SPI_HOLD_ENA_V  0x3
-#define SPI_HOLD_ENA_S  0
+#define SPI_INT_HOLD_ENA  0x00000003
+#define SPI_INT_HOLD_ENA_M  ((SPI_INT_HOLD_ENA_V)<<(SPI_INT_HOLD_ENA_S))
+#define SPI_INT_HOLD_ENA_V  0x3
+#define SPI_INT_HOLD_ENA_S  0
 
 #define SPI_DMA_CONF_REG(i)          (REG_SPI_BASE(i) + 0x058)
 /* SPI_DMA_CONTINUE : R/W ;bitpos:[16] ;default: 1'b0 ; */
@@ -783,20 +785,14 @@ extern "C" {
 #define SPI_IN_RST_M  (BIT(2))
 #define SPI_IN_RST_V  0x1
 #define SPI_IN_RST_S  2
-/* SPI_DMA_TX_ENA : RO ;bitpos:[1] ;default: 1'b0 ; */
-/*description: spi dma write data status bit.*/
-#define SPI_DMA_TX_ENA  (BIT(1))
-#define SPI_DMA_TX_ENA_M  (BIT(1))
-#define SPI_DMA_TX_ENA_V  0x1
-#define SPI_DMA_TX_ENA_S  1
-/* SPI_DMA_RX_ENA : RO ;bitpos:[0] ;default: 1'b0 ; */
-/*description: spi dma read data status bit.*/
-#define SPI_DMA_RX_ENA  (BIT(0))
-#define SPI_DMA_RX_ENA_M  (BIT(0))
-#define SPI_DMA_RX_ENA_V  0x1
-#define SPI_DMA_RX_ENA_S  0
 
 #define SPI_DMA_OUT_LINK_REG(i)          (REG_SPI_BASE(i) + 0x05C)
+/* SPI_DMA_TX_ENA : R/W ;bitpos:[31] ;default: 1'b0 ; */
+/*description: spi dma write data status bit.*/
+#define SPI_DMA_TX_ENA  (BIT(31))
+#define SPI_DMA_TX_ENA_M  (BIT(31))
+#define SPI_DMA_TX_ENA_V  0x1
+#define SPI_DMA_TX_ENA_S  31
 /* SPI_OUTLINK_RESTART : R/W ;bitpos:[30] ;default: 1'b0 ; */
 /*description: Set the bit to mount on new outlink descriptors.*/
 #define SPI_OUTLINK_RESTART  (BIT(30))
@@ -823,6 +819,12 @@ extern "C" {
 #define SPI_OUTLINK_ADDR_S  0
 
 #define SPI_DMA_IN_LINK_REG(i)          (REG_SPI_BASE(i) + 0x060)
+/* SPI_DMA_RX_ENA : R/W ;bitpos:[31] ;default: 1'b0 ; */
+/*description: spi dma read data status bit.*/
+#define SPI_DMA_RX_ENA  (BIT(31))
+#define SPI_DMA_RX_ENA_M  (BIT(31))
+#define SPI_DMA_RX_ENA_V  0x1
+#define SPI_DMA_RX_ENA_S  31
 /* SPI_INLINK_RESTART : R/W ;bitpos:[30] ;default: 1'b0 ; */
 /*description: Set the bit to mount on new inlink descriptors.*/
 #define SPI_INLINK_RESTART  (BIT(30))
@@ -1626,7 +1628,7 @@ extern "C" {
 #define SPI_SOP_ITL_S  0
 
 #define SPI_DATE_REG(i)          (REG_SPI_BASE(i) + 0x3FC)
-/* SPI_DATE : RW ;bitpos:[27:0] ;default: 32'h1809110 ; */
+/* SPI_DATE : RW ;bitpos:[27:0] ;default: 32'h1809190 ; */
 /*description: SPI register version.*/
 #define SPI_DATE  0x0FFFFFFF
 #define SPI_DATE_M  ((SPI_DATE_V)<<(SPI_DATE_S))
