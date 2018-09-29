@@ -37,6 +37,8 @@ typedef struct {
 static uint32_t mem_dbg_count = 0;
 static uint32_t mem_dbg_count2 = 0;
 static osi_mem_dbg_info_t mem_dbg_info[OSI_MEM_DBG_INFO_MAX];
+static uint32_t mem_dbg_total_size = 0;
+static uint32_t mem_dbg_max_size = 0;
 
 void osi_mem_dbg_init(void)
 {
@@ -50,6 +52,8 @@ void osi_mem_dbg_init(void)
     }
     mem_dbg_count = 0;
     mem_dbg_count2 = 0;
+    mem_dbg_total_size = 0;
+    mem_dbg_max_size = 0;
 }
 
 void osi_mem_dbg_record(void *p, int size, const char *func, int line)
@@ -75,6 +79,11 @@ void osi_mem_dbg_record(void *p, int size, const char *func, int line)
     if (i >= OSI_MEM_DBG_INFO_MAX) {
         OSI_TRACE_ERROR("%s full %s %d !!\n", __func__, func, line);
     }
+
+    mem_dbg_total_size += size;
+    if(mem_dbg_max_size < mem_dbg_total_size) {
+        mem_dbg_max_size = mem_dbg_total_size;
+    }
 }
 
 void osi_mem_dbg_clean(void *p, const char *func, int line)
@@ -88,6 +97,7 @@ void osi_mem_dbg_clean(void *p, const char *func, int line)
 
     for (i = 0; i < OSI_MEM_DBG_INFO_MAX; i++) {
         if (mem_dbg_info[i].p == p) {
+            mem_dbg_total_size -= mem_dbg_info[i].size;
             mem_dbg_info[i].p = NULL;
             mem_dbg_info[i].size = 0;
             mem_dbg_info[i].func = NULL;
@@ -112,6 +122,17 @@ void osi_mem_dbg_show(void)
         }
     }
     OSI_TRACE_ERROR("--> count %d\n", mem_dbg_count);
+    OSI_TRACE_ERROR("--> size %dB\n--> max size %dB\n", mem_dbg_total_size, mem_dbg_max_size);
+}
+
+uint32_t osi_mem_dbg_get_max_size(void)
+{
+    return mem_dbg_max_size;
+}
+
+uint32_t osi_mem_dbg_get_total_size(void)
+{
+    return mem_dbg_total_size;
 }
 #endif
 
@@ -164,14 +185,14 @@ void *osi_calloc_func(size_t size)
     return heap_caps_calloc_prefer(1, size, 2, MALLOC_CAP_DEFAULT|MALLOC_CAP_SPIRAM, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
 #else
     return calloc(1, size);
-#endif /* #if HEAP_ALLOCATION_FROM_SPIRAM_FIRST */ 
+#endif /* #if HEAP_ALLOCATION_FROM_SPIRAM_FIRST */
 #endif /* #if HEAP_MEMORY_DEBUG */
 }
 
 void osi_free_func(void *ptr)
 {
 #if HEAP_MEMORY_DEBUG
-    osi_mem_dbg_clean(ptr, __func__, __LINE__); 
+    osi_mem_dbg_clean(ptr, __func__, __LINE__);
 #endif
     free(ptr);
 }
