@@ -19,7 +19,6 @@
 extern "C" {
 #endif
 #include "soc.h"
-#define REG_I2S_BASE( i ) (DR_REG_I2S_BASE)
 #define I2S_CONF_REG(i)          (REG_I2S_BASE(i) + 0x0008)
 /* I2S_RX_RESET_ST : RO ;bitpos:[29] ;default: 1'b0 ; */
 /*description: */

@@ -56,7 +56,7 @@ extern "C" {
 #define GPIO_BT_SEL_S  0
 
 #define GPIO_OUT_REG          (DR_REG_GPIO_BASE + 0x4)
-/* GPIO_OUT_DATA : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_OUT_DATA : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
 #define GPIO_OUT_DATA  0xFFFFFFFF
 #define GPIO_OUT_DATA_M  ((GPIO_OUT_DATA_V)<<(GPIO_OUT_DATA_S))
@@ -64,44 +64,44 @@ extern "C" {
 #define GPIO_OUT_DATA_S  0
 
 #define GPIO_OUT_W1TS_REG          (DR_REG_GPIO_BASE + 0x8)
-/* GPIO_OUT_DATA_W1TS : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_OUT_W1TS : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_OUT_DATA_W1TS  0xFFFFFFFF
-#define GPIO_OUT_DATA_W1TS_M  ((GPIO_OUT_DATA_W1TS_V)<<(GPIO_OUT_DATA_W1TS_S))
-#define GPIO_OUT_DATA_W1TS_V  0xFFFFFFFF
-#define GPIO_OUT_DATA_W1TS_S  0
+#define GPIO_OUT_W1TS  0xFFFFFFFF
+#define GPIO_OUT_W1TS_M  ((GPIO_OUT_W1TS_V)<<(GPIO_OUT_W1TS_S))
+#define GPIO_OUT_W1TS_V  0xFFFFFFFF
+#define GPIO_OUT_W1TS_S  0
 
 #define GPIO_OUT_W1TC_REG          (DR_REG_GPIO_BASE + 0xC)
-/* GPIO_OUT_DATA_W1TC : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_OUT_W1TC : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_OUT_DATA_W1TC  0xFFFFFFFF
-#define GPIO_OUT_DATA_W1TC_M  ((GPIO_OUT_DATA_W1TC_V)<<(GPIO_OUT_DATA_W1TC_S))
-#define GPIO_OUT_DATA_W1TC_V  0xFFFFFFFF
-#define GPIO_OUT_DATA_W1TC_S  0
+#define GPIO_OUT_W1TC  0xFFFFFFFF
+#define GPIO_OUT_W1TC_M  ((GPIO_OUT_W1TC_V)<<(GPIO_OUT_W1TC_S))
+#define GPIO_OUT_W1TC_V  0xFFFFFFFF
+#define GPIO_OUT_W1TC_S  0
 
 #define GPIO_OUT1_REG          (DR_REG_GPIO_BASE + 0x10)
-/* GPIO_OUT1_DATA : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_OUT1_DATA : R/W ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
 #define GPIO_OUT1_DATA  0x003FFFFF
-#define GPIO_OUT1_DATA_M  ((GPIO_OUT1_DATA_V)<<(GPIO_OUT1_DATA_S))
+#define GPIO_OUT1_DATA_M  ((GPIO_OUT_DATA_V)<<(GPIO_OUT_DATA_S))
 #define GPIO_OUT1_DATA_V  0x3FFFFF
 #define GPIO_OUT1_DATA_S  0
 
 #define GPIO_OUT1_W1TS_REG          (DR_REG_GPIO_BASE + 0x14)
-/* GPIO_OUT1_DATA_W1TS : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_OUT1_W1TS : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_OUT1_DATA_W1TS  0x003FFFFF
-#define GPIO_OUT1_DATA_W1TS_M  ((GPIO_OUT1_DATA_W1TS_V)<<(GPIO_OUT1_DATA_W1TS_S))
-#define GPIO_OUT1_DATA_W1TS_V  0x3FFFFF
-#define GPIO_OUT1_DATA_W1TS_S  0
+#define GPIO_OUT1_W1TS  0x003FFFFF
+#define GPIO_OUT1_W1TS_M  ((GPIO_OUT1_W1TS_V)<<(GPIO_OUT1_W1TS_S))
+#define GPIO_OUT1_W1TS_V  0x3FFFFF
+#define GPIO_OUT1_W1TS_S  0
 
 #define GPIO_OUT1_W1TC_REG          (DR_REG_GPIO_BASE + 0x18)
-/* GPIO_OUT1_DATA_W1TC : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_OUT1_W1TC : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_OUT1_DATA_W1TC  0x003FFFFF
-#define GPIO_OUT1_DATA_W1TC_M  ((GPIO_OUT1_DATA_W1TC_V)<<(GPIO_OUT1_DATA_W1TC_S))
-#define GPIO_OUT1_DATA_W1TC_V  0x3FFFFF
-#define GPIO_OUT1_DATA_W1TC_S  0
+#define GPIO_OUT1_W1TC  0x003FFFFF
+#define GPIO_OUT1_W1TC_M  ((GPIO_OUT1_W1TC_V)<<(GPIO_OUT1_W1TC_S))
+#define GPIO_OUT1_W1TC_V  0x3FFFFF
+#define GPIO_OUT1_W1TC_S  0
 
 #define GPIO_SDIO_SELECT_REG          (DR_REG_GPIO_BASE + 0x1C)
 /* GPIO_SDIO_SEL : R/W ;bitpos:[7:0] ;default: 8'h0 ; */
@@ -120,20 +120,20 @@ extern "C" {
 #define GPIO_ENABLE_DATA_S  0
 
 #define GPIO_ENABLE_W1TS_REG          (DR_REG_GPIO_BASE + 0x24)
-/* GPIO_ENABLE_DATA_W1TS : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_ENABLE_W1TS : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_ENABLE_DATA_W1TS  0xFFFFFFFF
-#define GPIO_ENABLE_DATA_W1TS_M  ((GPIO_ENABLE_DATA_W1TS_V)<<(GPIO_ENABLE_DATA_W1TS_S))
-#define GPIO_ENABLE_DATA_W1TS_V  0xFFFFFFFF
-#define GPIO_ENABLE_DATA_W1TS_S  0
+#define GPIO_ENABLE_W1TS  0xFFFFFFFF
+#define GPIO_ENABLE_W1TS_M  ((GPIO_ENABLE_W1TS_V)<<(GPIO_ENABLE_W1TS_S))
+#define GPIO_ENABLE_W1TS_V  0xFFFFFFFF
+#define GPIO_ENABLE_W1TS_S  0
 
 #define GPIO_ENABLE_W1TC_REG          (DR_REG_GPIO_BASE + 0x28)
-/* GPIO_ENABLE_DATA_W1TC : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_ENABLE_W1TC : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_ENABLE_DATA_W1TC  0xFFFFFFFF
-#define GPIO_ENABLE_DATA_W1TC_M  ((GPIO_ENABLE_DATA_W1TC_V)<<(GPIO_ENABLE_DATA_W1TC_S))
-#define GPIO_ENABLE_DATA_W1TC_V  0xFFFFFFFF
-#define GPIO_ENABLE_DATA_W1TC_S  0
+#define GPIO_ENABLE_W1TC  0xFFFFFFFF
+#define GPIO_ENABLE_W1TC_M  ((GPIO_ENABLE_W1TC_V)<<(GPIO_ENABLE_W1TC_S))
+#define GPIO_ENABLE_W1TC_V  0xFFFFFFFF
+#define GPIO_ENABLE_W1TC_S  0
 
 #define GPIO_ENABLE1_REG          (DR_REG_GPIO_BASE + 0x2C)
 /* GPIO_ENABLE1_DATA : R/W ;bitpos:[21:0] ;default: 22'h0 ; */
@@ -144,20 +144,20 @@ extern "C" {
 #define GPIO_ENABLE1_DATA_S  0
 
 #define GPIO_ENABLE1_W1TS_REG          (DR_REG_GPIO_BASE + 0x30)
-/* GPIO_ENABLE1_DATA_W1TS : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_ENABLE1_W1TS : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_ENABLE1_DATA_W1TS  0x003FFFFF
-#define GPIO_ENABLE1_DATA_W1TS_M  ((GPIO_ENABLE1_DATA_W1TS_V)<<(GPIO_ENABLE1_DATA_W1TS_S))
-#define GPIO_ENABLE1_DATA_W1TS_V  0x3FFFFF
-#define GPIO_ENABLE1_DATA_W1TS_S  0
+#define GPIO_ENABLE1_W1TS  0x003FFFFF
+#define GPIO_ENABLE1_W1TS_M  ((GPIO_ENABLE1_W1TS_V)<<(GPIO_ENABLE1_W1TS_S))
+#define GPIO_ENABLE1_W1TS_V  0x3FFFFF
+#define GPIO_ENABLE1_W1TS_S  0
 
 #define GPIO_ENABLE1_W1TC_REG          (DR_REG_GPIO_BASE + 0x34)
-/* GPIO_ENABLE1_DATA_W1TC : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_ENABLE1_W1TC : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_ENABLE1_DATA_W1TC  0x003FFFFF
-#define GPIO_ENABLE1_DATA_W1TC_M  ((GPIO_ENABLE1_DATA_W1TC_V)<<(GPIO_ENABLE1_DATA_W1TC_S))
-#define GPIO_ENABLE1_DATA_W1TC_V  0x3FFFFF
-#define GPIO_ENABLE1_DATA_W1TC_S  0
+#define GPIO_ENABLE1_W1TC  0x003FFFFF
+#define GPIO_ENABLE1_W1TC_M  ((GPIO_ENABLE1_W1TC_V)<<(GPIO_ENABLE1_W1TC_S))
+#define GPIO_ENABLE1_W1TC_V  0x3FFFFF
+#define GPIO_ENABLE1_W1TC_S  0
 
 #define GPIO_STRAP_REG          (DR_REG_GPIO_BASE + 0x38)
 /* GPIO_STRAPPING : RO ;bitpos:[15:0] ;default:  ; */
@@ -192,20 +192,20 @@ extern "C" {
 #define GPIO_STATUS_INT_S  0
 
 #define GPIO_STATUS_W1TS_REG          (DR_REG_GPIO_BASE + 0x48)
-/* GPIO_STATUS_INT_W1TS : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_STATUS_W1TS : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_STATUS_INT_W1TS  0xFFFFFFFF
-#define GPIO_STATUS_INT_W1TS_M  ((GPIO_STATUS_INT_W1TS_V)<<(GPIO_STATUS_INT_W1TS_S))
-#define GPIO_STATUS_INT_W1TS_V  0xFFFFFFFF
-#define GPIO_STATUS_INT_W1TS_S  0
+#define GPIO_STATUS_W1TS  0xFFFFFFFF
+#define GPIO_STATUS_W1TS_M  ((GPIO_STATUS_W1TS_V)<<(GPIO_STATUS_W1TS_S))
+#define GPIO_STATUS_W1TS_V  0xFFFFFFFF
+#define GPIO_STATUS_W1TS_S  0
 
 #define GPIO_STATUS_W1TC_REG          (DR_REG_GPIO_BASE + 0x4C)
-/* GPIO_STATUS_INT_W1TC : R/W ;bitpos:[31:0] ;default: x ; */
+/* GPIO_STATUS_W1TC : WO ;bitpos:[31:0] ;default: 32'h0 ; */
 /*description: */
-#define GPIO_STATUS_INT_W1TC  0xFFFFFFFF
-#define GPIO_STATUS_INT_W1TC_M  ((GPIO_STATUS_INT_W1TC_V)<<(GPIO_STATUS_INT_W1TC_S))
-#define GPIO_STATUS_INT_W1TC_V  0xFFFFFFFF
-#define GPIO_STATUS_INT_W1TC_S  0
+#define GPIO_STATUS_W1TC  0xFFFFFFFF
+#define GPIO_STATUS_W1TC_M  ((GPIO_STATUS_W1TC_V)<<(GPIO_STATUS_W1TC_S))
+#define GPIO_STATUS_W1TC_V  0xFFFFFFFF
+#define GPIO_STATUS_W1TC_S  0
 
 #define GPIO_STATUS1_REG          (DR_REG_GPIO_BASE + 0x50)
 /* GPIO_STATUS1_INT : R/W ;bitpos:[21:0] ;default: 22'h0 ; */
@@ -216,20 +216,20 @@ extern "C" {
 #define GPIO_STATUS1_INT_S  0
 
 #define GPIO_STATUS1_W1TS_REG          (DR_REG_GPIO_BASE + 0x54)
-/* GPIO_STATUS1_INT_W1TS : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_STATUS1_W1TS : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_STATUS1_INT_W1TS  0x003FFFFF
-#define GPIO_STATUS1_INT_W1TS_M  ((GPIO_STATUS1_INT_W1TS_V)<<(GPIO_STATUS1_INT_W1TS_S))
-#define GPIO_STATUS1_INT_W1TS_V  0x3FFFFF
-#define GPIO_STATUS1_INT_W1TS_S  0
+#define GPIO_STATUS1_W1TS  0x003FFFFF
+#define GPIO_STATUS1_W1TS_M  ((GPIO_STATUS1_W1TS_V)<<(GPIO_STATUS1_W1TS_S))
+#define GPIO_STATUS1_W1TS_V  0x3FFFFF
+#define GPIO_STATUS1_W1TS_S  0
 
 #define GPIO_STATUS1_W1TC_REG          (DR_REG_GPIO_BASE + 0x58)
-/* GPIO_STATUS1_INT_W1TC : R/W ;bitpos:[21:0] ;default: x ; */
+/* GPIO_STATUS1_W1TC : WO ;bitpos:[21:0] ;default: 22'h0 ; */
 /*description: */
-#define GPIO_STATUS1_INT_W1TC  0x003FFFFF
-#define GPIO_STATUS1_INT_W1TC_M  ((GPIO_STATUS1_INT_W1TC_V)<<(GPIO_STATUS1_INT_W1TC_S))
-#define GPIO_STATUS1_INT_W1TC_V  0x3FFFFF
-#define GPIO_STATUS1_INT_W1TC_S  0
+#define GPIO_STATUS1_W1TC  0x003FFFFF
+#define GPIO_STATUS1_W1TC_M  ((GPIO_STATUS1_W1TC_V)<<(GPIO_STATUS1_W1TC_S))
+#define GPIO_STATUS1_W1TC_V  0x3FFFFF
+#define GPIO_STATUS1_W1TC_S  0
 
 #define GPIO_PCPU_INT_REG          (DR_REG_GPIO_BASE + 0x5C)
 /* GPIO_PROCPU_INT : RO ;bitpos:[31:0] ;default: 32'h0 ; */

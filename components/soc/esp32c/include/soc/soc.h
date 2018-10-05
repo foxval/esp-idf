@@ -110,6 +110,15 @@
 #define DR_REG_SPI4_BASE                        0x3f437000
 #define DR_REG_USB_WRAP_BASE                    0x3f439000
 
+#define REG_UHCI_BASE(i)         (DR_REG_UHCI0_BASE)
+#define REG_UART_BASE( i )  (DR_REG_UART_BASE + (i) * 0x10000 )
+#define REG_UART_AHB_BASE(i)  (0x60000000 + (i) * 0x10000 )
+#define UART_FIFO_AHB_REG(i)  (REG_UART_AHB_BASE(i) + 0x0)
+#define REG_I2S_BASE( i ) (DR_REG_I2S_BASE)
+#define REG_TIMG_BASE(i)              (DR_REG_TIMERGROUP0_BASE + (i)*0x1000)
+#define REG_SPI_MEM_BASE(i)     (DR_REG_SPI0_BASE - (i) * 0x1000)
+#define REG_I2C_BASE(i)    (DR_REG_I2C_EXT_BASE + (i) * 0x14000 )
+
 //Registers Operation {{
 #define ETS_UNCACHED_ADDR(addr) (addr)
 #define ETS_CACHED_ADDR(addr) (addr) 

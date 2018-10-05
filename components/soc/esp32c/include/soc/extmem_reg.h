@@ -1363,7 +1363,7 @@ extern "C" {
 #define DPORT_CLK_FORCE_ON_DB_ENCRYPT_S  0
 
 #define DPORT_CACHE_BRIDGE_ARBITER_CTRL_REG          (DR_REG_EXTMEM_BASE + 0x144)
-/* DPORT_ALLOC_WB_HOLD_ARBITER : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/* DPORT_ALLOC_WB_HOLD_ARBITER : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_ALLOC_WB_HOLD_ARBITER  (BIT(0))
 #define DPORT_ALLOC_WB_HOLD_ARBITER_M  (BIT(0))
@@ -1379,7 +1379,7 @@ extern "C" {
 #define EXTMEM_CLK_EN_S  0
 
 #define EXTMEM_DATE_REG          (DR_REG_EXTMEM_BASE + 0x3FC)
-/* EXTMEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809130 ; */
+/* EXTMEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809200 ; */
 /*description: */
 #define EXTMEM_DATE  0x0FFFFFFF
 #define EXTMEM_DATE_M  ((EXTMEM_DATE_V)<<(EXTMEM_DATE_S))
