@@ -257,7 +257,7 @@ static const uint32_t cache_mask  = DPORT_PRO_CACHE_MASK_OPSDRAM | DPORT_PRO_CAC
 #else
 static const uint32_t icache_mask  = DPORT_PRO_ICACHE_MASK_DROM0 |DPORT_PRO_ICACHE_MASK_IROM0 |
         DPORT_PRO_ICACHE_MASK_IRAM1 | DPORT_PRO_ICACHE_MASK_IRAM0;
-static const uint32_t dcache_mask  = DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DROM0;
+static const uint32_t dcache_mask  = DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DRAM0 | DPORT_PRO_DCACHE_MASK_DPORT | DPORT_PRO_DCACHE_MASK_DROM0;
 #endif
 
 static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_state)

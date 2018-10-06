@@ -55,7 +55,7 @@
 #define MMU_ADDR_MASK DPORT_MMU_ADDRESS_MASK
 #define IROM0_PAGES_NUM (IROM0_PAGES_END - IROM0_PAGES_START)
 #define DROM0_PAGES_NUM (DROM0_PAGES_END - DROM0_PAGES_START)
-#define PAGES_LIMIT (DROM0_PAGES_END > DROM0_PAGES_END ? DROM0_PAGES_END:DROM0_PAGES_END)
+#define PAGES_LIMIT (IROM0_PAGES_END > DROM0_PAGES_END ? IROM0_PAGES_END:DROM0_PAGES_END)
 #define INVALID_ENTRY_VAL DPORT_FLASH_MMU_TABLE_INVALID_VAL
 #define VADDR0_START_ADDR SOC_DROM_LOW
 #define VADDR1_START_ADDR 0x40000000
@@ -152,7 +152,7 @@ esp_err_t IRAM_ATTR spi_flash_mmap(size_t src_addr, size_t size, spi_flash_mmap_
         return ESP_ERR_NO_MEM;
     }
     for (int i = 0; i < page_count; i++) {
-        pages[i] = (phys_page+i) | BIT(15);
+        pages[i] = (phys_page+i) | DPORT_MMU_ACCESS_FLASH;
     }
     ret=spi_flash_mmap_pages(pages, page_count, memory, out_ptr, out_handle);
     free(pages);
@@ -272,12 +272,20 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
     */
     if (!did_flush && need_flush) {
 #if CONFIG_SPIRAM_SUPPORT
+#ifdef CONFIG_CHIP_IS_ESP32
         esp_spiram_writeback_cache();
+#endif
 #endif
 #ifdef CONFIG_CHIP_IS_ESP32
         Cache_Flush(0);
 #else
         Cache_Invalidate_ICache_All(0);
+        if (!Cache_Drom0_Using_ICache()) {
+#if CONFIG_SPIRAM_SUPPORT
+            Cache_WriteBack_All(0);
+#endif
+            Cache_Invalidate_DCache_All(0);
+        }
 #endif
 #ifndef CONFIG_FREERTOS_UNICORE
         Cache_Flush(1);
@@ -406,12 +414,20 @@ static inline IRAM_ATTR bool update_written_pages(size_t start_addr, size_t leng
                cores, or the pointer passed between CPUs.
             */
 #if CONFIG_SPIRAM_SUPPORT
+#ifdef CONFIG_CHIP_IS_ESP32
             esp_spiram_writeback_cache();
+#endif
 #endif
 #ifdef CONFIG_CHIP_IS_ESP32
             Cache_Flush(0);
 #else
             Cache_Invalidate_ICache_All(0);
+            if (!Cache_Drom0_Using_ICache()) {
+#if CONFIG_SPIRAM_SUPPORT
+                Cache_WriteBack_All(0);
+#endif
+                Cache_Invalidate_DCache_All(0);
+            }
 #endif
 #ifndef CONFIG_FREERTOS_UNICORE
             Cache_Flush(1);
