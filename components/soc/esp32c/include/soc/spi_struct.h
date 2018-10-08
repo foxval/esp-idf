@@ -175,7 +175,11 @@ typedef volatile struct {
         struct {
             uint32_t reserved0:  4;                       /*reserved*/
             uint32_t trans_done: 1;                       /*The interrupt raw bit for the completion of any operation in both the master mode and the slave mode.*/
-            uint32_t int_en:     5;                       /*Interrupt enable bits for the below 5 sources*/
+            uint32_t rd_buf_inten:     1;                   /*The interrupt enable bit for the completion of read-buffer operation in the slave mode.*/
+            uint32_t wr_buf_inten:     1;                   /*The interrupt enable bit for the completion of write-buffer operation in the slave mode.*/
+            uint32_t rd_dma_inten:     1;                   /*The interrupt enable bit for the completion of read-status operation in the slave mode.*/
+            uint32_t wr_dma_inten:     1;                   /*The interrupt enable bit for the completion of write-status operation in the slave mode.*/
+            uint32_t trans_inten:      1;                   /*The interrupt enable bit for the completion of any operation in both the master mode and the slave mode.*/
             uint32_t reserved10:13;                       /*reserved*/
             uint32_t trans_cnt:  4;                       /*The operations counter in both the master mode and the slave mode.*/
             uint32_t reserved27: 1;                       /*reserved*/
@@ -385,9 +389,7 @@ typedef volatile struct {
         };
         uint32_t val;
     } dma_in_status;
-    uint32_t data_buf[16];                                          /*data buffer*/
-    uint32_t w16;                                         /*data buffer*/
-    uint32_t w17;                                         /*data buffer*/
+    uint32_t data_buf[18];                                          /*data buffer*/
     union {
         struct {
             uint32_t din0_mode:     2;                    /*the input signals are delayed by system clock cycles  0: input without delayed  1: input with the posedge of clk_apb 2 input with the negedge of clk_apb  3: input with the spi_clk*/
@@ -663,6 +665,7 @@ typedef volatile struct {
 extern spi_dev_t GPSPI2;   //FSPI
 extern spi_dev_t GPSPI3;   //HSPI
 extern spi_dev_t GPSPI4;   //VSPI
+
 
 _Static_assert(sizeof(spi_dev_t)==0x400, "***invalid spi");
 
