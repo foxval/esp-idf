@@ -39,14 +39,15 @@
 #endif
 #include "rom/queue.h"
 
-#define REGIONS_COUNT 4
 #define PAGES_PER_REGION 64
 #ifdef CONFIG_CHIP_IS_ESP32
+#define REGIONS_COUNT 4
 #define IROM0_PAGES_START 64
 #define IROM0_PAGES_END 256
 #define DROM0_PAGES_START 0
 #define DROM0_PAGES_END 64
 #else
+#define REGIONS_COUNT 8
 #define IROM0_PAGES_START (PRO_CACHE_IBUS0_MMU_START / sizeof(uint32_t))
 #define IROM0_PAGES_END (PRO_CACHE_IBUS2_MMU_END / sizeof(uint32_t))
 #define DROM0_PAGES_START (Cache_Drom0_Using_ICache()? PRO_CACHE_IBUS3_MMU_START / sizeof(uint32_t) : PRO_CACHE_DBUS3_MMU_START / sizeof(uint32_t))
@@ -106,7 +107,7 @@ static void IRAM_ATTR spi_flash_mmap_init()
             DPORT_PRO_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;
         }
 #endif
-        if ((entry_pro & INVALID_ENTRY_VAL) == 0 && (i == 0 || i == PRO_IRAM0_FIRST_USABLE_PAGE || entry_pro != 0)) {
+        if ((entry_pro & INVALID_ENTRY_VAL) == 0 && (i == DROM0_PAGES_START || i == PRO_IRAM0_FIRST_USABLE_PAGE || entry_pro != 0)) {
             s_mmap_page_refcnt[i] = 1;
         } else {
             DPORT_PRO_FLASH_MMU_TABLE[i] = DPORT_FLASH_MMU_TABLE_INVALID_VAL;

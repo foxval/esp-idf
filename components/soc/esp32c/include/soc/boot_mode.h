@@ -54,14 +54,11 @@
 /*do not include download mode*/
 #define ETS_IS_UART_BOOT()				IS_0111(BOOT_MODE_GET())
 
-/*all spi boot including spi/hspi/legacy*/
+/*all spi boot including spi/legacy*/
 #define ETS_IS_FLASH_BOOT()				(IS_1XXX(BOOT_MODE_GET()) || IS_0100(BOOT_MODE_GET()))
 
-/*all faster spi boot including spi/hspi*/
+/*all faster spi boot including spi*/
 #define ETS_IS_FAST_FLASH_BOOT()				IS_1XXX(BOOT_MODE_GET())
-
-/*all spi boot including spi/legacy*/
-#define ETS_IS_SPI_FLASH_BOOT()				(IS_1XXX(BOOT_MODE_GET()) || IS_0100(BOOT_MODE_GET()))
 
 /*all sdio V2 of failing edge input, failing edge output*/
 #define ETS_IS_SDIO_FEI_FEO_V2_BOOT()				IS_0000(BOOT_MODE_GET())
@@ -88,7 +85,7 @@
 #define ETS_IS_ATE_BOOT()				IS_0101(BOOT_MODE_GET())
 
 /*TODO:efuse not work now, just print*/
-#define ETS_IS_PRINT_BOOT()                             (1)
+#define ETS_IS_PRINT_BOOT()                             (1 || !ETS_IS_FAST_FLASH_BOOT())
 /*used by  ETS_IS_SDIO_UART_BOOT*/
 #define SEL_NO_BOOT                                    0
 #define SEL_SDIO_BOOT                                 BIT0

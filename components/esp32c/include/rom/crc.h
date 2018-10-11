@@ -21,11 +21,11 @@
 extern "C" {
 #endif
 
-/** \defgroup uart_apis, uart configuration and communication related apis
-  * @brief uart apis
+/** \defgroup crc_apis, uart configuration and communication related apis
+  * @brief crc apis
   */
 
-/** @addtogroup uart_apis
+/** @addtogroup crc_apis
   * @{
   */
 

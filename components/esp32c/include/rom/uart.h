@@ -266,11 +266,7 @@ void uart_tx_flush(uint8_t uart_no);
   * The function defined in ROM code has a bug, so we define the correct version
   * here for compatibility.
   */
-static inline void IRAM_ATTR uart_tx_wait_idle(uint8_t uart_no) {
-    while(REG_GET_FIELD(UART_STATUS_REG(uart_no), UART_ST_UTX_OUT)) {
-        ;
-    }
-}
+void uart_tx_wait_idle(uint8_t uart_no);
 
 /**
   * @brief Get an input char from message channel.

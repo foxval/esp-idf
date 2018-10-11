@@ -615,6 +615,7 @@ static void wdt_reset_check(void)
     RESET_REASON rst_reas[2];
 
     rst_reas[0] = rtc_get_reset_reason(0);
+#ifdef CONFIG_CHIP_IS_ESP32
     rst_reas[1] = rtc_get_reset_reason(1);
     if (rst_reas[0] == RTCWDT_SYS_RESET || rst_reas[0] == TG0WDT_SYS_RESET || rst_reas[0] == TG1WDT_SYS_RESET ||
         rst_reas[0] == TGWDT_CPU_RESET  || rst_reas[0] == RTCWDT_CPU_RESET) {
@@ -626,6 +627,14 @@ static void wdt_reset_check(void)
         ESP_LOGW(TAG, "APP CPU has been reset by WDT.");
         wdt_rst = 1;
     }
+#else
+    if (rst_reas[0] == RTCWDT_SYS_RESET || rst_reas[0] == TG0WDT_SYS_RESET || rst_reas[0] == TG1WDT_SYS_RESET ||
+        rst_reas[0] == TG0WDT_CPU_RESET || rst_reas[0] == TG1WDT_CPU_RESET || rst_reas[0] == RTCWDT_CPU_RESET) {
+        ESP_LOGW(TAG, "PRO CPU has been reset by WDT.");
+        wdt_rst = 1;
+    }
+
+#endif
     if (wdt_rst) {
         // if reset by WDT dump info from trace port
         wdt_reset_info_dump(0);

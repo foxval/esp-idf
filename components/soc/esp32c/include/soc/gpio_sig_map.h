@@ -286,5 +286,5 @@
 #define PRO_ALONEGPIO_IN7_IDX			242
 #define PRO_ALONEGPIO_OUT7_IDX			242
 #define CLK_I2S_MUX_IDX			251
-#define SIG_GPIO_OUT_IDX            512
+#define SIG_GPIO_OUT_IDX            256
 #define GPIO_MAP_DATE_IDX			0x18090401

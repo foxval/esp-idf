@@ -193,10 +193,12 @@ ETS_STATUS ets_unpack_flash_code_legacy(uint32_t pos, uint32_t *entry_addr, bool
   *
   * @param  bool config : Config the flash when unpacking the image, config should be done only once.
   *
+  * @param  bool legacy : will not use cache to load code if it is true.
+  *
   * @return ETS_OK     : unpack successful
   * @return ETS_FAILED : unpack failed
   */
-ETS_STATUS ets_unpack_flash_code(uint32_t pos, uint32_t *entry_addr, bool jump, bool sb_need_check, bool config);
+ETS_STATUS ets_unpack_flash_code(uint32_t pos, uint32_t *entry_addr, bool jump, bool sb_need_check, bool config, bool legacy);
 
 /**
   * @}

@@ -79,20 +79,20 @@ typedef enum {
 typedef enum {
     NO_MEAN                =  0,
     POWERON_RESET          =  1,    /**<1, Vbat power on reset*/
-    SW_RESET               =  3,    /**<3, Software reset digital core*/
-    OWDT_RESET             =  4,    /**<4, Legacy watch dog reset digital core*/
+    RTC_SW_SYS_RESET       =  3,    /**<3, Software reset digital core*/
     DEEPSLEEP_RESET        =  5,    /**<3, Deep Sleep reset digital core*/
     SDIO_RESET             =  6,    /**<6, Reset by SLC module, reset digital core*/
     TG0WDT_SYS_RESET       =  7,    /**<7, Timer Group0 Watch dog reset digital core*/
     TG1WDT_SYS_RESET       =  8,    /**<8, Timer Group1 Watch dog reset digital core*/
     RTCWDT_SYS_RESET       =  9,    /**<9, RTC Watch dog Reset digital core*/
     INTRUSION_RESET        = 10,    /**<10, Instrusion tested to reset CPU*/
-    TGWDT_CPU_RESET        = 11,    /**<11, Time Group reset CPU*/
-    SW_CPU_RESET           = 12,    /**<12, Software reset CPU*/
+    TG0WDT_CPU_RESET       = 11,    /**<11, Time Group0 reset CPU*/
+    RTC_SW_CPU_RESET       = 12,    /**<12, Software reset CPU*/
     RTCWDT_CPU_RESET       = 13,    /**<13, RTC Watch dog Reset CPU*/
-    EXT_CPU_RESET          = 14,    /**<14, for APP CPU, reseted by PRO CPU*/
     RTCWDT_BROWN_OUT_RESET = 15,    /**<15, Reset when the vdd voltage is not stable*/
-    RTCWDT_RTC_RESET       = 16     /**<16, RTC Watch dog reset digital core and rtc module*/
+    RTCWDT_RTC_RESET       = 16,    /**<16, RTC Watch dog reset digital core and rtc module*/
+    TG1WDT_CPU_RESET       = 17,    /**<11, Time Group1 reset CPU*/
+    SUPER_WDT_RESET        = 18,    /**<11, super watchdog reset digital core and rtc module*/
 } RESET_REASON;
 
 typedef enum {
@@ -107,7 +107,11 @@ typedef enum {
     UART1_TRIG      = BIT7,
     TOUCH_TRIG      = BIT8,
     SAR_TRIG        = BIT9,
-    BT_TRIG         = BIT10
+    BT_TRIG         = BIT10,
+    RISCV_TRIG      = BIT11,
+    XTAL_DEAD_TRIG  = BIT12,
+    RISCV_TRAP_TRIG = BIT13,
+    USB_TRIG        = BIT14
 } WAKEUP_REASON;
 
 typedef enum {
@@ -122,26 +126,12 @@ typedef enum {
     UART1_TRIG_EN      = UART1_TRIG,
     TOUCH_TRIG_EN      = TOUCH_TRIG,
     SAR_TRIG_EN        = SAR_TRIG,
-    BT_TRIG_EN         = BT_TRIG
+    BT_TRIG_EN         = BT_TRIG,
+    RISCV_TRIG_EN      = RISCV_TRIG,
+    XTAL_DEAD_TRIG_EN  = XTAL_DEAD_TRIG,
+    RISCV_TRAP_TRIG_EN = RISCV_TRAP_TRIG,
+    USB_TRIG_EN        = USB_TRIG
 } WAKEUP_ENABLE;
-
-typedef enum {
-    NO_INT             = 0,
-    WAKEUP_INT         = BIT0,
-    REJECT_INT         = BIT1,
-    SDIO_IDLE_INT      = BIT2,
-    RTC_WDT_INT        = BIT3,
-    RTC_TIME_VALID_INT = BIT4
-} RTC_INT_REASON;
-
-typedef enum {
-    DISEN_INT             = 0,
-    WAKEUP_INT_EN         = WAKEUP_INT,
-    REJECT_INT_EN         = REJECT_INT,
-    SDIO_IDLE_INT_EN      = SDIO_IDLE_INT,
-    RTC_WDT_INT_EN        = RTC_WDT_INT,
-    RTC_TIME_VALID_INT_EN = RTC_TIME_VALID_INT
-} RTC_INT_EN;
 
 /**
   * @brief  Get the reset reason for CPU.
