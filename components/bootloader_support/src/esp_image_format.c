@@ -181,6 +181,12 @@ goto err;
         // No secure boot, but SHA-256 can be appended for basic corruption detection
         if (sha_handle != NULL && !esp_cpu_in_ocd_debug_mode()) {
             err = verify_simple_hash(sha_handle, data);
+#ifdef CONFIG_HARDWARE_IS_FPGA
+            if (err != ESP_OK) {
+                ESP_LOGW(TAG, "FIXME: Ignoring invalid SHA-256 as running on FPGA");
+                err = ESP_OK;
+            }
+#endif
         }
 #endif // CONFIG_SECURE_BOOT_ENABLED
     } else { // is_bootloader
