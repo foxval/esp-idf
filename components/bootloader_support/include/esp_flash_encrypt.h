@@ -15,6 +15,7 @@
 #define __ESP32_FLASH_ENCRYPT_H
 
 #include <stdbool.h>
+#include "sdkconfig.h"
 #include "esp_attr.h"
 #include "esp_err.h"
 #include "esp_spi_flash.h"
@@ -34,7 +35,13 @@
  * @return true if flash encryption is enabled.
  */
 static inline /** @cond */ IRAM_ATTR /** @endcond */ bool esp_flash_encryption_enabled(void) {
-    uint32_t flash_crypt_cnt = REG_GET_FIELD(EFUSE_BLK0_RDATA0_REG, EFUSE_RD_FLASH_CRYPT_CNT);
+    uint32_t flash_crypt_cnt;
+#ifdef CONFIG_CHIP_IS_ESP32
+    flash_crypt_cnt = REG_GET_FIELD(EFUSE_BLK0_RDATA0_REG, EFUSE_RD_FLASH_CRYPT_CNT);
+#else
+    flash_crypt_cnt = REG_GET_FIELD(EFUSE_RD_REPEAT_DATA1_REG,
+                                    EFUSE_SPI_BOOT_CRYPT_CNT);
+#endif
     /* __builtin_parity is in flash, so we calculate parity inline */
     bool enabled = false;
     while(flash_crypt_cnt) {

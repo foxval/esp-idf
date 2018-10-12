@@ -125,6 +125,7 @@ rtc_vddsdio_config_t rtc_vddsdio_get_config()
         result.tieh = (sdio_conf_reg & RTC_CNTL_SDIO_TIEH_M) >> RTC_CNTL_SDIO_TIEH_S;
         return result;
     }
+#if 0
     uint32_t efuse_reg = REG_READ(EFUSE_BLK0_RDATA4_REG);
     if (efuse_reg & EFUSE_RD_SDIO_FORCE) {
         // Get configuration from EFUSE
@@ -142,6 +143,7 @@ rtc_vddsdio_config_t rtc_vddsdio_get_config()
         }
         return result;
     }
+#endif
 
     // Otherwise, VDD_SDIO is controlled by bootstrapping pin
     uint32_t strap_reg = REG_READ(GPIO_STRAP_REG);

@@ -75,37 +75,7 @@ esp_err_t esp_base_mac_addr_get(uint8_t *mac)
 
 esp_err_t esp_efuse_mac_get_custom(uint8_t *mac)
 {
-    uint32_t mac_low;
-    uint32_t mac_high;
-    uint8_t efuse_crc;
-    uint8_t calc_crc;
-
-    uint8_t version = REG_READ(EFUSE_BLK3_RDATA5_REG) >> 24;
-
-    if (version != 1) {
-        ESP_LOGE(TAG, "Base MAC address from BLK3 of EFUSE version error, version = %d", version);
-        return ESP_ERR_INVALID_VERSION;
-    }
-
-    mac_low = REG_READ(EFUSE_BLK3_RDATA1_REG);
-    mac_high = REG_READ(EFUSE_BLK3_RDATA0_REG);
-
-    mac[0] = mac_high >> 8;
-    mac[1] = mac_high >> 16;
-    mac[2] = mac_high >> 24;
-    mac[3] = mac_low;
-    mac[4] = mac_low >> 8;
-    mac[5] = mac_low >> 16;
-
-    efuse_crc = mac_high;
-
-    calc_crc = esp_crc8(mac, 6);
-
-    if (efuse_crc != calc_crc) {
-        ESP_LOGE(TAG, "Base MAC address from BLK3 of EFUSE CRC error, efuse_crc = 0x%02x; calc_crc = 0x%02x", efuse_crc, calc_crc);
-        return ESP_ERR_INVALID_CRC;
-    }
-    return ESP_OK;
+    return ESP_ERR_NOT_SUPPORTED; // TODO: read from MAC block in efuse
 }
 
 esp_err_t esp_efuse_mac_get_default(uint8_t* mac)
@@ -399,41 +369,13 @@ const char* esp_get_idf_version(void)
     return IDF_VER;
 }
 
-static void get_chip_info_esp32(esp_chip_info_t* out_info)
-{
-    uint32_t reg = REG_READ(EFUSE_BLK0_RDATA3_REG);
-    memset(out_info, 0, sizeof(*out_info));
-    
-    out_info->model = CHIP_ESP32;
-    if ((reg & EFUSE_RD_CHIP_VER_REV1_M) != 0) {
-        out_info->revision = 1;
-    }
-#ifdef CONFIG_CHIP_IS_ESP32
-    if ((reg & EFUSE_RD_CHIP_VER_DIS_APP_CPU_M) == 0) {
-        out_info->cores = 2;
-    } else {
-        out_info->cores = 1;
-    }
-#else
-#ifdef CONFIG_CHIP_IS_ESP32C
-    out_info->cores = 1;
-#endif
-#endif
-    out_info->features = CHIP_FEATURE_WIFI_BGN;
-    if ((reg & EFUSE_RD_CHIP_VER_DIS_BT_M) == 0) {
-        out_info->features |= CHIP_FEATURE_BT | CHIP_FEATURE_BLE;
-    }
-    int package = (reg & EFUSE_RD_CHIP_VER_PKG_M) >> EFUSE_RD_CHIP_VER_PKG_S;
-    if (package == EFUSE_RD_CHIP_VER_PKG_ESP32D2WDQ5 ||
-        package == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD2 ||
-        package == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD4) {
-        out_info->features |= CHIP_FEATURE_EMB_FLASH;
-    }
-}
-
 void esp_chip_info(esp_chip_info_t* out_info)
 {
-    // Only ESP32 is supported now, in the future call one of the
-    // chip-specific functions based on sdkconfig choice
-    return get_chip_info_esp32(out_info);
+    memset(out_info, 0, sizeof(*out_info));
+
+    out_info->model = CHIP_ESP32;
+    out_info->cores = 1;
+    out_info->features = CHIP_FEATURE_WIFI_BGN;
+
+    // FIXME: other features?
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 #pragma once
 
+#include "sdkconfig.h"
 #include <stdbool.h>
 #include <esp_err.h>
 #include "soc/efuse_reg.h"
@@ -35,7 +36,11 @@ extern "C" {
  * @return true if secure boot is enabled.
  */
 static inline bool esp_secure_boot_enabled(void) {
+#ifdef CONFIG_CHIP_IS_ESP32
     return REG_READ(EFUSE_BLK0_RDATA6_REG) & EFUSE_RD_ABS_DONE_0;
+#else
+    return false; // FIXME
+#endif
 }
 
 

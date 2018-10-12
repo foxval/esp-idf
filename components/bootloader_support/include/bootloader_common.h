@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #pragma once
+#include <stdbool.h>
 #include "esp_flash_data_types.h"
 
 /// Type of hold a GPIO in low state
@@ -68,3 +69,10 @@ bool bootloader_common_erase_part_type_data(const char *list_erase, bool ota_dat
  * @return    Returns true if the list contains the label, false otherwise.
  */
 bool bootloader_common_label_search(const char *list, char *label);
+
+/**
+ * @brief Configure default SPI pin modes and drive strengths
+ *
+ * @param drv GPIO drive level (determined by clock frequency)
+ */
+void bootloader_configure_spi_pins(int drv);

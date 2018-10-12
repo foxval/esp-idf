@@ -262,6 +262,7 @@ const char* esp_get_idf_version(void);
  */
 typedef enum {
     CHIP_ESP32 = 1, //!< ESP32
+    CHIP_7_2_2 = 2, // FIXME: real name
 } esp_chip_model_t;
 
 /**

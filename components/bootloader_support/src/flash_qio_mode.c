@@ -162,6 +162,7 @@ static esp_err_t enable_qio_mode(read_status_fn_t read_status_fn,
     uint32_t status;
     const uint32_t spiconfig = ets_efuse_get_spiconfig();
 
+#ifdef CONFIG_CHIP_IS_ESP32
     if (spiconfig != EFUSE_SPICONFIG_SPI_DEFAULTS && spiconfig != EFUSE_SPICONFIG_HSPI_DEFAULTS) {
         // spiconfig specifies a custom efuse pin configuration. This config defines all pins -except- WP,
         // which is compiled into the bootloader instead.
@@ -177,6 +178,7 @@ static esp_err_t enable_qio_mode(read_status_fn_t read_status_fn,
             ESP_LOGW(TAG, "Chip is ESP32-D2WD/ESP32-PICOD4 but flash WP pin is different value to internal flash");
         }
     }
+#endif
 
     esp_rom_spiflash_wait_idle(&g_rom_flashchip);
 

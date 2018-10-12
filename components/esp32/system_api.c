@@ -377,12 +377,12 @@ const char* esp_get_idf_version(void)
     return IDF_VER;
 }
 
-static void get_chip_info_esp32(esp_chip_info_t* out_info)
+void esp_chip_info(esp_chip_info_t* out_info)
 {
     uint32_t reg = REG_READ(EFUSE_BLK0_RDATA3_REG);
     memset(out_info, 0, sizeof(*out_info));
-    
-    out_info->model = CHIP_ESP32;
+
+    out_info->model = CHIP_7_2_2;
     if ((reg & EFUSE_RD_CHIP_VER_REV1_M) != 0) {
         out_info->revision = 1;
     }
@@ -401,11 +401,4 @@ static void get_chip_info_esp32(esp_chip_info_t* out_info)
         package == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD4) {
         out_info->features |= CHIP_FEATURE_EMB_FLASH;
     }
-}
-
-void esp_chip_info(esp_chip_info_t* out_info)
-{
-    // Only ESP32 is supported now, in the future call one of the
-    // chip-specific functions based on sdkconfig choice
-    return get_chip_info_esp32(out_info);
 }
