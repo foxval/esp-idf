@@ -1456,19 +1456,25 @@ extern "C" {
 #define I2S_FIFO_FORCE_PD_S  0
 
 #define I2S_CONF2_REG(i)          (REG_I2S_BASE(i) + 0x00a8)
-/* I2S_CAM_SYNC_FIFO_RESET_ST : RO ;bitpos:[10] ;default: 1'b0 ; */
+/* I2S_I2SI_V_SYNC_FILTER_THRES : R/W ;bitpos:[13:11] ;default: 3'b0 ; */
 /*description: */
-#define I2S_CAM_SYNC_FIFO_RESET_ST  (BIT(10))
-#define I2S_CAM_SYNC_FIFO_RESET_ST_M  (BIT(10))
-#define I2S_CAM_SYNC_FIFO_RESET_ST_V  0x1
-#define I2S_CAM_SYNC_FIFO_RESET_ST_S  10
+#define I2S_I2SI_V_SYNC_FILTER_THRES  0x00000007
+#define I2S_I2SI_V_SYNC_FILTER_THRES_M  ((I2S_I2SI_V_SYNC_FILTER_THRES_V)<<(I2S_I2SI_V_SYNC_FILTER_THRES_S))
+#define I2S_I2SI_V_SYNC_FILTER_THRES_V  0x7
+#define I2S_I2SI_V_SYNC_FILTER_THRES_S  11
+/* I2S_I2SI_V_SYNC_FILTER_EN : R/W ;bitpos:[10] ;default: 1'b0 ; */
+/*description: */
+#define I2S_I2SI_V_SYNC_FILTER_EN  (BIT(10))
+#define I2S_I2SI_V_SYNC_FILTER_EN_M  (BIT(10))
+#define I2S_I2SI_V_SYNC_FILTER_EN_V  0x1
+#define I2S_I2SI_V_SYNC_FILTER_EN_S  10
 /* I2S_CAM_CLK_LOOPBACK : R/W ;bitpos:[9] ;default: 1'b0 ; */
 /*description: Set this bit to loopback cam_clk from i2s_rx*/
 #define I2S_CAM_CLK_LOOPBACK  (BIT(9))
 #define I2S_CAM_CLK_LOOPBACK_M  (BIT(9))
 #define I2S_CAM_CLK_LOOPBACK_V  0x1
 #define I2S_CAM_CLK_LOOPBACK_S  9
-/* I2S_CAM_SYNC_FIFO_RESET : WO ;bitpos:[8] ;default: 1'b0 ; */
+/* I2S_CAM_SYNC_FIFO_RESET : R/W ;bitpos:[8] ;default: 1'b0 ; */
 /*description: Set this bit to reset cam_sync_fifo*/
 #define I2S_CAM_SYNC_FIFO_RESET  (BIT(8))
 #define I2S_CAM_SYNC_FIFO_RESET_M  (BIT(8))
@@ -1704,7 +1710,7 @@ extern "C" {
 #define I2S_TX_IDLE_S  0
 
 #define I2S_DATE_REG(i)          (REG_I2S_BASE(i) + 0x00fc)
-/* I2S_I2SDATE : R/W ;bitpos:[31:0] ;default: 32'h18022300 ; */
+/* I2S_I2SDATE : R/W ;bitpos:[31:0] ;default: 32'h18092900 ; */
 /*description: */
 #define I2S_I2SDATE  0xFFFFFFFF
 #define I2S_I2SDATE_M  ((I2S_I2SDATE_V)<<(I2S_I2SDATE_S))

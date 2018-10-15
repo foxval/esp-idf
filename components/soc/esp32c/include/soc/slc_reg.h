@@ -1168,12 +1168,14 @@ extern "C" {
 #define SLC_FUNC_ST_M  ((SLC_FUNC_ST_V)<<(SLC_FUNC_ST_S))
 #define SLC_FUNC_ST_V  0xF
 #define SLC_FUNC_ST_S  4
+#define SLC_FUNC_ST_IDLE 2
 /* SLC_CMD_ST : RO ;bitpos:[2:0] ;default: 3'b0 ; */
 /*description: */
 #define SLC_CMD_ST  0x00000007
 #define SLC_CMD_ST_M  ((SLC_CMD_ST_V)<<(SLC_CMD_ST_S))
 #define SLC_CMD_ST_V  0x7
 #define SLC_CMD_ST_S  0
+#define SLC_CMD_ST_IDLE 1
 
 #define SLC_RX_DSCR_CONF_REG          (DR_REG_SLC_BASE + 0x98)
 /* SLC_SLC0_RD_RETRY_THRESHOLD : R/W ;bitpos:[15:5] ;default: 11'h80 ; */

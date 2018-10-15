@@ -160,6 +160,7 @@ extern "C" {
 #define GPIO_SD_DATE_M  ((GPIO_SD_DATE_V)<<(GPIO_SD_DATE_S))
 #define GPIO_SD_DATE_V  0xFFFFFFF
 #define GPIO_SD_DATE_S  0
+
 #ifdef __cplusplus
 }
 #endif

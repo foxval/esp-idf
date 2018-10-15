@@ -289,14 +289,14 @@ extern "C" {
 #define SPI_MEM_CS_DELAY_MODE_M  ((SPI_MEM_CS_DELAY_MODE_V)<<(SPI_MEM_CS_DELAY_MODE_S))
 #define SPI_MEM_CS_DELAY_MODE_V  0x3
 #define SPI_MEM_CS_DELAY_MODE_S  26
-/* SPI_MEM_CS_HOLD_TIME : R/W ;bitpos:[25:13] ;default: 13'h2 ; */
+/* SPI_MEM_CS_HOLD_TIME : R/W ;bitpos:[25:13] ;default: 13'h1 ; */
 /*description: delay cycles of cs pin by spi clock this bits are combined with
  spi_mem_cs_hold bit.*/
 #define SPI_MEM_CS_HOLD_TIME  0x00001FFF
 #define SPI_MEM_CS_HOLD_TIME_M  ((SPI_MEM_CS_HOLD_TIME_V)<<(SPI_MEM_CS_HOLD_TIME_S))
 #define SPI_MEM_CS_HOLD_TIME_V  0x1FFF
 #define SPI_MEM_CS_HOLD_TIME_S  13
-/* SPI_MEM_CS_SETUP_TIME : R/W ;bitpos:[12:0] ;default: 13'h0 ; */
+/* SPI_MEM_CS_SETUP_TIME : R/W ;bitpos:[12:0] ;default: 13'h1 ; */
 /*description: (cycles-1) of prepare phase by spi clock this bits are combined
  with spi_mem_cs_setup bit.*/
 #define SPI_MEM_CS_SETUP_TIME  0x00001FFF
@@ -305,7 +305,7 @@ extern "C" {
 #define SPI_MEM_CS_SETUP_TIME_S  0
 
 #define SPI_MEM_CLOCK_REG(i)          (REG_SPI_MEM_BASE(i) + 0x014)
-/* SPI_MEM_CLK_EQU_SYSCLK : R/W ;bitpos:[31] ;default: 1'b1 ; */
+/* SPI_MEM_CLK_EQU_SYSCLK : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: reserved*/
 #define SPI_MEM_CLK_EQU_SYSCLK  (BIT(31))
 #define SPI_MEM_CLK_EQU_SYSCLK_M  (BIT(31))
@@ -319,15 +319,13 @@ extern "C" {
 #define SPI_MEM_CLKCNT_N_V  0xFF
 #define SPI_MEM_CLKCNT_N_S  16
 /* SPI_MEM_CLKCNT_H : R/W ;bitpos:[15:8] ;default: 8'h1 ; */
-/*description: In the master mode it must be floor((spi_mem_clkcnt_N+1)/2-1).
- In the slave mode it must be 0.*/
+/*description: In the master mode it must be floor((spi_mem_clkcnt_N+1)/2-1).*/
 #define SPI_MEM_CLKCNT_H  0x000000FF
 #define SPI_MEM_CLKCNT_H_M  ((SPI_MEM_CLKCNT_H_V)<<(SPI_MEM_CLKCNT_H_S))
 #define SPI_MEM_CLKCNT_H_V  0xFF
 #define SPI_MEM_CLKCNT_H_S  8
 /* SPI_MEM_CLKCNT_L : R/W ;bitpos:[7:0] ;default: 8'h3 ; */
-/*description: In the master mode it must be equal to spi_mem_clkcnt_N. In the
- slave mode it must be 0.*/
+/*description: In the master mode it must be equal to spi_mem_clkcnt_N.*/
 #define SPI_MEM_CLKCNT_L  0x000000FF
 #define SPI_MEM_CLKCNT_L_M  ((SPI_MEM_CLKCNT_L_V)<<(SPI_MEM_CLKCNT_L_S))
 #define SPI_MEM_CLKCNT_L_V  0xFF
@@ -415,13 +413,6 @@ extern "C" {
 #define SPI_MEM_CK_OUT_EDGE_M  (BIT(9))
 #define SPI_MEM_CK_OUT_EDGE_V  0x1
 #define SPI_MEM_CK_OUT_EDGE_S  9
-/* SPI_MEM_CK_I_EDGE : R/W ;bitpos:[8] ;default: 1'b1 ; */
-/*description: In the slave mode the bit is same as spi_mem_ck_out_edge in master
- mode. It is combined with  spi_mem_miso_delay_mode bits.*/
-#define SPI_MEM_CK_I_EDGE  (BIT(8))
-#define SPI_MEM_CK_I_EDGE_M  (BIT(8))
-#define SPI_MEM_CK_I_EDGE_V  0x1
-#define SPI_MEM_CK_I_EDGE_S  8
 /* SPI_MEM_CS_SETUP : R/W ;bitpos:[7] ;default: 1'b0 ; */
 /*description: spi cs is enable when spi is in  prepare  phase. 1: enable 0: disable.*/
 #define SPI_MEM_CS_SETUP  (BIT(7))
@@ -809,7 +800,7 @@ extern "C" {
 #define SPI_MEM_CACHE_SRAM_USR_WR_CMD_VALUE_S  0
 
 #define SPI_MEM_SRAM_CLK_REG(i)          (REG_SPI_MEM_BASE(i) + 0x050)
-/* SPI_MEM_SCLK_EQU_SYSCLK : R/W ;bitpos:[31] ;default: 1'b1 ; */
+/* SPI_MEM_SCLK_EQU_SYSCLK : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: For SPI0 sram interface  1: spi_mem_clk is eqaul to system 0:
  spi_mem_clk is divided from system clock.*/
 #define SPI_MEM_SCLK_EQU_SYSCLK  (BIT(31))
@@ -824,15 +815,13 @@ extern "C" {
 #define SPI_MEM_SCLKCNT_N_V  0xFF
 #define SPI_MEM_SCLKCNT_N_S  16
 /* SPI_MEM_SCLKCNT_H : R/W ;bitpos:[15:8] ;default: 8'h1 ; */
-/*description: For SPI0 sram interface  it must be floor((spi_mem_clkcnt_N+1)/2-1).
- In the slave mode it must be 0.*/
+/*description: For SPI0 sram interface  it must be floor((spi_mem_clkcnt_N+1)/2-1).*/
 #define SPI_MEM_SCLKCNT_H  0x000000FF
 #define SPI_MEM_SCLKCNT_H_M  ((SPI_MEM_SCLKCNT_H_V)<<(SPI_MEM_SCLKCNT_H_S))
 #define SPI_MEM_SCLKCNT_H_V  0xFF
 #define SPI_MEM_SCLKCNT_H_S  8
 /* SPI_MEM_SCLKCNT_L : R/W ;bitpos:[7:0] ;default: 8'h3 ; */
-/*description: For SPI0 sram interface  it must be equal to spi_mem_clkcnt_N.
- In the slave mode it must be 0.*/
+/*description: For SPI0 sram interface  it must be equal to spi_mem_clkcnt_N.*/
 #define SPI_MEM_SCLKCNT_L  0x000000FF
 #define SPI_MEM_SCLKCNT_L_M  ((SPI_MEM_SCLKCNT_L_V)<<(SPI_MEM_SCLKCNT_L_S))
 #define SPI_MEM_SCLKCNT_L_V  0xFF
@@ -1937,7 +1926,7 @@ extern "C" {
 #define SPI_MEM_CLK_EN_S  0
 
 #define SPI_MEM_DATE_REG(i)          (REG_SPI_MEM_BASE(i) + 0x3FC)
-/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809050 ; */
+/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809280 ; */
 /*description: SPI register version.*/
 #define SPI_MEM_DATE  0x0FFFFFFF
 #define SPI_MEM_DATE_M  ((SPI_MEM_DATE_V)<<(SPI_MEM_DATE_S))
