@@ -501,6 +501,19 @@ void esp_rom_spiflash_write_encrypted_disable(void);
 esp_rom_spiflash_result_t esp_rom_spiflash_write_encrypted(uint32_t flash_addr, uint32_t *data, uint32_t len);
 
 
+/* TODO: figure out how to map these to their new names */
+typedef enum {
+    SPI_ENCRYPT_DESTINATION_FLASH,
+    SPI_ENCRYPT_DESTINATION_PSRAM,
+} SpiEncryptDest;
+
+typedef esp_rom_spiflash_result_t SpiFlashOpResult;
+
+SpiFlashOpResult SPI_Encrypt_Write(uint32_t flash_addr, const void* data, uint32_t len);
+SpiFlashOpResult SPI_Encrypt_Write_Dest(SpiEncryptDest dest, uint32_t flash_addr, const void* data, uint32_t len);
+void SPI_Write_Encrypt_Enable();
+void SPI_Write_Encrypt_Disable();
+
 /** @brief Wait until SPI flash write operation is complete
  *
  * @note Please do not call this function in SDK.

@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 /** \defgroup efuse_APIs efuse APIs
   * @brief     ESP32 efuse read/write APIs
@@ -92,8 +93,8 @@ void ets_efuse_clear_program_registers(void);
 /**
  * @brief Program a block of key data to an efuse block
  *
- * @param key_block Block to read purpose for. Must be in range ETS_EFUSE_BLOCK_KEY0 to ETS_EFUSE_BLOCK_KEY6.
- * @param purpose Purpose to set for this key. Purpose must be already unset.
+ * @param key_block Block to read purpose for. Must be in range ETS_EFUSE_BLOCK_KEY0 to ETS_EFUSE_BLOCK_KEY6. Key block must be unused (@ref ets_efuse_key_block_unused).
+ * @param purpose Purpose to set for this key.
  * @param data Pointer to data to write.
  * @param data_len Length of data to write.
  *
@@ -102,12 +103,60 @@ void ets_efuse_clear_program_registers(void);
 int ets_efuse_write_key(ets_efuse_block_t key_block, ets_efuse_purpose_t purpose, const void *data, size_t data_len);
 
 
+/* @brief Return the address of a particular efuse block's first read register
+ *
+ * @param block Index of efuse block to look up
+ *
+ * @return 0 if block is invalid, otherwise a numeric read register address
+ * of the first word in the block.
+ */
+uint32_t ets_efuse_get_read_register_address(ets_efuse_block_t block);
+
 /**
  * @brief Return the current purpose set for an efuse key block
  *
  * @param key_block Block to read purpose for. Must be in range ETS_EFUSE_BLOCK_KEY0 to ETS_EFUSE_BLOCK_KEY6.
  */
 ets_efuse_purpose_t ets_efuse_get_key_purpose(ets_efuse_block_t key_block);
+
+/**
+ * @brief Find a key block with the particular purpose set
+ *
+ * @param purpose Purpose to search for.
+ * @param[out] key_block Pointer which will be set to the key block if found. Can be NULL, if only need to test the key block exists.
+ * @return true if found, false if not found. If false, value at key_block pointer is unchanged.
+ */
+bool ets_efuse_find_purpose(ets_efuse_purpose_t purpose, ets_efuse_block_t *key_block);
+
+
+/**
+ * Return true if the key block is unused, false otherwise.
+ *
+ * An unused key block is all zero content, not read or write protected,
+ * and has purpose 0 (ETS_EFUSE_KEY_PURPOSE_USER)
+ *
+ * @param key_block key block to check.
+ *
+ * @return true if key block is unused, false if key block or used
+ * or the specified block index is not a key block.
+ */
+bool ets_efuse_key_block_unused(ets_efuse_block_t key_block);
+
+
+/**
+ * @brief Search for an unused key block and return the first one found.
+ *
+ * See @ref ets_efuse_key_block_unused for a description of an unused key block.
+ *
+ * @return First unused key block, or ETS_EFUSE_BLOCK_MAX if no unused key block is found.
+ */
+ets_efuse_block_t ets_efuse_find_unused_key_block(void);
+
+
+/**
+ * @brief Return the number of unused efuse key blocks (0-6)
+ */
+unsigned ets_efuse_count_unused_key_blocks(void);
 
 /**
  * @brief Calculate Reed-Solomon Encoding values for a block of efuse data.

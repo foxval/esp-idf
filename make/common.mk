@@ -10,6 +10,14 @@ SDKCONFIG_MAKEFILE ?= $(abspath $(BUILD_DIR_BASE)/include/config/auto.conf)
 -include $(SDKCONFIG_MAKEFILE)
 export SDKCONFIG_MAKEFILE  # sub-makes (like bootloader) will reuse this path
 
+ifdef CONFIG_CHIP_IS_ESP32
+SOC_NAME := esp32
+endif
+
+ifdef CONFIG_CHIP_IS_ESP32C
+SOC_NAME := esp32c
+endif
+
 # BATCH_BUILD flag disables interactive terminal features, defaults to verbose build
 ifdef BATCH_BUILD
 V ?= 1

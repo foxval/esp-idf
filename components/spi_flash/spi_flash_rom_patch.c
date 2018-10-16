@@ -515,6 +515,11 @@ esp_rom_spiflash_result_t esp_rom_spiflash_write(uint32_t target, const uint32_t
     return  ESP_ROM_SPIFLASH_RESULT_OK;
 }
 
+// TODO: this file shouldn't be compiled at all on ESP32C, but this is fiddly in GNU Make build
+// system - as would mean bootloader needs one header and no source files - so waiting until we are
+// using CMake
+#ifdef CONFIG_CHIP_IS_ESP32
+
 esp_rom_spiflash_result_t esp_rom_spiflash_write_encrypted(uint32_t flash_addr, uint32_t *data, uint32_t len)
 {
     esp_rom_spiflash_result_t ret = ESP_ROM_SPIFLASH_RESULT_OK;
@@ -541,6 +546,7 @@ esp_rom_spiflash_result_t esp_rom_spiflash_write_encrypted(uint32_t flash_addr, 
     return ret;
 }
 
+#endif // CONFIG_CHIP_IS_ESP32
 
 esp_rom_spiflash_result_t esp_rom_spiflash_read(uint32_t target, uint32_t *dest_addr, int32_t len)
 {

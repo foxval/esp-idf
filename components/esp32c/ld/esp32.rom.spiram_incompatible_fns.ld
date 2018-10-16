@@ -7,7 +7,6 @@ PROVIDE ( g_ticks_per_us_pro = g_ticks_per_us );
 PROVIDE ( g_rom_flashchip = SPI_flashchip_data );
 PROVIDE ( g_rom_spiflash_chip = SPI_flashchip_data );
 PROVIDE ( esp_rom_spiflash_config_param = SPIParamCfg );
-PROVIDE ( esp_rom_spiflash_prepare_encrypted_data = SPI_Prepare_Encrypt_Data);
 PROVIDE ( esp_rom_spiflash_read_status = SPI_read_status );
 PROVIDE ( esp_rom_spiflash_read_statushigh = SPI_read_status_high );
 PROVIDE ( esp_rom_spiflash_read_user_cmd = SPI_user_command_read );

@@ -58,7 +58,6 @@ int ets_aes_setkey_dec(const void *key, enum AES_BITS bits);
 
 void ets_aes_block(const void *input, void *output);
 
-
 #ifdef __cplusplus
 }
 #endif

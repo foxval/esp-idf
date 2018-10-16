@@ -20,8 +20,6 @@
 
 const esp_partition_t *get_test_data_partition()
 {
-    printf("WARNING: Partition API not working for some reason, FIXME!\n");
-    return NULL;
     /* This finds "flash_test" partition defined in partition_table_unit_test_app.csv */
     const esp_partition_t *result = esp_partition_find_first(ESP_PARTITION_TYPE_DATA,
             ESP_PARTITION_SUBTYPE_ANY, "flash_test");

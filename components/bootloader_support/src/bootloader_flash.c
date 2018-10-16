@@ -17,6 +17,7 @@
 #include <esp_log.h>
 #include <esp_spi_flash.h> /* including in bootloader for error values */
 #include <esp_flash_encrypt.h>
+#include "rom/spi_flash.h"
 
 #ifndef BOOTLOADER_BUILD
 /* Normal app version maps to esp_spi_flash.h operations...
@@ -62,7 +63,7 @@ esp_err_t bootloader_flash_read(size_t src, void *dest, size_t size, bool allow_
 esp_err_t bootloader_flash_write(size_t dest_addr, void *src, size_t size, bool write_encrypted)
 {
     if (write_encrypted) {
-        return spi_flash_write_encrypted(dest_addr, src, size);
+        return SPI_Encrypt_Write(dest_addr, src, size);
     } else {
         return spi_flash_write(dest_addr, src, size);
     }
