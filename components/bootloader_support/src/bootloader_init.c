@@ -467,7 +467,7 @@ static void wdt_reset_info_dump(int cpu)
 
 #else
         stat    = 0xdeadbeef;
-        pid     = REG_READ(ASSIST_DEBUG_PRO_RCD_PID);
+        pid     = 0;
         inst    = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGINST);
         dstat   = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGSTATUS);
         data    = REG_READ(ASSIST_DEBUG_PRO_RCD_PDEBUGDATA);

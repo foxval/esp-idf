@@ -859,7 +859,7 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             break;
         case PSRAM_CACHE_F20M_S20M:
             psram_clock_set(0, 4);
-
+            break;
         case PSRAM_CACHE_F40M_S40M:
         default:
 #ifdef CONFIG_CHIP_IS_ESP32
