@@ -677,18 +677,6 @@ psram_size_t psram_get_size()
 //psram gpio init , different working frequency we have different solutions
 esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vaddrmode)   //psram init
 {
-    uint32_t chip_ver = REG_GET_FIELD(EFUSE_BLK0_RDATA3_REG, EFUSE_RD_CHIP_VER_PKG);
-    uint32_t pkg_ver = chip_ver & 0x7;
-    if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32D2WDQ5) {
-        ESP_EARLY_LOGE(TAG, "ESP32D2WD do not support psram yet");
-        return ESP_FAIL;
-    } else if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD2) {
-        ESP_EARLY_LOGE(TAG, "ESP32PICOD2 do not support psram yet");
-        return ESP_FAIL;
-    } else if (pkg_ver == EFUSE_RD_CHIP_VER_PKG_ESP32PICOD4) {
-        ESP_EARLY_LOGE(TAG, "ESP32PICOD4  do not support psram yet");
-        return ESP_FAIL;
-    }
 
 #ifdef CONFIG_CHIP_IS_ESP32
     WRITE_PERI_REG(GPIO_ENABLE_W1TC_REG, BIT(PSRAM_CLK_IO) | BIT(PSRAM_CS_IO));   //DISABLE OUPUT FOR IO16/17

@@ -5,6 +5,7 @@
 #include "soc/io_mux_reg.h"
 #include "rom/efuse.h"
 #include "rom/gpio.h"
+#include "rom/spi_flash.h"
 
 #define FLASH_CLK_IO SPI_CLK_GPIO_NUM
 #define FLASH_CS_IO SPI_CS0_GPIO_NUM
