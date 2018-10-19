@@ -1,8 +1,22 @@
+/* Copyright 2018 Espressif Systems (Shanghai) PTE LTD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /*
- * FreeModbus Libary: ESP32 Demo Application
+ * FreeModbus Libary: ESP32 Port Demo Application
  * Copyright (C) 2010 Christian Walter <cwalter@embedded-solutions.at>
  *
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -13,7 +27,7 @@
  *   documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *   derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * IF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,50 +41,25 @@
  *
  * File: $Id: portother.c,v 1.1 2010/06/06 13:07:20 wolti Exp $
  */
+#ifndef _PORT_SERIAL_MASTER_H
+#define _PORT_SERIAL_MASTER_H
 
-/* ----------------------- System includes ----------------------------------*/
-#include <stdlib.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/semphr.h>
+/* ----------------------- Platform includes --------------------------------*/
+#include "driver/uart.h"
+#include "driver/timer.h"
+#include "esp_log.h"                // for ESP_LOGE macro
+#include "mb_m.h"
+#include "port.h"
 
-/* ----------------------- Modbus includes ----------------------------------*/
-#include "mb.h"
-#include "mbport.h"
+/* ----------------------- Defines ------------------------------------------*/
+#ifdef __cplusplus
+PR_BEGIN_EXTERN_C
+#endif /* __cplusplus */
+   
+void vMBPortSetMode( UCHAR ucMode );
 
-/* ----------------------- Modbus includes ----------------------------------*/
+#ifdef __cplusplus
+PR_END_EXTERN_C
+#endif /* __cplusplus */
 
-/* ----------------------- Variables ----------------------------------------*/
-static portMUX_TYPE mb_mutex = portMUX_INITIALIZER_UNLOCKED;
-
-/* ----------------------- Start implementation -----------------------------*/
-
-BOOL
-bMBPortIsWithinException( void )
-{
-    BOOL bIsWithinException = xPortInIsrContext();
-    return bIsWithinException;
-}
-
-void
-vMBPortEnterCritical( void )
-{
-    portENTER_CRITICAL(&mb_mutex);
-}
-
-void
-vMBPortExitCritical( void )
-{
-    portEXIT_CRITICAL(&mb_mutex);
-}
-
-void
-vMBPortClose( void )
-{
-    extern void     vMBPortSerialClose( void );
-    extern void     vMBPortTimerClose( void );
-    extern void     vMBPortEventClose( void );
-    vMBPortSerialClose(  );
-    vMBPortTimerClose(  );
-    vMBPortEventClose(  );
-}
+#endif

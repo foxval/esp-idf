@@ -1,3 +1,17 @@
+/* Copyright 2018 Espressif Systems (Shanghai) PTE LTD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /*
  * FreeModbus Libary: ESP32 Port Demo Application
  * Copyright (C) 2010 Christian Walter <cwalter@embedded-solutions.at>
@@ -27,72 +41,27 @@
  *
  * File: $Id: portother.c,v 1.1 2010/06/06 13:07:20 wolti Exp $
  */
-#ifndef _PORT_H
-#define _PORT_H
+#ifndef _PORT_SERIAL_SLAVE_H
+#define _PORT_SERIAL_SLAVE_H
+
 /* ----------------------- Platform includes --------------------------------*/
+
 #include "driver/uart.h"
 #include "driver/timer.h"
 #include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/xtensa_api.h"
-#include "freertos/portmacro.h"
-#include "sdkconfig.h"
+#include "port.h"
 
 /* ----------------------- Defines ------------------------------------------*/
 #ifdef __cplusplus
- extern "C" {
+PR_BEGIN_EXTERN_C
 #endif /* __cplusplus */
 
-#define MB_PORT_TAG "MB_PORT"
+BOOL xMBPortSerialTxPoll( void );
 
-#define MB_PORT_CHECK(a, ret_val, str, ...) \
-    if (!(a)) { \
-        ESP_LOGE(MB_PORT_TAG, "%s(%u): " str, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-        return (ret_val); \
-    }
-
-#define	INLINE                      inline
-#define PR_BEGIN_EXTERN_C           extern "C" {
-#define	PR_END_EXTERN_C             }
-
-#define MB_ENTER_CRITICAL_ISR(mux)  portENTER_CRITICAL_ISR(mux)
-#define MB_EXIT_CRITICAL_ISR(mux)   portEXIT_CRITICAL_ISR(mux)
-#define MB_ENTER_CRITICAL(mux)      portENTER_CRITICAL(mux)
-#define MB_EXIT_CRITICAL(mux)       portEXIT_CRITICAL(mux)
-
-#define ENTER_CRITICAL_SECTION( )   ( vMBPortEnterCritical() )
-#define EXIT_CRITICAL_SECTION( )    ( vMBPortExitCritical() )
-
-typedef char    BOOL;
-
-typedef unsigned char UCHAR;
-typedef char    CHAR;
-
-typedef unsigned short USHORT;
-typedef short   SHORT;
-
-typedef unsigned long ULONG;
-typedef long    LONG;
-
-#ifndef TRUE
-#define TRUE            1
-#endif
-
-#ifndef FALSE
-#define FALSE           0
-#endif
-
-void vMBPortSetWithinException( BOOL bInException );
-
-void vMBPortEnterCritical(void);
-
-void vMBPortExitCritical(void);
-
-BOOL xMBPortSerialTxPoll();
-
+void vMBPortSetMode( UCHAR ucMode );
 
 #ifdef __cplusplus
-}
+PR_END_EXTERN_C
 #endif /* __cplusplus */
 
 #endif

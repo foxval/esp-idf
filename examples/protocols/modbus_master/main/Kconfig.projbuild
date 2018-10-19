@@ -1,4 +1,4 @@
-menu "Modbus Slave Example Configuration"
+menu "Modbus Example Configuration"
 
     config MB_UART_RXD
         int "UART RXD pin number"

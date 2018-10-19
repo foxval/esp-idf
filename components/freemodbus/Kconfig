@@ -1,5 +1,21 @@
 menu "Modbus configuration"
 
+config MB_MASTER_TIMEOUT_MS_RESPOND
+    int "Slave respond timeout (Milliseconds)"
+    default 150
+    range 50 400
+    help
+        If master sends a frame which is not broadcast, it has to wait sometime for slave response.
+        if slave is not respond in this time, the master will process timeout error.
+        
+config MB_MASTER_DELAY_MS_CONVERT
+    int "Slave conversion delay (Milliseconds)"
+    default 200
+    range 50 400
+    help
+        If master sends a broadcast frame, it has to wait conversion time to delay,
+        then master can send next frame.
+
 config MB_QUEUE_LENGTH
     int "Modbus serial task queue length"
     range 0 200
@@ -72,7 +88,7 @@ config MB_CONTROLLER_STACK_SIZE
     range 0 8192
     default 4096
     help
-        Modbus controller task stack size. The Stack size may be adjusted when 
+        Modbus controller task stack size. The stack size may be adjusted when 
         debug mode is used which requires more stack size (for example).    
 
 config MB_EVENT_QUEUE_TIMEOUT
@@ -93,7 +109,6 @@ config MB_TIMER_PORT_ENABLED
 config MB_TIMER_GROUP
     int "Modbus Timer group number"
     range 0 1
-    depends on MB_TIMER_PORT_ENABLED
     default 0
     help
         Modbus Timer group number that is used for timeout measurement. 
@@ -101,7 +116,6 @@ config MB_TIMER_GROUP
 config MB_TIMER_INDEX
     int "Modbus Timer index in the group"
     range 0 1
-    depends on MB_TIMER_PORT_ENABLED
     default 0
     help
         Modbus Timer Index in the group that is used for timeout measurement. 
