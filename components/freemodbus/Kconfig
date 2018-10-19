@@ -1,5 +1,72 @@
 menu "Modbus configuration"
 
+choice MB_SERIAL_MASTER_OPT
+    prompt "Modbus serial stack master protocol options"
+    default MB_SERIAL_MASTER_DISABLED
+    help
+        Selection type of master protocol option for serial mode.        
+
+config MB_SERIAL_MASTER_RTU_ENABLED
+    bool "Modbus RTU Master"
+    help
+        Select this to support RTU master protocol option in serial mode 
+        
+config MB_SERIAL_MASTER_ASCII_ENABLED
+    bool "Modbus ASCII Master"
+    help
+        Select this to support ASCII master protocol option in serial mode 
+
+config MB_SERIAL_MASTER_DISABLED
+    bool "Modbus Master disable"
+    help
+        Select this option to disable master stack mode 
+      
+endchoice
+
+choice MB_SERIAL_SLAVE_OPT
+    prompt "Modbus stack slave protocol options"
+    default MB_SERIAL_SLAVE_RTU_ENABLED
+    depends on MB_SERIAL_MASTER_DISABLED
+    help
+        Selection type of protocol option for slave mode.        
+
+config MB_SERIAL_SLAVE_ASCII_ENABLED
+    bool "Modbus ASCII Slave"
+    help
+        Select this to support ASCII slave protocol option in serial mode 
+
+config MB_SERIAL_SLAVE_RTU_ENABLED
+    bool "Modbus RTU Slave"
+    help
+        Select this to support RTU slave protocol option in serial mode
+        
+config MB_SERIAL_SLAVE_DISABLED
+    bool "Modbus Slave Disable"
+    help
+        Select this to disable serial slave mode
+        
+endchoice
+
+config MB_SERIAL_MASTER_TIMEOUT_MS_RESPOND
+    int "Slave respond timeout (Milliseconds)"
+    default 150
+    range 50 400
+    depends on !MB_SERIAL_SLAVE_ASCII_ENABLED
+    depends on !MB_SERIAL_SLAVE_RTU_ENABLED
+    help
+        If master sends a frame which is not broadcast, it has to wait sometime for slave response.
+        if slave is not respond in this time, the master will process timeout error.
+        
+config MB_SERIAL_MASTER_DELAY_MS_CONVERT
+    int "Slave conversion delay (Milliseconds)"
+    default 200
+    range 50 400
+    depends on !MB_SERIAL_SLAVE_ASCII_ENABLED
+    depends on !MB_SERIAL_SLAVE_RTU_ENABLED
+    help
+        If master sends a broadcast frame, it has to wait conversion time to delay,
+        then master can send next frame.
+
 config MB_UART_RXD
     int "UART RXD pin number"
     range 0 34
@@ -60,6 +127,7 @@ config MB_SERIAL_TASK_PRIO
 config MB_CONTROLLER_SLAVE_ID_SUPPORT
     bool "Modbus controller slave ID support"
     default n
+    depends on MB_SERIAL_MASTER_DISABLED
     help
         Modbus slave ID support enable. 
         When enabled the Modbus <Report Slave ID> command is supported by stack.
@@ -69,6 +137,7 @@ config MB_CONTROLLER_SLAVE_ID
     range 0 4294967295
     default 0x00112233
     depends on MB_CONTROLLER_SLAVE_ID_SUPPORT
+    depends on MB_SERIAL_MASTER_DISABLED
     help
         Modbus slave ID value to identify modbus device 
         in the network using <Report Slave ID> command.
@@ -79,6 +148,7 @@ config MB_CONTROLLER_NOTIFY_TIMEOUT
     int "Modbus controller notification timeout (ms)"
     range 0 200
     default 20
+    depends on MB_SERIAL_MASTER_DISABLED
     help
         Modbus controller notification timeout in milliseconds. 
         This timeout is used to send notification about accessed parameters.
@@ -87,6 +157,7 @@ config MB_CONTROLLER_NOTIFY_QUEUE_SIZE
     int "Modbus controller notification queue size"
     range 0 200
     default 20
+    depends on MB_SERIAL_MASTER_DISABLED
     help
         Modbus controller notification queue size. 
         The notification queue is used to get information about accessed parameters.
@@ -96,13 +167,14 @@ config MB_CONTROLLER_STACK_SIZE
     range 0 8192
     default 4096
     help
-        Modbus controller task stack size. The Stack size may be adjusted when 
+        Modbus controller task stack size. The stack size may be adjusted when 
         debug mode is used which requires more stack size (for example).    
 
 config MB_EVENT_QUEUE_TIMEOUT
     int "Modbus stack event queue timeout (ms)"
     range 0 500
     default 20
+    depends on MB_SERIAL_MASTER_DISABLED
     help
         Modbus stack event queue timeout in milliseconds. This may help to optimize
         Modbus stack event processing time.
@@ -113,6 +185,7 @@ config MB_TIMER_PORT_ENABLED
     help
         If this option is set the Modbus stack uses timer for T3.5 time measurement. 
         Else the internal UART TOUT timeout is used for 3.5T symbol time measurement.
+        It is required option for serial master stack.
 
 config MB_TIMER_GROUP
     int "Modbus Timer group number"
