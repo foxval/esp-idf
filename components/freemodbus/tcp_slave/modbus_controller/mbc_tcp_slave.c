@@ -11,7 +11,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
 // mbc_serial_slave.c
 // Implementation of the Modbus controller serial slave
@@ -24,19 +24,26 @@
 #include "esp_modbus_common.h"      // for common defines
 #include "esp_modbus_slave.h"       // for public slave interface types
 #include "mbc_slave.h"              // for private slave interface types
-#include "mbc_serial_slave.h"       // for serial slave implementation definitions
-#include "port_serial_slave.h"
+#include "mbc_tcp_slave.h"          // for serial slave implementation definitions
+
+#define MB_DEFAULT_TCP_PORT 502
+
+// The helper function to get time stamp in microseconds
+static uint64_t get_time_stamp()
+{
+    uint64_t time_stamp = esp_timer_get_time();
+    return time_stamp;
+}
 
 // Shared pointer to interface structure
-static mb_slave_interface_t* mbs_interface_ptr = NULL; // &default_interface_inst;
+static mb_slave_interface_t* mbs_interface_ptr = NULL;
 
 // Modbus task function
-static void modbus_slave_task(void *pvParameters)
+static void modbus_tcp_slave_task(void *pvParameters)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
 
-    MB_SLAVE_ASSERT(mbs_opts != NULL);
     // Main Modbus stack processing cycle
     for (;;) {
         BaseType_t status = xEventGroupWaitBits(mbs_opts->mbs_event_group,
@@ -47,52 +54,38 @@ static void modbus_slave_task(void *pvParameters)
         // Check if stack started then poll for data
         if (status & MB_EVENT_STACK_STARTED) {
             (void)eMBPoll(); // allow stack to process data
-            (void)xMBPortSerialTxPoll(); // Send response buffer if ready
         }
     }
 }
 
 // Setup Modbus controller parameters
-static esp_err_t mbc_serial_slave_setup(void* comm_info)
+static esp_err_t mbc_tcp_slave_setup(void* comm_info)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
     MB_SLAVE_CHECK((comm_info != NULL), ESP_ERR_INVALID_ARG,
                     "mb wrong communication settings.");
-    mb_slave_comm_info_t* comm_settings = (mb_slave_comm_info_t*)comm_info;
-    MB_SLAVE_CHECK(((comm_settings->mode == MB_MODE_RTU) || (comm_settings->mode == MB_MODE_ASCII)),
-                ESP_ERR_INVALID_ARG, "mb incorrect mode = (0x%x).",
-                (uint32_t)comm_settings->mode);
-    MB_SLAVE_CHECK((comm_settings->slave_addr <= MB_ADDRESS_MAX),
-                ESP_ERR_INVALID_ARG, "mb wrong slave address = (0x%x).",
-                (uint32_t)comm_settings->slave_addr);
-    MB_SLAVE_CHECK((comm_settings->port <= UART_NUM_2), ESP_ERR_INVALID_ARG,
-                "mb wrong port to set = (0x%x).", (uint32_t)comm_settings->port);
-    MB_SLAVE_CHECK((comm_settings->parity <= UART_PARITY_EVEN), ESP_ERR_INVALID_ARG,
-                "mb wrong parity option = (0x%x).", (uint32_t)comm_settings->parity);
-
+    mb_communication_info_t* comm_settings = (mb_communication_info_t*)comm_info;
+    MB_SLAVE_CHECK(((comm_settings->tcp_mode == MB_MODE_RTU) || (comm_settings->tcp_mode == MB_MODE_ASCII)),
+                ESP_ERR_INVALID_ARG, "mb incorrect mode = (0x%x).", (uint8_t)comm_settings->tcp_mode);
     // Set communication options of the controller
-    mbs_opts->mbs_comm = *(mb_communication_info_t*)comm_settings;
+    mbs_opts->mbs_comm = *comm_settings;
     return ESP_OK;
 }
 
 // Start Modbus controller start function
-static esp_err_t mbc_serial_slave_start(void)
+static esp_err_t mbc_tcp_slave_start(void)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
     eMBErrorCode status = MB_EIO;
     // Initialize Modbus stack using mbcontroller parameters
-    status = eMBInit((eMBMode)mbs_opts->mbs_comm.mode,
-                         (UCHAR)mbs_opts->mbs_comm.slave_addr,
-                         (UCHAR)mbs_opts->mbs_comm.port,
-                         (ULONG)mbs_opts->mbs_comm.baudrate,
-                         (eMBParity)mbs_opts->mbs_comm.parity);
+    status = eMBTCPInit((USHORT)mbs_opts->mbs_comm.tcp_port);
     MB_SLAVE_CHECK((status == MB_ENOERR), ESP_ERR_INVALID_STATE,
             "mb stack initialization failure, eMBInit() returns (0x%x).", status);
     status = eMBEnable();
     MB_SLAVE_CHECK((status == MB_ENOERR), ESP_ERR_INVALID_STATE,
-            "mb stack set slave ID failure, eMBEnable() returned (0x%x).", (uint32_t)status);
+            "mb TCP stack start failure, eMBEnable() returned (0x%x).", (uint32_t)status);
     // Set the mbcontroller start flag
     EventBits_t flag = xEventGroupSetBits(mbs_opts->mbs_event_group,
                                             (EventBits_t)MB_EVENT_STACK_STARTED);
@@ -102,7 +95,7 @@ static esp_err_t mbc_serial_slave_start(void)
 }
 
 // Modbus controller destroy function
-static esp_err_t mbc_serial_slave_destroy(void)
+static esp_err_t mbc_tcp_slave_destroy(void)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
@@ -118,15 +111,12 @@ static esp_err_t mbc_serial_slave_destroy(void)
     (void)vTaskDelete(mbs_opts->mbs_task_handle);
     (void)vQueueDelete(mbs_opts->mbs_notification_queue_handle);
     (void)vEventGroupDelete(mbs_opts->mbs_event_group);
-    mb_error = eMBClose();
-    MB_SLAVE_CHECK((mb_error == MB_ENOERR), ESP_ERR_INVALID_STATE,
-            "mb stack close failure returned (0x%x).", (uint32_t)mb_error);
+    (void)vMBTCPPortClose();
     free(mbs_interface_ptr);
-
     return ESP_OK;
 }
 
-esp_err_t mbc_serial_slave_set_descriptor(const mb_register_area_descriptor_t descr_info)
+esp_err_t mbc_tcp_slave_set_descriptor(const mb_register_area_descriptor_t descr_info)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
@@ -140,13 +130,6 @@ esp_err_t mbc_serial_slave_set_descriptor(const mb_register_area_descriptor_t de
                 (uint32_t)descr_info.size);
     mbs_opts->mbs_area_descriptors[descr_info.type] = descr_info;
     return ESP_OK;
-}
-
-// The helper function to get time stamp in microseconds
-static uint64_t get_time_stamp()
-{
-    uint64_t time_stamp = esp_timer_get_time();
-    return time_stamp;
 }
 
 // Helper function to send parameter information to application task
@@ -191,7 +174,7 @@ static esp_err_t send_param_access_notification(mb_event_group_t event)
 }
 
 // Blocking function to get event on parameter group change for application task
-static mb_event_group_t mbc_serial_slave_check_event(mb_event_group_t group)
+static mb_event_group_t mbc_tcp_slave_check_event(mb_event_group_t group)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
@@ -202,7 +185,7 @@ static mb_event_group_t mbc_serial_slave_check_event(mb_event_group_t group)
 }
 
 // Function to get notification about parameter change from application task
-static esp_err_t mbc_serial_slave_get_param_info(mb_param_info_t* reg_info, uint32_t timeout)
+static esp_err_t mbc_tcp_slave_get_param_info(mb_param_info_t* reg_info, uint32_t timeout)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
@@ -225,7 +208,7 @@ static esp_err_t mbc_serial_slave_get_param_info(mb_param_info_t* reg_info, uint
 #pragma GCC diagnostic ignored "-Wtype-limits"
 
 // Callback function for reading of MB Input Registers
-eMBErrorCode eMBRegInputCBSerialSlave(UCHAR * pucRegBuffer, USHORT usAddress,
+eMBErrorCode eMBRegInputCBTcpSlave(UCHAR * pucRegBuffer, USHORT usAddress,
                                 USHORT usNRegs)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
@@ -265,7 +248,7 @@ eMBErrorCode eMBRegInputCBSerialSlave(UCHAR * pucRegBuffer, USHORT usAddress,
 
 // Callback function for reading of MB Holding Registers
 // Executed by stack when request to read/write holding registers is received
-eMBErrorCode eMBRegHoldingCBSerialSlave(UCHAR * pucRegBuffer, USHORT usAddress,
+eMBErrorCode eMBRegHoldingCBTcpSlave(UCHAR * pucRegBuffer, USHORT usAddress,
         USHORT usNRegs, eMBRegisterMode eMode)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
@@ -321,7 +304,7 @@ eMBErrorCode eMBRegHoldingCBSerialSlave(UCHAR * pucRegBuffer, USHORT usAddress,
 }
 
 // Callback function for reading of MB Coils Registers
-eMBErrorCode eMBRegCoilsCBSerialSlave(UCHAR* pucRegBuffer, USHORT usAddress,
+eMBErrorCode eMBRegCoilsCBTcpSlave(UCHAR* pucRegBuffer, USHORT usAddress,
         USHORT usNCoils, eMBRegisterMode eMode)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
@@ -376,7 +359,7 @@ eMBErrorCode eMBRegCoilsCBSerialSlave(UCHAR* pucRegBuffer, USHORT usAddress,
 }
 
 // Callback function for reading of MB Discrete Input Registers
-eMBErrorCode eMBRegDiscreteCBSerialSlave(UCHAR* pucRegBuffer, USHORT usAddress,
+eMBErrorCode eMBRegDiscreteCBTcpSlave(UCHAR* pucRegBuffer, USHORT usAddress,
                             USHORT usNDiscrete)
 {
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
@@ -422,28 +405,24 @@ eMBErrorCode eMBRegDiscreteCBSerialSlave(UCHAR* pucRegBuffer, USHORT usAddress,
 #pragma GCC diagnostic pop   // require GCC
 
 // Initialization of Modbus controller
-esp_err_t mbc_serial_slave_create(mb_port_type_t port_type, void** handler)
+esp_err_t mbc_tcp_slave_create(mb_port_type_t port_type, void** handler)
 {
-    MB_SLAVE_CHECK((port_type == MB_PORT_SERIAL_SLAVE), ESP_ERR_NOT_SUPPORTED, "mb port not supported.");
+    MB_SLAVE_CHECK((port_type == MB_PORT_TCP_SLAVE), ESP_ERR_NOT_SUPPORTED, "mb port not supported.");
 
     // Allocate space for options
     if (mbs_interface_ptr == NULL) {
         mbs_interface_ptr = malloc(sizeof(mb_slave_interface_t));
     }
     MB_SLAVE_ASSERT(mbs_interface_ptr != NULL);
-    vMBPortSetMode((UCHAR)port_type);
     mb_slave_options_t* mbs_opts = &mbs_interface_ptr->opts;
-    mbs_opts->port_type = MB_PORT_SERIAL_SLAVE; // set interface port type
+    mbs_opts->port_type = MB_PORT_TCP_SLAVE; // set interface port type
 
     // Set default values of communication options
-    mbs_opts->mbs_comm.mode = MB_MODE_RTU;
-    mbs_opts->mbs_comm.slave_addr = MB_DEVICE_ADDRESS;
-    mbs_opts->mbs_comm.port = MB_UART_PORT;
-    mbs_opts->mbs_comm.baudrate = MB_DEVICE_SPEED;
-    mbs_opts->mbs_comm.parity = MB_PARITY_NONE;
+    mbs_opts->mbs_comm.tcp_port = MB_DEFAULT_TCP_PORT;
 
     // Initialization of active context of the Modbus controller
     BaseType_t status = 0;
+
     // Parameter change notification queue
     mbs_opts->mbs_event_group = xEventGroupCreate();
     MB_SLAVE_CHECK((mbs_opts->mbs_event_group != NULL),
@@ -455,8 +434,8 @@ esp_err_t mbc_serial_slave_create(mb_port_type_t port_type, void** handler)
     MB_SLAVE_CHECK((mbs_opts->mbs_notification_queue_handle != NULL),
             ESP_ERR_NO_MEM, "mb notify queue creation error.");
     // Create Modbus controller task
-    status = xTaskCreate((void*)&modbus_slave_task,
-                            "modbus_slave_task",
+    status = xTaskCreate((void*)&modbus_tcp_slave_task,
+                            "modbus_tcp_slave_task",
                             MB_CONTROLLER_STACK_SIZE,
                             NULL,
                             MB_CONTROLLER_PRIORITY,
@@ -467,25 +446,26 @@ esp_err_t mbc_serial_slave_create(mb_port_type_t port_type, void** handler)
                 "mb controller task creation error, xTaskCreate() returns (0x%x).",
                 (uint32_t)status);
     }
-    MB_SLAVE_ASSERT(mbs_opts->mbs_task_handle != NULL); // The task is created but handle is incorrect
 
-    // Initialize interface function pointers
-    mbs_interface_ptr->check_event = mbc_serial_slave_check_event;
-    mbs_interface_ptr->destroy = mbc_serial_slave_destroy;
-    mbs_interface_ptr->get_param_info = mbc_serial_slave_get_param_info;
-    mbs_interface_ptr->init = mbc_serial_slave_create;
-    mbs_interface_ptr->set_descriptor = mbc_serial_slave_set_descriptor;
-    mbs_interface_ptr->setup = mbc_serial_slave_setup;
-    mbs_interface_ptr->start = mbc_serial_slave_start;
+    // The task is created but handle is incorrect
+    MB_SLAVE_ASSERT(mbs_opts->mbs_task_handle != NULL);
+
+    // Initialization of interface pointers
+    mbs_interface_ptr->init = mbc_tcp_slave_create;
+    mbs_interface_ptr->destroy = mbc_tcp_slave_destroy;
+    mbs_interface_ptr->setup = mbc_tcp_slave_setup;
+    mbs_interface_ptr->start = mbc_tcp_slave_start;
+    mbs_interface_ptr->check_event = mbc_tcp_slave_check_event;
+    mbs_interface_ptr->get_param_info = mbc_tcp_slave_get_param_info;
+    mbs_interface_ptr->set_descriptor = mbc_tcp_slave_set_descriptor;
 
     // Initialize stack callback function pointers
-    mbs_interface_ptr->slave_reg_cb_discrete = eMBRegDiscreteCBSerialSlave;
-    mbs_interface_ptr->slave_reg_cb_input = eMBRegInputCBSerialSlave;
-    mbs_interface_ptr->slave_reg_cb_holding = eMBRegHoldingCBSerialSlave;
-    mbs_interface_ptr->slave_reg_cb_coils = eMBRegCoilsCBSerialSlave;
+    mbs_interface_ptr->slave_reg_cb_discrete = eMBRegDiscreteCBTcpSlave;
+    mbs_interface_ptr->slave_reg_cb_input = eMBRegInputCBTcpSlave;
+    mbs_interface_ptr->slave_reg_cb_holding = eMBRegHoldingCBTcpSlave;
+    mbs_interface_ptr->slave_reg_cb_coils = eMBRegCoilsCBTcpSlave;
 
     *handler = (void*)mbs_interface_ptr;
 
     return ESP_OK;
 }
-

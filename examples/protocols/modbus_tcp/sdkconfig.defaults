@@ -1,0 +1,6 @@
+#
+# Modbus TCP configuration
+#
+CONFIG_ESP_WIFI_SSID="myssid"
+CONFIG_ESP_WIFI_PASSWORD="mypassword"
+CONFIG_MB_EXAMPLE_PORT=502

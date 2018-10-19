@@ -101,7 +101,7 @@ typedef enum {
     MB_MODE_RTU,                     /*!< RTU transmission mode. */
     MB_MODE_ASCII,                   /*!< ASCII transmission mode. */
     MB_MODE_TCP                      /*!< TCP mode. */
-} mb_mode_type_t; // Todo: This is common type leave it here for now
+} mb_mode_type_t;
 
 /**
  * @brief Device communication structure to setup Modbus controller
@@ -119,10 +119,6 @@ typedef union {
     // Tcp communication structure
     struct {
         mb_mode_type_t tcp_mode;                /*!< Modbus communication mode */
-        uint8_t dummy_addr;                     /*!< Modbus slave address field (dummy for master) */
-        uart_port_t dummy_uart_port;            /*!< Modbus communication port (UART) number */
-        uint32_t dummy_baudrate;                /*!< Modbus baudrate */
-        uart_parity_t dummy_parity;             /*!< Modbus UART parity settings */
         uint16_t tcp_port;                      /*!< Modbus TCP port */
     };
 } mb_communication_info_t;
@@ -136,3 +132,4 @@ typedef esp_err_t (*iface_setup)(void*);                  /*!< Interface method 
 typedef esp_err_t (*iface_start)(void);                   /*!< Interface method start */
 
 #endif // _MB_IFACE_COMMON_H
+

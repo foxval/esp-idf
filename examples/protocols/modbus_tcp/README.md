@@ -1,0 +1,50 @@
+# Modbus TCP Slave Example
+
+This example demonstrates using of FreeModbus TCP stack port implementation for ESP32. The external Modbus host is able to read/write device parameters using Modbus protocol transport. The parameters accessible thorough Modbus are located in deviceparams.h/c files and can be updated by user. 
+These are represented in structures holding_reg_params, input_reg_params, coil_reg_params, discrete_reg_params for holding registers, input parameters, coils and discrete inputs accordingly. The app_main application demonstrates how to setup Modbus stack and use notifications about parameters change from host system. 
+The FreeModbus stack located in components\freemodbus\ folder and contain \port folder inside which contains FreeModbus stack port for ESP32. There are some parameters that can be configured in KConfig file to start stack correctly (See description below for more information).
+
+## Hardware required :
+PC + WiFi access point
+
+## How to setup and use an example:
+
+### Configure the application
+Configure the UART pins used for modbus communication using command and table below.
+```
+make menuconfig
+```
+
+Configure parameters of example:
+ CONFIG_ESP_WIFI_SSID = SSID of WiFi access point used
+ CONFIG_ESP_WIFI_PASSWORD = password of access point
+ CONFIG_MB_EXAMPLE_PORT = Modbus TCP port number (default 502)
+
+The communication parameters allow to configure freemodbus stack appropriately but usually it is enough to use default settings.
+See the help string of parameters for more information.
+
+### Setup external Modbus master software
+Configure the external Modbus master software according to port configuration parameters used in application.
+As an example the Modbus Poll application can be used with this example.
+
+### Build and flash software
+Build the project and flash it to the board, then run monitor tool to view serial output:
+```
+make -j4 flash monitor
+```
+
+(To exit the serial monitor, type ``Ctrl-]``.)
+
+See the Getting Started Guide for full steps to configure and use ESP-IDF to build projects.
+
+## Example Output
+Example output of the application:
+```
+INPUT READ: time_stamp(us):565240387, mb_addr:1, type:8, st_address:0x3ffb385c, size:8
+
+HOLDING READ/WRITE: time_stamp(us):12104081, mb_addr:1, type:2, st_address:0x3ffb386c, size:8
+```
+The output lines describe type of operation, its timestamp, modbus address, access type, storage address in parameter structure and number of registers accordingly.
+
+
+

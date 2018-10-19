@@ -20,6 +20,7 @@
 #include "esp_modbus_slave.h"       // for public slave defines
 #include "esp_modbus_callbacks.h"   // for modbus callbacks function pointers declaration
 #include "mbc_serial_slave.h"       // for create function of serial port
+#include "mbc_tcp_slave.h"          // for create function of tcp port
 
 #ifdef CONFIG_MB_CONTROLLER_SLAVE_ID_SUPPORT
 
@@ -55,8 +56,7 @@ esp_err_t mbc_slave_init(mb_port_type_t port_type, void** handler)
             error = mbc_serial_slave_create(port_type, &port_handler);
             break;
         case MB_PORT_TCP_SLAVE:
-            // Not yet supported
-            //error = mbc_tcp_slave_create(port_type, &port_handler);
+            error = mbc_tcp_slave_create(port_type, &port_handler);
             break;
         default:
             break;
