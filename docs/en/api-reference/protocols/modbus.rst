@@ -20,25 +20,15 @@ Modbus common interface API overview
 
 The API functions below provide common functionality to setup Modbus stack for slave and master implementation. ISP-IDF supports Modbus serial slave and master protocol stacks and provides modbus_controller interface API to interact with user application.
 
-.. doxygenfunction:: mbcontroller_init
+    * :cpp:func:`mbcontroller_init`: The function initializes the Modbus controller interface and its active context (tasks, RTOS objects and other resources).
 
-The function initializes the Modbus controller interface and its active context (tasks, RTOS objects and other resources).
+    * :cpp:func:`mbcontroller_setup`: The function is used to setup communication parameters of the Modbus stack. See the Modbus controller API documentation for more information.
 
-.. doxygenfunction:: mbcontroller_setup
+    * :cpp:func:`mbcontroller_set_descriptor`: The Modbus stack uses parameter description tables (descriptors) for communication. These are different for master and slave implementation of stack and should be assigned by :cpp:func:`mbcontroller_set_descriptor()` API call before start of communication.
 
-The function is used to setup communication parameters of the Modbus stack. See the Modbus controller API documentation for more information.
+    * :cpp:func:`mbcontroller_start`: Modbus controller start function. Starts stack and interface and allows communication.  
 
-.. doxygenfunction:: mbcontroller_set_descriptor
-
-The Modbus stack uses parameter description tables (descriptors) for communication. These are different for master and slave implementation of stack and should be assigned by :cpp:func:`mbcontroller_set_descriptor()` API call before start of communication.
-
-.. doxygenfunction:: mbcontroller_start
-
-Modbus controller start function. Starts stack and interface and allows communication.  
-
-.. doxygenfunction:: mbcontroller_destroy
-
-This function stops Modbus communication stack and destroys controller interface.  
+    * :cpp:func:`mbcontroller_destroy`: This function stops Modbus communication stack and destroys controller interface.  
 
 There are some configurable parameters of modbus_controller interface and Modbus stack that can be configured using KConfig values in "Modbus configuration" menu. The most important option in KConfig menu is "Selection of Modbus stack support mode" that allows to select master or slave stack for implementation. See the examples for more information about how to use these API functions.
     
@@ -50,18 +40,13 @@ Modbus serial slave interface API overview
 The slave stack requires the user defined structures which represent Modbus parameters accessed by stack. These structures should be prepared by user and be assigned to the modbus_controller interface using :cpp:func:`mbcontroller_set_descriptor()` API call before start of communication.
 The interface API functions below are used for Modbus slave application:
 
-.. doxygenfunction:: mbcontroller_set_descriptor
+    * :cpp:func:`mbcontroller_set_descriptor`: The function initializes Modbus communication descriptors for each type of Modbus register area (Holding Registers, Input Registers, Coils (single bit output), Discrete Inputs). Once areas are initialized and the :cpp:func:`mbcontroller_start()` API is called the Modbus stack can access the data in user data structures by request from master. See the :cpp:type:`mb_register_area_descriptor_t` and example for more information.
 
-The function initializes Modbus communication descriptors for each type of Modbus register area (Holding Registers, Input Registers, Coils (single bit output), Discrete Inputs). Once areas are initialized and the :cpp:func:`mbcontroller_start()` API is called the Modbus stack can access the data in user data structures by request from master. See the :cpp:type:`mb_register_area_descriptor_t` and example for more information.
+    * :cpp:func:`mbcontroller_check_event`: The blocking call to function waits for event specified in the input parameter as event mask. Once master access the parameter and event mask matches the parameter the application task will be unblocked and function will return ESP_OK. See the :cpp:type:`mb_event_group_t` for more information about Modbus event masks.
 
-.. doxygenfunction:: mbcontroller_check_event
+    * :cpp:func:`mbcontroller_get_param_info`: The function gets information about accessed parameters from modbus controller event queue. The KConfig 'CONFIG_MB_CONTROLLER_NOTIFY_QUEUE_SIZE' key can be used to configure the notification queue size. The timeout parameter allows to specify timeout for waiting notification. The :cpp:type:`mb_param_info_t` structure contain information about accessed parameter.
 
-The blocking call to function waits for event specified in the input parameter as event mask. Once master access the parameter and event mask matches the parameter the application task will be unblocked and function will return ESP_OK. See the :cpp:type:`mb_event_group_t` for more information about Modbus event masks.
-
-.. doxygenfunction:: mbcontroller_get_param_info
-
-The function gets information about accessed parameters from modbus controller event queue. The KConfig 'CONFIG_MB_CONTROLLER_NOTIFY_QUEUE_SIZE' key can be used to configure the notification queue size. The timeout parameter allows to specify timeout for waiting notification. The :cpp:type:`mb_param_info_t` structure contain information about accessed parameter.
-
+    
 Modbus serial master interface API overview
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -70,30 +55,15 @@ The Modbus master implementation requires parameter description table be defined
 
 Below are the interface API functions that are used to setup and use Modbus master stack from user application and can be executed in next order:
 
-.. doxygenfunction:: mbcontroller_set_descriptor
+    * :cpp:func:`mbcontroller_set_descriptor`: Assigns parameter description table for Modbus controller interface. The table has to be prepared by user according to particular 
 
-Assigns parameter description table for Modbus controller interface. The table has to be prepared by user according to particular 
+    * :cpp:func:`mbcontroller_send_request`: This function sends data request as defined in parameter request, waits response from corresponded slave and returns status of command execution. This function provides a standard way for read/write access to Modbus devices in the network.
 
-.. doxygenfunction:: mbcontroller_send_request
+    * :cpp:func:`mbcontroller_get_cid_info`: The function gets information about supported characteristic defined as cid. It will check if characteristic is supported and returns its description.
 
-This function sends data request as defined in parameter request, waits response from corresponded slave and returns status of command execution. This function provides a standard way for read/write access to Modbus devices in the network.
+    * :cpp:func:`mbcontroller_get_parameter`: The function reads data of characteristic defined in parameters from Modbus slave device and returns its data. The additional data for request is taken from parameter description table.
 
-.. doxygenfunction:: mbcontroller_get_cid_info
-
-The function gets information about supported characteristic defined as cid. It will check if characteristic is supported and returns its description.
-
-.. doxygenfunction:: mbcontroller_get_parameter
-
-The function reads data of characteristic defined in parameters from Modbus slave device and returns its data. The additional data for request is taken from parameter description table.
-
-.. doxygenfunction:: mbcontroller_set_parameter
-
-The function writes characteristic's value defined as a name and cid parameter in corresponded slave device. The additional data for parameter request is taken from master parameter description table.
-
-.. doxygenfunction:: mbcontroller_destroy
-
-This function stops Modbus communication stack and destroys controller interface.
-
+    * :cpp:func:`mbcontroller_set_parameter`: The function writes characteristic's value defined as a name and cid parameter in corresponded slave device. The additional data for parameter request is taken from master parameter description table.
 
 
 Application Example
@@ -107,4 +77,10 @@ The examples below use the FreeModbus library port for slave and master implemen
 :example:`protocols/modbus_master`
 
 Please refer to the specific example README.md for details.
+
+
+API Reference
+-------------
+
+.. include:: /_build/inc/modbus.inc
 
