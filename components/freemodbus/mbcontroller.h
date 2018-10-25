@@ -20,11 +20,8 @@
 
 #include "sdkconfig.h"              // for KConfig options
 
-#if CONFIG_MB_MASTER_RTU_ENABLED > 0 || CONFIG_MB_MASTER_ASCII_ENABLED > 0
 #include "mbcontroller_master.h"
-#else
 #include "mbcontroller_slave.h"
-#endif
 
 #endif
 

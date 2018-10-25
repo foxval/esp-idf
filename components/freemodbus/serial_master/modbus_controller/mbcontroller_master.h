@@ -136,14 +136,14 @@ typedef enum
 typedef union
 {
     struct {
-        int opt1;                         /*!< Parameter option1 */
-        int opt2;                         /*!< Parameter option2 */
-        int opt3;                         /*!< Parameter option3 */
+        int opt1;                         // Parameter option1
+        int opt2;                         // Parameter option2
+        int opt3;                         // Parameter option3
     };
     struct {
-        int min;                          /*!< Parameter minimum value */
-        int max;                          /*!< Parameter maximum value */
-        int step;                         /*!< Step of parameter change tracking */
+        int min;                          // Parameter minimum value
+        int max;                          // Parameter maximum value
+        int step;                         // Step of parameter change tracking
     };
 } mb_parameter_opt_t;
 
