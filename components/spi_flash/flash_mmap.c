@@ -280,12 +280,12 @@ esp_err_t IRAM_ATTR spi_flash_mmap_pages(int *pages, size_t page_count, spi_flas
 #ifdef CONFIG_CHIP_IS_ESP32
         Cache_Flush(0);
 #else
-        Cache_Invalidate_ICache_All(0);
+        Cache_Invalidate_ICache_All();
         if (!Cache_Drom0_Using_ICache()) {
 #if CONFIG_SPIRAM_SUPPORT
-            Cache_WriteBack_All(0);
+            Cache_WriteBack_All();
 #endif
-            Cache_Invalidate_DCache_All(0);
+            Cache_Invalidate_DCache_All();
         }
 #endif
 #ifndef CONFIG_FREERTOS_UNICORE
@@ -422,12 +422,12 @@ static inline IRAM_ATTR bool update_written_pages(size_t start_addr, size_t leng
 #ifdef CONFIG_CHIP_IS_ESP32
             Cache_Flush(0);
 #else
-            Cache_Invalidate_ICache_All(0);
+            Cache_Invalidate_ICache_All();
             if (!Cache_Drom0_Using_ICache()) {
 #if CONFIG_SPIRAM_SUPPORT
-                Cache_WriteBack_All(0);
+                Cache_WriteBack_All();
 #endif
-                Cache_Invalidate_DCache_All(0);
+                Cache_Invalidate_DCache_All();
             }
 #endif
 #ifndef CONFIG_FREERTOS_UNICORE

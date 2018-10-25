@@ -97,7 +97,7 @@ void IRAM_ATTR esp_spiram_init_cache()
     //Enable external RAM in MMU
     cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 32, 128 );
 #else
-    Cache_Dbus_MMU_Set( 0, DPORT_MMU_ACCESS_SPIRAM, SOC_EXTRAM_DATA_LOW, 0, 64, CONFIG_SPIRAM_SIZE >> 16);
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SOC_EXTRAM_DATA_LOW, 0, 64, CONFIG_SPIRAM_SIZE >> 16);
 #endif
     //Flush and enable icache for APP CPU
 #if !CONFIG_FREERTOS_UNICORE
@@ -135,7 +135,7 @@ esp_err_t esp_spiram_add_to_heapalloc()
     ESP_EARLY_LOGI(TAG, "Adding pool of %dK of external SPI memory to heap allocator", CONFIG_SPIRAM_SIZE/1024);
     //Add entire external RAM region to heap allocator. Heap allocator knows the capabilities of this type of memory, so there's
     //no need to explicitly specify them.
-    return heap_caps_add_region((intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_INSTRUCTION_SIZE, (intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE -1);
+    return heap_caps_add_region((intptr_t)0x3f800000 + CONFIG_SPIRAM_INSTRUCTION_SIZE, (intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE -1);
 }
 
 
@@ -166,7 +166,7 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     volatile int i=0;
     volatile uint8_t *psram=(volatile uint8_t*)SOC_EXTRAM_DATA_LOW;
 #else
-    extern void Cache_WriteBack_Addr(int cpu_no, uint32_t addr, uint32_t size);
+    extern void Cache_WriteBack_Addr(uint32_t addr, uint32_t size);
 #endif
     int cache_was_disabled=0;
 
@@ -209,10 +209,7 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     }
 #endif
 #else
-    Cache_WriteBack_Addr(0, SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE);
-#ifndef CONFIG_FREERTOS_UNICORE
-    Cache_WriteBack_Addr(1, SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE);
-#endif
+    Cache_WriteBack_Addr(SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE);
 #endif
 
     if (cache_was_disabled&(1<<0)) {

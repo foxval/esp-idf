@@ -108,24 +108,33 @@ const void *bootloader_mmap(uint32_t src_addr, uint32_t size)
 
     uint32_t src_addr_aligned = src_addr & MMU_FLASH_MASK;
     uint32_t count = (size + (src_addr - src_addr_aligned) + 0xffff) / MMU_BLOCK_SIZE;
-    Cache_Read_Disable(0);
 #ifdef CONFIG_CHIP_IS_ESP32
+    Cache_Read_Disable(0);
     Cache_Flush(0);
 #else
-    Cache_Invalidate_ICache_All(0);
+    uint32_t autoload = Cache_Suspend_ICache();
+    Cache_Invalidate_ICache_All();
 #endif
     ESP_LOGD(TAG, "mmu set paddr=%08x count=%d", src_addr_aligned, count );
 #ifdef CONFIG_CHIP_IS_ESP32
     int e = cache_flash_mmu_set(0, 0, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count);
 #else
-    int e = Cache_Ibus_MMU_Set(0, DPORT_MMU_ACCESS_FLASH, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count);
+    int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count);
 #endif
     if (e != 0) {
         ESP_LOGE(TAG, "cache_flash_mmu_set failed: %d\n", e);
+#ifdef CONFIG_CHIP_IS_ESP32
         Cache_Read_Enable(0);
+#else
+        Cache_Resume_ICache(autoload);
+#endif
         return NULL;
     }
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Read_Enable(0);
+#else
+    Cache_Resume_ICache(autoload);
+#endif
 
     mapped = true;
 
@@ -136,13 +145,16 @@ void bootloader_munmap(const void *mapping)
 {
     if (mapped)  {
         /* Full MMU reset */
-        Cache_Read_Disable(0);
 #ifdef CONFIG_CHIP_IS_ESP32
+        Cache_Read_Disable(0);
         Cache_Flush(0);
-#else
-        Cache_Invalidate_ICache_All(0);
-#endif
         mmu_init(0);
+#else
+        //TODO, save the autoload value.
+        Cache_Suspend_ICache();
+        Cache_Invalidate_ICache_All();
+        Cache_MMU_Init();
+#endif
         mapped = false;
         current_read_mapping = UINT32_MAX;
     }
@@ -164,14 +176,18 @@ static esp_err_t spi_to_esp_err(esp_rom_spiflash_result_t r)
 
 static esp_err_t bootloader_flash_read_no_decrypt(size_t src_addr, void *dest, size_t size)
 {
-    Cache_Read_Disable(0);
 #ifdef CONFIG_CHIP_IS_ESP32
+    Cache_Read_Disable(0);
     Cache_Flush(0);
 #else
-    Cache_Invalidate_ICache_All(0);
+    uint32_t autoload = Cache_Suspend_ICache();
 #endif
     esp_rom_spiflash_result_t r = esp_rom_spiflash_read(src_addr, dest, size);
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Read_Enable(0);
+#else
+    Cache_Resume_ICache(autoload);
+#endif
 
     return spi_to_esp_err(r);
 }
@@ -189,25 +205,34 @@ static esp_err_t bootloader_flash_read_allow_decrypt(size_t src_addr, void *dest
         uint32_t *map_ptr;
         if (map_at != current_read_mapping) {
             /* Move the 64KB mmu mapping window to fit map_at */
-            Cache_Read_Disable(0);
 #ifdef CONFIG_CHIP_IS_ESP32
+            Cache_Read_Disable(0);
             Cache_Flush(0);
 #else
-            Cache_Invalidate_ICache_All(0);
+            uint32_t autoload = Cache_Suspend_ICache();
+            Cache_Invalidate_ICache_All();
 #endif
             ESP_LOGD(TAG, "mmu set block paddr=0x%08x (was 0x%08x)", map_at, current_read_mapping);
 #ifdef CONFIG_CHIP_IS_ESP32
             int e = cache_flash_mmu_set(0, 0, MMU_BLOCK63_VADDR, map_at, 64, 1);
 #else
-            int e = Cache_Ibus_MMU_Set(0, DPORT_MMU_ACCESS_FLASH, MMU_BLOCK63_VADDR, map_at, 64, 1);
+            int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK63_VADDR, map_at, 64, 1);
 #endif
             if (e != 0) {
                 ESP_LOGE(TAG, "cache_flash_mmu_set failed: %d\n", e);
+#ifdef CONFIG_CHIP_IS_ESP32
                 Cache_Read_Enable(0);
+#else
+                Cache_Resume_ICache(autoload);
+#endif
                 return ESP_FAIL;
             }
             current_read_mapping = map_at;
+#ifdef CONFIG_CHIP_IS_ESP32
             Cache_Read_Enable(0);
+#else
+            Cache_Resume_ICache(autoload);
+#endif
         }
         map_ptr = (uint32_t *)(MMU_BLOCK63_VADDR + (word_src - map_at));
         dest_words[word] = *map_ptr;

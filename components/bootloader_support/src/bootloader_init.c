@@ -92,15 +92,12 @@ esp_err_t bootloader_init()
 
     /* completely reset MMU for both CPUs
        (in case serial bootloader was running) */
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Read_Disable(0);
 #if !CONFIG_FREERTOS_UNICORE
     Cache_Read_Disable(1);
 #endif
-#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Flush(0);
-#else
-    Cache_Invalidate_ICache_All(0);
-#endif
 #if !CONFIG_FREERTOS_UNICORE
     Cache_Flush(1);
 #endif
@@ -109,6 +106,12 @@ esp_err_t bootloader_init()
     DPORT_REG_SET_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MMU_IA_CLR);
     mmu_init(1);
     DPORT_REG_CLR_BIT(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MMU_IA_CLR);
+#endif
+#else
+    //TODO, save the autoload value
+    Cache_Suspend_ICache();
+    Cache_Invalidate_ICache_All();
+    Cache_MMU_Init();
 #endif
     /* (above steps probably unnecessary for most serial bootloader
        usage, all that's absolutely needed is that we unmask DROM0
@@ -216,17 +219,21 @@ static void update_flash_config(const esp_image_header_t* pfhdr)
         default:
             size = 2;
     }
-    Cache_Read_Disable( 0 );
+#ifdef CONFIG_CHIP_IS_ESP32
+    Cache_Read_Disable(0);
+#else
+    uint32_t autoload = Cache_Suspend_ICache();
+#endif
     // Set flash chip size
     esp_rom_spiflash_config_param(g_rom_flashchip.device_id, size * 0x100000, 0x10000, 0x1000, 0x100, 0xffff);
     // TODO: set mode
     // TODO: set frequency
 #ifdef CONFIG_CHIP_IS_ESP32
     Cache_Flush(0);
+    Cache_Read_Enable(0);
 #else
-    Cache_Invalidate_ICache_All(0);
+    Cache_Resume_ICache(autoload);
 #endif
-    Cache_Read_Enable( 0 );
 }
 
 static void print_flash_info(const esp_image_header_t* phdr)

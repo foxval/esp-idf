@@ -286,9 +286,14 @@ void IRAM_ATTR esp_restart_noos()
     uart_tx_wait_idle(2);
 
     // Disable cache
+#ifdef CONFIG_CHIP_IS_ESP32
     Cache_Read_Disable(0);
 #if !CONFIG_FREERTOS_UNICORE
     Cache_Read_Disable(1);
+#endif
+#else
+    Cache_Disable_ICache();
+    Cache_Disable_DCache();
 #endif
 
     // 2nd stage bootloader reconfigures SPI flash signals.

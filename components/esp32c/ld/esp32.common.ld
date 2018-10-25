@@ -109,6 +109,7 @@ SECTIONS
     *libgcc.a:lib2funcs.o(.literal .text .literal.* .text.*)
     *libspi_flash.a:spi_flash_rom_patch.o(.literal .text .literal.* .text.*)
     *libgcov.a:(.literal .text .literal.* .text.*)
+    *libmain.a:(.literal .text .literal.* .text.*)
     INCLUDE esp32.spiram.rom-functions-iram.ld
     _iram_text_end = ABSOLUTE(.);
   } > iram0_0_seg
@@ -135,6 +136,7 @@ SECTIONS
     *libgcov.a:(.rodata .rodata.*)
     *libheap.a:multi_heap.o(.rodata .rodata.*)
     *libheap.a:multi_heap_poisoning.o(.rodata .rodata.*)
+    *libmain.a:(.rodata .rodata.*)
     INCLUDE esp32.spiram.rom-functions-dram.ld
     _data_end = ABSOLUTE(.);
     . = ALIGN(4);

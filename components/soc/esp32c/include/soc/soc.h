@@ -62,7 +62,9 @@
 #define DR_REG_INTERRUPT_BASE                   0x3f4c2000
 #define DR_REG_DMA_COPY_BASE                    0x3f4c3000
 #define DR_REG_EXTMEM_BASE                      0x3f4c4000
-#define DR_REG_FLASH_MMU_TABLE_PRO              0x3f4c5000
+#define DR_REG_MMU_TABLE                        0x3f4c5000
+#define DR_REG_ITAG_TABLE                       0x3f4c6000
+#define DR_REG_DTAG_TABLE                       0x3f4c7000
 #define DR_REG_AES_BASE                         0x3f4c8000
 #define DR_REG_SHA_BASE                         0x3f4c9000
 #define DR_REG_RSA_BASE                         0x3f4ca000

@@ -954,9 +954,8 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
 
     Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_DCACHE_HIGH, CACHE_MEMORY_INVALID);
     Cache_Set_DCache_Mode(CACHE_SIZE_16KB, CACHE_8WAYS_ASSOC, CACHE_LINE_SIZE_64B);
-    Cache_Invalidate_ICache_All(0);
-
-    DPORT_SET_PERI_REG_MASK(DPORT_PRO_DCACHE_CTRL_REG, DPORT_PRO_DCACHE_ENABLE);
+    Cache_Invalidate_DCache_All();
+    Cache_Enable_DCache(0);
 #endif
 
     CLEAR_PERI_REG_MASK(SPI_MEM_MISC_REG(0), SPI_MEM_CS1_DIS_M); //ENABLE SPI0 CS1 TO PSRAM(CS0--FLASH; CS1--SRAM)

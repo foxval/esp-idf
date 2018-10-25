@@ -440,11 +440,12 @@ static void set_cache_and_start_app(
     uint32_t entry_addr)
 {
     ESP_LOGD(TAG, "configure drom and irom and start");
-    Cache_Read_Disable( 0 );
 #ifdef CONFIG_CHIP_IS_ESP32
-    Cache_Flush( 0 );
+    Cache_Read_Disable(0);
+    Cache_Flush(0);
 #else
-    Cache_Invalidate_ICache_All(0);
+    uint32_t autoload = Cache_Suspend_ICache();
+    Cache_Invalidate_ICache_All();
 #endif
 
     /* Clear the MMU entries that are already set up,
@@ -459,7 +460,7 @@ static void set_cache_and_start_app(
 #ifdef CONFIG_CHIP_IS_ESP32
     int rc = cache_flash_mmu_set( 0, 0, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
 #else
-    int rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
+    int rc = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, drom_load_addr & 0xffff0000, drom_addr & 0xffff0000, 64, drom_page_count );
 #endif
     ESP_LOGV(TAG, "rc=%d", rc );
 #if !CONFIG_FREERTOS_UNICORE
@@ -479,17 +480,17 @@ static void set_cache_and_start_app(
         irom0_used = 1;
     }
     if(iram1_used || irom0_used) {
-        rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40000000, 0, 64, 64);
-        rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40400000, 0, 64, 64);
+        rc = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, 0x40000000, 0, 64, 64);
+        rc = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, 0x40400000, 0, 64, 64);
         REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_I_SOURCE_PRO_IRAM1);
         REG_CLR_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_IRAM1);
         if(irom0_used) {
-            rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, 0x40800000, 0, 64, 64);
+            rc = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, 0x40800000, 0, 64, 64);
             REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_I_SOURCE_PRO_IROM0);
             REG_CLR_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_IROM0);
         }
     }
-    rc = Cache_Ibus_MMU_Set( 0, DPORT_MMU_ACCESS_FLASH, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
+    rc = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, irom_load_addr & 0xffff0000, irom_addr & 0xffff0000, 64, irom_page_count );
 #endif
     ESP_LOGV(TAG, "rc=%d", rc );
 #if !CONFIG_FREERTOS_UNICORE
@@ -507,7 +508,11 @@ static void set_cache_and_start_app(
     DPORT_REG_CLR_BIT( DPORT_APP_ICACHE_CTRL1_REG, (DPORT_APP_ICACHE_MASK_IRAM0) | (DPORT_APP_ICACHE_MASK_IRAM1 & 0) | (DPORT_APP_ICACHE_MASK_IROM0 & 0) | DPORT_APP_ICACHE_MASK_DROM0 );
 #endif
 #endif
-    Cache_Read_Enable( 0 );
+#ifdef CONFIG_CHIP_IS_ESP32
+    Cache_Read_Enable(0);
+#else
+    Cache_Resume_ICache(autoload);
+#endif
 
     // Application will need to do Cache_Flush(1) and Cache_Read_Enable(1)
 
