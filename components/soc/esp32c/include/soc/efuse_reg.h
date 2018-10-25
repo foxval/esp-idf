@@ -88,12 +88,12 @@ extern "C" {
 #define EFUSE_DIS_EFUSE_ATE_WR_M  (BIT(16))
 #define EFUSE_DIS_EFUSE_ATE_WR_V  0x1
 #define EFUSE_DIS_EFUSE_ATE_WR_S  16
-/* EFUSE_DIS_SDIO_HOST : R/W ;bitpos:[15] ;default: 1'b0 ; */
+/* EFUSE_DIS_SDIO_ACCESS : R/W ;bitpos:[15] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIS_SDIO_HOST  (BIT(15))
-#define EFUSE_DIS_SDIO_HOST_M  (BIT(15))
-#define EFUSE_DIS_SDIO_HOST_V  0x1
-#define EFUSE_DIS_SDIO_HOST_S  15
+#define EFUSE_DIS_SDIO_ACCESS  (BIT(15))
+#define EFUSE_DIS_SDIO_ACCESS_M  (BIT(15))
+#define EFUSE_DIS_SDIO_ACCESS_V  0x1
+#define EFUSE_DIS_SDIO_ACCESS_S  15
 /* EFUSE_DIS_CAN : R/W ;bitpos:[14] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_DIS_CAN  (BIT(14))
@@ -136,12 +136,12 @@ extern "C" {
 #define EFUSE_DIS_ICACHE_M  (BIT(8))
 #define EFUSE_DIS_ICACHE_V  0x1
 #define EFUSE_DIS_ICACHE_S  8
-/* EFUSE_CLR_DRAM : R/W ;bitpos:[7] ;default: 1'b0 ; */
+/* EFUSE_DIS_RTC_RAM_BOOT : R/W ;bitpos:[7] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_CLR_DRAM  (BIT(7))
-#define EFUSE_CLR_DRAM_M  (BIT(7))
-#define EFUSE_CLR_DRAM_V  0x1
-#define EFUSE_CLR_DRAM_S  7
+#define EFUSE_DIS_RTC_RAM_BOOT  (BIT(7))
+#define EFUSE_DIS_RTC_RAM_BOOT_M  (BIT(7))
+#define EFUSE_DIS_RTC_RAM_BOOT_V  0x1
+#define EFUSE_DIS_RTC_RAM_BOOT_S  7
 /* EFUSE_RD_DIS : R/W ;bitpos:[6:0] ;default: 7'h0 ; */
 /*description: */
 #define EFUSE_RD_DIS  0x0000007F
@@ -310,12 +310,18 @@ extern "C" {
 #define EFUSE_KEY_PURPOSE_2_S  0
 
 #define EFUSE_PGM_DATA4_REG          (DR_REG_EFUSE_BASE + 0x010)
-/* EFUSE_RESERVE : R/W ;bitpos:[31:6] ;default: 26'h0 ; */
+/* EFUSE_RESERVE : R/W ;bitpos:[31:8] ;default: 24'h0 ; */
 /*description: */
-#define EFUSE_RESERVE  0x03FFFFFF
+#define EFUSE_RESERVE  0x00FFFFFF
 #define EFUSE_RESERVE_M  ((EFUSE_RESERVE_V)<<(EFUSE_RESERVE_S))
-#define EFUSE_RESERVE_V  0x3FFFFFF
-#define EFUSE_RESERVE_S  6
+#define EFUSE_RESERVE_V  0xFFFFFF
+#define EFUSE_RESERVE_S  8
+/* EFUSE_UART_PRINT_CONTROL : R/W ;bitpos:[7:6] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_UART_PRINT_CONTROL  0x00000003
+#define EFUSE_UART_PRINT_CONTROL_M  ((EFUSE_UART_PRINT_CONTROL_V)<<(EFUSE_UART_PRINT_CONTROL_S))
+#define EFUSE_UART_PRINT_CONTROL_V  0x3
+#define EFUSE_UART_PRINT_CONTROL_S  6
 /* EFUSE_ENABLE_SECURITY_DOWNLOAD : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_ENABLE_SECURITY_DOWNLOAD  (BIT(5))
@@ -328,18 +334,18 @@ extern "C" {
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_M  (BIT(4))
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_V  0x1
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_S  4
-/* EFUSE_DIG_RESERVE : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/* EFUSE_DIS_TINY_BASIC : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIG_RESERVE  (BIT(3))
-#define EFUSE_DIG_RESERVE_M  (BIT(3))
-#define EFUSE_DIG_RESERVE_V  0x1
-#define EFUSE_DIG_RESERVE_S  3
-/* EFUSE_DIS_UART_PRINT : R/W ;bitpos:[2] ;default: 1'b0 ; */
+#define EFUSE_DIS_TINY_BASIC  (BIT(3))
+#define EFUSE_DIS_TINY_BASIC_M  (BIT(3))
+#define EFUSE_DIS_TINY_BASIC_V  0x1
+#define EFUSE_DIS_TINY_BASIC_S  3
+/* EFUSE_UART_PRINT_CHANNEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIS_UART_PRINT  (BIT(2))
-#define EFUSE_DIS_UART_PRINT_M  (BIT(2))
-#define EFUSE_DIS_UART_PRINT_V  0x1
-#define EFUSE_DIS_UART_PRINT_S  2
+#define EFUSE_UART_PRINT_CHANNEL  (BIT(2))
+#define EFUSE_UART_PRINT_CHANNEL_M  (BIT(2))
+#define EFUSE_UART_PRINT_CHANNEL_V  0x1
+#define EFUSE_UART_PRINT_CHANNEL_S  2
 /* EFUSE_DIS_LEGACY_SPI_BOOT : R/W ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_DIS_LEGACY_SPI_BOOT  (BIT(1))
@@ -476,12 +482,12 @@ extern "C" {
 #define EFUSE_DIS_EFUSE_ATE_WR_M  (BIT(16))
 #define EFUSE_DIS_EFUSE_ATE_WR_V  0x1
 #define EFUSE_DIS_EFUSE_ATE_WR_S  16
-/* EFUSE_DIS_SDIO_HOST : RO ;bitpos:[15] ;default: 1'b0 ; */
+/* EFUSE_DIS_SDIO_ACCESS : RO ;bitpos:[15] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIS_SDIO_HOST  (BIT(15))
-#define EFUSE_DIS_SDIO_HOST_M  (BIT(15))
-#define EFUSE_DIS_SDIO_HOST_V  0x1
-#define EFUSE_DIS_SDIO_HOST_S  15
+#define EFUSE_DIS_SDIO_ACCESS  (BIT(15))
+#define EFUSE_DIS_SDIO_ACCESS_M  (BIT(15))
+#define EFUSE_DIS_SDIO_ACCESS_V  0x1
+#define EFUSE_DIS_SDIO_ACCESS_S  15
 /* EFUSE_DIS_CAN : RO ;bitpos:[14] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_DIS_CAN  (BIT(14))
@@ -524,12 +530,12 @@ extern "C" {
 #define EFUSE_DIS_ICACHE_M  (BIT(8))
 #define EFUSE_DIS_ICACHE_V  0x1
 #define EFUSE_DIS_ICACHE_S  8
-/* EFUSE_CLR_DRAM : RO ;bitpos:[7] ;default: 1'b0 ; */
+/* EFUSE_DIS_RTC_RAM_BOOT : RO ;bitpos:[7] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_CLR_DRAM  (BIT(7))
-#define EFUSE_CLR_DRAM_M  (BIT(7))
-#define EFUSE_CLR_DRAM_V  0x1
-#define EFUSE_CLR_DRAM_S  7
+#define EFUSE_DIS_RTC_RAM_BOOT  (BIT(7))
+#define EFUSE_DIS_RTC_RAM_BOOT_M  (BIT(7))
+#define EFUSE_DIS_RTC_RAM_BOOT_V  0x1
+#define EFUSE_DIS_RTC_RAM_BOOT_S  7
 /* EFUSE_RD_DIS : RO ;bitpos:[6:0] ;default: 7'h0 ; */
 /*description: */
 #define EFUSE_RD_DIS  0x0000007F
@@ -698,12 +704,18 @@ extern "C" {
 #define EFUSE_KEY_PURPOSE_2_S  0
 
 #define EFUSE_RD_REPEAT_DATA3_REG          (DR_REG_EFUSE_BASE + 0x03c)
-/* EFUSE_RESERVE : RO ;bitpos:[31:6] ;default: 26'h0 ; */
+/* EFUSE_RESERVE : RO ;bitpos:[31:8] ;default: 24'h0 ; */
 /*description: */
-#define EFUSE_RESERVE  0x03FFFFFF
+#define EFUSE_RESERVE  0x00FFFFFF
 #define EFUSE_RESERVE_M  ((EFUSE_RESERVE_V)<<(EFUSE_RESERVE_S))
-#define EFUSE_RESERVE_V  0x3FFFFFF
-#define EFUSE_RESERVE_S  6
+#define EFUSE_RESERVE_V  0xFFFFFF
+#define EFUSE_RESERVE_S  8
+/* EFUSE_UART_PRINT_CONTROL : RO ;bitpos:[7:6] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_UART_PRINT_CONTROL  0x00000003
+#define EFUSE_UART_PRINT_CONTROL_M  ((EFUSE_UART_PRINT_CONTROL_V)<<(EFUSE_UART_PRINT_CONTROL_S))
+#define EFUSE_UART_PRINT_CONTROL_V  0x3
+#define EFUSE_UART_PRINT_CONTROL_S  6
 /* EFUSE_ENABLE_SECURITY_DOWNLOAD : RO ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_ENABLE_SECURITY_DOWNLOAD  (BIT(5))
@@ -716,18 +728,18 @@ extern "C" {
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_M  (BIT(4))
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_V  0x1
 #define EFUSE_DIS_USB_DOWNLOAD_MODE_S  4
-/* EFUSE_DIG_RESERVE : RO ;bitpos:[3] ;default: 1'b0 ; */
+/* EFUSE_DIS_TINY_BASIC : RO ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIG_RESERVE  (BIT(3))
-#define EFUSE_DIG_RESERVE_M  (BIT(3))
-#define EFUSE_DIG_RESERVE_V  0x1
-#define EFUSE_DIG_RESERVE_S  3
-/* EFUSE_DIS_UART_PRINT : RO ;bitpos:[2] ;default: 1'b0 ; */
+#define EFUSE_DIS_TINY_BASIC  (BIT(3))
+#define EFUSE_DIS_TINY_BASIC_M  (BIT(3))
+#define EFUSE_DIS_TINY_BASIC_V  0x1
+#define EFUSE_DIS_TINY_BASIC_S  3
+/* EFUSE_UART_PRINT_CHANNEL : RO ;bitpos:[2] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_DIS_UART_PRINT  (BIT(2))
-#define EFUSE_DIS_UART_PRINT_M  (BIT(2))
-#define EFUSE_DIS_UART_PRINT_V  0x1
-#define EFUSE_DIS_UART_PRINT_S  2
+#define EFUSE_UART_PRINT_CHANNEL  (BIT(2))
+#define EFUSE_UART_PRINT_CHANNEL_M  (BIT(2))
+#define EFUSE_UART_PRINT_CHANNEL_V  0x1
+#define EFUSE_UART_PRINT_CHANNEL_S  2
 /* EFUSE_DIS_LEGACY_SPI_BOOT : RO ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_DIS_LEGACY_SPI_BOOT  (BIT(1))
@@ -1446,12 +1458,12 @@ extern "C" {
 #define EFUSE_RD_DIS_EFUSE_ATE_WR_ERR_M  (BIT(16))
 #define EFUSE_RD_DIS_EFUSE_ATE_WR_ERR_V  0x1
 #define EFUSE_RD_DIS_EFUSE_ATE_WR_ERR_S  16
-/* EFUSE_RD_DIS_SDIO_HOST_ERR : RO ;bitpos:[15] ;default: 1'b0 ; */
+/* EFUSE_RD_DIS_SDIO_ACCESS_ERR : RO ;bitpos:[15] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_RD_DIS_SDIO_HOST_ERR  (BIT(15))
-#define EFUSE_RD_DIS_SDIO_HOST_ERR_M  (BIT(15))
-#define EFUSE_RD_DIS_SDIO_HOST_ERR_V  0x1
-#define EFUSE_RD_DIS_SDIO_HOST_ERR_S  15
+#define EFUSE_RD_DIS_SDIO_ACCESS_ERR  (BIT(15))
+#define EFUSE_RD_DIS_SDIO_ACCESS_ERR_M  (BIT(15))
+#define EFUSE_RD_DIS_SDIO_ACCESS_ERR_V  0x1
+#define EFUSE_RD_DIS_SDIO_ACCESS_ERR_S  15
 /* EFUSE_RD_DIS_CAN_ERR : RO ;bitpos:[14] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_RD_DIS_CAN_ERR  (BIT(14))
@@ -1494,12 +1506,12 @@ extern "C" {
 #define EFUSE_RD_DIS_ICACHE_ERR_M  (BIT(8))
 #define EFUSE_RD_DIS_ICACHE_ERR_V  0x1
 #define EFUSE_RD_DIS_ICACHE_ERR_S  8
-/* EFUSE_RD_CLR_DRAM_ERR : RO ;bitpos:[7] ;default: 1'b0 ; */
+/* EFUSE_RD_DIS_RTC_RAM_BOOT_ERR : RO ;bitpos:[7] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_RD_CLR_DRAM_ERR  (BIT(7))
-#define EFUSE_RD_CLR_DRAM_ERR_M  (BIT(7))
-#define EFUSE_RD_CLR_DRAM_ERR_V  0x1
-#define EFUSE_RD_CLR_DRAM_ERR_S  7
+#define EFUSE_RD_DIS_RTC_RAM_BOOT_ERR  (BIT(7))
+#define EFUSE_RD_DIS_RTC_RAM_BOOT_ERR_M  (BIT(7))
+#define EFUSE_RD_DIS_RTC_RAM_BOOT_ERR_V  0x1
+#define EFUSE_RD_DIS_RTC_RAM_BOOT_ERR_S  7
 /* EFUSE_RD_RD_DIS_ERR : RO ;bitpos:[6:0] ;default: 7'h0 ; */
 /*description: */
 #define EFUSE_RD_RD_DIS_ERR  0x0000007F
@@ -1668,12 +1680,18 @@ extern "C" {
 #define EFUSE_RD_KEY_PURPOSE_2_ERR_S  0
 
 #define EFUSE_RD_REPEAT_ERR3_REG          (DR_REG_EFUSE_BASE + 0x188)
-/* EFUSE_RD_RESERVE_ERR : RO ;bitpos:[31:6] ;default: 26'h0 ; */
+/* EFUSE_RD_RESERVE_ERR : RO ;bitpos:[31:8] ;default: 24'h0 ; */
 /*description: */
-#define EFUSE_RD_RESERVE_ERR  0x03FFFFFF
+#define EFUSE_RD_RESERVE_ERR  0x00FFFFFF
 #define EFUSE_RD_RESERVE_ERR_M  ((EFUSE_RD_RESERVE_ERR_V)<<(EFUSE_RD_RESERVE_ERR_S))
-#define EFUSE_RD_RESERVE_ERR_V  0x3FFFFFF
-#define EFUSE_RD_RESERVE_ERR_S  6
+#define EFUSE_RD_RESERVE_ERR_V  0xFFFFFF
+#define EFUSE_RD_RESERVE_ERR_S  8
+/* EFUSE_RD_UART_PRINT_CONTROL : RO ;bitpos:[7:6] ;default: 2'b0 ; */
+/*description: */
+#define EFUSE_RD_UART_PRINT_CONTROL  0x00000003
+#define EFUSE_RD_UART_PRINT_CONTROL_M  ((EFUSE_RD_UART_PRINT_CONTROL_V)<<(EFUSE_RD_UART_PRINT_CONTROL_S))
+#define EFUSE_RD_UART_PRINT_CONTROL_V  0x3
+#define EFUSE_RD_UART_PRINT_CONTROL_S  6
 /* EFUSE_RD_ENABLE_SECURITY_DOWNLOAD : RO ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_RD_ENABLE_SECURITY_DOWNLOAD  (BIT(5))
@@ -1686,18 +1704,18 @@ extern "C" {
 #define EFUSE_RD_DIS_USB_DOWNLOAD_MODE_M  (BIT(4))
 #define EFUSE_RD_DIS_USB_DOWNLOAD_MODE_V  0x1
 #define EFUSE_RD_DIS_USB_DOWNLOAD_MODE_S  4
-/* EFUSE_RD_DIG_RESERVE_ERR : RO ;bitpos:[3] ;default: 1'b0 ; */
+/* EFUSE_RD_DIS_TINY_BASIC : RO ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_RD_DIG_RESERVE_ERR  (BIT(3))
-#define EFUSE_RD_DIG_RESERVE_ERR_M  (BIT(3))
-#define EFUSE_RD_DIG_RESERVE_ERR_V  0x1
-#define EFUSE_RD_DIG_RESERVE_ERR_S  3
-/* EFUSE_RD_DIS_UART_PRINT : RO ;bitpos:[2] ;default: 1'b0 ; */
+#define EFUSE_RD_DIS_TINY_BASIC  (BIT(3))
+#define EFUSE_RD_DIS_TINY_BASIC_M  (BIT(3))
+#define EFUSE_RD_DIS_TINY_BASIC_V  0x1
+#define EFUSE_RD_DIS_TINY_BASIC_S  3
+/* EFUSE_RD_UART_PRINT_CHANNEL : RO ;bitpos:[2] ;default: 1'b0 ; */
 /*description: */
-#define EFUSE_RD_DIS_UART_PRINT  (BIT(2))
-#define EFUSE_RD_DIS_UART_PRINT_M  (BIT(2))
-#define EFUSE_RD_DIS_UART_PRINT_V  0x1
-#define EFUSE_RD_DIS_UART_PRINT_S  2
+#define EFUSE_RD_UART_PRINT_CHANNEL  (BIT(2))
+#define EFUSE_RD_UART_PRINT_CHANNEL_M  (BIT(2))
+#define EFUSE_RD_UART_PRINT_CHANNEL_V  0x1
+#define EFUSE_RD_UART_PRINT_CHANNEL_S  2
 /* EFUSE_RD_DIS_LEGACY_SPI_BOOT_ERR : RO ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_RD_DIS_LEGACY_SPI_BOOT_ERR  (BIT(1))
@@ -2066,7 +2084,7 @@ extern "C" {
 #define EFUSE_TSUP_A_S  0
 
 #define EFUSE_DATE_REG          (DR_REG_EFUSE_BASE + 0x1FC)
-/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h18082800 ; */
+/* EFUSE_DATE : R/W ;bitpos:[31:0] ;default: 32'h18101600 ; */
 /*description: */
 #define EFUSE_DATE  0xFFFFFFFF
 #define EFUSE_DATE_M  ((EFUSE_DATE_V)<<(EFUSE_DATE_S))

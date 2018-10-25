@@ -187,7 +187,7 @@ extern "C" {
 #define DPORT_CPU_WAIT_MODE_FORCE_ON_M  (BIT(3))
 #define DPORT_CPU_WAIT_MODE_FORCE_ON_V  0x1
 #define DPORT_CPU_WAIT_MODE_FORCE_ON_S  3
-/* DPORT_PLL_FREQ_SEL : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/* DPORT_PLL_FREQ_SEL : R/W ;bitpos:[2] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_PLL_FREQ_SEL  (BIT(2))
 #define DPORT_PLL_FREQ_SEL_M  (BIT(2))
@@ -882,6 +882,12 @@ extern "C" {
 #define DPORT_BUSTOEXTMEM_ENA_S  0
 
 #define DPORT_CACHE_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x088)
+/* DPORT_PRO_CACHE_RESET : R/W ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_CACHE_RESET  (BIT(2))
+#define DPORT_PRO_CACHE_RESET_M  (BIT(2))
+#define DPORT_PRO_CACHE_RESET_V  0x1
+#define DPORT_PRO_CACHE_RESET_S  2
 /* DPORT_PRO_DCACHE_CLK_ON : R/W ;bitpos:[1] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_PRO_DCACHE_CLK_ON  (BIT(1))
@@ -978,7 +984,7 @@ extern "C" {
 #define SYSTEM_CLK_EN_S  0
 
 #define SYSTEM_DATE_REG          (DR_REG_SYSTEM_BASE + 0xFFC)
-/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809130 ; */
+/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810180 ; */
 /*description: */
 #define SYSTEM_DATE  0x0FFFFFFF
 #define SYSTEM_DATE_M  ((SYSTEM_DATE_V)<<(SYSTEM_DATE_S))
