@@ -5,7 +5,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <rom/efuse.h>
+#include <rom/hmac.h>
 #include <soc/efuse_reg.h>
+#include <esp_log.h>
 #include "unity.h"
 
 static void dump_efuse_block(int n, uint32_t addr, const char *label)
@@ -69,6 +71,50 @@ TEST_CASE("efuse write key block", "[esp32c]")
     // TODO: check no error bits are set
 }
 
+TEST_CASE("Soft-disable JTAG", "[esp32c][ignore]")
+{
+    ets_efuse_clear_program_registers();
+    REG_SET_BIT(EFUSE_PGM_DATA1_REG, EFUSE_SOFT_DIS_JTAG);
+    ets_efuse_program(ETS_EFUSE_BLOCK0);
+    printf("JTAG soft-disabled (needs manual confirmation)...\n");
+}
+
+TEST_CASE("Temporarily enable JTAG", "[esp32c][ignore]")
+{
+    const ets_efuse_block_t key_block = ETS_EFUSE_BLOCK_KEY3;
+    const ets_efuse_purpose_t purpose = ETS_EFUSE_KEY_PURPOSE_HMAC_DOWN_ALL;
+    const uint8_t key_data[32] = { "Hello world!" }; // padded with lots of zeroes
+
+    /* The JTAG HMAC of the key_data. Produced by the following Python:
+
+       import hmac, hashlib, binascii
+       binascii.hexlify(hmac.HMAC(b"Hello world!", b"\x00" * 32, hashlib.sha256).digest())
+    */
+    const uint8_t key_hmac[32] = {
+        0xda, 0x28, 0x7c, 0xf7, 0xab, 0x5b, 0x59, 0x02, 0x94, 0x04, 0x28, 0x4d, 0x8b, 0x5e, 0x97, 0x68,
+        0x22, 0xb5, 0x98, 0x50, 0xde, 0x6f, 0x81, 0x4c, 0xe9, 0x09, 0x9d, 0x9c, 0x69, 0x2b, 0x60, 0x62,
+    };
+
+    int r = ets_efuse_write_key(key_block, purpose,
+                        key_data, sizeof(key_data));
+
+    TEST_ASSERT_EQUAL(r, 0);
+
+    r = ets_jtag_enable_temporarily(key_hmac, key_block);
+    TEST_ASSERT_EQUAL(r, 0);
+
+    printf("JTAG temporarily enabled? (Need manual confirmation)\n");
+}
+
+TEST_CASE("HMAC re-disable JTAG", "[esp32c][ignore]")
+{
+    int r = ets_hmac_invalidate_downstream(ETS_EFUSE_KEY_PURPOSE_HMAC_DOWN_JTAG);
+    TEST_ASSERT_EQUAL(r, 0);
+
+    ets_hmac_disable();
+
+    printf("JTAG re-disabled? (Need manual confirmation)\n");
+}
 
 
 #endif /* CONFIG_HARDWARE_IS_FPGA */
