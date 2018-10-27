@@ -524,23 +524,23 @@ extern "C" {
 #define RTC_CNTL_RESET_CAUSE_PROCPU_S  0
 
 #define RTC_CNTL_WAKEUP_STATE_REG          (DR_REG_RTCCNTL_BASE + 0x003c)
-/* RTC_CNTL_GPIO_WAKEUP_FILTER : R/W ;bitpos:[28] ;default: 1'd0 ; */
+/* RTC_CNTL_GPIO_WAKEUP_FILTER : R/W ;bitpos:[30] ;default: 1'd0 ; */
 /*description: enable filter for gpio wakeup event*/
-#define RTC_CNTL_GPIO_WAKEUP_FILTER  (BIT(28))
-#define RTC_CNTL_GPIO_WAKEUP_FILTER_M  (BIT(28))
+#define RTC_CNTL_GPIO_WAKEUP_FILTER  (BIT(30))
+#define RTC_CNTL_GPIO_WAKEUP_FILTER_M  (BIT(30))
 #define RTC_CNTL_GPIO_WAKEUP_FILTER_V  0x1
-#define RTC_CNTL_GPIO_WAKEUP_FILTER_S  28
-/* RTC_CNTL_WAKEUP_ENA : R/W ;bitpos:[27:14] ;default: 14'b1100 ; */
+#define RTC_CNTL_GPIO_WAKEUP_FILTER_S  30
+/* RTC_CNTL_WAKEUP_ENA : R/W ;bitpos:[29:15] ;default: 15'b1100 ; */
 /*description: wakeup enable bitmap*/
-#define RTC_CNTL_WAKEUP_ENA  0x00003FFF
+#define RTC_CNTL_WAKEUP_ENA  0x00007FFF
 #define RTC_CNTL_WAKEUP_ENA_M  ((RTC_CNTL_WAKEUP_ENA_V)<<(RTC_CNTL_WAKEUP_ENA_S))
-#define RTC_CNTL_WAKEUP_ENA_V  0x3FFF
-#define RTC_CNTL_WAKEUP_ENA_S  14
-/* RTC_CNTL_WAKEUP_CAUSE : RO ;bitpos:[13:0] ;default: 14'h0 ; */
+#define RTC_CNTL_WAKEUP_ENA_V  0x7FFF
+#define RTC_CNTL_WAKEUP_ENA_S  15
+/* RTC_CNTL_WAKEUP_CAUSE : RO ;bitpos:[14:0] ;default: 15'h0 ; */
 /*description: wakeup cause*/
-#define RTC_CNTL_WAKEUP_CAUSE  0x00003FFF
+#define RTC_CNTL_WAKEUP_CAUSE  0x00007FFF
 #define RTC_CNTL_WAKEUP_CAUSE_M  ((RTC_CNTL_WAKEUP_CAUSE_V)<<(RTC_CNTL_WAKEUP_CAUSE_S))
-#define RTC_CNTL_WAKEUP_CAUSE_V  0x3FFF
+#define RTC_CNTL_WAKEUP_CAUSE_V  0x7FFF
 #define RTC_CNTL_WAKEUP_CAUSE_S  0
 
 #define RTC_CNTL_INT_ENA_REG          (DR_REG_RTCCNTL_BASE + 0x0040)
@@ -3070,7 +3070,7 @@ extern "C" {
 #define RTC_CNTL_TOUCH_FILTER_EN_V  0x1
 #define RTC_CNTL_TOUCH_FILTER_EN_S  31
 /* RTC_CNTL_TOUCH_FILTER_MODE : R/W ;bitpos:[30:29] ;default: 2'd1 ; */
-/*description: 0: IIR ½ 1: IIR ¼ 2: IIR 1/8 3: Jitter*/
+/*description: 0: IIR ? 1: IIR ? 2: IIR 1/8 3: Jitter*/
 #define RTC_CNTL_TOUCH_FILTER_MODE  0x00000003
 #define RTC_CNTL_TOUCH_FILTER_MODE_M  ((RTC_CNTL_TOUCH_FILTER_MODE_V)<<(RTC_CNTL_TOUCH_FILTER_MODE_S))
 #define RTC_CNTL_TOUCH_FILTER_MODE_V  0x3
@@ -3105,9 +3105,107 @@ extern "C" {
 #define RTC_CNTL_TOUCH_NEG_NOISE_LIMIT_M  ((RTC_CNTL_TOUCH_NEG_NOISE_LIMIT_V)<<(RTC_CNTL_TOUCH_NEG_NOISE_LIMIT_S))
 #define RTC_CNTL_TOUCH_NEG_NOISE_LIMIT_V  0xF
 #define RTC_CNTL_TOUCH_NEG_NOISE_LIMIT_S  16
+/* RTC_CNTL_TOUCH_JITTER_STEP : R/W ;bitpos:[15:12] ;default: 4'd1 ; */
+/*description: touch jitter step*/
+#define RTC_CNTL_TOUCH_JITTER_STEP  0x0000000F
+#define RTC_CNTL_TOUCH_JITTER_STEP_M  ((RTC_CNTL_TOUCH_JITTER_STEP_V)<<(RTC_CNTL_TOUCH_JITTER_STEP_S))
+#define RTC_CNTL_TOUCH_JITTER_STEP_V  0xF
+#define RTC_CNTL_TOUCH_JITTER_STEP_S  12
 
-#define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0120)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809210 ; */
+#define RTC_CNTL_USB_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x0120)
+/* RTC_CNTL_USB_TX_EN_OVERRIDE : R/W ;bitpos:[16] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_TX_EN_OVERRIDE  (BIT(16))
+#define RTC_CNTL_USB_TX_EN_OVERRIDE_M  (BIT(16))
+#define RTC_CNTL_USB_TX_EN_OVERRIDE_V  0x1
+#define RTC_CNTL_USB_TX_EN_OVERRIDE_S  16
+/* RTC_CNTL_USB_TX_EN : R/W ;bitpos:[15] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_TX_EN  (BIT(15))
+#define RTC_CNTL_USB_TX_EN_M  (BIT(15))
+#define RTC_CNTL_USB_TX_EN_V  0x1
+#define RTC_CNTL_USB_TX_EN_S  15
+/* RTC_CNTL_USB_TXP : R/W ;bitpos:[14] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_TXP  (BIT(14))
+#define RTC_CNTL_USB_TXP_M  (BIT(14))
+#define RTC_CNTL_USB_TXP_V  0x1
+#define RTC_CNTL_USB_TXP_S  14
+/* RTC_CNTL_USB_TXM : R/W ;bitpos:[13] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_TXM  (BIT(13))
+#define RTC_CNTL_USB_TXM_M  (BIT(13))
+#define RTC_CNTL_USB_TXM_V  0x1
+#define RTC_CNTL_USB_TXM_S  13
+/* RTC_CNTL_USB_PAD_ENABLE : R/W ;bitpos:[12] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_PAD_ENABLE  (BIT(12))
+#define RTC_CNTL_USB_PAD_ENABLE_M  (BIT(12))
+#define RTC_CNTL_USB_PAD_ENABLE_V  0x1
+#define RTC_CNTL_USB_PAD_ENABLE_S  12
+/* RTC_CNTL_USB_PAD_ENABLE_OVERRIDE : R/W ;bitpos:[11] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_PAD_ENABLE_OVERRIDE  (BIT(11))
+#define RTC_CNTL_USB_PAD_ENABLE_OVERRIDE_M  (BIT(11))
+#define RTC_CNTL_USB_PAD_ENABLE_OVERRIDE_V  0x1
+#define RTC_CNTL_USB_PAD_ENABLE_OVERRIDE_S  11
+/* RTC_CNTL_USB_PULLUP_VALUE : R/W ;bitpos:[10] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_PULLUP_VALUE  (BIT(10))
+#define RTC_CNTL_USB_PULLUP_VALUE_M  (BIT(10))
+#define RTC_CNTL_USB_PULLUP_VALUE_V  0x1
+#define RTC_CNTL_USB_PULLUP_VALUE_S  10
+/* RTC_CNTL_USB_DM_PULLDOWN : R/W ;bitpos:[9] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_DM_PULLDOWN  (BIT(9))
+#define RTC_CNTL_USB_DM_PULLDOWN_M  (BIT(9))
+#define RTC_CNTL_USB_DM_PULLDOWN_V  0x1
+#define RTC_CNTL_USB_DM_PULLDOWN_S  9
+/* RTC_CNTL_USB_DM_PULLUP : R/W ;bitpos:[8] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_DM_PULLUP  (BIT(8))
+#define RTC_CNTL_USB_DM_PULLUP_M  (BIT(8))
+#define RTC_CNTL_USB_DM_PULLUP_V  0x1
+#define RTC_CNTL_USB_DM_PULLUP_S  8
+/* RTC_CNTL_USB_DP_PULLDOWN : R/W ;bitpos:[7] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_DP_PULLDOWN  (BIT(7))
+#define RTC_CNTL_USB_DP_PULLDOWN_M  (BIT(7))
+#define RTC_CNTL_USB_DP_PULLDOWN_V  0x1
+#define RTC_CNTL_USB_DP_PULLDOWN_S  7
+/* RTC_CNTL_USB_DP_PULLUP : R/W ;bitpos:[6] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_DP_PULLUP  (BIT(6))
+#define RTC_CNTL_USB_DP_PULLUP_M  (BIT(6))
+#define RTC_CNTL_USB_DP_PULLUP_V  0x1
+#define RTC_CNTL_USB_DP_PULLUP_S  6
+/* RTC_CNTL_USB_PAD_PULL_OVERRIDE : R/W ;bitpos:[5] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_PAD_PULL_OVERRIDE  (BIT(5))
+#define RTC_CNTL_USB_PAD_PULL_OVERRIDE_M  (BIT(5))
+#define RTC_CNTL_USB_PAD_PULL_OVERRIDE_V  0x1
+#define RTC_CNTL_USB_PAD_PULL_OVERRIDE_S  5
+/* RTC_CNTL_USB_VREF_OVERRIDE : R/W ;bitpos:[4] ;default: 1'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_VREF_OVERRIDE  (BIT(4))
+#define RTC_CNTL_USB_VREF_OVERRIDE_M  (BIT(4))
+#define RTC_CNTL_USB_VREF_OVERRIDE_V  0x1
+#define RTC_CNTL_USB_VREF_OVERRIDE_S  4
+/* RTC_CNTL_USB_VREFL : R/W ;bitpos:[3:2] ;default: 2'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_VREFL  0x00000003
+#define RTC_CNTL_USB_VREFL_M  ((RTC_CNTL_USB_VREFL_V)<<(RTC_CNTL_USB_VREFL_S))
+#define RTC_CNTL_USB_VREFL_V  0x3
+#define RTC_CNTL_USB_VREFL_S  2
+/* RTC_CNTL_USB_VREFH : R/W ;bitpos:[1:0] ;default: 2'd0 ; */
+/*description: */
+#define RTC_CNTL_USB_VREFH  0x00000003
+#define RTC_CNTL_USB_VREFH_M  ((RTC_CNTL_USB_VREFH_V)<<(RTC_CNTL_USB_VREFH_S))
+#define RTC_CNTL_USB_VREFH_V  0x3
+#define RTC_CNTL_USB_VREFH_S  0
+
+#define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0124)
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809300 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))

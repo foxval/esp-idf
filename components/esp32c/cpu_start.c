@@ -148,6 +148,27 @@ void IRAM_ATTR call_start_cpu0()
         memset(&_rtc_bss_start, 0, (&_rtc_bss_end - &_rtc_bss_start) * sizeof(_rtc_bss_start));
     }
 
+    /* Configure the mode of instruction cache : cache size, cache associated ways, cache line size. */
+extern void esp_config_instruction_cache_mode(void);
+    esp_config_instruction_cache_mode();
+
+    /* copy MMU table from ICache to DCache, so we can use DCache to access rodata later. */
+#if CONFIG_RODATA_USE_DATA_CACHE
+    MMU_Drom0_I2D_Copy();
+#endif
+
+    /* If we need use SPIRAM, we should use data cache, or if we want to access rodata, we also should use data cache.
+       Configure the mode of data : cache size, cache associated ways, cache line size.
+       Enable data cache, so if we don't use SPIRAM, it just works. */
+#if CONFIG_SPIRAM_BOOT_INIT || CONFIG_RODATA_USE_DATA_CACHE
+extern void esp_config_data_cache_mode(void);
+    esp_config_data_cache_mode();
+    Cache_Enable_DCache(0);
+#endif
+
+    /* In SPIRAM code, we will reconfigure data cache, as well as instruction cache, so that we can:
+       1. make data buses works with SPIRAM
+       2. make instruction and rodata work with SPIRAM, still through instruction cache */
 #if CONFIG_SPIRAM_BOOT_INIT
     esp_spiram_init_cache();
     if (esp_spiram_init() != ESP_OK) {
@@ -159,6 +180,12 @@ void IRAM_ATTR call_start_cpu0()
         abort();
 #endif
     }
+#endif
+
+    /* Start to use data cache to access rodata. */
+#if CONFIG_RODATA_USE_DATA_CACHE
+extern void esp_switch_rodata_to_dcache(void);
+    esp_switch_rodata_to_dcache();
 #endif
 
     ESP_EARLY_LOGI(TAG, "Pro cpu up.");
@@ -197,6 +224,15 @@ void IRAM_ATTR call_start_cpu0()
             abort();
         }
     }
+#endif
+
+#if CONFIG_INSTRUCTION_USE_SPIRAM
+extern void esp_spiram_enable_intruction_access(void);
+    esp_spiram_enable_intruction_access();
+#endif
+#if CONFIG_RODATA_USE_SPIRAM
+extern void esp_spiram_enable_rodata_access(void);
+    esp_spiram_enable_rodata_access();
 #endif
 
     /* Initialize heap allocator. WARNING: This *needs* to happen *after* the app cpu has booted.

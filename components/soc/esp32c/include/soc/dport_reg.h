@@ -27,87 +27,125 @@ extern "C" {
 /*IRAM0 connected with Cache IBUS0*/
 #define IRAM0_ADDRESS_LOW		0x40000000
 #define IRAM0_ADDRESS_HIGH		0x40400000
-#define ADDRESS_IN_IRAM0(vaddr) ((vaddr) >= IRAM0_ADDRESS_LOW && (vaddr) < IRAM0_ADDRESS_HIGH)
-#define IRAM0_CACHE_ADDRESS_LOW		0x40720000
+#define IRAM0_CACHE_ADDRESS_LOW		0x40080000
 #define IRAM0_CACHE_ADDRESS_HIGH	0x40400000
-#define ADDRESS_IN_IRAM0_CACHE(vaddr) ((vaddr) >= IRAM0_CACHE_ADDRESS_LOW && (vaddr) < IRAM0_CACHE_ADDRESS_HIGH)
 
 /*IRAM1 and AHB_IBUS1 connected with Cache IBUS1, alternative*/
 #define IRAM1_ADDRESS_LOW		0x40400000
 #define IRAM1_ADDRESS_HIGH		0x40800000
-#define ADDRESS_IN_IRAM1(vaddr) ((vaddr) >= IRAM1_ADDRESS_LOW && (vaddr) < IRAM1_ADDRESS_HIGH)
 #define AHB_IBUS1_ADDRESS_LOW		0x60400000
 #define AHB_IBUS1_ADDRESS_HIGH		0x60800000
-#define ADDRESS_IN_AHB_IBUS1(vaddr) ((vaddr) >= AHB_IBUS1_ADDRESS_LOW && (vaddr) < AHB_IBUS1_ADDRESS_HIGH)
 
 /*IROM0 and AHB_IBUS2 connected with Cache IBUS2, alternative*/
 #define IROM0_ADDRESS_LOW		0x40800000
 #define IROM0_ADDRESS_HIGH		0x40c00000
-#define ADDRESS_IN_IROM0(vaddr) ((vaddr) >= IROM0_ADDRESS_LOW && (vaddr) < IROM0_ADDRESS_HIGH)
 #define AHB_IBUS2_ADDRESS_LOW		0x60800000
 #define AHB_IBUS2_ADDRESS_HIGH		0x60c00000
-#define ADDRESS_IN_AHB_IBUS2(vaddr) ((vaddr) >= AHB_IBUS2_ADDRESS_LOW && (vaddr) < AHB_IBUS2_ADDRESS_HIGH)
 
 /*DROM0 and AHB_IBUS2 connected with Cache IBUS3, alternative*/
 /*DROM0 and AHB_DBUS2 connected with Cache DBUS3, alternative*/
 #define DROM0_ADDRESS_LOW		0x3f000000
 #define DROM0_ADDRESS_HIGH		0x3f400000
-#define ADDRESS_IN_DROM0(vaddr) ((vaddr) >= DROM0_ADDRESS_LOW && (vaddr) < DROM0_ADDRESS_HIGH)
 #define AHB_IBUS3_ADDRESS_LOW		0x60c00000
 #define AHB_IBUS3_ADDRESS_HIGH		0x61000000
-#define ADDRESS_IN_AHB_IBUS3(vaddr) ((vaddr) >= AHB_IBUS3_ADDRESS_LOW && (vaddr) < AHB_IBUS3_ADDRESS_HIGH)
 #define AHB_DBUS3_ADDRESS_LOW		0x61800000
 #define AHB_DBUS3_ADDRESS_HIGH		0x61c00000
-#define ADDRESS_IN_AHB_DBUS3(vaddr) ((vaddr) >= AHB_DBUS3_ADDRESS_LOW && (vaddr) < AHB_DBUS3_ADDRESS_HIGH)
 
 /*DRAM0 and AHB_DBUS2 connected with Cache DBUS0, alternative*/
 #define DRAM0_ADDRESS_LOW       	0x3fc00000
 #define DRAM0_ADDRESS_HIGH      	0x40000000
-#define ADDRESS_IN_DRAM0(vaddr) ((vaddr) >= DRAM0_ADDRESS_LOW && (vaddr) < DRAM0_ADDRESS_HIGH)
 #define DRAM0_CACHE_ADDRESS_LOW       	0x3fc00000
-#define DRAM0_CACHE_ADDRESS_HIGH      	0x3ff9e000
-#define ADDRESS_IN_DRAM0_CACHE(vaddr) ((vaddr) >= DRAM0_CACHE_ADDRESS_LOW && (vaddr) < DRAM0_CACHE_ADDRESS_HIGH)
+#define DRAM0_CACHE_ADDRESS_HIGH      	0x3ff90000
 #define AHB_DBUS0_ADDRESS_LOW		0x61000000
 #define AHB_DBUS0_ADDRESS_HIGH		0x61400000
-#define ADDRESS_IN_AHB_DBUS0(vaddr) ((vaddr) >= AHB_DBUS0_ADDRESS_LOW && (vaddr) < AHB_DBUS0_ADDRESS_HIGH)
 
 /*DRAM1 connected with Cache DBUS1*/
 #define DRAM1_ADDRESS_LOW       	0x3f800000
 #define DRAM1_ADDRESS_HIGH      	0x3fc00000
-#define ADDRESS_IN_DRAM1(vaddr) ((vaddr) >= DRAM1_ADDRESS_LOW && (vaddr) < DRAM1_ADDRESS_HIGH)
 
 /*DPORT and AHB_DBUS2 connected with Cache DBUS2, alternative*/
 #define DPORT_ADDRESS_LOW       	0x3f400000
 #define DPORT_ADDRESS_HIGH      	0x3f800000
-#define ADDRESS_IN_DPORT(vaddr) ((vaddr) >= DPORT_ADDRESS_LOW && (vaddr) < DPORT_ADDRESS_HIGH)
 #define DPORT_CACHE_ADDRESS_LOW       	0x3f500000
 #define DPORT_CACHE_ADDRESS_HIGH      	0x3f800000
-#define ADDRESS_IN_DPORT_CACHE(vaddr) ((vaddr) >= DPORT_CACHE_ADDRESS_LOW && (vaddr) < DPORT_CACHE_ADDRESS_HIGH)
 #define AHB_DBUS2_ADDRESS_LOW		0x61400000
 #define AHB_DBUS2_ADDRESS_HIGH		0x61800000
-#define ADDRESS_IN_AHB_DBUS2(vaddr) ((vaddr) >= AHB_DBUS2_ADDRESS_LOW && (vaddr) < AHB_DBUS2_ADDRESS_HIGH)
 
+#define BUS_SIZE(bus_name)                 (bus_name##_ADDRESS_HIGH - bus_name##_ADDRESS_LOW)
+#define ADDRESS_IN_BUS(bus_name, vaddr)    ((vaddr) >= bus_name##_ADDRESS_LOW && (vaddr) < bus_name##_ADDRESS_HIGH)
+
+#define ADDRESS_IN_IRAM0(vaddr)            ADDRESS_IN_BUS(IRAM0, vaddr)
+#define ADDRESS_IN_IRAM0_CACHE(vaddr)      ADDRESS_IN_BUS(IRAM0_CACHE, vaddr)
+#define ADDRESS_IN_IRAM1(vaddr)            ADDRESS_IN_BUS(IRAM1, vaddr)
+#define ADDRESS_IN_AHB_IBUS1(vaddr)        ADDRESS_IN_BUS(AHB_IBUS1, vaddr)
+#define ADDRESS_IN_IROM0(vaddr)            ADDRESS_IN_BUS(IROM0, vaddr)
+#define ADDRESS_IN_AHB_IBUS2(vaddr)        ADDRESS_IN_BUS(AHB_IBUS2, vaddr)
+#define ADDRESS_IN_DROM0(vaddr)            ADDRESS_IN_BUS(DROM0, vaddr)
+#define ADDRESS_IN_AHB_IBUS3(vaddr)        ADDRESS_IN_BUS(AHB_IBUS3, vaddr)
+#define ADDRESS_IN_AHB_DBUS3(vaddr)        ADDRESS_IN_BUS(AHB_DBUS3, vaddr)
+#define ADDRESS_IN_DRAM0(vaddr)            ADDRESS_IN_BUS(DRAM0, vaddr)
+#define ADDRESS_IN_DRAM0_CACHE(vaddr)      ADDRESS_IN_BUS(DRAM0_CACHE, vaddr)
+#define ADDRESS_IN_AHB_DBUS0(vaddr)        ADDRESS_IN_BUS(AHB_DBUS0, vaddr)
+#define ADDRESS_IN_DRAM1(vaddr)            ADDRESS_IN_BUS(DRAM1, vaddr)
+#define ADDRESS_IN_DPORT(vaddr)            ADDRESS_IN_BUS(DPORT, vaddr)
+#define ADDRESS_IN_DPORT_CACHE(vaddr)      ADDRESS_IN_BUS(DPORT_CACHE, vaddr)
+#define ADDRESS_IN_AHB_DBUS2(vaddr)        ADDRESS_IN_BUS(AHB_DBUS2, vaddr)
+
+#define BUS_IRAM0_CACHE_SIZE              BUS_SIZE(IRAM0_CACHE)
+#define BUS_IRAM1_CACHE_SIZE              BUS_SIZE(IRAM1)
+#define BUS_IROM0_CACHE_SIZE              BUS_SIZE(IROM0)
+#define BUS_DROM0_CACHE_SIZE              BUS_SIZE(DROM0)
+#define BUS_DRAM0_CACHE_SIZE              BUS_SIZE(DRAM0_CACHE)
+#define BUS_DRAM1_CACHE_SIZE              BUS_SIZE(DRAM1)
+#define BUS_DPORT_CACHE_SIZE              BUS_SIZE(DPORT)
+
+#define BUS_AHB_IBUS1_CACHE_SIZE          BUS_SIZE(AHB_IBUS1)
+#define BUS_AHB_IBUS2_CACHE_SIZE          BUS_SIZE(AHB_IBUS2)
+#define BUS_AHB_IBUS3_CACHE_SIZE          BUS_SIZE(AHB_IBUS3)
+#define BUS_AHB_DBUS0_CACHE_SIZE          BUS_SIZE(AHB_DBUS0)
+#define BUS_AHB_DBUS2_CACHE_SIZE          BUS_SIZE(AHB_DBUS2)
+#define BUS_AHB_DBUS3_CACHE_SIZE          BUS_SIZE(AHB_DBUS3)
+
+
+
+#define PRO_CACHE_IBUS0			0
 #define PRO_CACHE_IBUS0_MMU_START 	0
 #define PRO_CACHE_IBUS0_MMU_END 	0x100
+
+#define PRO_CACHE_IBUS1			1
 #define PRO_CACHE_IBUS1_MMU_START	0x100
 #define PRO_CACHE_IBUS1_MMU_END		0x200
+
+#define PRO_CACHE_IBUS2			2
 #define PRO_CACHE_IBUS2_MMU_START	0x200
 #define PRO_CACHE_IBUS2_MMU_END		0x300
+
+#define PRO_CACHE_IBUS3			3
 #define PRO_CACHE_IBUS3_MMU_START	0x300
 #define PRO_CACHE_IBUS3_MMU_END		0x400
+
+#define PRO_CACHE_DBUS0			4
 #define PRO_CACHE_DBUS0_MMU_START	0x400
 #define PRO_CACHE_DBUS0_MMU_END		0x500
+
+#define PRO_CACHE_DBUS1			5
 #define PRO_CACHE_DBUS1_MMU_START	0x500
 #define PRO_CACHE_DBUS1_MMU_END		0x600
+
+#define PRO_CACHE_DBUS2			6
 #define PRO_CACHE_DBUS2_MMU_START	0x600
 #define PRO_CACHE_DBUS2_MMU_END		0x700
+
+#define PRO_CACHE_DBUS3			7
 #define PRO_CACHE_DBUS3_MMU_START	0x700
 #define PRO_CACHE_DBUS3_MMU_END		0x800
 
 #define DPORT_MMU_SIZE			0x800
 #define DPORT_ICACHE_MMU_SIZE		0x400
 #define DPORT_DCACHE_MMU_SIZE		0x400
-#define DPORT_MMU_DROM0_SIZE		0x100
+
+#define DPORT_MMU_BUS_START(i)		((i) * 0x100)
+#define DPORT_MMU_BUS_SIZE		0x100
 
 #define DPORT_MMU_INVALID		BIT(14)
 #define DPORT_MMU_ACCESS_FLASH		BIT(15)

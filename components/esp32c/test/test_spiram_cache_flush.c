@@ -60,8 +60,13 @@ TEST_CASE("Spiram cache flush on mmap", "[spiram][ignore]")
     mem[0]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
     mem[1]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
 #else
-    mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
-    mem[1]=(void*)SOC_EXTRAM_DATA_LOW+TSTSZ;
+    if ((SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW) < CONFIG_SPIRAM_SIZE) {
+        mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
+        mem[1]=(void*)SOC_EXTRAM_DATA_LOW + TSTSZ;
+    } else {
+        mem[0]=(void*)SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE;
+        mem[1]=(void*)SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE + TSTSZ;
+    }
 #endif
     assert(mem[0]);
     assert(mem[1]);
@@ -106,8 +111,13 @@ TEST_CASE("Spiram cache flush on write/read", "[spiram][ignore]")
     mem[0]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
     mem[1]=heap_caps_malloc(TSTSZ, MALLOC_CAP_SPIRAM);
 #else
-    mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
-    mem[1]=(void*)SOC_EXTRAM_DATA_LOW+TSTSZ;
+    if ((SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW) < CONFIG_SPIRAM_SIZE) {
+        mem[0]=(void*)SOC_EXTRAM_DATA_LOW;
+        mem[1]=(void*)SOC_EXTRAM_DATA_LOW + TSTSZ;
+    } else {
+        mem[0]=(void*)SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE;
+        mem[1]=(void*)SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE + TSTSZ;
+    }
 #endif
     assert(mem[0]);
     assert(mem[1]);
@@ -149,7 +159,12 @@ IRAM_ATTR TEST_CASE("Spiram memcmp weirdness at 80MHz", "[spiram][ignore]") {
 #if CONFIG_SPIRAM_USE_CAPS_ALLOC
     char *mem2=heap_caps_malloc(0x10000, MALLOC_CAP_SPIRAM);
 #else
-    char *mem2=(void*)SOC_EXTRAM_DATA_LOW;
+    char *mem2;
+    if ((SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW) < CONFIG_SPIRAM_SIZE) {
+        mem2 = (void*)SOC_EXTRAM_DATA_LOW;
+    } else {
+        mem2 = (void*)(SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE);
+    }
 #endif
 
 #if !CONFIG_SPIRAM_SPEED_80M

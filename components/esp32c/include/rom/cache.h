@@ -108,6 +108,7 @@ struct autoload_config {
     uint8_t order;                      /*!< autoload step is positive or negative */
     uint8_t step;                       /*!< autoload step */
     uint8_t trigger;                    /*!< autoload trigger */
+    uint32_t autoload_size;             /*!< autoload size */
     uint32_t addr0;                     /*!< autoload region0 start address */
     uint32_t size0;                     /*!< autoload region0 size */
     uint32_t addr1;                     /*!< autoload region1 start address */
@@ -145,51 +146,51 @@ void Cache_MMU_Init(void);
   * @brief Set ICache mmu mapping.
   *        Please do not call this function in your SDK application.
   *
-  * @param  unsigned int ext_ram : DPORT_MMU_ACCESS_FLASH for flash, DPORT_MMU_ACCESS_SPIRAM for spiram, DPORT_MMU_INVALID for invalid.
+  * @param  uint32_t ext_ram : DPORT_MMU_ACCESS_FLASH for flash, DPORT_MMU_ACCESS_SPIRAM for spiram, DPORT_MMU_INVALID for invalid.
   *
-  * @param  unsigned int vaddr : virtual address in CPU address space.
+  * @param  uint32_t vaddr : virtual address in CPU address space.
   *                              Can be Iram0,Iram1,Irom0,Drom0 and AHB buses address.
   *                              Should be aligned by psize.
   *
-  * @param  unsigned int paddr : physical address in external memory.
+  * @param  uint32_t paddr : physical address in external memory.
   *                              Should be aligned by psize.
   *
   * @param  int psize : page size of ICache, in kilobytes. Should be 64 here.
   *
   * @param  int num : pages to be set.
   *
-  * @return unsigned int: error status
+  * @return uint32_t: error status
   *                   0 : mmu set success
   *                   1 : vaddr or paddr is not aligned
   *                   3 : psize error
   *                   5 : vaddr is out of range
   */
-int Cache_Ibus_MMU_Set(unsigned int ext_ram, unsigned int vaddr, unsigned int paddr,  int psize, int num);
+int Cache_Ibus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr,  int psize, int num);
 
 /**
   * @brief Set DCache mmu mapping.
   *        Please do not call this function in your SDK application.
   *
-  * @param  unsigned int ext_ram : DPORT_MMU_ACCESS_FLASH for flash, DPORT_MMU_ACCESS_SPIRAM for spiram, DPORT_MMU_INVALID for invalid.
+  * @param  uint32_t ext_ram : DPORT_MMU_ACCESS_FLASH for flash, DPORT_MMU_ACCESS_SPIRAM for spiram, DPORT_MMU_INVALID for invalid.
   *
-  * @param  unsigned int vaddr : virtual address in CPU address space.
+  * @param  uint32_t vaddr : virtual address in CPU address space.
   *                              Can be DRam0, DRam1, DRom0, DPort and AHB buses address.
   *                              Should be aligned by psize.
   *
-  * @param  unsigned int paddr : physical address in external memory.
+  * @param  uint32_t paddr : physical address in external memory.
   *                              Should be aligned by psize.
   *
   * @param  int psize : page size of flash, in kilobytes. Should be 64 here.
   *
   * @param  int num : pages to be set.
   *
-  * @return unsigned int: error status
+  * @return uint32_t: error status
   *                   0 : mmu set success
   *                   1 : vaddr or paddr is not aligned
   *                   3 : psize error
   *                   5 : vaddr is out of range
   */
-int Cache_Dbus_MMU_Set(unsigned int ext_ram, unsigned int vaddr, unsigned int paddr, int psize, int num);
+int Cache_Dbus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr, int psize, int num);
 
 /**
   * @brief Copy DRom0 ICache MMU to DCache MMU.
@@ -200,6 +201,40 @@ int Cache_Dbus_MMU_Set(unsigned int ext_ram, unsigned int vaddr, unsigned int pa
   * @return None
   */
 void MMU_Drom0_I2D_Copy(void);
+
+/**
+  * @brief Unmap DRom0 ICache MMU.
+  *        Please do not call this function in your SDK application.
+  *
+  * @param  None
+  *
+  * @return None
+  */
+void MMU_Drom_ICache_Unmap(void);
+
+/**
+  * @brief Count the pages in the bus room address which map to Flash.
+  *        Please do not call this function in your SDK application.
+  *
+  * @param uint32_t bus : the bus to count with.
+  *
+  * return uint32_t : the number of pages which map to Flash.
+  */
+uint32_t Cache_Count_Flash_Pages(uint32_t bus);
+
+/**
+  * @brief Copy Instruction or rodata from Flash to SPIRAM, and remap to SPIRAM.
+  *        Please do not call this function in your SDK application.
+  *
+  * @param uint32_t bus : the bus which need to copy to SPIRAM.
+  *
+  * @param uint32_t bus_start_addr : the start virtual address for the bus.
+  *
+  * @param uint32_t start_page : the start (64KB) page number in SPIRAM.
+  *
+  * return uint32_t : the next start page number for SPIRAM not mapped.
+  */
+uint32_t Cache_Flash_To_SPIRAM_Copy(uint32_t bus, uint32_t bus_start_addr, uint32_t start_page);
 
 
 /**
@@ -479,9 +514,11 @@ void Cache_Resume_DCache_Autoload(uint32_t autoload);
   *
   * @param uint32_t size : size of the preload region, should not exceed the size of ICache.
   *
+  * @param uint32_t order : the preload order, 0 for positive, other for negative
+  *
   * @return uint32_t : 0 for ICache not auto preload before manual preload.
   */
-uint32_t Cache_Start_ICache_Preload(uint32_t addr, uint32_t size);
+uint32_t Cache_Start_ICache_Preload(uint32_t addr, uint32_t size, uint32_t order);
 
 /**
   * @brief Return if the ICache manual preload done.
@@ -511,9 +548,11 @@ void Cache_End_ICache_Preload(uint32_t autoload);
   *
   * @param uint32_t size : size of the preload region, should not exceed the size of DCache.
   *
+  * @param uint32_t order : the preload order, 0 for positive, other for negative
+  *
   * @return uint32_t : 0 for DCache not auto preload before manual preload.
   */
-uint32_t Cache_Start_DCache_Preload(uint32_t addr, uint32_t size);
+uint32_t Cache_Start_DCache_Preload(uint32_t addr, uint32_t size, uint32_t order);
 
 /**
   * @brief Return if the DCache manual preload done.
@@ -841,13 +880,13 @@ uint32_t Cache_Get_Virtual_Addr(struct cache_mode *mode, uint32_t tag, uint32_t 
   * @brief Get cache memory block base address.
   *        Please do not call this function in your SDK application.
   *
-  * @param  uint8_t icache : 0 for dcache, other for icache.
+  * @param  uint32_t icache : 0 for dcache, other for icache.
   *
-  * @param  uint8_t high : 0 for low part block, 1 for high part block.
+  * @param  uint32_t high : 0 for low part block, 1 for high part block.
   *
   * @return uint32_t : the cache memory block base address, 0 if the block not used.
   */
-uint32_t Cache_Get_Memory_BaseAddr(uint8_t icache, uint8_t high);
+uint32_t Cache_Get_Memory_BaseAddr(uint32_t icache, uint32_t high);
 
 /**
   * @brief Get the cache memory address from cache mode, cache memory offset and the virtual address offset of cache ways.

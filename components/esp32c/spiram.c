@@ -68,11 +68,17 @@ static bool spiram_inited=false;
 */
 bool esp_spiram_test()
 {
-    volatile int *spiram=(volatile int*)SOC_EXTRAM_DATA_LOW;
+    volatile int *spiram=(volatile int*)(SOC_EXTRAM_DATA_HIGH - CONFIG_SPIRAM_SIZE);
     size_t p;
     size_t s=CONFIG_SPIRAM_SIZE;
     int errct=0;
     int initial_err=-1;
+
+    if ((SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW) < CONFIG_SPIRAM_SIZE) {
+        ESP_EARLY_LOGW(TAG, "Only test spiram from %08x to %08x\n", SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH);
+        spiram=(volatile int*)SOC_EXTRAM_DATA_LOW;
+        s = SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW;
+    }
     for (p=0; p<(s/sizeof(int)); p+=8) {
         spiram[p]=p^0xAAAAAAAA;
     }
@@ -80,6 +86,9 @@ bool esp_spiram_test()
         if (spiram[p]!=(p^0xAAAAAAAA)) {
             errct++;
             if (errct==1) initial_err=p*4;
+            if (errct < 4) {
+                ESP_EARLY_LOGE(TAG, "SPI SRAM error@%08x:%08x/%08x \n", &spiram[p], spiram[p], p^0xAAAAAAAA);
+            }
         }
     }
     if (errct) {
@@ -91,21 +100,128 @@ bool esp_spiram_test()
     }
 }
 
+#define DRAM0_ONLY_CACHE_SIZE                   BUS_IRAM0_CACHE_SIZE
+#define DRAM0_DRAM1_CACHE_SIZE	                (BUS_IRAM0_CACHE_SIZE + BUS_IRAM1_CACHE_SIZE)
+#define DRAM0_DRAM1_DPORT_CACHE_SIZE            (BUS_IRAM0_CACHE_SIZE + BUS_IRAM1_CACHE_SIZE + BUS_DPORT_CACHE_SIZE)
+#define DBUS3_ONLY_CACHE_SIZE                   BUS_AHB_DBUS3_CACHE_SIZE
+#define DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE      (DRAM0_DRAM1_DPORT_CACHE_SIZE + DBUS3_ONLY_CACHE_SIZE)
+
+#define SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT      (CONFIG_SPIRAM_SIZE - DRAM0_DRAM1_DPORT_CACHE_SIZE)
+#define SPIRAM_SIZE_EXC_DATA_CACHE             (CONFIG_SPIRAM_SIZE - DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE)
+
+#define SPIRAM_SMALL_SIZE_MAP_VADDR             (DRAM0_CACHE_ADDRESS_HIGH - CONFIG_SPIRAM_SIZE)
+#define SPIRAM_SMALL_SIZE_MAP_PADDR             0
+#define SPIRAM_SMALL_SIZE_MAP_SIZE              CONFIG_SPIRAM_SIZE
+
+#define SPIRAM_MID_SIZE_MAP_VADDR               (AHB_DBUS3_ADDRESS_HIGH - SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT)
+#define SPIRAM_MID_SIZE_MAP_PADDR               0
+#define SPIRAM_MID_SIZE_MAP_SIZE                (SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT)
+
+#define SPIRAM_BIG_SIZE_MAP_VADDR               AHB_DBUS3_ADDRESS_LOW
+#define SPIRAM_BIG_SIZE_MAP_PADDR               (AHB_DBUS3_ADDRESS_HIGH - DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE)
+#define SPIRAM_BIG_SIZE_MAP_SIZE                DBUS3_ONLY_CACHE_SIZE
+
+#define SPIRAM_MID_BIG_SIZE_MAP_VADDR           DPORT_CACHE_ADDRESS_LOW
+#define SPIRAM_MID_BIG_SIZE_MAP_PADDR           SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT
+#define SPIRAM_MID_BIG_SIZE_MAP_SIZE            DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE
+
+
 void IRAM_ATTR esp_spiram_init_cache()
 {
+    Cache_Suspend_DCache();
 #ifdef CONFIG_CHIP_IS_ESP32
     //Enable external RAM in MMU
     cache_sram_mmu_set( 0, 0, SOC_EXTRAM_DATA_LOW, 0, 32, 128 );
-#else
-    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SOC_EXTRAM_DATA_LOW, 0, 64, CONFIG_SPIRAM_SIZE >> 16);
-#endif
     //Flush and enable icache for APP CPU
 #if !CONFIG_FREERTOS_UNICORE
     DPORT_CLEAR_PERI_REG_MASK(DPORT_APP_CACHE_CTRL1_REG, DPORT_APP_CACHE_MASK_DRAM1);
     cache_sram_mmu_set( 1, 0, SOC_EXTRAM_DATA_LOW, 0, 32, 128 );
 #endif
+#else
+    /* map the address from SPIRAM end to the start, map the address in order: DRAM1, DRAM1, DPORT, DBUS3 */
+#if CONFIG_SPIRAM_SIZE <= DRAM0_ONLY_CACHE_SIZE
+    /* cache size <= 3MB + 576 KB, only map DRAM0 bus */
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_SMALL_SIZE_MAP_VADDR, SPIRAM_SMALL_SIZE_MAP_PADDR, 64, SPIRAM_SMALL_SIZE_MAP_SIZE >> 16);
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM0);
+#elif CONFIG_SPIRAM_SIZE <= DRAM0_DRAM1_CACHE_SIZE
+    /* cache size <= 7MB + 576KB, only map DRAM0 and DRAM1 bus */
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_SMALL_SIZE_MAP_VADDR, SPIRAM_SMALL_SIZE_MAP_PADDR, 64, SPIRAM_SMALL_SIZE_MAP_SIZE >> 16);
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DRAM0);
+#elif CONFIG_SPIRAM_SIZE <= DRAM0_DRAM1_DPORT_CACHE_SIZE
+    /* cache size <= 10MB + 576KB, map DRAM0, DRAM1, DPORT bus */
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_SMALL_SIZE_MAP_VADDR, SPIRAM_SMALL_SIZE_MAP_PADDR, 64, SPIRAM_SMALL_SIZE_MAP_SIZE >> 16);
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DPORT | DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DRAM0 | DPORT_PRO_DCACHE_MASK_DPORT);
+#else
+#if CONFIG_USE_AHB_DBUS3_ACCESS_SPIRAM
+#if CONFIG_SPIRAM_SIZE <= DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE
+    /* cache size <= 14MB + 576KB, map DRAM0, DRAM1, DPORT bus, as well as data bus3 */
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_MID_SIZE_MAP_VADDR, SPIRAM_MID_SIZE_MAP_PADDR, 64, SPIRAM_MID_SIZE_MAP_SIZE >> 16);
+#else
+    /* cache size > 14MB + 576KB, map DRAM0, DRAM1, DPORT bus, as well as data bus3 */
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_BIG_SIZE_MAP_VADDR, SPIRAM_BIG_SIZE_MAP_PADDR, 64, SPIRAM_BIG_SIZE_MAP_SIZE >> 16);
+#endif
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_MID_BIG_SIZE_MAP_VADDR, SPIRAM_MID_BIG_SIZE_MAP_PADDR, 64, SPIRAM_MID_BIG_SIZE_MAP_SIZE >> 16);
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DPORT | DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DROM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DRAM0 | DPORT_PRO_DCACHE_MASK_DPORT | DPORT_PRO_DCACHE_MASK_BUS3);
+#else
+    /* cache size > 10MB + 576KB, map DRAM0, DRAM1, DPORT bus , only remap 0x3f500000 ~ 0x3ff90000*/
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_MID_BIG_SIZE_MAP_VADDR, SPIRAM_MID_BIG_SIZE_MAP_PADDR, 64, SPIRAM_MID_BIG_SIZE_MAP_SIZE >> 16);
+    REG_SET_BIT(DPORT_CACHE_SOURCE_1_REG, DPORT_PRO_CACHE_D_SOURCE_PRO_DPORT | DPORT_PRO_CACHE_D_SOURCE_PRO_DRAM0);
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DRAM1 | DPORT_PRO_DCACHE_MASK_DRAM0 | DPORT_PRO_DCACHE_MASK_DPORT);
+#endif
+#endif
+#endif
+
 }
 
+static uint32_t pages_for_flash = 0;
+esp_err_t esp_spiram_enable_intruction_access(void)
+{
+    uint32_t pages_in_flash = 0;
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_IBUS0);
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_IBUS1);
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_IBUS2);
+    if ((pages_in_flash + pages_for_flash) > (CONFIG_SPIRAM_SIZE >> 16)) {
+        ESP_EARLY_LOGE(TAG, "SPI RAM space not enough for the instructions.");
+        return ESP_FAIL;
+    }
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS0, IRAM0_ADDRESS_LOW, pages_for_flash);
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS1, IRAM1_ADDRESS_LOW, pages_for_flash);
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS2, IROM0_ADDRESS_LOW, pages_for_flash);
+    return ESP_OK;
+}
+
+esp_err_t esp_spiram_enable_rodata_access(void)
+{
+    uint32_t pages_in_flash = 0;
+    if (Cache_Drom0_Using_ICache()) {
+        pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_IBUS3);
+    } else {
+        pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_DBUS3);
+    }
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_DBUS0);
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_DBUS1);
+    pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_DBUS2);
+
+    if ((pages_in_flash + pages_for_flash) > (CONFIG_SPIRAM_SIZE >> 16)) {
+        ESP_EARLY_LOGE(TAG, "SPI RAM space not enough for the read only data.");
+        return ESP_FAIL;
+    }
+
+    if (Cache_Drom0_Using_ICache()) {
+        pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS3, DROM0_ADDRESS_LOW, pages_for_flash);
+    } else {
+        pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS3, DROM0_ADDRESS_LOW, pages_for_flash);
+    }
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS0, DRAM0_ADDRESS_LOW, pages_for_flash);
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS1, DRAM1_ADDRESS_LOW, pages_for_flash);
+    pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS2, DPORT_ADDRESS_LOW, pages_for_flash);
+    return ESP_OK;
+}
 
 esp_err_t esp_spiram_init()
 {
@@ -132,10 +248,53 @@ esp_err_t esp_spiram_init()
 
 esp_err_t esp_spiram_add_to_heapalloc()
 {
-    ESP_EARLY_LOGI(TAG, "Adding pool of %dK of external SPI memory to heap allocator", CONFIG_SPIRAM_SIZE/1024);
+    uint32_t size_for_flash = (pages_for_flash << 16);
+    ESP_EARLY_LOGI(TAG, "Adding pool of %dK of external SPI memory to heap allocator", (CONFIG_SPIRAM_SIZE - (pages_for_flash << 16))/1024);
     //Add entire external RAM region to heap allocator. Heap allocator knows the capabilities of this type of memory, so there's
     //no need to explicitly specify them.
-    return heap_caps_add_region((intptr_t)0x3f800000 + CONFIG_SPIRAM_INSTRUCTION_SIZE, (intptr_t)SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE -1);
+
+#if CONFIG_SPIRAM_SIZE <= DRAM0_DRAM1_DPORT_CACHE_SIZE
+    /* cache size <= 10MB + 576KB, map DRAM0, DRAM1, DPORT bus */
+    return heap_caps_add_region((intptr_t)SPIRAM_SMALL_SIZE_MAP_VADDR + size_for_flash, (intptr_t)SPIRAM_SMALL_SIZE_MAP_VADDR + SPIRAM_SMALL_SIZE_MAP_SIZE -1);
+#else
+#if CONFIG_USE_AHB_DBUS3_ACCESS_SPIRAM
+#if CONFIG_SPIRAM_SIZE <= DRAM0_DRAM1_DPORT_DBUS3_CACHE_SIZE
+    /* cache size <= 14MB + 576KB, map DRAM0, DRAM1, DPORT bus, as well as data bus3 */
+    if (size_for_flash <= SPIRAM_MID_SIZE_MAP_SIZE) {
+        esp_err_t err = heap_caps_add_region((intptr_t)SPIRAM_MID_SIZE_MAP_VADDR + size_for_flash, (intptr_t)SPIRAM_MID_SIZE_MAP_VADDR + SPIRAM_MID_SIZE_MAP_SIZE -1);
+        if (err) {
+            return err;
+        }
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    } else {
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + size_for_flash - SPIRAM_MID_SIZE_MAP_SIZE, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    }
+#else
+    if (size_for_flash <= SPIRAM_SIZE_EXC_DATA_CACHE) {
+        esp_err_t err = heap_caps_add_region((intptr_t)SPIRAM_BIG_SIZE_MAP_VADDR, (intptr_t)SPIRAM_BIG_SIZE_MAP_VADDR + SPIRAM_BIG_SIZE_MAP_SIZE -1);
+        if (err) {
+            return err;
+        }
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    } else if (size_for_flash <= SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT) {
+        esp_err_t err = heap_caps_add_region((intptr_t)SPIRAM_BIG_SIZE_MAP_VADDR + size_for_flash - SPIRAM_SIZE_EXC_DATA_CACHE, (intptr_t)SPIRAM_MID_SIZE_MAP_VADDR + SPIRAM_MID_SIZE_MAP_SIZE -1);
+        if (err) {
+            return err;
+        }
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    } else {
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + size_for_flash - SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    }
+#endif
+#else
+    Cache_Dbus_MMU_Set(DPORT_MMU_ACCESS_SPIRAM, SPIRAM_MID_BIG_SIZE_MAP_VADDR, SPIRAM_MID_BIG_SIZE_MAP_PADDR, 64, SPIRAM_MID_BIG_SIZE_MAP_SIZE >> 16);
+    if (size_for_flash <= SPIRAM_SIZE_EXC_DRAM0_DRAM1_DPORT) {
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    } else {
+        return heap_caps_add_region((intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + size_for_flash, (intptr_t)SPIRAM_MID_BIG_SIZE_MAP_VADDR + SPIRAM_MID_BIG_SIZE_MAP_SIZE -1);
+    }
+#endif
+#endif
 }
 
 
@@ -166,7 +325,7 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     volatile int i=0;
     volatile uint8_t *psram=(volatile uint8_t*)SOC_EXTRAM_DATA_LOW;
 #else
-    extern void Cache_WriteBack_Addr(uint32_t addr, uint32_t size);
+    extern void Cache_WriteBack_All(void);
 #endif
     int cache_was_disabled=0;
 
@@ -209,7 +368,7 @@ void IRAM_ATTR esp_spiram_writeback_cache()
     }
 #endif
 #else
-    Cache_WriteBack_Addr(SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE);
+    Cache_WriteBack_All();
 #endif
 
     if (cache_was_disabled&(1<<0)) {

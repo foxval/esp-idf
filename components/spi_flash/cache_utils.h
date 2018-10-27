@@ -56,4 +56,11 @@ void spi_flash_enable_interrupts_caches_no_os();
 // Only call this while holding spi_flash_op_lock()
 void spi_flash_mark_modified_region(uint32_t start_addr, uint32_t length);
 
+//config cache mode
+#ifdef CONFIG_CHIP_IS_ESP32C
+void esp_config_instruction_cache_mode(void);
+void esp_config_data_cache_mode(void);
+void esp_switch_rodata_to_dcache(void);
+#endif
+
 #endif //ESP_SPI_FLASH_CACHE_UTILS_H

@@ -49,7 +49,13 @@ const soc_memory_type_desc_t soc_memory_types[] = {
     //Type 3: IRAM
     { "IRAM", { MALLOC_CAP_EXEC|MALLOC_CAP_32BIT|MALLOC_CAP_INTERNAL, 0, 0 }, false, false},
     //Type 4: SPI SRAM data
+    //TODO, in fact, part of them support EDMA, to be supported.
     { "SPIRAM", { MALLOC_CAP_SPIRAM|MALLOC_CAP_DEFAULT, 0, MALLOC_CAP_8BIT|MALLOC_CAP_32BIT}, false, false},
+    //Type 5: SPI SRAM data from AHB DBUS3, slower than normal
+    //TODO, add a bit to control the access of it
+#if CONFIG_USE_AHB_DBUS3_ACCESS_SPIRAM
+    { "SPIRAM(Slow)", { MALLOC_CAP_SPIRAM|MALLOC_CAP_DEFAULT, 0, MALLOC_CAP_8BIT|MALLOC_CAP_32BIT}, false, false},
+#endif
 };
 
 const size_t soc_memory_type_count = sizeof(soc_memory_types)/sizeof(soc_memory_type_desc_t);
@@ -62,14 +68,29 @@ from low to high start address.
 */
 const soc_memory_region_t soc_memory_regions[] = {
 #ifdef CONFIG_SPIRAM_SUPPORT
-    { SOC_EXTRAM_DATA_LOW, CONFIG_SPIRAM_SIZE, 4, 0}, //SPI SRAM, if available
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH - SOC_EXTRAM_DATA_LOW, 4, 0}, //SPI SRAM, if available
+#if CONFIG_USE_AHB_DBUS3_ACCESS_SPIRAM
+    { SOC_SLOW_EXTRAM_DATA_LOW, SOC_SLOW_EXTRAM_DATA_HIGH - SOC_SLOW_EXTRAM_DATA_LOW, 5, 0}, //SPI SRAM, if available
 #endif
-#ifdef CONFIG_MIN_ICACHE
+#endif
+#if CONFIG_INSTRUCTION_CACHE_8KB
+#if CONFIG_DATA_CACHE_0KB
     { 0x3FFB2000, 0x2000, 0, 0x400B2000}, //Block 1, can be use as I/D cache memory
-#endif
-#ifndef CONFIG_SPIRAM_SUPPORT 
     { 0x3FFB4000, 0x2000, 0, 0x400B4000}, //Block 2, can be use as D cache memory
     { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#elif CONFIG_DATA_CACHE_8KB
+    { 0x3FFB4000, 0x2000, 0, 0x400B4000}, //Block 2, can be use as D cache memory
+    { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#else
+    { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#endif
+#else
+#if CONFIG_DATA_CACHE_0KB
+    { 0x3FFB4000, 0x2000, 0, 0x400B4000}, //Block 2, can be use as D cache memory
+    { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#elif CONFIG_DATA_CACHE_8KB
+    { 0x3FFB6000, 0x2000, 0, 0x400B6000}, //Block 3, can be use as D cache memory
+#endif
 #endif
     { 0x3FFB8000, 0x4000, 0, 0x40028000}, //Block 4,  can be remapped to ROM, can be used as trace memory
     { 0x3FFBC000, 0x4000, 0, 0x4002C000}, //Block 5,  can be remapped to ROM, can be used as trace memory
@@ -121,7 +142,10 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 #endif
 
 #ifdef CONFIG_SPIRAM_SUPPORT
-    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_LOW + CONFIG_SPIRAM_SIZE}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
+    { SOC_EXTRAM_DATA_LOW, SOC_EXTRAM_DATA_HIGH}, //SPI RAM gets added later if needed, in spiram.c; reserve it for now
+#if CONFIG_USE_AHB_DBUS3_ACCESS_SPIRAM
+    { SOC_SLOW_EXTRAM_DATA_LOW, SOC_SLOW_EXTRAM_DATA_HIGH}, //SPI RAM(Slow) gets added later if needed, in spiram.c; reserve it for now
+#endif
 #endif
 };
 

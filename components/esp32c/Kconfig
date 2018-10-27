@@ -27,6 +27,113 @@ config ESP32_DEFAULT_CPU_FREQ_MHZ
     default 160 if ESP32_DEFAULT_CPU_FREQ_160
     default 240 if ESP32_DEFAULT_CPU_FREQ_240
 
+menu "Cache config"
+    depends on CHIP_IS_ESP32C
+
+choice INSTRUCTION_CACHE_SIZE
+    prompt "Instruction cache size"
+    default INSTRUCTION_CACHE_8KB
+    help
+        Instruction cache size to be set on application startup.
+        If you use 8KB instruction cache rather than 16KB instruction cache, the other 8KB will be added to the heap.
+
+config INSTRUCTION_CACHE_8KB
+    bool "8KB"
+
+config INSTRUCTION_CACHE_16KB
+    bool "16KB"
+endchoice
+
+choice INSTRUCTION_CACHE_ASSOCIATED_WAYS
+    prompt "Instruction cache associated ways"
+    default INSTRUCTION_CACHE_8WAYS
+    help
+        Instruction cache line size to be set on application startup.
+
+config INSTRUCTION_CACHE_4WAYS
+    bool "4 ways"
+
+config INSTRUCTION_CACHE_8WAYS
+    bool "8 ways"
+
+endchoice
+
+
+choice INSTRUCTION_CACHE_LINE_SIZE
+    prompt "Instruction cache line size"
+    default INSTRUCTION_CACHE_LINE_32B
+    help
+        Instruction cache line size to be set on application startup.
+
+config INSTRUCTION_CACHE_LINE_16B
+    bool "16 Byte"
+
+config INSTRUCTION_CACHE_LINE_32B
+    bool "32 Byte"
+
+config INSTRUCTION_CACHE_LINE_64B
+    bool "64 Byte"
+endchoice
+
+choice DATA_CACHE_SIZE
+    prompt "Data cache size"
+    default DATA_CACHE_8KB
+    help
+        Instruction cache size to be set on application startup.
+        If you use 8KB data cache rather than 16KB data cache, the other 8KB will be added to the heap.
+
+config DATA_CACHE_0KB
+    depends on !SPIRAM_SUPPORT
+    bool "0KB"
+
+config DATA_CACHE_8KB
+    bool "8KB"
+
+config DATA_CACHE_16KB
+    bool "16KB"
+endchoice
+
+choice DATA_CACHE_ASSOCIATED_WAYS
+    prompt "Data cache associated ways"
+    default DATA_CACHE_8WAYS
+    help
+        Instruction cache line size to be set on application startup.
+
+config DATA_CACHE_4WAYS
+    bool "4 ways"
+
+config DATA_CACHE_8WAYS
+    bool "8 ways"
+
+endchoice
+
+
+choice DATA_CACHE_LINE_SIZE
+    prompt "Data cache line size"
+    default DATA_CACHE_LINE_32B
+    help
+        Data cache line size to be set on application startup.
+
+config DATA_CACHE_LINE_16B
+    bool "16 Byte"
+
+config DATA_CACHE_LINE_32B
+    bool "32 Byte"
+
+config DATA_CACHE_LINE_64B
+    bool "64 Byte"
+endchoice
+
+config RODATA_USE_DATA_CACHE
+    depends on DATA_CACHE_8KB || DATA_CACHE_16KB
+    bool "Use data cache rather than instrcutin cache to access read only data"
+    default "n"
+    help
+        If enabled, CPU will access rodata through data cache, which will reduce the overload
+        of instruction cache, however will increase the overload of data cache.
+
+endmenu
+
 config SPIRAM_SUPPORT
     bool "Support for external, SPI-connected RAM"
     default "n"
@@ -90,12 +197,25 @@ config SPIRAM_SIZE
     default 0
     range 0 11075584
 
-config SPIRAM_INSTRUCTION_SIZE
-    int "Size of SPI RAM used to map to instructions"
-    default 0
-    range 0 SPIRAM_SIZE
+config INSTRUCTION_USE_SPIRAM
+    bool "Cache fetch instructions from SPI RAM"
+    default n
     help
-        Config the size of SPI RAM used to map to instructions, this SPI RAM block will be put at the beginning of the whole SPI RAM.
+        If enabled, instruction in flash will be copied into SPIRAM.
+        If you also enable RODATA_USE_SPIRAM option, you can run the instruction when you are erasing or programming the flash.
+
+config RODATA_USE_SPIRAM
+    bool "Cache load read only data from SPI RAM"
+    default n
+    help
+        If enabled, radata in flash will be copied into SPIRAM.
+        If you also enable INSTRUCTION_USE_SPIRAM option, you can run the instruction when you erasing or programming the flash.
+
+config USE_AHB_DBUS3_ACCESS_SPIRAM
+    bool "Enable AHB DBUS3 to access SPIRAM"
+    help
+        If Enabled, when you SPI_CONFIG_SIZE is bigger then 10MB+576KB, then you can have 4MB more space the map the SPIRAM.
+        However, the AHB bus is slower then other data cache buses.
 
 
 choice SPIRAM_SPEED

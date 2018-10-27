@@ -84,8 +84,6 @@
 /*ATE mode*/
 #define ETS_IS_ATE_BOOT()				IS_0101(BOOT_MODE_GET())
 
-/*TODO:efuse not work now, just print*/
-#define ETS_IS_PRINT_BOOT()                             (1 || !ETS_IS_FAST_FLASH_BOOT())
 /*used by  ETS_IS_SDIO_UART_BOOT*/
 #define SEL_NO_BOOT                                    0
 #define SEL_SDIO_BOOT                                 BIT0

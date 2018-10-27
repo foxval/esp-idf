@@ -31,6 +31,7 @@
 #include "esp_spi_flash.h"
 #include "esp_log.h"
 
+static const char* TAG = "spiflash";
 
 static void IRAM_ATTR spi_flash_disable_cache(uint32_t cpuid, uint32_t* saved_state);
 static void IRAM_ATTR spi_flash_restore_cache(uint32_t cpuid, uint32_t saved_state);
@@ -326,3 +327,85 @@ IRAM_ATTR bool spi_flash_cache_enabled()
 #endif
     return result;
 }
+
+#ifdef CONFIG_CHIP_IS_ESP32C
+IRAM_ATTR void esp_config_instruction_cache_mode(void)
+{
+    cache_size_t cache_size;
+    cache_ways_t cache_ways;
+    cache_line_size_t cache_line_size;
+
+#if CONFIG_INSTRUCTION_CACHE_8KB
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_INVALID, CACHE_MEMORY_INVALID, CACHE_MEMORY_INVALID);
+    cache_size = CACHE_SIZE_8KB;
+#else
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_ICACHE_HIGH, CACHE_MEMORY_INVALID, CACHE_MEMORY_INVALID);
+    cache_size = CACHE_SIZE_16KB;
+#endif
+#if CONFIG_INSTRUCTION_CACHE_4WAYS
+    cache_ways = CACHE_4WAYS_ASSOC;
+#else
+    cache_ways = CACHE_8WAYS_ASSOC;
+#endif
+#if CONFIG_INSTRUCTION_CACHE_LINE_16B
+    cache_line_size = CACHE_LINE_SIZE_16B;
+#elif CONFIG_INSTRUCTION_CACHE_LINE_32B
+    cache_line_size = CACHE_LINE_SIZE_32B;
+#else
+    cache_line_size = CACHE_LINE_SIZE_64B;
+#endif
+    ESP_EARLY_LOGI(TAG, "Instruction cache \t: size %dKB, %dWays, cache line size %dByte", cache_size == CACHE_SIZE_8KB ? 8 : 16, cache_ways == CACHE_4WAYS_ASSOC ? 4: 8, cache_line_size == CACHE_LINE_SIZE_16B ? 16 : (cache_line_size == CACHE_LINE_SIZE_32B ? 32 : 64));
+    Cache_Set_DCache_Mode(cache_size, cache_ways, cache_line_size);
+    Cache_Invalidate_ICache_All();
+}
+
+IRAM_ATTR void esp_config_data_cache_mode(void)
+{
+    cache_size_t cache_size;
+    cache_ways_t cache_ways;
+    cache_line_size_t cache_line_size;
+
+#if CONFIG_INSTRUCTION_CACHE_8KB
+#if CONFIG_DATA_CACHE_8KB
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_INVALID, CACHE_MEMORY_INVALID);
+    cache_size = CACHE_SIZE_8KB;
+#else
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_DCACHE_HIGH, CACHE_MEMORY_INVALID);
+    cache_size = CACHE_SIZE_16KB;
+#endif
+#else
+#if CONFIG_DATA_CACHE_8KB
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_ICACHE_HIGH, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_INVALID);
+    cache_size = CACHE_SIZE_8KB;
+#else
+    Cache_Allocate_SRAM(CACHE_MEMORY_ICACHE_LOW, CACHE_MEMORY_ICACHE_HIGH, CACHE_MEMORY_DCACHE_LOW, CACHE_MEMORY_DCACHE_HIGH);
+    cache_size = CACHE_SIZE_16KB;
+#endif
+#endif
+
+#if CONFIG_DATA_CACHE_4WAYS
+    cache_ways = CACHE_4WAYS_ASSOC;
+#else
+    cache_ways = CACHE_8WAYS_ASSOC;
+#endif
+#if CONFIG_DATA_CACHE_LINE_16B
+    cache_line_size = CACHE_LINE_SIZE_16B;
+#elif CONFIG_DATA_CACHE_LINE_32B
+    cache_line_size = CACHE_LINE_SIZE_32B;
+#else
+    cache_line_size = CACHE_LINE_SIZE_64B;
+#endif
+    ESP_EARLY_LOGI(TAG, "Data cache \t\t: size %dKB, %dWays, cache line size %dByte", cache_size == CACHE_SIZE_8KB ? 8 : 16, cache_ways == CACHE_4WAYS_ASSOC ? 4: 8, cache_line_size == CACHE_LINE_SIZE_16B ? 16 : (cache_line_size == CACHE_LINE_SIZE_32B ? 32 : 64));
+    Cache_Set_DCache_Mode(cache_size, cache_ways, cache_line_size);
+    Cache_Invalidate_DCache_All();
+}
+
+void esp_switch_rodata_to_dcache(void)
+{
+    REG_CLR_BIT(DPORT_PRO_DCACHE_CTRL1_REG, DPORT_PRO_DCACHE_MASK_DROM0);
+    Cache_Drom0_Source_DCache();
+    MMU_Drom_ICache_Unmap();
+    REG_SET_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_DROM0);
+    ESP_EARLY_LOGI(TAG, "Switch rodata load path to data cache.");
+}
+#endif
