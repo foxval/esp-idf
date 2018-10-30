@@ -12,15 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//  mbcontroller.h
+//  mbcontroller_slave.h
 //  Implementation of the MbController
 
-#ifndef _MODBUS_CONTROLLER
-#define _MODBUS_CONTROLLER
+#ifndef _MODBUS_CONTROLLER_SLAVE
+#define _MODBUS_CONTROLLER_SLAVE
 
 #include <stdint.h>                 // for standard int types definition
 #include <stddef.h>                 // for NULL and std defines
 #include "soc/soc.h"                // for BITN definitions
+#include "freertos/FreeRTOS.h"      // for task creation and queue access
+#include "freertos/task.h"          // for task api access
+#include "freertos/event_groups.h"  // for event groups
+#include "freertos/queue.h"         // for queue api access
 #include "sdkconfig.h"              // for KConfig options
 #include "driver/uart.h"            // for uart port number defines
 
@@ -33,12 +37,7 @@
 #define MB_CONTROLLER_NOTIFY_QUEUE_SIZE     (CONFIG_MB_CONTROLLER_NOTIFY_QUEUE_SIZE) // Number of messages in parameter notification queue
 #define MB_CONTROLLER_NOTIFY_TIMEOUT        (pdMS_TO_TICKS(CONFIG_MB_CONTROLLER_NOTIFY_TIMEOUT)) // notification timeout
 
-// Default port defines
-#define MB_DEVICE_ADDRESS   (1)             // Default slave device address in Modbus
-#define MB_DEVICE_SPEED     (115200)        // Default Modbus speed for now hard defined
-#define MB_UART_PORT        (UART_NUM_2)    // Default UART port number
-#define MB_PAR_INFO_TOUT    (10)            // Timeout for get parameter info
-#define MB_PARITY_NONE      (UART_PARITY_DISABLE)
+#if MB_MASTER_RTU_ENABLED == 0 && MB_MASTER_ASCII_ENABLED == 0
 
 /**
  * @brief Event group for parameters notification
@@ -111,42 +110,26 @@ typedef struct {
 } mb_communication_info_t;
 
 /**
+ * @brief Modbus controller handler structure
+ */
+typedef struct {
+    uint8_t mbs_stack_type;                             /*!< stack type */
+    mb_communication_info_t mbs_comm;                   /*!< communication info */
+    TaskHandle_t mbs_task_handle;                       /*!< task handle */
+    EventGroupHandle_t mbs_event_group;                 /*!< controller event group */
+    QueueHandle_t mbs_notification_queue_handle;        /*!< controller notification queue */
+    /*!< register area descriptors */
+    mb_register_area_descriptor_t mbs_area_descriptors[MB_PARAM_COUNT];
+} mb_slave_options_t;
+
+/**
  * @brief Initialize modbus controller and stack
  *
  * @return
  *     - ESP_OK   Success
  *     - ESP_FAIL Parameter error
  */
-esp_err_t mbcontroller_init(void);
-
-/**
- * @brief Destroy Modbus controller and stack
- *
- * @return
- *     - ESP_OK   Success
- *     - ESP_FAIL Parameter error
- */
-esp_err_t mbcontroller_destroy(void);
-
-/**
- * @brief Start Modbus communication stack
- *
- * @return
- *     - ESP_OK   Success
- *     - ESP_ERR_INVALID_ARG Modbus stack start error
- */
-esp_err_t mbcontroller_start(void);
-
-/**
- * @brief Set Modbus communication parameters for the controller
- *
- * @param comm_info Communication parameters structure.
- *
- * @return
- *     - ESP_OK Success
- *     - ESP_ERR_INVALID_ARG Incorrect parameter data
- */
-esp_err_t mbcontroller_setup(mb_communication_info_t comm_info);
+esp_err_t mbcontroller_init_slave(void** handler);
 
 /**
  * @brief Wait for specific event on parameter change.
@@ -156,7 +139,7 @@ esp_err_t mbcontroller_setup(mb_communication_info_t comm_info);
  * @return
  *     - mb_event_group_t event bits triggered
  */
-mb_event_group_t mbcontroller_check_event(mb_event_group_t group);
+mb_event_group_t (*mbcontroller_check_event)(mb_event_group_t group);
 
 /**
  * @brief Get parameter information
@@ -169,7 +152,7 @@ mb_event_group_t mbcontroller_check_event(mb_event_group_t group);
  *     - ESP_ERR_TIMEOUT Can not get data from parameter queue
  *                       or queue overflow
  */
-esp_err_t mbcontroller_get_param_info(mb_param_info_t* reg_info, uint32_t timeout);
+esp_err_t (*mbcontroller_get_param_info)(mb_param_info_t* reg_info, uint32_t timeout);
 
 /**
  * @brief Set Modbus area descriptor
@@ -180,7 +163,9 @@ esp_err_t mbcontroller_get_param_info(mb_param_info_t* reg_info, uint32_t timeou
  *     - ESP_OK: The appropriate descriptor is set
  *     - ESP_ERR_INVALID_ARG: The argument is incorrect
  */
-esp_err_t mbcontroller_set_descriptor(mb_register_area_descriptor_t descr_data);
+esp_err_t (*mbcontroller_set_descriptor)(mb_register_area_descriptor_t descr_data);
+
+#endif
 
 #endif
 

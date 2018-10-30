@@ -15,28 +15,21 @@
 //  mbcontroller.h
 //  Implementation of the MbController
 
-#ifndef _MODBUS_CONTROLLER
-#define _MODBUS_CONTROLLER
+#ifndef _MODBUS_CONTROLLER_MASTER
+#define _MODBUS_CONTROLLER_MASTER
 
 #include <stdint.h>                 // for standard int types definition
 #include <stddef.h>                 // for NULL and std defines
 #include "soc/soc.h"                // for BITN definitions
 #include "sdkconfig.h"              // for KConfig options
 #include "driver/uart.h"            // for uart port number defines
+#include "freertos/event_groups.h"  // for event groups handle definition
 
 #include "sdkconfig.h"              // for Kconfig parameters
 
 /* ----------------------- Defines ------------------------------------------*/
 
-#define MB_CONTROLLER_STACK_SIZE            (CONFIG_MB_CONTROLLER_STACK_SIZE) // Stack size for Modbus controller
-#define MB_CONTROLLER_PRIORITY              (CONFIG_MB_SERIAL_TASK_PRIO - 1) // priority of MB controller task
-
-// Default port defines
-#define MB_DEVICE_ADDRESS   (1)             // Default slave device address in Modbus
-#define MB_DEVICE_SPEED     (115200)        // Default Modbus speed for now hard defined
-#define MB_UART_PORT        (UART_NUM_2)    // Default UART port number
-#define MB_PAR_INFO_TOUT    (10)            // Timeout for get parameter info
-#define MB_PARITY_NONE      (UART_PARITY_DISABLE)
+#if CONFIG_MB_MASTER_RTU_ENABLED > 0 || CONFIG_MB_MASTER_ASCII_ENABLED > 0
 
 /**
  * @brief Request mode for parameter to use in data dictionary
@@ -177,13 +170,27 @@ typedef struct {
 } mb_param_request_t;
 
 /**
+ * @brief Modbus controller handler structure
+ */
+typedef struct {
+    mb_communication_info_t mbm_comm;                   /*!< Modbus communication info */
+    uint8_t* mbm_reg_buffer_ptr;                        /*!< Modbus data buffer pointer */
+    uint16_t mbm_reg_buffer_size;                       /*!< Modbus data buffer size */
+    TaskHandle_t mbm_task_handle;                       /*!< Modbus task handle */
+    EventGroupHandle_t mbm_event_group;                 /*!< Modbus controller event group */
+    const mb_parameter_descriptor_t* mbm_param_descriptor_table; /*!< Modbus controller parameter description table */
+    size_t mbm_param_descriptor_size;                   /*!< Modbus controller parameter description table size*/
+} mb_master_options_t;
+
+/**
  * @brief Initialize Modbus controller and stack
  *
+ * @param[out] handler handler(pointer) to master data structure
  * @return
  *     - ESP_OK   Success
  *     - ESP_FAIL Parameter error
  */
-esp_err_t mbcontroller_init(void);
+esp_err_t mbcontroller_init_master(void** handler);
 
 /**
  * @brief Destroy Modbus controller and stack
@@ -192,7 +199,7 @@ esp_err_t mbcontroller_init(void);
  *     - ESP_OK   Success
  *     - ESP_FAIL Parameter error
  */
-esp_err_t mbcontroller_destroy(void);
+//esp_err_t (*mbcontroller_destroy)(void);
 
 /**
  * @brief Start Modbus communication stack
@@ -201,7 +208,7 @@ esp_err_t mbcontroller_destroy(void);
  *     - ESP_OK   Success
  *     - ESP_ERR_INVALID_ARG Modbus stack start error
  */
-esp_err_t mbcontroller_start(void);
+//esp_err_t (*mbcontroller_start)(void);
 
 /**
  * @brief Set Modbus communication parameters for the controller
@@ -212,9 +219,9 @@ esp_err_t mbcontroller_start(void);
  *     - ESP_OK Success
  *     - ESP_ERR_INVALID_ARG Incorrect parameter data
  */
-esp_err_t mbcontroller_setup(mb_communication_info_t comm_info);
+//esp_err_t (*mbcontroller_setup)(void* comm_info);
 
-/***************************** Interface functions for network example ********************************
+/***************************** Specific interface functions ********************************
  * Interface functions below provide basic methods to read/write access to slave devices in Modbus
  * segment as well as API to read specific supported characteristics linked to Modbus parameters
  * of devices in Modbus network.
@@ -230,7 +237,7 @@ esp_err_t mbcontroller_setup(mb_communication_info_t comm_info);
  *     - esp_err_t ESP_OK - set descriptor successfully
  *     - esp_err_t ESP_ERR_INVALID_ARG - invalid argument in function call
  */
-esp_err_t mbcontroller_set_descriptor(const mb_parameter_descriptor_t* descriptor, const uint16_t num_elements);
+esp_err_t (*mbcontroller_set_descriptor)(const mb_parameter_descriptor_t* descriptor, const uint16_t num_elements);
 
 /**
  * @brief Send data request as defined in parameter request, waits response
@@ -248,7 +255,7 @@ esp_err_t mbcontroller_set_descriptor(const mb_parameter_descriptor_t* descripto
  *     - esp_err_t ESP_ERR_NOT_SUPPORTED - the request command is not supported by slave
  *     - esp_err_t ESP_FAIL - slave returned an exception or other failure
  */
-esp_err_t mbcontroller_send_request(mb_param_request_t* request, void* data_ptr);
+esp_err_t (*mbcontroller_send_request)(mb_param_request_t* request, void* data_ptr);
 
 /**
  * @brief Get information about supported characteristic defined as cid. Uses parameter description table to get
@@ -264,7 +271,7 @@ esp_err_t mbcontroller_send_request(mb_param_request_t* request, void* data_ptr)
  *     - esp_err_t ESP_ERR_NOT_FOUND - the characteristic (cid) not found
  *     - esp_err_t ESP_FAIL - unknown error during lookup table processing
 */
-esp_err_t mbcontroller_get_cid_info(uint16_t cid, const mb_parameter_descriptor_t** param_info);
+esp_err_t (*mbcontroller_get_cid_info)(uint16_t cid, const mb_parameter_descriptor_t** param_info);
 
 /**
  * @brief Read parameter from modbus slave device whose name is defined by name and has cid.
@@ -286,7 +293,7 @@ esp_err_t mbcontroller_get_cid_info(uint16_t cid, const mb_parameter_descriptor_
  *     - esp_err_t ESP_ERR_NOT_FOUND - the parameter is not found in the parameter description table
  *     - esp_err_t ESP_FAIL - slave returned an exception or other failure
 */
-esp_err_t mbcontroller_get_parameter(uint16_t cid, char* name, uint8_t* value, uint8_t *type);
+esp_err_t (*mbcontroller_get_parameter)(uint16_t cid, char* name, uint8_t* value, uint8_t *type);
 
 /**
  * @brief Set characteristic's value defined as a name and cid parameter.
@@ -306,7 +313,9 @@ esp_err_t mbcontroller_get_parameter(uint16_t cid, char* name, uint8_t* value, u
  *     - esp_err_t ESP_ERR_NOT_SUPPORTED - the request command is not supported by slave
  *     - esp_err_t ESP_FAIL - slave returned an exception or other failure
 */
-esp_err_t mbcontroller_set_parameter(uint16_t cid, char* name, uint8_t* value, uint8_t *type);
+esp_err_t (*mbcontroller_set_parameter)(uint16_t cid, char* name, uint8_t* value, uint8_t *type);
+
+#endif
 
 #endif
 
