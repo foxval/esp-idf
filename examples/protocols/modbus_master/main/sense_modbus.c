@@ -96,11 +96,11 @@ esp_err_t sense_modbus_init()
             .baudrate = MB_BAUDRATE,
             .parity = MB_PARITY
     };
-    esp_err_t err = mbcontroller_init();
+    esp_err_t err = mbcontroller_init(MB_SERIAL_MASTER);
     SENSE_MB_CHECK((err == ESP_OK), ESP_ERR_INVALID_STATE,
                             "mb controller initialization fail, returns(0x%x).",
                             (uint32_t)err);
-    err = mbcontroller_setup(comm);
+    err = mbcontroller_setup((void*)&comm);
     SENSE_MB_CHECK((err == ESP_OK), ESP_ERR_INVALID_STATE,
                             "mb controller setup fail, returns(0x%x).",
                             (uint32_t)err);
@@ -193,7 +193,7 @@ esp_err_t sense_modbus_read_value(uint16_t cid, void *value)
     return error;
 }
 
-// Write characteristic value into Modbus parameter
+// Write characteristic value into associated Modbus parameter
 esp_err_t sense_modbus_send_value(uint16_t cid, void* value)
 {
     assert(active_cid_table != NULL);

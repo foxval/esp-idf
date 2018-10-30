@@ -18,10 +18,11 @@ if(CONFIG_MB_MASTER_RTU_ENABLED OR CONFIG_MB_MASTER_ASCII_ENABLED)
                    "serial_master/port/portother.c"
                    "serial_master/port/portserial.c"
                    "serial_master/port/porttimer.c"
-                   "serial_master/modbus_controller/mbcontroller.c"
-                   "serial_master/modbus/mb.c")
+                   "serial_master/modbus_controller/mbcontroller_master.c"
+                   "serial_master/modbus/mb.c"
+                   "common/mbcontroller.c")
     
-    set(COMPONENT_ADD_INCLUDEDIRS serial_master/modbus/include serial_master/modbus_controller)
+    set(COMPONENT_ADD_INCLUDEDIRS serial_master/modbus/include serial_master/modbus_controller common)
     set(COMPONENT_PRIV_INCLUDEDIRS serial_master/port serial_master/modbus/ascii serial_master/modbus/functions serial_master/modbus/rtu serial_master/modbus/include)
 else()
     set(COMPONENT_SRCS "serial_slave/modbus/ascii/mbascii.c"
@@ -39,10 +40,11 @@ else()
                    "serial_slave/port/portother.c"
                    "serial_slave/port/portserial.c"
                    "serial_slave/port/porttimer.c"
-                   "serial_slave/modbus_controller/mbcontroller.c"
-                   "serial_slave/modbus/mb.c")
+                   "serial_slave/modbus_controller/mbcontroller_slave.c"
+                   "serial_slave/modbus/mb.c"
+                   "common/mbcontroller.c")
     
-    set(COMPONENT_ADD_INCLUDEDIRS serial_slave/modbus/include serial_slave/modbus_controller)
+    set(COMPONENT_ADD_INCLUDEDIRS serial_slave/modbus/include serial_slave/modbus_controller common)
     set(COMPONENT_PRIV_INCLUDEDIRS serial_slave/port serial_slave/modbus/ascii serial_slave/modbus/functions serial_slave/modbus/rtu serial_slave/modbus/include)
 endif()
 

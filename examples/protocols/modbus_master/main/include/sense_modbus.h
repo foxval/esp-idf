@@ -34,17 +34,17 @@ extern "C" {
 
 typedef struct
 {
-    uint16_t            cid;                // Characteristic cid
-    const char*         param_key;          // The key (name) of the parameter
-    const char*         param_units;        // The units of the parameter
-    mb_parameter_opt_t  param_opts;         // Parameter options
-    mb_param_perms_t    access;             // Access permissions based on mode
-    void*               instance_ptr;       // Data instance for the parameter
-    mb_descr_type_t     instance_type;      // Type of instance value
-    size_t              instance_size;      // Size of instance to save data
-    uint8_t             change_flag;        // Change value flag
-    esp_err_t           status;             // Status of the value
-    uint64_t            timestamp;          // Time stamp of last access to parameter
+    uint16_t            cid;                /*!< Characteristic cid */
+    const char*         param_key;          /*!< The key (name) of the parameter */
+    const char*         param_units;        /*!< The units of the parameter */
+    mb_parameter_opt_t  param_opts;         /*!< Parameter options */
+    mb_param_perms_t    access;             /*!< Access permissions based on mode */
+    void*               instance_ptr;       /*!< Data instance for the parameter */
+    mb_descr_type_t     instance_type;      /*!< Type of instance value */
+    size_t              instance_size;      /*!< Size of instance to save data */
+    uint8_t             change_flag;        /*!< Change value flag */
+    esp_err_t           status;             /*!< Status of the value */
+    uint64_t            timestamp;          /*!< Time stamp of last access to parameter */
 } characteristic_descriptor_t;
 
 esp_err_t sense_modbus_init();

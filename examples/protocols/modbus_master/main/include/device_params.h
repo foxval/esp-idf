@@ -27,7 +27,7 @@ enum {
     CID_COUNT,
 };
 
-#define DEVICE_PARAM_MAX_SIZE PARAM_SIZE_ASCII24
+#define DEVICE_PARAM_MAX_SIZE 24
 
 // The structures below define the parameters that will be accessed by Modbus master device.
 // These parameters reflect the parameters in the address space of external devices in Modbus network.

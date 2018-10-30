@@ -66,7 +66,7 @@ void app_main()
     // Set UART log level
     esp_log_level_set(TAG, ESP_LOG_INFO);
 
-    mbcontroller_init(); // Initialization of Modbus controller
+    ESP_ERROR_CHECK(mbcontroller_init(MB_SERIAL_SLAVE)); // Initialization of Modbus controller
 
     // Setup communication parameters and start stack
     comm_info.mode = MB_MODE_RTU;
@@ -74,7 +74,7 @@ void app_main()
     comm_info.port = MB_PORT_NUM;
     comm_info.baudrate = MB_DEV_SPEED;
     comm_info.parity = MB_PARITY_NONE;
-    ESP_ERROR_CHECK(mbcontroller_setup(comm_info));
+    ESP_ERROR_CHECK(mbcontroller_setup((void*)&comm_info));
 
     // The code below initializes Modbus register area descriptors
     // for Modbus Holding Registers, Input Registers, Coils and Discrete Inputs
