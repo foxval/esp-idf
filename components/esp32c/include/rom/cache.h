@@ -155,9 +155,11 @@ void Cache_MMU_Init(void);
   * @param  uint32_t paddr : physical address in external memory.
   *                              Should be aligned by psize.
   *
-  * @param  int psize : page size of ICache, in kilobytes. Should be 64 here.
+  * @param  uint32_t psize : page size of ICache, in kilobytes. Should be 64 here.
   *
-  * @param  int num : pages to be set.
+  * @param  uint32_t num : pages to be set.
+  *
+  * @param  uint32_t fixed : 0 for physical pages grow with virtual pages, other for virtual pages map to same physical page.
   *
   * @return uint32_t: error status
   *                   0 : mmu set success
@@ -165,7 +167,7 @@ void Cache_MMU_Init(void);
   *                   3 : psize error
   *                   5 : vaddr is out of range
   */
-int Cache_Ibus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr,  int psize, int num);
+int Cache_Ibus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr,  uint32_t psize, uint32_t num, uint32_t fixed);
 
 /**
   * @brief Set DCache mmu mapping.
@@ -180,9 +182,11 @@ int Cache_Ibus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr,  int ps
   * @param  uint32_t paddr : physical address in external memory.
   *                              Should be aligned by psize.
   *
-  * @param  int psize : page size of flash, in kilobytes. Should be 64 here.
+  * @param  uint32_t psize : page size of DCache, in kilobytes. Should be 64 here.
   *
-  * @param  int num : pages to be set.
+  * @param  uint32_t num : pages to be set.
+
+  * @param  uint32_t fixed : 0 for physical pages grow with virtual pages, other for virtual pages map to same physical page.
   *
   * @return uint32_t: error status
   *                   0 : mmu set success
@@ -190,7 +194,7 @@ int Cache_Ibus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr,  int ps
   *                   3 : psize error
   *                   5 : vaddr is out of range
   */
-int Cache_Dbus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr, int psize, int num);
+int Cache_Dbus_MMU_Set(uint32_t ext_ram, uint32_t vaddr, uint32_t paddr, uint32_t psize, uint32_t num, uint32_t fixed);
 
 /**
   * @brief Copy DRom0 ICache MMU to DCache MMU.
@@ -218,9 +222,11 @@ void MMU_Drom_ICache_Unmap(void);
   *
   * @param uint32_t bus : the bus to count with.
   *
+  * @param uint32_t * page0_mapped : value should be initial by user, 0 for not mapped, other for mapped count.
+  *
   * return uint32_t : the number of pages which map to Flash.
   */
-uint32_t Cache_Count_Flash_Pages(uint32_t bus);
+uint32_t Cache_Count_Flash_Pages(uint32_t bus, uint32_t * page0_mapped);
 
 /**
   * @brief Copy Instruction or rodata from Flash to SPIRAM, and remap to SPIRAM.
@@ -232,9 +238,11 @@ uint32_t Cache_Count_Flash_Pages(uint32_t bus);
   *
   * @param uint32_t start_page : the start (64KB) page number in SPIRAM.
   *
+  * @param uint32_t * page0_page : the flash page0 in SPIRAM page number, 0xffff for invalid.
+  *
   * return uint32_t : the next start page number for SPIRAM not mapped.
   */
-uint32_t Cache_Flash_To_SPIRAM_Copy(uint32_t bus, uint32_t bus_start_addr, uint32_t start_page);
+uint32_t Cache_Flash_To_SPIRAM_Copy(uint32_t bus, uint32_t bus_start_addr, uint32_t start_page, uint32_t * page0_page);
 
 
 /**

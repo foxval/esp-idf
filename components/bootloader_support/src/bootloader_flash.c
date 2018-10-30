@@ -119,7 +119,7 @@ const void *bootloader_mmap(uint32_t src_addr, uint32_t size)
 #ifdef CONFIG_CHIP_IS_ESP32
     int e = cache_flash_mmu_set(0, 0, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count);
 #else
-    int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count);
+    int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK0_VADDR, src_addr_aligned, 64, count, 0);
 #endif
     if (e != 0) {
         ESP_LOGE(TAG, "cache_flash_mmu_set failed: %d\n", e);
@@ -216,7 +216,7 @@ static esp_err_t bootloader_flash_read_allow_decrypt(size_t src_addr, void *dest
 #ifdef CONFIG_CHIP_IS_ESP32
             int e = cache_flash_mmu_set(0, 0, MMU_BLOCK63_VADDR, map_at, 64, 1);
 #else
-            int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK63_VADDR, map_at, 64, 1);
+            int e = Cache_Ibus_MMU_Set(DPORT_MMU_ACCESS_FLASH, MMU_BLOCK63_VADDR, map_at, 64, 1, 0);
 #endif
             if (e != 0) {
                 ESP_LOGE(TAG, "cache_flash_mmu_set failed: %d\n", e);
