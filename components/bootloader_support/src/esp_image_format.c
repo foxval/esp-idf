@@ -23,6 +23,7 @@
 #include <bootloader_flash.h>
 #include <bootloader_random.h>
 #include <bootloader_sha.h>
+#include <bootloader_utility.h>
 
 static const char *TAG = "esp_image";
 
@@ -492,8 +493,6 @@ static esp_err_t verify_checksum(bootloader_sha256_handle_t sha_handle, uint32_t
     return ESP_OK;
 }
 
-static void debug_log_hash(const uint8_t *image_hash, const char *caption);
-
 static esp_err_t verify_secure_boot_signature(bootloader_sha256_handle_t sha_handle, esp_image_metadata_t *data)
 {
     uint8_t image_hash[HASH_LEN] = { 0 };
@@ -509,7 +508,7 @@ static esp_err_t verify_secure_boot_signature(bootloader_sha256_handle_t sha_han
     bootloader_sha256_finish(sha_handle, image_hash);
 
     // Log the hash for debugging
-    debug_log_hash(image_hash, "Calculated secure boot hash");
+    bootloader_debug_buffer(image_hash, HASH_LEN, "Calculated secure boot hash");
 
     // Use hash to verify signature block
     const esp_secure_boot_sig_block_t *sig_block = bootloader_mmap(data->start_addr + data->image_len, sizeof(esp_secure_boot_sig_block_t));
@@ -543,37 +542,17 @@ static esp_err_t verify_simple_hash(bootloader_sha256_handle_t sha_handle, esp_i
     bootloader_sha256_finish(sha_handle, image_hash);
 
     // Log the hash for debugging
-    debug_log_hash(image_hash, "Calculated hash");
+    bootloader_debug_buffer(image_hash, HASH_LEN, "Calculated hash");
 
     // Simple hash for verification only
     const void *hash = bootloader_mmap(data->start_addr + data->image_len - HASH_LEN, HASH_LEN);
     if (memcmp(hash, image_hash, HASH_LEN) != 0) {
         ESP_LOGE(TAG, "Image hash failed - image is corrupt");
-        debug_log_hash(hash, "Expected hash");
+        bootloader_debug_buffer(hash, HASH_LEN, "Expected hash");
         bootloader_munmap(hash);
         return ESP_ERR_IMAGE_INVALID;
     }
 
     bootloader_munmap(hash);
     return ESP_OK;
-}
-
-// Log a hash as a hex string
-static void debug_log_hash(const uint8_t *image_hash, const char *label)
-{
-#if BOOT_LOG_LEVEL >= LOG_LEVEL_DEBUG
-        char hash_print[HASH_LEN*2 + 1];
-        hash_print[HASH_LEN*2] = 0;
-        for (int i = 0; i < HASH_LEN; i++) {
-            for (int shift = 0; shift < 2; shift++) {
-                uint8_t nibble = (image_hash[i] >> (shift ? 0 : 4)) & 0x0F;
-                if (nibble < 10) {
-                    hash_print[i*2+shift] = '0' + nibble;
-                } else {
-                    hash_print[i*2+shift] = 'a' + nibble - 10;
-                }
-            }
-        }
-        ESP_LOGD(TAG, "%s: %s", label, hash_print);
-#endif
 }

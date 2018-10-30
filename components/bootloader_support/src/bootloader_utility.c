@@ -524,3 +524,24 @@ static void set_cache_and_start_app(
     // use "movsp" instruction to reset stack back to where ROM stack starts.
     (*entry)();
 }
+
+void bootloader_debug_buffer(const void *buffer, size_t length, const char *label)
+{
+#if BOOT_LOG_LEVEL >= LOG_LEVEL_DEBUG
+    assert(length <= 128); // Avoid unbounded VLA size
+    const uint8_t *bytes = (const uint8_t *)buffer;
+    char hexbuf[length*2 + 1];
+    hexbuf[length*2] = 0;
+    for (int i = 0; i < length; i++) {
+        for (int shift = 0; shift < 2; shift++) {
+            uint8_t nibble = (bytes[i] >> (shift ? 0 : 4)) & 0x0F;
+            if (nibble < 10) {
+                hexbuf[i*2+shift] = '0' + nibble;
+            } else {
+                hexbuf[i*2+shift] = 'a' + nibble - 10;
+            }
+        }
+    }
+    ESP_LOGD(TAG, "%s: %s", label, hexbuf);
+#endif
+}

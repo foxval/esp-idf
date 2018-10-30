@@ -14,6 +14,7 @@
 #pragma once
 
 #include "esp_image_format.h"
+#include "bootloader_config.h"
 
 /**
  * @brief Load partition table.
@@ -52,3 +53,15 @@ int bootloader_utility_get_selected_boot_partition(const bootloader_state_t *bs)
  * @param[in] start_index The index from which the search for images begins.
  */
 __attribute__((noreturn)) void bootloader_utility_load_boot_image(const bootloader_state_t *bs, int start_index);
+
+
+/**
+ * @brief Debug log contents of a buffer as hexadecimal
+ *
+ * @note Only works if component log level is DEBUG or higher.
+ *
+ * @param buffer Buffer to log
+ * @param length Length of buffer in bytes. Maximum length 128 bytes.
+ * @param label Label to print at beginning of log line.
+ */
+void bootloader_debug_buffer(const void *buffer, size_t length, const char *label);

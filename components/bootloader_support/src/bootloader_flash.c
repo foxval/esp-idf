@@ -86,7 +86,7 @@ static const char *TAG = "bootloader_flash";
    63th block for bootloader_flash_read
 */
 #define MMU_BLOCK0_VADDR  SOC_DROM_LOW
-#define MMU_BLOCK63_VADDR (SOC_DROM_LOW + 0x3f0000)
+#define MMU_BLOCK63_VADDR (MMU_BLOCK0_VADDR + 0x3f0000)
 #define MMU_FLASH_MASK    0xffff0000
 #define MMU_BLOCK_SIZE    0x00010000
 
@@ -286,7 +286,11 @@ esp_err_t bootloader_flash_write(size_t dest_addr, void *src, size_t size, bool 
     }
 
     if (write_encrypted) {
+#ifdef CONFIG_CHIP_IS_ESP32
         return spi_to_esp_err(esp_rom_spiflash_write_encrypted(dest_addr, src, size));
+#else // TODO: use the same ROM AP here
+        return spi_to_esp_err(SPI_Encrypt_Write(dest_addr, src, size));
+#endif
     } else {
         return spi_to_esp_err(esp_rom_spiflash_write(dest_addr, src, size));
     }
