@@ -82,15 +82,15 @@ This function sends data request as defined in parameter request, waits response
 
 The function gets information about supported characteristic defined as cid. It will check if characteristic is supported and returns its description.
 
-.. doxygenfunction:: mbcontroller_get_parameter
+.. doxygenfunction:: *mbcontroller_get_parameter
 
 The function reads data of characteristic defined in parameters from Modbus slave device and returns its data. The additional data for request is taken from parameter description table.
 
-.. doxygenfunction:: mbcontroller_set_parameter
+.. doxygenfunction:: *mbcontroller_set_parameter
 
 The function writes characteristic's value defined as a name and cid parameter in corresponded slave device. The additional data for parameter request is taken from master parameter description table.
 
-.. doxygenfunction:: mbcontroller_destroy
+.. doxygenfunction:: *mbcontroller_destroy
 
 This function stops Modbus communication stack and destroys controller interface.
 
