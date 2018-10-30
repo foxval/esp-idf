@@ -1394,7 +1394,45 @@ extern "C" {
 #define DPORT_ALLOC_WB_HOLD_ARBITER_V  0x1
 #define DPORT_ALLOC_WB_HOLD_ARBITER_S  0
 
-#define EXTMEM_CLOCK_GATE_REG          (DR_REG_EXTMEM_BASE + 0x148)
+#define DPORT_CACHE_PRELOAD_INT_CTRL_REG          (DR_REG_EXTMEM_BASE + 0x148)
+/* DPORT_PRO_DCACHE_PRELOAD_INT_CLR : WOD ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DCACHE_PRELOAD_INT_CLR  (BIT(5))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_CLR_M  (BIT(5))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_CLR_V  0x1
+#define DPORT_PRO_DCACHE_PRELOAD_INT_CLR_S  5
+/* DPORT_PRO_DCACHE_PRELOAD_INT_ENA : R/W ;bitpos:[4] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ENA  (BIT(4))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ENA_M  (BIT(4))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ENA_V  0x1
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ENA_S  4
+/* DPORT_PRO_DCACHE_PRELOAD_INT_ST : RO ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ST  (BIT(3))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ST_M  (BIT(3))
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ST_V  0x1
+#define DPORT_PRO_DCACHE_PRELOAD_INT_ST_S  3
+/* DPORT_PRO_ICACHE_PRELOAD_INT_CLR : WOD ;bitpos:[2] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_ICACHE_PRELOAD_INT_CLR  (BIT(2))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_CLR_M  (BIT(2))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_CLR_V  0x1
+#define DPORT_PRO_ICACHE_PRELOAD_INT_CLR_S  2
+/* DPORT_PRO_ICACHE_PRELOAD_INT_ENA : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ENA  (BIT(1))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ENA_M  (BIT(1))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ENA_V  0x1
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ENA_S  1
+/* DPORT_PRO_ICACHE_PRELOAD_INT_ST : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ST  (BIT(0))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ST_M  (BIT(0))
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ST_V  0x1
+#define DPORT_PRO_ICACHE_PRELOAD_INT_ST_S  0
+
+#define EXTMEM_CLOCK_GATE_REG          (DR_REG_EXTMEM_BASE + 0x14C)
 /* EXTMEM_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define EXTMEM_CLK_EN  (BIT(0))
@@ -1403,7 +1441,7 @@ extern "C" {
 #define EXTMEM_CLK_EN_S  0
 
 #define EXTMEM_DATE_REG          (DR_REG_EXTMEM_BASE + 0x3FC)
-/* EXTMEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810220 ; */
+/* EXTMEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810250 ; */
 /*description: */
 #define EXTMEM_DATE  0x0FFFFFFF
 #define EXTMEM_DATE_M  ((EXTMEM_DATE_V)<<(EXTMEM_DATE_S))

@@ -28,6 +28,12 @@ extern "C" {
 #define UART_RXFIFO_RD_BYTE_S  0
 
 #define UART_INT_RAW_REG(i)          (REG_UART_BASE(i) + 0x4)
+/* UART_WAKEUP_INT_RAW : RO ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define UART_WAKEUP_INT_RAW  (BIT(19))
+#define UART_WAKEUP_INT_RAW_M  (BIT(19))
+#define UART_WAKEUP_INT_RAW_V  0x1
+#define UART_WAKEUP_INT_RAW_S  19
 /* UART_AT_CMD_CHAR_DET_INT_RAW : RO ;bitpos:[18] ;default: 1'b0 ; */
 /*description: */
 #define UART_AT_CMD_CHAR_DET_INT_RAW  (BIT(18))
@@ -144,6 +150,12 @@ extern "C" {
 #define UART_RXFIFO_FULL_INT_RAW_S  0
 
 #define UART_INT_ST_REG(i)          (REG_UART_BASE(i) + 0x8)
+/* UART_WAKEUP_INT_ST : RO ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define UART_WAKEUP_INT_ST  (BIT(19))
+#define UART_WAKEUP_INT_ST_M  (BIT(19))
+#define UART_WAKEUP_INT_ST_V  0x1
+#define UART_WAKEUP_INT_ST_S  19
 /* UART_AT_CMD_CHAR_DET_INT_ST : RO ;bitpos:[18] ;default: 1'b0 ; */
 /*description: */
 #define UART_AT_CMD_CHAR_DET_INT_ST  (BIT(18))
@@ -260,6 +272,12 @@ extern "C" {
 #define UART_RXFIFO_FULL_INT_ST_S  0
 
 #define UART_INT_ENA_REG(i)          (REG_UART_BASE(i) + 0xC)
+/* UART_WAKEUP_INT_ENA : R/W ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define UART_WAKEUP_INT_ENA  (BIT(19))
+#define UART_WAKEUP_INT_ENA_M  (BIT(19))
+#define UART_WAKEUP_INT_ENA_V  0x1
+#define UART_WAKEUP_INT_ENA_S  19
 /* UART_AT_CMD_CHAR_DET_INT_ENA : R/W ;bitpos:[18] ;default: 1'b0 ; */
 /*description: */
 #define UART_AT_CMD_CHAR_DET_INT_ENA  (BIT(18))
@@ -376,6 +394,12 @@ extern "C" {
 #define UART_RXFIFO_FULL_INT_ENA_S  0
 
 #define UART_INT_CLR_REG(i)          (REG_UART_BASE(i) + 0x10)
+/* UART_WAKEUP_INT_CLR : WO ;bitpos:[19] ;default: 1'b0 ; */
+/*description: */
+#define UART_WAKEUP_INT_CLR  (BIT(19))
+#define UART_WAKEUP_INT_CLR_M  (BIT(19))
+#define UART_WAKEUP_INT_CLR_V  0x1
+#define UART_WAKEUP_INT_CLR_S  19
 /* UART_AT_CMD_CHAR_DET_INT_CLR : WO ;bitpos:[18] ;default: 1'b0 ; */
 /*description: */
 #define UART_AT_CMD_CHAR_DET_INT_CLR  (BIT(18))

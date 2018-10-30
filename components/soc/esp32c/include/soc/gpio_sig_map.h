@@ -114,9 +114,7 @@
 #define SPI3_HD_OUT_IDX			75
 #define SPI3_CS0_IN_IDX			76
 #define SPI3_CS0_OUT_IDX			76
-#define SPI3_CS1_IN_IDX			77
 #define SPI3_CS1_OUT_IDX			77
-#define SPI3_CS2_IN_IDX			78
 #define SPI3_CS2_OUT_IDX			78
 #define LEDC_LS_SIG_OUT0_IDX			79
 #define LEDC_LS_SIG_OUT1_IDX			80
@@ -157,9 +155,7 @@
 #define SPI4_HD_OUT_IDX			111
 #define SPI4_CS0_IN_IDX			112
 #define SPI4_CS0_OUT_IDX			112
-#define SPI4_CS1_IN_IDX			113
 #define SPI4_CS1_OUT_IDX			113
-#define SPI4_CS2_IN_IDX			114
 #define SPI4_CS2_OUT_IDX			114
 #define FSPICLK_IN_IDX			115
 #define FSPICLK_OUT_MUX_IDX			115
@@ -173,9 +169,7 @@
 #define FSPIWP_OUT_IDX			119
 #define FSPICS0_IN_IDX			120
 #define FSPICS0_OUT_IDX			120
-#define FSPICS1_IN_IDX			121
 #define FSPICS1_OUT_IDX			121
-#define FSPICS2_IN_IDX			122
 #define FSPICS2_OUT_IDX			122
 #define CAN_RX_IDX			123
 #define CAN_TX_IDX			123
@@ -290,4 +284,4 @@
 #define PRO_ALONEGPIO_OUT7_IDX			242
 #define CLK_I2S_MUX_IDX			251
 #define SIG_GPIO_OUT_IDX            256
-#define GPIO_MAP_DATE_IDX			0x18092900
+#define GPIO_MAP_DATE_IDX			0x18102600

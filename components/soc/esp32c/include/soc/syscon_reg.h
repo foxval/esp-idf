@@ -662,7 +662,7 @@ extern "C" {
 #define SYSCON_SPI0_REJECT_CDE_M  ((SYSCON_SPI0_REJECT_CDE_V)<<(SYSCON_SPI0_REJECT_CDE_S))
 #define SYSCON_SPI0_REJECT_CDE_V  0x1F
 #define SYSCON_SPI0_REJECT_CDE_S  2
-/* SYSCON_SPI0_REJECT_CLR : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* SYSCON_SPI0_REJECT_CLR : WOD ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define SYSCON_SPI0_REJECT_CLR  (BIT(1))
 #define SYSCON_SPI0_REJECT_CLR_M  (BIT(1))
@@ -690,7 +690,7 @@ extern "C" {
 #define SYSCON_SPI1_REJECT_CDE_M  ((SYSCON_SPI1_REJECT_CDE_V)<<(SYSCON_SPI1_REJECT_CDE_S))
 #define SYSCON_SPI1_REJECT_CDE_V  0x1F
 #define SYSCON_SPI1_REJECT_CDE_S  2
-/* SYSCON_SPI1_REJECT_CLR : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* SYSCON_SPI1_REJECT_CLR : WOD ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define SYSCON_SPI1_REJECT_CLR  (BIT(1))
 #define SYSCON_SPI1_REJECT_CLR_M  (BIT(1))
@@ -747,8 +747,78 @@ extern "C" {
 #define SYSCON_REDCY_SIG1_V  0x7FFFFFFF
 #define SYSCON_REDCY_SIG1_S  0
 
+#define SYSCON_WIFI_BB_CFG_REG          (DR_REG_SYSCON_BASE + 0x0CC)
+/* SYSCON_WIFI_BB_CFG : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define SYSCON_WIFI_BB_CFG  0xFFFFFFFF
+#define SYSCON_WIFI_BB_CFG_M  ((SYSCON_WIFI_BB_CFG_V)<<(SYSCON_WIFI_BB_CFG_S))
+#define SYSCON_WIFI_BB_CFG_V  0xFFFFFFFF
+#define SYSCON_WIFI_BB_CFG_S  0
+
+#define SYSCON_WIFI_BB_CFG_2_REG          (DR_REG_SYSCON_BASE + 0x0D0)
+/* SYSCON_WIFI_BB_CFG_2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define SYSCON_WIFI_BB_CFG_2  0xFFFFFFFF
+#define SYSCON_WIFI_BB_CFG_2_M  ((SYSCON_WIFI_BB_CFG_2_V)<<(SYSCON_WIFI_BB_CFG_2_S))
+#define SYSCON_WIFI_BB_CFG_2_V  0xFFFFFFFF
+#define SYSCON_WIFI_BB_CFG_2_S  0
+
+#define SYSCON_WIFI_CLK_EN_REG          (DR_REG_SYSCON_BASE + 0x0D4)
+/* SYSCON_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
+/*description: */
+#define SYSCON_WIFI_CLK_EN  0xFFFFFFFF
+#define SYSCON_WIFI_CLK_EN_M  ((SYSCON_WIFI_CLK_EN_V)<<(SYSCON_WIFI_CLK_EN_S))
+#define SYSCON_WIFI_CLK_EN_V  0xFFFFFFFF
+#define SYSCON_WIFI_CLK_EN_S  0
+
+#define SYSCON_WIFI_RST_EN_REG          (DR_REG_SYSCON_BASE + 0x0D8)
+/* SYSCON_WIFI_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define SYSCON_WIFI_RST  0xFFFFFFFF
+#define SYSCON_WIFI_RST_M  ((SYSCON_WIFI_RST_V)<<(SYSCON_WIFI_RST_S))
+#define SYSCON_WIFI_RST_V  0xFFFFFFFF
+#define SYSCON_WIFI_RST_S  0
+
+#define SYSCON_FRONT_END_MEM_PD_REG          (DR_REG_SYSCON_BASE + 0x0DC)
+/* SYSCON_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define SYSCON_DC_MEM_FORCE_PD  (BIT(5))
+#define SYSCON_DC_MEM_FORCE_PD_M  (BIT(5))
+#define SYSCON_DC_MEM_FORCE_PD_V  0x1
+#define SYSCON_DC_MEM_FORCE_PD_S  5
+/* SYSCON_DC_MEM_FORCE_PU : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define SYSCON_DC_MEM_FORCE_PU  (BIT(4))
+#define SYSCON_DC_MEM_FORCE_PU_M  (BIT(4))
+#define SYSCON_DC_MEM_FORCE_PU_V  0x1
+#define SYSCON_DC_MEM_FORCE_PU_S  4
+/* SYSCON_PBUS_MEM_FORCE_PD : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define SYSCON_PBUS_MEM_FORCE_PD  (BIT(3))
+#define SYSCON_PBUS_MEM_FORCE_PD_M  (BIT(3))
+#define SYSCON_PBUS_MEM_FORCE_PD_V  0x1
+#define SYSCON_PBUS_MEM_FORCE_PD_S  3
+/* SYSCON_PBUS_MEM_FORCE_PU : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define SYSCON_PBUS_MEM_FORCE_PU  (BIT(2))
+#define SYSCON_PBUS_MEM_FORCE_PU_M  (BIT(2))
+#define SYSCON_PBUS_MEM_FORCE_PU_V  0x1
+#define SYSCON_PBUS_MEM_FORCE_PU_S  2
+/* SYSCON_AGC_MEM_FORCE_PD : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define SYSCON_AGC_MEM_FORCE_PD  (BIT(1))
+#define SYSCON_AGC_MEM_FORCE_PD_M  (BIT(1))
+#define SYSCON_AGC_MEM_FORCE_PD_V  0x1
+#define SYSCON_AGC_MEM_FORCE_PD_S  1
+/* SYSCON_AGC_MEM_FORCE_PU : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define SYSCON_AGC_MEM_FORCE_PU  (BIT(0))
+#define SYSCON_AGC_MEM_FORCE_PU_M  (BIT(0))
+#define SYSCON_AGC_MEM_FORCE_PU_V  0x1
+#define SYSCON_AGC_MEM_FORCE_PU_S  0
+
 #define SYSCON_DATE_REG          (DR_REG_SYSCON_BASE + 0x3FC)
-/* SYSCON_DATE : R/W ;bitpos:[31:0] ;default: 32'h18091100 ; */
+/* SYSCON_DATE : R/W ;bitpos:[31:0] ;default: 32'h18102500 ; */
 /*description: */
 #define SYSCON_DATE  0xFFFFFFFF
 #define SYSCON_DATE_M  ((SYSCON_DATE_V)<<(SYSCON_DATE_S))

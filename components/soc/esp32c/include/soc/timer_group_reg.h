@@ -426,6 +426,12 @@ extern "C" {
 #define TIMG_RTC_CALI_VALUE_M  ((TIMG_RTC_CALI_VALUE_V)<<(TIMG_RTC_CALI_VALUE_S))
 #define TIMG_RTC_CALI_VALUE_V  0x1FFFFFF
 #define TIMG_RTC_CALI_VALUE_S  7
+/* TIMG_RTC_CALI_CYCLING_DATA_VLD : RO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: */
+#define TIMG_RTC_CALI_CYCLING_DATA_VLD  (BIT(0))
+#define TIMG_RTC_CALI_CYCLING_DATA_VLD_M  (BIT(0))
+#define TIMG_RTC_CALI_CYCLING_DATA_VLD_V  0x1
+#define TIMG_RTC_CALI_CYCLING_DATA_VLD_S  0
 
 #define TIMG_LACTCONFIG_REG(i)          (REG_TIMG_BASE(i) + 0x0070)
 /* TIMG_LACT_EN : R/W ;bitpos:[31] ;default: 1'h0 ; */
@@ -692,7 +698,7 @@ extern "C" {
 #define TIMG_RTC_CALI_TIMEOUT_S  0
 
 #define TIMG_NTIMERS_DATE_REG(i)          (REG_TIMG_BASE(i) + 0x00f8)
-/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1711220 ; */
+/* TIMG_NTIMERS_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810190 ; */
 /*description: */
 #define TIMG_NTIMERS_DATE  0x0FFFFFFF
 #define TIMG_NTIMERS_DATE_M  ((TIMG_NTIMERS_DATE_V)<<(TIMG_NTIMERS_DATE_S))

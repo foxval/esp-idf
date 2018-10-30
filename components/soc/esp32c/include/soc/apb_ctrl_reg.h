@@ -667,7 +667,7 @@ extern "C" {
 #define APB_CTRL_SPI0_REJECT_CDE_M  ((APB_CTRL_SPI0_REJECT_CDE_V)<<(APB_CTRL_SPI0_REJECT_CDE_S))
 #define APB_CTRL_SPI0_REJECT_CDE_V  0x1F
 #define APB_CTRL_SPI0_REJECT_CDE_S  2
-/* APB_CTRL_SPI0_REJECT_CLR : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* APB_CTRL_SPI0_REJECT_CLR : WOD ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define APB_CTRL_SPI0_REJECT_CLR  (BIT(1))
 #define APB_CTRL_SPI0_REJECT_CLR_M  (BIT(1))
@@ -695,7 +695,7 @@ extern "C" {
 #define APB_CTRL_SPI1_REJECT_CDE_M  ((APB_CTRL_SPI1_REJECT_CDE_V)<<(APB_CTRL_SPI1_REJECT_CDE_S))
 #define APB_CTRL_SPI1_REJECT_CDE_V  0x1F
 #define APB_CTRL_SPI1_REJECT_CDE_S  2
-/* APB_CTRL_SPI1_REJECT_CLR : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/* APB_CTRL_SPI1_REJECT_CLR : WOD ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define APB_CTRL_SPI1_REJECT_CLR  (BIT(1))
 #define APB_CTRL_SPI1_REJECT_CLR_M  (BIT(1))
@@ -752,8 +752,78 @@ extern "C" {
 #define APB_CTRL_REDCY_SIG1_V  0x7FFFFFFF
 #define APB_CTRL_REDCY_SIG1_S  0
 
+#define APB_CTRL_WIFI_BB_CFG_REG          (DR_REG_APB_CTRL_BASE + 0x0CC)
+/* APB_CTRL_WIFI_BB_CFG : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define APB_CTRL_WIFI_BB_CFG  0xFFFFFFFF
+#define APB_CTRL_WIFI_BB_CFG_M  ((APB_CTRL_WIFI_BB_CFG_V)<<(APB_CTRL_WIFI_BB_CFG_S))
+#define APB_CTRL_WIFI_BB_CFG_V  0xFFFFFFFF
+#define APB_CTRL_WIFI_BB_CFG_S  0
+
+#define APB_CTRL_WIFI_BB_CFG_2_REG          (DR_REG_APB_CTRL_BASE + 0x0D0)
+/* APB_CTRL_WIFI_BB_CFG_2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define APB_CTRL_WIFI_BB_CFG_2  0xFFFFFFFF
+#define APB_CTRL_WIFI_BB_CFG_2_M  ((APB_CTRL_WIFI_BB_CFG_2_V)<<(APB_CTRL_WIFI_BB_CFG_2_S))
+#define APB_CTRL_WIFI_BB_CFG_2_V  0xFFFFFFFF
+#define APB_CTRL_WIFI_BB_CFG_2_S  0
+
+#define APB_CTRL_WIFI_CLK_EN_REG          (DR_REG_APB_CTRL_BASE + 0x0D4)
+/* APB_CTRL_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
+/*description: */
+#define APB_CTRL_WIFI_CLK_EN  0xFFFFFFFF
+#define APB_CTRL_WIFI_CLK_EN_M  ((APB_CTRL_WIFI_CLK_EN_V)<<(APB_CTRL_WIFI_CLK_EN_S))
+#define APB_CTRL_WIFI_CLK_EN_V  0xFFFFFFFF
+#define APB_CTRL_WIFI_CLK_EN_S  0
+
+#define APB_CTRL_WIFI_RST_EN_REG          (DR_REG_APB_CTRL_BASE + 0x0D8)
+/* APB_CTRL_WIFI_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define APB_CTRL_WIFI_RST  0xFFFFFFFF
+#define APB_CTRL_WIFI_RST_M  ((APB_CTRL_WIFI_RST_V)<<(APB_CTRL_WIFI_RST_S))
+#define APB_CTRL_WIFI_RST_V  0xFFFFFFFF
+#define APB_CTRL_WIFI_RST_S  0
+
+#define APB_CTRL_FRONT_END_MEM_PD_REG          (DR_REG_APB_CTRL_BASE + 0x0DC)
+/* APB_CTRL_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
+/*description: */
+#define APB_CTRL_DC_MEM_FORCE_PD  (BIT(5))
+#define APB_CTRL_DC_MEM_FORCE_PD_M  (BIT(5))
+#define APB_CTRL_DC_MEM_FORCE_PD_V  0x1
+#define APB_CTRL_DC_MEM_FORCE_PD_S  5
+/* APB_CTRL_DC_MEM_FORCE_PU : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_DC_MEM_FORCE_PU  (BIT(4))
+#define APB_CTRL_DC_MEM_FORCE_PU_M  (BIT(4))
+#define APB_CTRL_DC_MEM_FORCE_PU_V  0x1
+#define APB_CTRL_DC_MEM_FORCE_PU_S  4
+/* APB_CTRL_PBUS_MEM_FORCE_PD : R/W ;bitpos:[3] ;default: 1'b0 ; */
+/*description: */
+#define APB_CTRL_PBUS_MEM_FORCE_PD  (BIT(3))
+#define APB_CTRL_PBUS_MEM_FORCE_PD_M  (BIT(3))
+#define APB_CTRL_PBUS_MEM_FORCE_PD_V  0x1
+#define APB_CTRL_PBUS_MEM_FORCE_PD_S  3
+/* APB_CTRL_PBUS_MEM_FORCE_PU : R/W ;bitpos:[2] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_PBUS_MEM_FORCE_PU  (BIT(2))
+#define APB_CTRL_PBUS_MEM_FORCE_PU_M  (BIT(2))
+#define APB_CTRL_PBUS_MEM_FORCE_PU_V  0x1
+#define APB_CTRL_PBUS_MEM_FORCE_PU_S  2
+/* APB_CTRL_AGC_MEM_FORCE_PD : R/W ;bitpos:[1] ;default: 1'b0 ; */
+/*description: */
+#define APB_CTRL_AGC_MEM_FORCE_PD  (BIT(1))
+#define APB_CTRL_AGC_MEM_FORCE_PD_M  (BIT(1))
+#define APB_CTRL_AGC_MEM_FORCE_PD_V  0x1
+#define APB_CTRL_AGC_MEM_FORCE_PD_S  1
+/* APB_CTRL_AGC_MEM_FORCE_PU : R/W ;bitpos:[0] ;default: 1'b1 ; */
+/*description: */
+#define APB_CTRL_AGC_MEM_FORCE_PU  (BIT(0))
+#define APB_CTRL_AGC_MEM_FORCE_PU_M  (BIT(0))
+#define APB_CTRL_AGC_MEM_FORCE_PU_V  0x1
+#define APB_CTRL_AGC_MEM_FORCE_PU_S  0
+
 #define APB_CTRL_DATE_REG          (DR_REG_APB_CTRL_BASE + 0x3FC)
-/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h18091100 ; */
+/* APB_CTRL_DATE : R/W ;bitpos:[31:0] ;default: 32'h18102500 ; */
 /*description: */
 #define APB_CTRL_DATE  0xFFFFFFFF
 #define APB_CTRL_DATE_M  ((APB_CTRL_DATE_V)<<(APB_CTRL_DATE_S))

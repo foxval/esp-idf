@@ -527,7 +527,7 @@ extern "C" {
 #define SPI_MEM_CS_POL_M  ((SPI_MEM_CS_POL_V)<<(SPI_MEM_CS_POL_S))
 #define SPI_MEM_CS_POL_V  0x3
 #define SPI_MEM_CS_POL_S  5
-/* SPI_MEM_TRANS_END_INT_ENA : R/W ;bitpos:[4] ;default: 1'b1 ; */
+/* SPI_MEM_TRANS_END_INT_ENA : R/W ;bitpos:[4] ;default: 1'b0 ; */
 /*description: The bit is used to enable the intterrupt of SPI transmitting done.*/
 #define SPI_MEM_TRANS_END_INT_ENA  (BIT(4))
 #define SPI_MEM_TRANS_END_INT_ENA_M  (BIT(4))
@@ -1875,7 +1875,7 @@ extern "C" {
 #define SPI_MEM_CLK_EN_S  0
 
 #define SPI_MEM_DATE_REG(i)          (REG_SPI_MEM_BASE(i) + 0x3FC)
-/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810180 ; */
+/* SPI_MEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810250 ; */
 /*description: SPI register version.*/
 #define SPI_MEM_DATE  0x0FFFFFFF
 #define SPI_MEM_DATE_M  ((SPI_MEM_DATE_V)<<(SPI_MEM_DATE_S))

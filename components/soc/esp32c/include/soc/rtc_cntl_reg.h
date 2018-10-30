@@ -1134,36 +1134,30 @@ extern "C" {
 #define RTC_CNTL_EXT_WAKEUP0_LV_S  30
 
 #define RTC_CNTL_SLP_REJECT_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x0068)
-/* RTC_CNTL_REJECT_CAUSE : RO ;bitpos:[31:28] ;default: 4'b0 ; */
-/*description: */
-#define RTC_CNTL_REJECT_CAUSE  0x0000000F
-#define RTC_CNTL_REJECT_CAUSE_M  ((RTC_CNTL_REJECT_CAUSE_V)<<(RTC_CNTL_REJECT_CAUSE_S))
-#define RTC_CNTL_REJECT_CAUSE_V  0xF
-#define RTC_CNTL_REJECT_CAUSE_S  28
-/* RTC_CNTL_DEEP_SLP_REJECT_EN : R/W ;bitpos:[27] ;default: 1'b0 ; */
+/* RTC_CNTL_DEEP_SLP_REJECT_EN : R/W ;bitpos:[31] ;default: 1'b0 ; */
 /*description: enable reject for deep sleep*/
-#define RTC_CNTL_DEEP_SLP_REJECT_EN  (BIT(27))
-#define RTC_CNTL_DEEP_SLP_REJECT_EN_M  (BIT(27))
+#define RTC_CNTL_DEEP_SLP_REJECT_EN  (BIT(31))
+#define RTC_CNTL_DEEP_SLP_REJECT_EN_M  (BIT(31))
 #define RTC_CNTL_DEEP_SLP_REJECT_EN_V  0x1
-#define RTC_CNTL_DEEP_SLP_REJECT_EN_S  27
-/* RTC_CNTL_LIGHT_SLP_REJECT_EN : R/W ;bitpos:[26] ;default: 1'b0 ; */
+#define RTC_CNTL_DEEP_SLP_REJECT_EN_S  31
+/* RTC_CNTL_LIGHT_SLP_REJECT_EN : R/W ;bitpos:[30] ;default: 1'b0 ; */
 /*description: enable reject for light sleep*/
-#define RTC_CNTL_LIGHT_SLP_REJECT_EN  (BIT(26))
-#define RTC_CNTL_LIGHT_SLP_REJECT_EN_M  (BIT(26))
+#define RTC_CNTL_LIGHT_SLP_REJECT_EN  (BIT(30))
+#define RTC_CNTL_LIGHT_SLP_REJECT_EN_M  (BIT(30))
 #define RTC_CNTL_LIGHT_SLP_REJECT_EN_V  0x1
-#define RTC_CNTL_LIGHT_SLP_REJECT_EN_S  26
-/* RTC_CNTL_SDIO_REJECT_EN : R/W ;bitpos:[25] ;default: 1'b0 ; */
-/*description: enable SDIO reject*/
-#define RTC_CNTL_SDIO_REJECT_EN  (BIT(25))
-#define RTC_CNTL_SDIO_REJECT_EN_M  (BIT(25))
-#define RTC_CNTL_SDIO_REJECT_EN_V  0x1
-#define RTC_CNTL_SDIO_REJECT_EN_S  25
-/* RTC_CNTL_GPIO_REJECT_EN : R/W ;bitpos:[24] ;default: 1'b0 ; */
-/*description: enable GPIO reject*/
-#define RTC_CNTL_GPIO_REJECT_EN  (BIT(24))
-#define RTC_CNTL_GPIO_REJECT_EN_M  (BIT(24))
-#define RTC_CNTL_GPIO_REJECT_EN_V  0x1
-#define RTC_CNTL_GPIO_REJECT_EN_S  24
+#define RTC_CNTL_LIGHT_SLP_REJECT_EN_S  30
+/* RTC_CNTL_SLEEP_REJECT_ENA : R/W ;bitpos:[29:15] ;default: 15'd0 ; */
+/*description: sleep reject enable*/
+#define RTC_CNTL_SLEEP_REJECT_ENA  0x00007FFF
+#define RTC_CNTL_SLEEP_REJECT_ENA_M  ((RTC_CNTL_SLEEP_REJECT_ENA_V)<<(RTC_CNTL_SLEEP_REJECT_ENA_S))
+#define RTC_CNTL_SLEEP_REJECT_ENA_V  0x7FFF
+#define RTC_CNTL_SLEEP_REJECT_ENA_S  15
+/* RTC_CNTL_REJECT_CAUSE : RO ;bitpos:[14:0] ;default: 15'd0 ; */
+/*description: sleep reject cause*/
+#define RTC_CNTL_REJECT_CAUSE  0x00007FFF
+#define RTC_CNTL_REJECT_CAUSE_M  ((RTC_CNTL_REJECT_CAUSE_V)<<(RTC_CNTL_REJECT_CAUSE_S))
+#define RTC_CNTL_REJECT_CAUSE_V  0x7FFF
+#define RTC_CNTL_REJECT_CAUSE_S  0
 
 #define RTC_CNTL_CPU_PERIOD_CONF_REG          (DR_REG_RTCCNTL_BASE + 0x006c)
 /* RTC_CNTL_CPUPERIOD_SEL : R/W ;bitpos:[31:30] ;default: 2'b00 ; */
@@ -2805,13 +2799,7 @@ extern "C" {
 #define RTC_CNTL_ULP_CP_MEM_ADDR_INIT_S  0
 
 #define RTC_CNTL_COCPU_CTRL_REG          (DR_REG_RTCCNTL_BASE + 0x0104)
-/* RTC_CNTL_COCPU_WAKEUP_FORCE_EN : R/W ;bitpos:[26] ;default: 1'd1 ; */
-/*description: riscV cocpu force wake up*/
-#define RTC_CNTL_COCPU_WAKEUP_FORCE_EN  (BIT(26))
-#define RTC_CNTL_COCPU_WAKEUP_FORCE_EN_M  (BIT(26))
-#define RTC_CNTL_COCPU_WAKEUP_FORCE_EN_V  0x1
-#define RTC_CNTL_COCPU_WAKEUP_FORCE_EN_S  26
-/* RTC_CNTL_COCPU_WAKEUP : R/W ;bitpos:[25] ;default: 1'd0 ; */
+/* RTC_CNTL_COCPU_WAKEUP : WO ;bitpos:[25] ;default: 1'd0 ; */
 /*description: riscV cocpu wake up register*/
 #define RTC_CNTL_COCPU_WAKEUP  (BIT(25))
 #define RTC_CNTL_COCPU_WAKEUP_M  (BIT(25))
@@ -2947,12 +2935,6 @@ extern "C" {
 #define RTC_CNTL_TOUCH_SLP_TIMER_EN_M  (BIT(13))
 #define RTC_CNTL_TOUCH_SLP_TIMER_EN_V  0x1
 #define RTC_CNTL_TOUCH_SLP_TIMER_EN_S  13
-/* RTC_CNTL_TOUCH_WAKEUP_FORCE_EN : R/W ;bitpos:[12] ;default: 1'd1 ; */
-/*description: touch controller force wake up*/
-#define RTC_CNTL_TOUCH_WAKEUP_FORCE_EN  (BIT(12))
-#define RTC_CNTL_TOUCH_WAKEUP_FORCE_EN_M  (BIT(12))
-#define RTC_CNTL_TOUCH_WAKEUP_FORCE_EN_V  0x1
-#define RTC_CNTL_TOUCH_WAKEUP_FORCE_EN_S  12
 /* RTC_CNTL_TOUCH_REFC : R/W ;bitpos:[11:9] ;default: 3'h4 ; */
 /*description: TOUCH pad0 reference cap*/
 #define RTC_CNTL_TOUCH_REFC  0x00000007
@@ -3205,7 +3187,7 @@ extern "C" {
 #define RTC_CNTL_USB_VREFH_S  0
 
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0124)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809300 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810231 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))
