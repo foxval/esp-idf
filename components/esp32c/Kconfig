@@ -132,6 +132,18 @@ config RODATA_USE_DATA_CACHE
         If enabled, CPU will access rodata through data cache, which will reduce the overload
         of instruction cache, however will increase the overload of data cache.
 
+config ENABLE_INSTRUCTION_CACHE_WRAP
+    bool "enable instruction cache wrap"
+    default "n"
+    help
+       if enabled, instruction cache will use wrap mode to read spi flash(maybe spiram), the wrap length equals to INSTRUCTION_CACHE_LINE_SIZE. However, it depends on complex conditions.
+
+config ENABLE_DATA_CACHE_WRAP
+    bool "enable data cache wrap"
+    default "n"
+    help
+       if enabled, data cache will use wrap mode to read spiram(maybe spi flash), the wrap length equals to DATA_CACHE_LINE_SIZE. However, it depends on complex conditions.
+
 endmenu
 
 config SPIRAM_SUPPORT

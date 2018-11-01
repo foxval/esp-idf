@@ -156,6 +156,7 @@ static void psram_clear_spi_fifo(psram_spi_num_t spi_num)
 static void psram_set_basic_write_mode(psram_spi_num_t spi_num)
 {
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_QIO);
+    CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD_M);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_DIO);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_QUAD);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_DUAL);
@@ -164,6 +165,7 @@ static void psram_set_basic_write_mode(psram_spi_num_t spi_num)
 static void psram_set_qio_write_mode(psram_spi_num_t spi_num)
 {
     SET_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_QIO);
+    SET_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD_M);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_DIO);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_QUAD);
     CLEAR_PERI_REG_MASK(SPI_MEM_USER_REG(spi_num), SPI_MEM_FWRITE_DUAL);
@@ -172,6 +174,7 @@ static void psram_set_qio_write_mode(psram_spi_num_t spi_num)
 static void psram_set_qio_read_mode(psram_spi_num_t spi_num)
 {
     SET_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_QIO);
+    SET_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD_M);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_QUAD);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_DUAL);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_DIO);
@@ -180,6 +183,7 @@ static void psram_set_qio_read_mode(psram_spi_num_t spi_num)
 static void psram_set_basic_read_mode(psram_spi_num_t spi_num)
 {
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_QIO);
+    CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD_M);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_QUAD);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_DUAL);
     CLEAR_PERI_REG_MASK(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FREAD_DIO);
@@ -203,15 +207,9 @@ static void IRAM_ATTR psram_cmd_recv_start(psram_spi_num_t spi_num, uint32_t* pR
     if (cmd_mode == PSRAM_CMD_SPI) {
         psram_set_basic_write_mode(spi_num);
         psram_set_basic_read_mode(spi_num);
-#ifndef FAKE_QPI
-        REG_CLR_BIT(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD);
-#endif
     } else if (cmd_mode == PSRAM_CMD_QPI) {
         psram_set_qio_write_mode(spi_num);
         psram_set_qio_read_mode(spi_num);
-#ifndef FAKE_QPI
-        REG_SET_BIT(SPI_MEM_CTRL_REG(spi_num), SPI_MEM_FCMD_QUAD);
-#endif
     }
 
 #if CONFIG_CHIP_IS_ESP32
@@ -452,6 +450,85 @@ static void psram_disable_qio_mode(psram_spi_num_t spi_num)
     psram_cmd_config(spi_num, &ps_cmd);
     psram_cmd_recv_start(spi_num, NULL, 0, PSRAM_CMD_QPI);
     psram_cmd_end(spi_num);
+}
+
+
+//switch psram burst length(32 bytes or 1024 bytes)
+//datasheet says it should be 1024 bytes by default
+static void psram_set_wrap_burst_length(psram_spi_num_t spi_num, psram_cmd_mode_t mode)
+{
+    psram_cmd_t ps_cmd;
+    ps_cmd.cmd = 0xC0;
+    ps_cmd.cmdBitLen = 8;
+    ps_cmd.addr = 0;
+    ps_cmd.addrBitLen = 0;
+    ps_cmd.txData = NULL;
+    ps_cmd.txDataBitLen = 0;
+    ps_cmd.rxData = NULL;
+    ps_cmd.rxDataBitLen = 0;
+    ps_cmd.dummyBitLen = 0;
+    psram_cmd_config(spi_num, &ps_cmd);
+    psram_cmd_recv_start(spi_num, NULL, 0, mode);
+    psram_cmd_end(spi_num);
+}
+
+//send reset command to psram, in spi mode
+static void psram_reset_mode(psram_spi_num_t spi_num)
+{
+    psram_cmd_t ps_cmd;
+    ps_cmd.txData = NULL;
+    ps_cmd.txDataBitLen = 0;
+    ps_cmd.addr = NULL;
+    ps_cmd.addrBitLen = 0;
+    ps_cmd.cmd = PSRAM_RESET_EN;
+    ps_cmd.cmdBitLen = 8;
+    ps_cmd.rxData = NULL;
+    ps_cmd.rxDataBitLen = 0;
+    ps_cmd.dummyBitLen = 0;
+    psram_cmd_config(spi_num, &ps_cmd);
+    psram_cmd_recv_start(spi_num, NULL, 0, PSRAM_CMD_SPI);
+    psram_cmd_end(spi_num);
+
+    memset(&ps_cmd, 0, sizeof(ps_cmd));
+    ps_cmd.txData = NULL;
+    ps_cmd.txDataBitLen = 0;
+    ps_cmd.addr = NULL;
+    ps_cmd.addrBitLen = 0;
+    ps_cmd.cmd = PSRAM_RESET;
+    ps_cmd.cmdBitLen = 8;
+    ps_cmd.rxData = NULL;
+    ps_cmd.rxDataBitLen = 0;
+    ps_cmd.dummyBitLen = 0;
+    psram_cmd_config(spi_num, &ps_cmd);
+    psram_cmd_recv_start(spi_num, NULL, 0, PSRAM_CMD_SPI);
+    psram_cmd_end(spi_num);
+}
+
+esp_err_t psram_enable_wrap(uint32_t wrap_size)
+{
+    switch (wrap_size) {
+        case 32:
+            psram_set_wrap_burst_length(PSRAM_SPI_1, PSRAM_CMD_QPI);
+            return ESP_OK;
+        case 16:
+        case 64:
+        default:
+            return ESP_FAIL;
+    }
+}
+
+bool psram_support_wrap_size(uint32_t wrap_size)
+{
+    switch (wrap_size) {
+        case 0:
+        case 32:
+            return true;
+        case 16:
+        case 64:
+        default:
+            return false;
+    }
+
 }
 
 static void psram_read_id(uint32_t* dev_id)
@@ -780,6 +857,9 @@ esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vad
         gpio_matrix_out(PSRAM_INTERNAL_IO_28, SIG_GPIO_OUT_IDX, 0, 0);
         gpio_matrix_out(PSRAM_INTERNAL_IO_29, SIG_GPIO_OUT_IDX, 0, 0);
         gpio_matrix_out(PSRAM_CLK_IO, SPICLK_OUT_IDX, 0, 0);
+        #else
+        REG_SET_FIELD(SPI_MEM_SRAM_CMD_REG(0), SPI_MEM_SCLK_MODE, 0);
+        REG_SET_FIELD(SPI_MEM_CTRL1_REG(1), SPI_MEM_CLK_MODE, 0);
         #endif
     } else if (PSRAM_IS_32MBIT_VER0(s_psram_id)) {
         s_clk_mode = PSRAM_CLK_MODE_DCLK;
@@ -812,6 +892,7 @@ esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vad
 		#endif
         }
     }
+    psram_reset_mode(PSRAM_SPI_1);
     psram_enable_qio_mode(PSRAM_SPI_1);
     psram_cache_init(mode, vaddrmode);
     return ESP_OK;
@@ -838,6 +919,19 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
     SET_PERI_REG_BITS(SPI_MEM_CLOCK_REG(0), SPI_MEM_CLKCNT_H, 0, SPI_MEM_CLKCNT_H_S);
     SET_PERI_REG_BITS(SPI_MEM_CLOCK_REG(0), SPI_MEM_CLKCNT_L, 1, SPI_MEM_CLKCNT_L_S);
 #endif
+
+    SET_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_USR_RD_SRAM_DUMMY_M);   //enable cache read dummy
+    SET_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_CACHE_SRAM_USR_RCMD_M); //enable user mode for cache read command
+    SET_PERI_REG_BITS(SPI_MEM_SRAM_DWR_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_WR_CMD_BITLEN, 7,
+            SPI_MEM_CACHE_SRAM_USR_WR_CMD_BITLEN_S);
+    SET_PERI_REG_BITS(SPI_MEM_SRAM_DWR_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_WR_CMD_VALUE, PSRAM_QUAD_WRITE,
+            SPI_MEM_CACHE_SRAM_USR_WR_CMD_VALUE_S); //0x38
+    SET_PERI_REG_BITS(SPI_MEM_SRAM_DRD_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_RD_CMD_BITLEN_V, 7,
+            SPI_MEM_CACHE_SRAM_USR_RD_CMD_BITLEN_S);
+    SET_PERI_REG_BITS(SPI_MEM_SRAM_DRD_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_RD_CMD_VALUE_V, PSRAM_FAST_READ_QUAD,
+            SPI_MEM_CACHE_SRAM_USR_RD_CMD_VALUE_S); //0x0b
+    SET_PERI_REG_BITS(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_SRAM_RDUMMY_CYCLELEN_V, PSRAM_FAST_READ_QUAD_DUMMY + extra_dummy,
+            SPI_MEM_SRAM_RDUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
 
     switch (psram_cache_mode) {
         case PSRAM_CACHE_F80M_S80M:
@@ -874,19 +968,6 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
     SET_PERI_REG_BITS(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_SRAM_ADDR_BITLEN_V, 23, SPI_MEM_SRAM_ADDR_BITLEN_S); //write address for cache command.
     SET_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_USR_SRAM_QIO_M);     //enable qio mode for cache command
     CLEAR_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_USR_SRAM_DIO_M);     //disable dio mode for cache command
-
-    SET_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_USR_RD_SRAM_DUMMY_M);   //enable cache read dummy
-    SET_PERI_REG_MASK(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_CACHE_SRAM_USR_RCMD_M); //enable user mode for cache read command
-    SET_PERI_REG_BITS(SPI_MEM_SRAM_DWR_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_WR_CMD_BITLEN, 7,
-            SPI_MEM_CACHE_SRAM_USR_WR_CMD_BITLEN_S);
-    SET_PERI_REG_BITS(SPI_MEM_SRAM_DWR_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_WR_CMD_VALUE, PSRAM_QUAD_WRITE,
-            SPI_MEM_CACHE_SRAM_USR_WR_CMD_VALUE_S); //0x38
-    SET_PERI_REG_BITS(SPI_MEM_SRAM_DRD_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_RD_CMD_BITLEN_V, 7,
-            SPI_MEM_CACHE_SRAM_USR_RD_CMD_BITLEN_S);
-    SET_PERI_REG_BITS(SPI_MEM_SRAM_DRD_CMD_REG(0), SPI_MEM_CACHE_SRAM_USR_RD_CMD_VALUE_V, PSRAM_FAST_READ_QUAD,
-            SPI_MEM_CACHE_SRAM_USR_RD_CMD_VALUE_S); //0x0b
-    SET_PERI_REG_BITS(SPI_MEM_CACHE_SCTRL_REG(0), SPI_MEM_SRAM_RDUMMY_CYCLELEN_V, PSRAM_FAST_READ_QUAD_DUMMY + extra_dummy,
-            SPI_MEM_SRAM_RDUMMY_CYCLELEN_S); //dummy, psram cache :  40m--+1dummy,80m--+2dummy
 
     //config sram cache r/w command
     switch (psram_cache_mode) {
@@ -954,5 +1035,4 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
         SET_PERI_REG_BITS(SPI_MEM_CTRL2_REG(0), SPI_MEM_CS_HOLD_TIME_V, 1, SPI_MEM_CS_HOLD_TIME_S);
     }
 }
-
 #endif // CONFIG_SPIRAM_SUPPORT

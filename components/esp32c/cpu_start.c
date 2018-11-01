@@ -227,12 +227,24 @@ extern void esp_switch_rodata_to_dcache(void);
 #endif
 
 #if CONFIG_INSTRUCTION_USE_SPIRAM
-extern void esp_spiram_enable_intruction_access(void);
-    esp_spiram_enable_intruction_access();
+extern void esp_spiram_enable_instruction_access(void);
+    esp_spiram_enable_instruction_access();
 #endif
 #if CONFIG_RODATA_USE_SPIRAM
 extern void esp_spiram_enable_rodata_access(void);
     esp_spiram_enable_rodata_access();
+#endif
+
+#if CONFIG_ENABLE_INSTRUCTION_CACHE_WRAP || CONFIG_ENABLE_DATA_CACHE_WRAP
+uint32_t icache_wrap_enable = 0,dcache_wrap_enable = 0;
+#if CONFIG_ENABLE_INSTRUCTION_CACHE_WRAP
+    icache_wrap_enable = 1;
+#endif
+#if CONFIG_ENABLE_DATA_CACHE_WRAP
+    dcache_wrap_enable = 1;
+#endif
+extern void esp_enable_cache_wrap(uint32_t icache_wrap_enable, uint32_t dcache_wrap_enable);
+    esp_enable_cache_wrap(icache_wrap_enable, dcache_wrap_enable);
 #endif
 
     /* Initialize heap allocator. WARNING: This *needs* to happen *after* the app cpu has booted.

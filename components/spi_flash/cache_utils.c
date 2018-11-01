@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -355,7 +355,7 @@ IRAM_ATTR void esp_config_instruction_cache_mode(void)
     cache_line_size = CACHE_LINE_SIZE_64B;
 #endif
     ESP_EARLY_LOGI(TAG, "Instruction cache \t: size %dKB, %dWays, cache line size %dByte", cache_size == CACHE_SIZE_8KB ? 8 : 16, cache_ways == CACHE_4WAYS_ASSOC ? 4: 8, cache_line_size == CACHE_LINE_SIZE_16B ? 16 : (cache_line_size == CACHE_LINE_SIZE_32B ? 32 : 64));
-    Cache_Set_DCache_Mode(cache_size, cache_ways, cache_line_size);
+    Cache_Set_ICache_Mode(cache_size, cache_ways, cache_line_size);
     Cache_Invalidate_ICache_All();
 }
 
@@ -407,5 +407,169 @@ void esp_switch_rodata_to_dcache(void)
     MMU_Drom_ICache_Unmap();
     REG_SET_BIT(DPORT_PRO_ICACHE_CTRL1_REG, DPORT_PRO_ICACHE_MASK_DROM0);
     ESP_EARLY_LOGI(TAG, "Switch rodata load path to data cache.");
+}
+
+static IRAM_ATTR void esp_enable_cache_flash_wrap(bool icache, bool dcache)
+{
+    uint32_t i_autoload, d_autoload;
+    if (icache) {
+        i_autoload = Cache_Suspend_ICache();
+    }
+    if (dcache) {
+        d_autoload = Cache_Suspend_DCache();
+    }
+    REG_SET_BIT(DPORT_PRO_CACHE_WRAP_AROUND_CTRL_REG, DPORT_PRO_CACHE_FLASH_WRAP_AROUND);
+    if (icache) {
+        Cache_Resume_ICache(i_autoload);
+    }
+    if (dcache) {
+        Cache_Resume_DCache(d_autoload);
+    }
+}
+
+static IRAM_ATTR void esp_enable_cache_spiram_wrap(bool icache, bool dcache)
+{
+    uint32_t i_autoload, d_autoload;
+    if (icache) {
+        i_autoload = Cache_Suspend_ICache();
+    }
+    if (dcache) {
+        d_autoload = Cache_Suspend_DCache();
+    }
+    REG_SET_BIT(DPORT_PRO_CACHE_WRAP_AROUND_CTRL_REG, DPORT_PRO_CACHE_SRAM_RD_WRAP_AROUND);
+    if (icache) {
+        Cache_Resume_ICache(i_autoload);
+    }
+    if (dcache) {
+        Cache_Resume_DCache(d_autoload);
+    }
+}
+
+esp_err_t esp_enable_cache_wrap(bool icache_wrap_enable, bool dcache_wrap_enable)
+{
+    int icache_wrap_size = 0, dcache_wrap_size = 0;
+    int flash_wrap_sizes[2]={-1, -1}, spiram_wrap_sizes[2]={-1, -1};
+    int flash_wrap_size = 0, spiram_wrap_size = 0;
+    int flash_count = 0, spiram_count = 0;
+    int i;
+    bool flash_spiram_wrap_together, flash_support_wrap = true, spiram_support_wrap = true;
+    if (icache_wrap_enable) {
+#if CONFIG_INSTRUCTION_CACHE_LINE_16B
+        icache_wrap_size = 16;
+#elif CONFIG_INSTRUCTION_CACHE_LINE_32B
+        icache_wrap_size = 32;
+#else
+        icache_wrap_size = 64;
+#endif
+    }
+    if (dcache_wrap_enable) {
+#if CONFIG_DATA_CACHE_LINE_16B
+        dcache_wrap_size = 16;
+#elif CONFIG_DATA_CACHE_LINE_32B
+        dcache_wrap_size = 32;
+#else
+        dcache_wrap_size = 64;
+#endif
+    }
+
+extern uint32_t esp_spiram_instruction_access_enabled();
+extern uint32_t esp_spiram_rodata_access_enabled();
+
+    if (esp_spiram_instruction_access_enabled()) {
+        spiram_wrap_sizes[0] = icache_wrap_size;
+    } else {
+        flash_wrap_sizes[0] = icache_wrap_size;
+    }
+    if (esp_spiram_rodata_access_enabled()) {
+        if (Cache_Drom0_Using_ICache()) {
+            spiram_wrap_sizes[0] = icache_wrap_size;
+        } else {
+            spiram_wrap_sizes[1] = dcache_wrap_size;
+        }
+#ifdef CONFIG_EXT_RODATA_SUPPORT
+        spiram_wrap_sizes[1] = dcache_wrap_size;
+#endif
+    } else {
+        if (Cache_Drom0_Using_ICache()) {
+            flash_wrap_sizes[0] = icache_wrap_size;
+        } else {
+            flash_wrap_sizes[1] = dcache_wrap_size;
+        }
+#ifdef CONFIG_EXT_RODATA_SUPPORT
+        flash_wrap_sizes[1] = dcache_wrap_size;
+#endif
+    }
+#ifdef CONFIG_SPIRAM_SUPPORT
+    spiram_wrap_sizes[1] = dcache_wrap_size;
+#endif
+    for (i = 0; i < 2; i++) {
+        if (flash_wrap_sizes[i] != -1) {
+            flash_count++;
+            flash_wrap_size = flash_wrap_sizes[i];
+        }
+    }
+    for (i = 0; i < 2; i++) {
+        if (spiram_wrap_sizes[i] != -1) {
+            spiram_count++;
+            spiram_wrap_size = spiram_wrap_sizes[i];
+        }
+    }
+    if (flash_count + spiram_count <= 2) {
+        flash_spiram_wrap_together = false;
+    } else {
+        flash_spiram_wrap_together = true;
+    }
+    if (flash_count > 1 && flash_wrap_sizes[0] != flash_wrap_sizes[1]) {
+        ESP_EARLY_LOGW(TAG, "Flash wrap with different length %d and %d, abort wrap.", flash_wrap_sizes[0], flash_wrap_sizes[1]);
+        if (flash_spiram_wrap_together) {
+            ESP_EARLY_LOGE(TAG, "Abort spiram wrap because flash wrap length not fixed.");
+            return ESP_FAIL;
+        }
+    }
+    if (spiram_count > 1 && spiram_wrap_sizes[0] != spiram_wrap_sizes[1]) {
+        ESP_EARLY_LOGW(TAG, "SPIRAM wrap with different length %d and %d, abort wrap.", spiram_wrap_sizes[0], spiram_wrap_sizes[1]);
+        if (flash_spiram_wrap_together) {
+            ESP_EARLY_LOGW(TAG, "Abort flash wrap because spiram wrap length not fixed.");
+            return ESP_FAIL;
+        }
+    }
+
+    if (flash_spiram_wrap_together && flash_wrap_size != spiram_wrap_size) {
+        ESP_EARLY_LOGW(TAG, "SPIRAM has different wrap length with flash, %d and %d, abort wrap.", spiram_wrap_size, flash_wrap_size);
+        return ESP_FAIL;
+    }
+
+extern bool spi_flash_support_wrap_size(uint32_t wrap_size);
+    if (!spi_flash_support_wrap_size(flash_wrap_size)) {
+        flash_support_wrap = false;
+        ESP_EARLY_LOGW(TAG, "Flash do not support wrap size %d.", flash_wrap_size);
+    }
+
+extern bool psram_support_wrap_size(uint32_t wrap_size);
+    if (!psram_support_wrap_size(spiram_wrap_size)) {
+        spiram_support_wrap = false;
+        ESP_EARLY_LOGW(TAG, "SPIRAM do not support wrap size %d.", spiram_wrap_size);
+    }
+
+    if (flash_spiram_wrap_together && !(flash_support_wrap && spiram_support_wrap)) {
+        ESP_EARLY_LOGW(TAG, "Flash and SPIRAM should support wrap together.");
+        return ESP_FAIL;
+    }
+
+extern esp_err_t spi_flash_enable_wrap(uint32_t wrap_size);
+extern esp_err_t psram_enable_wrap(uint32_t wrap_size);
+    if (flash_support_wrap && flash_wrap_size > 0) {
+        ESP_EARLY_LOGI(TAG, "Flash wrap enabled.");
+        spi_flash_enable_wrap(flash_wrap_size);
+        esp_enable_cache_flash_wrap((flash_wrap_sizes[0] > 0), (flash_wrap_sizes[1] > 0));
+    }
+    if (spiram_support_wrap && spiram_wrap_size > 0) {
+        ESP_EARLY_LOGI(TAG, "SPIRAM wrap enabled.");
+        psram_enable_wrap(spiram_wrap_size);
+        esp_enable_cache_spiram_wrap((spiram_wrap_sizes[0] > 0), (spiram_wrap_sizes[1] > 0));
+    }
+
+    return ESP_OK;
+
 }
 #endif

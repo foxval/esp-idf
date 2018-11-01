@@ -66,4 +66,14 @@ psram_size_t psram_get_size();
  */
 esp_err_t psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vaddrmode);
 
+typedef enum {
+    SPIRAM_WRAP_MODE_16B,
+    SPIRAM_WRAP_MODE_32B,
+    SPIRAM_WRAP_MODE_64B,
+    SPIRAM_WRAP_MODE_DISABLE
+} spiram_wrap_mode_t;
+
+esp_err_t esp_spiram_wrap_set(spiram_wrap_mode_t mode);
+
+
 #endif

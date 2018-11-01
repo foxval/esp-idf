@@ -181,7 +181,20 @@ void IRAM_ATTR esp_spiram_init_cache()
 static uint32_t pages_for_flash = 0;
 static uint32_t page0_mapped = 0;
 static uint32_t page0_page = 0xffff;
-esp_err_t esp_spiram_enable_intruction_access(void)
+static uint32_t instrcution_in_spiram = 0;
+static uint32_t rodata_in_spiram = 0;
+
+uint32_t esp_spiram_instruction_access_enabled()
+{
+    return instrcution_in_spiram;
+}
+
+uint32_t esp_spiram_rodata_access_enabled()
+{
+    return rodata_in_spiram;
+}
+
+esp_err_t esp_spiram_enable_instruction_access(void)
 {
     uint32_t pages_in_flash = 0;
     pages_in_flash += Cache_Count_Flash_Pages(PRO_CACHE_IBUS0, &page0_mapped);
@@ -195,6 +208,7 @@ esp_err_t esp_spiram_enable_intruction_access(void)
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS0, IRAM0_ADDRESS_LOW, pages_for_flash, &page0_page);
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS1, IRAM1_ADDRESS_LOW, pages_for_flash, &page0_page);
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_IBUS2, IROM0_ADDRESS_LOW, pages_for_flash, &page0_page);
+    instrcution_in_spiram = 1;
     return ESP_OK;
 }
 
@@ -224,6 +238,7 @@ esp_err_t esp_spiram_enable_rodata_access(void)
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS0, DRAM0_ADDRESS_LOW, pages_for_flash, &page0_page);
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS1, DRAM1_ADDRESS_LOW, pages_for_flash, &page0_page);
     pages_for_flash = Cache_Flash_To_SPIRAM_Copy(PRO_CACHE_DBUS2, DPORT_ADDRESS_LOW, pages_for_flash, &page0_page);
+    rodata_in_spiram = 1;
     return ESP_OK;
 }
 
