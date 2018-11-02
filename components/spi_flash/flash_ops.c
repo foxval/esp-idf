@@ -713,9 +713,6 @@ esp_err_t spi_flash_wrap_set(spi_flash_wrap_mode_t mode)
 
 esp_err_t spi_flash_enable_wrap(uint32_t wrap_size)
 {
-    if (!REG_GET_BIT(SPI_MEM_CTRL_REG(0), SPI_MEM_FREAD_QIO) || !REG_GET_BIT(SPI_MEM_CTRL_REG(0), SPI_MEM_FASTRD_MODE)){
-        return ESP_FAIL;
-    }
     switch(wrap_size) {
         case 8:
             return spi_flash_wrap_set(FLASH_WRAP_MODE_8B);
@@ -737,11 +734,9 @@ void spi_flash_disable_wrap()
 
 bool spi_flash_support_wrap_size(uint32_t wrap_size)
 {
-#if 0
-    if (SPICACHE.user.fwrite_qio != 1 || SPICACHE.ctrl.fcmd_quad != 0) {
-        return false;
+    if (!REG_GET_BIT(SPI_MEM_CTRL_REG(0), SPI_MEM_FREAD_QIO) || !REG_GET_BIT(SPI_MEM_CTRL_REG(0), SPI_MEM_FASTRD_MODE)){
+        return ESP_FAIL;
     }
-#endif
     switch(wrap_size) {
         case 0:
         case 8:
