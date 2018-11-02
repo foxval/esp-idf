@@ -544,6 +544,7 @@ static void psram_read_id(uint32_t* dev_id)
             break;
         case PSRAM_CACHE_F80M_S40M:
         case PSRAM_CACHE_F40M_S40M:
+        case PSRAM_CACHE_F26M_S26M:
         case PSRAM_CACHE_F20M_S20M:
         default:
             dummy_bits = 0 + extra_dummy;
@@ -665,6 +666,7 @@ static void IRAM_ATTR psram_gpio_config(psram_cache_mode_t mode)
             break;
         case PSRAM_CACHE_F80M_S80M:
             extra_dummy = PSRAM_IO_MATRIX_DUMMY_80M;
+#if 0
             g_rom_spiflash_dummy_len_plus[_SPI_CACHE_PORT] = PSRAM_IO_MATRIX_DUMMY_80M;
             g_rom_spiflash_dummy_len_plus[_SPI_FLASH_PORT] = PSRAM_IO_MATRIX_DUMMY_80M;
             SET_PERI_REG_BITS(SPI_MEM_USER1_REG(_SPI_CACHE_PORT), SPI_MEM_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + PSRAM_IO_MATRIX_DUMMY_80M, SPI_MEM_USR_DUMMY_CYCLELEN_S);  //DUMMY
@@ -679,9 +681,11 @@ static void IRAM_ATTR psram_gpio_config(psram_cache_mode_t mode)
             SET_PERI_REG_BITS(PERIPHS_IO_MUX_SD_CLK_U, FUN_DRV, 3, FUN_DRV_S);
             SET_PERI_REG_BITS(GPIO_PIN_MUX_REG[PSRAM_CLK_IO], FUN_DRV, 3, FUN_DRV_S);
 #endif
+#endif
             break;
         case PSRAM_CACHE_F40M_S40M:
             extra_dummy = PSRAM_IO_MATRIX_DUMMY_40M;
+#if 0
             g_rom_spiflash_dummy_len_plus[_SPI_CACHE_PORT] = PSRAM_IO_MATRIX_DUMMY_40M;
             g_rom_spiflash_dummy_len_plus[_SPI_FLASH_PORT] = PSRAM_IO_MATRIX_DUMMY_40M;
             SET_PERI_REG_BITS(SPI_MEM_USER1_REG(_SPI_CACHE_PORT), SPI_MEM_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + PSRAM_IO_MATRIX_DUMMY_40M, SPI_MEM_USR_DUMMY_CYCLELEN_S);  //DUMMY
@@ -691,6 +695,7 @@ static void IRAM_ATTR psram_gpio_config(psram_cache_mode_t mode)
 
             CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
             esp_rom_spiflash_config_clk(_SPI_40M_CLK_DIV, _SPI_FLASH_PORT);
+#endif
 
 #ifdef CONFIG_CHIP_IS_ESP32
             //set drive ability for clock
@@ -698,8 +703,10 @@ static void IRAM_ATTR psram_gpio_config(psram_cache_mode_t mode)
             SET_PERI_REG_BITS(GPIO_PIN_MUX_REG[PSRAM_CLK_IO], FUN_DRV, 2, FUN_DRV_S);
 #endif
             break;
+        case PSRAM_CACHE_F26M_S26M:
         case PSRAM_CACHE_F20M_S20M:
             extra_dummy = PSRAM_IO_MATRIX_DUMMY_20M;
+#if 0
             g_rom_spiflash_dummy_len_plus[_SPI_CACHE_PORT] = PSRAM_IO_MATRIX_DUMMY_20M;
             g_rom_spiflash_dummy_len_plus[_SPI_FLASH_PORT] = PSRAM_IO_MATRIX_DUMMY_20M;
             SET_PERI_REG_BITS(SPI_MEM_USER1_REG(_SPI_CACHE_PORT), SPI_MEM_USR_DUMMY_CYCLELEN_V, spi_cache_dummy + PSRAM_IO_MATRIX_DUMMY_20M, SPI_MEM_USR_DUMMY_CYCLELEN_S);  //DUMMY
@@ -708,6 +715,7 @@ static void IRAM_ATTR psram_gpio_config(psram_cache_mode_t mode)
             esp_rom_spiflash_config_clk(_SPI_20M_CLK_DIV, _SPI_CACHE_PORT);
             CLEAR_PERI_REG_MASK(PERIPHS_SPI_FLASH_CTRL, SPI_MEM_FREAD_QIO | SPI_MEM_FREAD_QUAD | SPI_MEM_FREAD_DIO | SPI_MEM_FREAD_DUAL | SPI_MEM_FASTRD_MODE);
             esp_rom_spiflash_config_clk(_SPI_20M_CLK_DIV, _SPI_FLASH_PORT);
+#endif
 #ifdef CONFIG_CHIP_IS_ESP32
             //set drive ability for clock
             SET_PERI_REG_BITS(PERIPHS_IO_MUX_SD_CLK_U, FUN_DRV, 2, FUN_DRV_S);
@@ -779,6 +787,7 @@ esp_err_t IRAM_ATTR psram_enable(psram_cache_mode_t mode, psram_vaddr_mode_t vad
 #endif
         case PSRAM_CACHE_F80M_S40M:
         case PSRAM_CACHE_F40M_S40M:
+        case PSRAM_CACHE_F26M_S26M:
         case PSRAM_CACHE_F20M_S20M:
         default:
             psram_spi_init(PSRAM_SPI_1, mode);
@@ -951,6 +960,9 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             psram_clock_set(0, 2);
 #endif
             break;
+        case PSRAM_CACHE_F26M_S26M:
+            psram_clock_set(0, 3);
+            break;
         case PSRAM_CACHE_F20M_S20M:
             psram_clock_set(0, 4);
             break;
@@ -975,6 +987,7 @@ static void IRAM_ATTR psram_cache_init(psram_cache_mode_t psram_cache_mode, psra
             break;
         case PSRAM_CACHE_F80M_S40M: //is sram is @40M, need 2 cycles of delay
         case PSRAM_CACHE_F40M_S40M:
+        case PSRAM_CACHE_F26M_S26M:
         case PSRAM_CACHE_F20M_S20M:
         default:
 #ifdef FAKE_QPI

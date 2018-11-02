@@ -355,8 +355,10 @@ IRAM_ATTR void esp_config_instruction_cache_mode(void)
     cache_line_size = CACHE_LINE_SIZE_64B;
 #endif
     ESP_EARLY_LOGI(TAG, "Instruction cache \t: size %dKB, %dWays, cache line size %dByte", cache_size == CACHE_SIZE_8KB ? 8 : 16, cache_ways == CACHE_4WAYS_ASSOC ? 4: 8, cache_line_size == CACHE_LINE_SIZE_16B ? 16 : (cache_line_size == CACHE_LINE_SIZE_32B ? 32 : 64));
+    Cache_Suspend_ICache();
     Cache_Set_ICache_Mode(cache_size, cache_ways, cache_line_size);
     Cache_Invalidate_ICache_All();
+    Cache_Resume_ICache(0);
 }
 
 IRAM_ATTR void esp_config_data_cache_mode(void)
@@ -521,6 +523,9 @@ extern uint32_t esp_spiram_rodata_access_enabled();
     }
     if (flash_count > 1 && flash_wrap_sizes[0] != flash_wrap_sizes[1]) {
         ESP_EARLY_LOGW(TAG, "Flash wrap with different length %d and %d, abort wrap.", flash_wrap_sizes[0], flash_wrap_sizes[1]);
+        if (spiram_wrap_size == 0) {
+            return ESP_FAIL;
+        }
         if (flash_spiram_wrap_together) {
             ESP_EARLY_LOGE(TAG, "Abort spiram wrap because flash wrap length not fixed.");
             return ESP_FAIL;
@@ -528,6 +533,9 @@ extern uint32_t esp_spiram_rodata_access_enabled();
     }
     if (spiram_count > 1 && spiram_wrap_sizes[0] != spiram_wrap_sizes[1]) {
         ESP_EARLY_LOGW(TAG, "SPIRAM wrap with different length %d and %d, abort wrap.", spiram_wrap_sizes[0], spiram_wrap_sizes[1]);
+        if (flash_wrap_size == 0) {
+            return ESP_FAIL;
+        }
         if (flash_spiram_wrap_together) {
             ESP_EARLY_LOGW(TAG, "Abort flash wrap because spiram wrap length not fixed.");
             return ESP_FAIL;

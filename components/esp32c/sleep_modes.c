@@ -152,7 +152,7 @@ void esp_deep_sleep(uint64_t time_in_us)
 
 static void IRAM_ATTR suspend_uarts()
 {
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 2; ++i) {
         REG_SET_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XOFF);
         uart_tx_wait_idle(i);
     }
@@ -160,7 +160,7 @@ static void IRAM_ATTR suspend_uarts()
 
 static void IRAM_ATTR resume_uarts()
 {
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 2; ++i) {
         REG_CLR_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XOFF);
         REG_SET_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XON);
         REG_CLR_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XON);

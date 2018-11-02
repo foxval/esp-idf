@@ -16,8 +16,8 @@ MEMORY
   /* IRAM POOL1, used for APP CPU cache. Bootloader runs from here during the final stage of loading the app because APP CPU is still held in reset, the main app enables APP CPU cache */
   /* iram_loader_seg (RWX) :           org = 0x40078000, len = 0x8000 */  /* 32KB, APP CPU cache */
   /* Digital team to check */
-  iram_loader_seg (RWX) :           org = 0x40022000, len = 0x4000  /* 32KB, APP CPU cache */
-  iram_seg (RWX) :                  org = 0x40026000, len = 0x2000
+  iram_loader_seg (RWX) :           org = 0x40022000, len = 0x2000  /* 32KB, APP CPU cache */
+  iram_seg (RWX) :                  org = 0x40024000, len = 0x4000
   /* 64k at the end of DRAM, after ROM bootloader stack */
   dram_seg (RW) :                  	org = 0x3FFF8000, len = 0x4000
 }

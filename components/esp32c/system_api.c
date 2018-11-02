@@ -284,7 +284,9 @@ void IRAM_ATTR esp_restart_noos()
     // Flush any data left in UART FIFOs
     uart_tx_wait_idle(0);
     uart_tx_wait_idle(1);
+#ifdef CONFIG_CHIP_IS_ESP32
     uart_tx_wait_idle(2);
+#endif
 
     // Disable cache
 #ifdef CONFIG_CHIP_IS_ESP32
