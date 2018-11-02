@@ -185,7 +185,8 @@ static uint32_t IRAM_ATTR esp_sleep_start(uint32_t pd_flags)
     }
     // Enable ULP wakeup
     if (s_config.wakeup_triggers & RTC_ULP_TRIG_EN) {
-        SET_PERI_REG_MASK(RTC_CNTL_STATE0_REG, RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN);
+        //TODO, chip7.2.2 do not have this bit
+        //SET_PERI_REG_MASK(RTC_CNTL_STATE0_REG, RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN);
     }
 
     // Enter sleep

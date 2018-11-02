@@ -779,6 +779,61 @@ extern "C" {
 #define SYSCON_WIFI_RST_V  0xFFFFFFFF
 #define SYSCON_WIFI_RST_S  0
 
+#define DPORT_WIFI_CLK_EN_REG          SYSCON_WIFI_CLK_EN_REG
+/* DPORT_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
+/*description: */
+#define DPORT_WIFI_CLK_EN  0xFFFFFFFF
+#define DPORT_WIFI_CLK_EN_M  ((DPORT_WIFI_CLK_EN_V)<<(DPORT_WIFI_CLK_EN_S))
+#define DPORT_WIFI_CLK_EN_V  0xFFFFFFFF
+#define DPORT_WIFI_CLK_EN_S  0
+
+/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15 */
+#define DPORT_WIFI_CLK_WIFI_EN  0x000007cf
+#define DPORT_WIFI_CLK_WIFI_EN_M  ((DPORT_WIFI_CLK_WIFI_EN_V)<<(DPORT_WIFI_CLK_WIFI_EN_S))
+#define DPORT_WIFI_CLK_WIFI_EN_V  0x7cf
+#define DPORT_WIFI_CLK_WIFI_EN_S  0
+/* Mask for all Bluetooth clock bits - 11, 16, 17 */
+#define DPORT_WIFI_CLK_BT_EN  0x61
+#define DPORT_WIFI_CLK_BT_EN_M  ((DPORT_WIFI_CLK_BT_EN_V)<<(DPORT_WIFI_CLK_BT_EN_S))
+#define DPORT_WIFI_CLK_BT_EN_V  0x61
+#define DPORT_WIFI_CLK_BT_EN_S  11
+/* Mask for clock bits used by both WIFI and Bluetooth, bit 0, 3, 6, 7, 8, 9 */
+#define DPORT_WIFI_CLK_WIFI_BT_COMMON_M 0x000003c9
+
+/* Digital team to check */
+//bluetooth baseband bit11
+#define DPORT_BT_BASEBAND_EN  BIT(11)
+//bluetooth LC bit16 and bit17
+#define DPORT_BT_LC_EN  (BIT(16)|BIT(17))
+
+/* Remaining single bit clock masks */
+#define DPORT_WIFI_CLK_SDIOSLAVE_EN  BIT(4)
+#define DPORT_WIFI_CLK_UNUSED_BIT5  BIT(5)
+#define DPORT_WIFI_CLK_UNUSED_BIT12  BIT(12)
+#define DPORT_WIFI_CLK_SDIO_HOST_EN  BIT(13)
+#define DPORT_WIFI_CLK_EMAC_EN  BIT(14)
+#define DPORT_WIFI_CLK_RNG_EN  BIT(15)
+
+#define DPORT_CORE_RST_EN_REG         DPORT_WIFI_RST_EN_REG
+#define DPORT_WIFI_RST_EN_REG         SYSCON_WIFI_RST_EN_REG
+/* DPORT_WIFI_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
+/*description: */
+#define DPORT_WIFI_RST  0xFFFFFFFF
+#define DPORT_WIFI_RST_M  ((DPORT_WIFI_RST_V)<<(DPORT_WIFI_RST_S))
+#define DPORT_WIFI_RST_V  0xFFFFFFFF
+#define DPORT_WIFI_RST_S  0
+#define DPORT_RW_BTLP_RST (BIT(10))
+#define DPORT_RW_BTMAC_RST (BIT(9))
+#define DPORT_MACPWR_RST (BIT(8))
+#define DPORT_EMAC_RST (BIT(7))
+#define DPORT_SDIO_HOST_RST (BIT(6))
+#define DPORT_SDIO_RST (BIT(5))
+#define DPORT_BTMAC_RST (BIT(4))
+#define DPORT_BT_RST (BIT(3))
+#define DPORT_MAC_RST (BIT(2))
+#define DPORT_FE_RST (BIT(1))
+#define DPORT_BB_RST (BIT(0))  
+
 #define SYSCON_FRONT_END_MEM_PD_REG          (DR_REG_SYSCON_BASE + 0x0DC)
 /* SYSCON_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
 /*description: */

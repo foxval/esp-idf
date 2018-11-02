@@ -309,6 +309,18 @@ extern "C" {
 #define RTC_CNTL_APB2RTC_BRIDGE_SEL_M  (BIT(22))
 #define RTC_CNTL_APB2RTC_BRIDGE_SEL_V  0x1
 #define RTC_CNTL_APB2RTC_BRIDGE_SEL_S  22
+/* RTC_CNTL_SLP_REJECT_CAUSE_CLR : WO ;bitpos:[1] ;default: 1'b0 ; */
+/*description: clear rtc sleep reject cause*/
+#define RTC_CNTL_SLP_REJECT_CAUSE_CLR  (BIT(1))
+#define RTC_CNTL_SLP_REJECT_CAUSE_CLR_M  (BIT(1))
+#define RTC_CNTL_SLP_REJECT_CAUSE_CLR_V  0x1
+#define RTC_CNTL_SLP_REJECT_CAUSE_CLR_S  1
+/* RTC_CNTL_SW_CPU_INT : WO ;bitpos:[0] ;default: 1'b0 ; */
+/*description: rtc software interrupt to main cpu*/
+#define RTC_CNTL_SW_CPU_INT  (BIT(0))
+#define RTC_CNTL_SW_CPU_INT_M  (BIT(0))
+#define RTC_CNTL_SW_CPU_INT_V  0x1
+#define RTC_CNTL_SW_CPU_INT_S  0
 
 #define RTC_CNTL_TIMER1_REG          (DR_REG_RTCCNTL_BASE + 0x001c)
 /* RTC_CNTL_PLL_BUF_WAIT : R/W ;bitpos:[31:24] ;default: 8'd40 ; */
@@ -2180,12 +2192,12 @@ extern "C" {
 #define RTC_CNTL_SWD_RST_FLAG_CLR_M  (BIT(28))
 #define RTC_CNTL_SWD_RST_FLAG_CLR_V  0x1
 #define RTC_CNTL_SWD_RST_FLAG_CLR_S  28
-/* RTC_CNTL_SWD_SIGNAL_WIDTH : R/W ;bitpos:[27:20] ;default: 8'd20 ; */
+/* RTC_CNTL_SWD_SIGNAL_WIDTH : R/W ;bitpos:[27:18] ;default: 8'd300 ; */
 /*description: adjust signal width send to swd*/
-#define RTC_CNTL_SWD_SIGNAL_WIDTH  0x000000FF
+#define RTC_CNTL_SWD_SIGNAL_WIDTH  0x000003FF
 #define RTC_CNTL_SWD_SIGNAL_WIDTH_M  ((RTC_CNTL_SWD_SIGNAL_WIDTH_V)<<(RTC_CNTL_SWD_SIGNAL_WIDTH_S))
-#define RTC_CNTL_SWD_SIGNAL_WIDTH_V  0xFF
-#define RTC_CNTL_SWD_SIGNAL_WIDTH_S  20
+#define RTC_CNTL_SWD_SIGNAL_WIDTH_V  0x3FF
+#define RTC_CNTL_SWD_SIGNAL_WIDTH_S  18
 /* RTC_CNTL_SWD_FEED_INT : RO ;bitpos:[1] ;default: 1'b0 ; */
 /*description: swd interrupt for feeding*/
 #define RTC_CNTL_SWD_FEED_INT  (BIT(1))
@@ -2735,12 +2747,6 @@ extern "C" {
 #define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_M  (BIT(29))
 #define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_V  0x1
 #define RTC_CNTL_ULP_CP_GPIO_WAKEUP_ENA_S  29
-/* RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN : R/W ;bitpos:[28] ;default: 1'd1 ; */
-/*description: ULP-coprocessor force wake up*/
-#define RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN  (BIT(28))
-#define RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN_M  (BIT(28))
-#define RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN_V  0x1
-#define RTC_CNTL_ULP_CP_WAKEUP_FORCE_EN_S  28
 /* RTC_CNTL_ULP_CP_TIMER_SLP_CYCLE : R/W ;bitpos:[27:12] ;default: 16'd200 ; */
 /*description: sleep cycles for ULP-coprocessor timer*/
 #define RTC_CNTL_ULP_CP_TIMER_SLP_CYCLE  0x0000FFFF
@@ -2799,12 +2805,6 @@ extern "C" {
 #define RTC_CNTL_ULP_CP_MEM_ADDR_INIT_S  0
 
 #define RTC_CNTL_COCPU_CTRL_REG          (DR_REG_RTCCNTL_BASE + 0x0104)
-/* RTC_CNTL_COCPU_WAKEUP : WO ;bitpos:[25] ;default: 1'd0 ; */
-/*description: riscV cocpu wake up register*/
-#define RTC_CNTL_COCPU_WAKEUP  (BIT(25))
-#define RTC_CNTL_COCPU_WAKEUP_M  (BIT(25))
-#define RTC_CNTL_COCPU_WAKEUP_V  0x1
-#define RTC_CNTL_COCPU_WAKEUP_S  25
 /* RTC_CNTL_COCPU_SW_INT_TRIGGER : WO ;bitpos:[24] ;default: 1'b0 ; */
 /*description: trigger cocpu register interrupt*/
 #define RTC_CNTL_COCPU_SW_INT_TRIGGER  (BIT(24))
@@ -3187,7 +3187,7 @@ extern "C" {
 #define RTC_CNTL_USB_VREFH_S  0
 
 #define RTC_CNTL_DATE_REG          (DR_REG_RTCCNTL_BASE + 0x0124)
-/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810231 ; */
+/* RTC_CNTL_CNTL_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810261 ; */
 /*description: */
 #define RTC_CNTL_CNTL_DATE  0x0FFFFFFF
 #define RTC_CNTL_CNTL_DATE_M  ((RTC_CNTL_CNTL_DATE_V)<<(RTC_CNTL_CNTL_DATE_S))

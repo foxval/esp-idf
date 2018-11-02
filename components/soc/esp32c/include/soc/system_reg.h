@@ -164,23 +164,7 @@ extern "C" {
 #define DPORT_RST_EN_AES_V  0x1
 #define DPORT_RST_EN_AES_S  0
 
-#define DPORT_WIFI_BB_CFG_REG          (DR_REG_SYSTEM_BASE + 0x018)
-/* DPORT_WIFI_BB_CFG : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: */
-#define DPORT_WIFI_BB_CFG  0xFFFFFFFF
-#define DPORT_WIFI_BB_CFG_M  ((DPORT_WIFI_BB_CFG_V)<<(DPORT_WIFI_BB_CFG_S))
-#define DPORT_WIFI_BB_CFG_V  0xFFFFFFFF
-#define DPORT_WIFI_BB_CFG_S  0
-
-#define DPORT_WIFI_BB_CFG_2_REG          (DR_REG_SYSTEM_BASE + 0x01C)
-/* DPORT_WIFI_BB_CFG_2 : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: */
-#define DPORT_WIFI_BB_CFG_2  0xFFFFFFFF
-#define DPORT_WIFI_BB_CFG_2_M  ((DPORT_WIFI_BB_CFG_2_V)<<(DPORT_WIFI_BB_CFG_2_S))
-#define DPORT_WIFI_BB_CFG_2_V  0xFFFFFFFF
-#define DPORT_WIFI_BB_CFG_2_S  0
-
-#define DPORT_CPU_PER_CONF_REG          (DR_REG_SYSTEM_BASE + 0x020)
+#define DPORT_CPU_PER_CONF_REG          (DR_REG_SYSTEM_BASE + 0x018)
 /* DPORT_CPU_WAIT_MODE_FORCE_ON : R/W ;bitpos:[3] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_CPU_WAIT_MODE_FORCE_ON  (BIT(3))
@@ -200,7 +184,7 @@ extern "C" {
 #define DPORT_CPUPERIOD_SEL_V  0x3
 #define DPORT_CPUPERIOD_SEL_S  0
 
-#define DPORT_JTAG_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x024)
+#define DPORT_JTAG_CTRL_0_REG          (DR_REG_SYSTEM_BASE + 0x01C)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_0 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_0  0xFFFFFFFF
@@ -208,7 +192,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_0_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_0_S  0
 
-#define DPORT_JTAG_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x028)
+#define DPORT_JTAG_CTRL_1_REG          (DR_REG_SYSTEM_BASE + 0x020)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_1 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_1  0xFFFFFFFF
@@ -216,7 +200,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_1_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_1_S  0
 
-#define DPORT_JTAG_CTRL_2_REG          (DR_REG_SYSTEM_BASE + 0x02C)
+#define DPORT_JTAG_CTRL_2_REG          (DR_REG_SYSTEM_BASE + 0x024)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_2 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_2  0xFFFFFFFF
@@ -224,7 +208,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_2_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_2_S  0
 
-#define DPORT_JTAG_CTRL_3_REG          (DR_REG_SYSTEM_BASE + 0x030)
+#define DPORT_JTAG_CTRL_3_REG          (DR_REG_SYSTEM_BASE + 0x028)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_3 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_3  0xFFFFFFFF
@@ -232,7 +216,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_3_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_3_S  0
 
-#define DPORT_JTAG_CTRL_4_REG          (DR_REG_SYSTEM_BASE + 0x034)
+#define DPORT_JTAG_CTRL_4_REG          (DR_REG_SYSTEM_BASE + 0x02C)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_4 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_4  0xFFFFFFFF
@@ -240,7 +224,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_4_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_4_S  0
 
-#define DPORT_JTAG_CTRL_5_REG          (DR_REG_SYSTEM_BASE + 0x038)
+#define DPORT_JTAG_CTRL_5_REG          (DR_REG_SYSTEM_BASE + 0x030)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_5 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_5  0xFFFFFFFF
@@ -248,7 +232,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_5_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_5_S  0
 
-#define DPORT_JTAG_CTRL_6_REG          (DR_REG_SYSTEM_BASE + 0x03C)
+#define DPORT_JTAG_CTRL_6_REG          (DR_REG_SYSTEM_BASE + 0x034)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_6 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_6  0xFFFFFFFF
@@ -256,7 +240,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_6_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_6_S  0
 
-#define DPORT_JTAG_CTRL_7_REG          (DR_REG_SYSTEM_BASE + 0x040)
+#define DPORT_JTAG_CTRL_7_REG          (DR_REG_SYSTEM_BASE + 0x038)
 /* DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_7 : WOR ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_7  0xFFFFFFFF
@@ -264,7 +248,7 @@ extern "C" {
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_7_V  0xFFFFFFFF
 #define DPORT_CANCEL_EFUSE_DISABLE_JTAG_TEMPORARY_7_S  0
 
-#define DPORT_MEM_PD_MASK_REG          (DR_REG_SYSTEM_BASE + 0x044)
+#define DPORT_MEM_PD_MASK_REG          (DR_REG_SYSTEM_BASE + 0x03C)
 /* DPORT_LSLP_MEM_PD_MASK : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_LSLP_MEM_PD_MASK  (BIT(0))
@@ -273,7 +257,7 @@ extern "C" {
 #define DPORT_LSLP_MEM_PD_MASK_S  0
 
 #define DPORT_PERIP_CLK_EN_REG DPORT_PERIP_CLK_EN0_REG
-#define DPORT_PERIP_CLK_EN0_REG          (DR_REG_SYSTEM_BASE + 0x048)
+#define DPORT_PERIP_CLK_EN0_REG          (DR_REG_SYSTEM_BASE + 0x040)
 /* DPORT_SPI4_CLK_EN : R/W ;bitpos:[31] ;default: 1'h1 ; */
 /*description: */
 #define DPORT_SPI4_CLK_EN  (BIT(31))
@@ -467,7 +451,7 @@ extern "C" {
 #define DPORT_TIMERS_CLK_EN_V  0x1
 #define DPORT_TIMERS_CLK_EN_S  0
 
-#define DPORT_PERIP_CLK_EN1_REG          (DR_REG_SYSTEM_BASE + 0x04C)
+#define DPORT_PERIP_CLK_EN1_REG          (DR_REG_SYSTEM_BASE + 0x044)
 /* DPORT_SPI_SHARED_DMA_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_SPI_SHARED_DMA_CLK_EN  (BIT(0))
@@ -476,7 +460,7 @@ extern "C" {
 #define DPORT_SPI_SHARED_DMA_CLK_EN_S  0
 
 #define DPORT_PERIP_RST_EN_REG DPORT_PERIP_RST_EN0_REG
-#define DPORT_PERIP_RST_EN0_REG          (DR_REG_SYSTEM_BASE + 0x050)
+#define DPORT_PERIP_RST_EN0_REG          (DR_REG_SYSTEM_BASE + 0x048)
 /* DPORT_SPI4_RST : R/W ;bitpos:[31] ;default: 1'h0 ; */
 /*description: */
 #define DPORT_SPI4_RST  (BIT(31))
@@ -670,7 +654,7 @@ extern "C" {
 #define DPORT_TIMERS_RST_V  0x1
 #define DPORT_TIMERS_RST_S  0
 
-#define DPORT_PERIP_RST_EN1_REG          (DR_REG_SYSTEM_BASE + 0x054)
+#define DPORT_PERIP_RST_EN1_REG          (DR_REG_SYSTEM_BASE + 0x04C)
 /* DPORT_SPI_SHARED_DMA_RST : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_SPI_SHARED_DMA_RST  (BIT(0))
@@ -678,62 +662,7 @@ extern "C" {
 #define DPORT_SPI_SHARED_DMA_RST_V  0x1
 #define DPORT_SPI_SHARED_DMA_RST_S  0
 
-#define DPORT_WIFI_CLK_EN_REG          (DR_REG_SYSTEM_BASE + 0x058)
-/* DPORT_WIFI_CLK_EN : R/W ;bitpos:[31:0] ;default: 32'hfffce030 ; */
-/*description: */
-#define DPORT_WIFI_CLK_EN  0xFFFFFFFF
-#define DPORT_WIFI_CLK_EN_M  ((DPORT_WIFI_CLK_EN_V)<<(DPORT_WIFI_CLK_EN_S))
-#define DPORT_WIFI_CLK_EN_V  0xFFFFFFFF
-#define DPORT_WIFI_CLK_EN_S  0
-
-/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15 */
-#define DPORT_WIFI_CLK_WIFI_EN  0x000007cf
-#define DPORT_WIFI_CLK_WIFI_EN_M  ((DPORT_WIFI_CLK_WIFI_EN_V)<<(DPORT_WIFI_CLK_WIFI_EN_S))
-#define DPORT_WIFI_CLK_WIFI_EN_V  0x7cf
-#define DPORT_WIFI_CLK_WIFI_EN_S  0
-/* Mask for all Bluetooth clock bits - 11, 16, 17 */
-#define DPORT_WIFI_CLK_BT_EN  0x61
-#define DPORT_WIFI_CLK_BT_EN_M  ((DPORT_WIFI_CLK_BT_EN_V)<<(DPORT_WIFI_CLK_BT_EN_S))
-#define DPORT_WIFI_CLK_BT_EN_V  0x61
-#define DPORT_WIFI_CLK_BT_EN_S  11
-/* Mask for clock bits used by both WIFI and Bluetooth, bit 0, 3, 6, 7, 8, 9 */
-#define DPORT_WIFI_CLK_WIFI_BT_COMMON_M 0x000003c9
-
-/* Digital team to check */
-//bluetooth baseband bit11
-#define DPORT_BT_BASEBAND_EN  BIT(11)
-//bluetooth LC bit16 and bit17
-#define DPORT_BT_LC_EN  (BIT(16)|BIT(17))
-
-/* Remaining single bit clock masks */
-#define DPORT_WIFI_CLK_SDIOSLAVE_EN  BIT(4)
-#define DPORT_WIFI_CLK_UNUSED_BIT5  BIT(5)
-#define DPORT_WIFI_CLK_UNUSED_BIT12  BIT(12)
-#define DPORT_WIFI_CLK_SDIO_HOST_EN  BIT(13)
-#define DPORT_WIFI_CLK_EMAC_EN  BIT(14)
-#define DPORT_WIFI_CLK_RNG_EN  BIT(15)
-
-#define DPORT_CORE_RST_EN_REG         DPORT_WIFI_RST_EN_REG
-#define DPORT_WIFI_RST_EN_REG          (DR_REG_SYSTEM_BASE + 0x05C)
-/* DPORT_WIFI_RST : R/W ;bitpos:[31:0] ;default: 32'h0 ; */
-/*description: */
-#define DPORT_WIFI_RST  0xFFFFFFFF
-#define DPORT_WIFI_RST_M  ((DPORT_WIFI_RST_V)<<(DPORT_WIFI_RST_S))
-#define DPORT_WIFI_RST_V  0xFFFFFFFF
-#define DPORT_WIFI_RST_S  0
-#define DPORT_RW_BTLP_RST (BIT(10))
-#define DPORT_RW_BTMAC_RST (BIT(9))
-#define DPORT_MACPWR_RST (BIT(8))
-#define DPORT_EMAC_RST (BIT(7))
-#define DPORT_SDIO_HOST_RST (BIT(6))
-#define DPORT_SDIO_RST (BIT(5))
-#define DPORT_BTMAC_RST (BIT(4))
-#define DPORT_BT_RST (BIT(3))
-#define DPORT_MAC_RST (BIT(2))
-#define DPORT_FE_RST (BIT(1))
-#define DPORT_BB_RST (BIT(0))  
-
-#define DPORT_BT_LPCK_DIV_INT_REG          (DR_REG_SYSTEM_BASE + 0x060)
+#define DPORT_BT_LPCK_DIV_INT_REG          (DR_REG_SYSTEM_BASE + 0x050)
 /* DPORT_BT_LPCK_DIV_NUM : R/W ;bitpos:[11:0] ;default: 12'd255 ; */
 /*description: */
 #define DPORT_BT_LPCK_DIV_NUM  0x00000FFF
@@ -741,7 +670,7 @@ extern "C" {
 #define DPORT_BT_LPCK_DIV_NUM_V  0xFFF
 #define DPORT_BT_LPCK_DIV_NUM_S  0
 
-#define DPORT_BT_LPCK_DIV_FRAC_REG          (DR_REG_SYSTEM_BASE + 0x064)
+#define DPORT_BT_LPCK_DIV_FRAC_REG          (DR_REG_SYSTEM_BASE + 0x054)
 /* DPORT_LPCLK_RTC_EN : R/W ;bitpos:[28] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_LPCLK_RTC_EN  (BIT(28))
@@ -785,7 +714,7 @@ extern "C" {
 #define DPORT_BT_LPCK_DIV_B_V  0xFFF
 #define DPORT_BT_LPCK_DIV_B_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_0_REG          (DR_REG_SYSTEM_BASE + 0x068)
+#define DPORT_CPU_INTR_FROM_CPU_0_REG          (DR_REG_SYSTEM_BASE + 0x058)
 /* DPORT_CPU_INTR_FROM_CPU_0 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_0  (BIT(0))
@@ -793,7 +722,7 @@ extern "C" {
 #define DPORT_CPU_INTR_FROM_CPU_0_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_0_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_1_REG          (DR_REG_SYSTEM_BASE + 0x06C)
+#define DPORT_CPU_INTR_FROM_CPU_1_REG          (DR_REG_SYSTEM_BASE + 0x05C)
 /* DPORT_CPU_INTR_FROM_CPU_1 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_1  (BIT(0))
@@ -801,7 +730,7 @@ extern "C" {
 #define DPORT_CPU_INTR_FROM_CPU_1_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_1_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_2_REG          (DR_REG_SYSTEM_BASE + 0x070)
+#define DPORT_CPU_INTR_FROM_CPU_2_REG          (DR_REG_SYSTEM_BASE + 0x060)
 /* DPORT_CPU_INTR_FROM_CPU_2 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_2  (BIT(0))
@@ -809,7 +738,7 @@ extern "C" {
 #define DPORT_CPU_INTR_FROM_CPU_2_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_2_S  0
 
-#define DPORT_CPU_INTR_FROM_CPU_3_REG          (DR_REG_SYSTEM_BASE + 0x074)
+#define DPORT_CPU_INTR_FROM_CPU_3_REG          (DR_REG_SYSTEM_BASE + 0x064)
 /* DPORT_CPU_INTR_FROM_CPU_3 : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_CPU_INTR_FROM_CPU_3  (BIT(0))
@@ -817,7 +746,7 @@ extern "C" {
 #define DPORT_CPU_INTR_FROM_CPU_3_V  0x1
 #define DPORT_CPU_INTR_FROM_CPU_3_S  0
 
-#define DPORT_RSA_PD_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x078)
+#define DPORT_RSA_PD_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x068)
 /* DPORT_RSA_MEM_PD : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_RSA_MEM_PD  (BIT(0))
@@ -826,46 +755,8 @@ extern "C" {
 #define DPORT_RSA_MEM_PD_S  0
 #define DPORT_RSA_PD DPORT_RSA_MEM_PD
 
-#define DPORT_FRONT_END_MEM_PD_REG          (DR_REG_SYSTEM_BASE + 0x07C)
-/* DPORT_DC_MEM_FORCE_PD : R/W ;bitpos:[5] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_DC_MEM_FORCE_PD  (BIT(5))
-#define DPORT_DC_MEM_FORCE_PD_M  (BIT(5))
-#define DPORT_DC_MEM_FORCE_PD_V  0x1
-#define DPORT_DC_MEM_FORCE_PD_S  5
-/* DPORT_DC_MEM_FORCE_PU : R/W ;bitpos:[4] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_DC_MEM_FORCE_PU  (BIT(4))
-#define DPORT_DC_MEM_FORCE_PU_M  (BIT(4))
-#define DPORT_DC_MEM_FORCE_PU_V  0x1
-#define DPORT_DC_MEM_FORCE_PU_S  4
-/* DPORT_PBUS_MEM_FORCE_PD : R/W ;bitpos:[3] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_PBUS_MEM_FORCE_PD  (BIT(3))
-#define DPORT_PBUS_MEM_FORCE_PD_M  (BIT(3))
-#define DPORT_PBUS_MEM_FORCE_PD_V  0x1
-#define DPORT_PBUS_MEM_FORCE_PD_S  3
-/* DPORT_PBUS_MEM_FORCE_PU : R/W ;bitpos:[2] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_PBUS_MEM_FORCE_PU  (BIT(2))
-#define DPORT_PBUS_MEM_FORCE_PU_M  (BIT(2))
-#define DPORT_PBUS_MEM_FORCE_PU_V  0x1
-#define DPORT_PBUS_MEM_FORCE_PU_S  2
-/* DPORT_AGC_MEM_FORCE_PD : R/W ;bitpos:[1] ;default: 1'b0 ; */
-/*description: */
-#define DPORT_AGC_MEM_FORCE_PD  (BIT(1))
-#define DPORT_AGC_MEM_FORCE_PD_M  (BIT(1))
-#define DPORT_AGC_MEM_FORCE_PD_V  0x1
-#define DPORT_AGC_MEM_FORCE_PD_S  1
-/* DPORT_AGC_MEM_FORCE_PU : R/W ;bitpos:[0] ;default: 1'b1 ; */
-/*description: */
-#define DPORT_AGC_MEM_FORCE_PU  (BIT(0))
-#define DPORT_AGC_MEM_FORCE_PU_M  (BIT(0))
-#define DPORT_AGC_MEM_FORCE_PU_V  0x1
-#define DPORT_AGC_MEM_FORCE_PU_S  0
-
 #define DPORT_SPI_DMA_CHAN_SEL_REG DPORT_SPI_SHARED_DMA_SEL_REG
-#define DPORT_SPI_SHARED_DMA_SEL_REG          (DR_REG_SYSTEM_BASE + 0x080)
+#define DPORT_SPI_SHARED_DMA_SEL_REG          (DR_REG_SYSTEM_BASE + 0x06C)
 /* DPORT_SPI_SHARED_DMA_SEL : R/W ;bitpos:[0] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_SPI_SHARED_DMA_SEL  (BIT(0))
@@ -873,7 +764,7 @@ extern "C" {
 #define DPORT_SPI_SHARED_DMA_SEL_V  0x1
 #define DPORT_SPI_SHARED_DMA_SEL_S  0
 
-#define DPORT_BUSTOEXTMEM_ENA_REG          (DR_REG_SYSTEM_BASE + 0x084)
+#define DPORT_BUSTOEXTMEM_ENA_REG          (DR_REG_SYSTEM_BASE + 0x070)
 /* DPORT_BUSTOEXTMEM_ENA : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define DPORT_BUSTOEXTMEM_ENA  (BIT(0))
@@ -881,7 +772,7 @@ extern "C" {
 #define DPORT_BUSTOEXTMEM_ENA_V  0x1
 #define DPORT_BUSTOEXTMEM_ENA_S  0
 
-#define DPORT_CACHE_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x088)
+#define DPORT_CACHE_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x074)
 /* DPORT_PRO_CACHE_RESET : R/W ;bitpos:[2] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_PRO_CACHE_RESET  (BIT(2))
@@ -901,7 +792,7 @@ extern "C" {
 #define DPORT_PRO_ICACHE_CLK_ON_V  0x1
 #define DPORT_PRO_ICACHE_CLK_ON_S  0
 
-#define DPORT_EXTERNAL_DEVICE_ENCRYPT_DECRYPT_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x08C)
+#define DPORT_EXTERNAL_DEVICE_ENCRYPT_DECRYPT_CONTROL_REG          (DR_REG_SYSTEM_BASE + 0x078)
 /* DPORT_ENABLE_DOWNLOAD_MANUAL_ENCRYPT : R/W ;bitpos:[3] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_ENABLE_DOWNLOAD_MANUAL_ENCRYPT  (BIT(3))
@@ -927,7 +818,7 @@ extern "C" {
 #define DPORT_ENABLE_SPI_MANUAL_ENCRYPT_V  0x1
 #define DPORT_ENABLE_SPI_MANUAL_ENCRYPT_S  0
 
-#define DPORT_RTC_FASTMEM_CONFIG_REG          (DR_REG_SYSTEM_BASE + 0x090)
+#define DPORT_RTC_FASTMEM_CONFIG_REG          (DR_REG_SYSTEM_BASE + 0x07C)
 /* DPORT_RTC_MEM_CRC_FINISH : RO ;bitpos:[31] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_RTC_MEM_CRC_FINISH  (BIT(31))
@@ -953,7 +844,7 @@ extern "C" {
 #define DPORT_RTC_MEM_CRC_START_V  0x1
 #define DPORT_RTC_MEM_CRC_START_S  8
 
-#define DPORT_RTC_FASTMEM_CRC_REG          (DR_REG_SYSTEM_BASE + 0x094)
+#define DPORT_RTC_FASTMEM_CRC_REG          (DR_REG_SYSTEM_BASE + 0x080)
 /* DPORT_RTC_MEM_CRC_RES : RO ;bitpos:[31:0] ;default: 32'b0 ; */
 /*description: */
 #define DPORT_RTC_MEM_CRC_RES  0xFFFFFFFF
@@ -961,7 +852,7 @@ extern "C" {
 #define DPORT_RTC_MEM_CRC_RES_V  0xFFFFFFFF
 #define DPORT_RTC_MEM_CRC_RES_S  0
 
-#define DPORT_REDUNDANT_ECO_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x098)
+#define DPORT_REDUNDANT_ECO_CTRL_REG          (DR_REG_SYSTEM_BASE + 0x084)
 /* DPORT_REDUNDANT_ECO_RESULT : RO ;bitpos:[1] ;default: 1'b0 ; */
 /*description: */
 #define DPORT_REDUNDANT_ECO_RESULT  (BIT(1))
@@ -975,7 +866,7 @@ extern "C" {
 #define DPORT_REDUNDANT_ECO_DRIVE_V  0x1
 #define DPORT_REDUNDANT_ECO_DRIVE_S  0
 
-#define SYSTEM_CLOCK_GATE_REG          (DR_REG_SYSTEM_BASE + 0x09C)
+#define SYSTEM_CLOCK_GATE_REG          (DR_REG_SYSTEM_BASE + 0x088)
 /* SYSTEM_CLK_EN : R/W ;bitpos:[0] ;default: 1'b1 ; */
 /*description: */
 #define SYSTEM_CLK_EN  (BIT(0))
@@ -984,7 +875,7 @@ extern "C" {
 #define SYSTEM_CLK_EN_S  0
 
 #define SYSTEM_DATE_REG          (DR_REG_SYSTEM_BASE + 0xFFC)
-/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810180 ; */
+/* SYSTEM_DATE : R/W ;bitpos:[27:0] ;default: 28'h1810300 ; */
 /*description: */
 #define SYSTEM_DATE  0x0FFFFFFF
 #define SYSTEM_DATE_M  ((SYSTEM_DATE_V)<<(SYSTEM_DATE_S))

@@ -19,6 +19,7 @@
 #include "soc/dport_reg.h"
 #include "driver/periph_ctrl.h"
 #include "sdkconfig.h"
+#include "soc/syscon_reg.h"
 
 static portMUX_TYPE periph_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
