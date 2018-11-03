@@ -68,7 +68,14 @@ TEST_CASE("efuse write key block", "[esp32c]")
     for (int i = 0; i < 8; i++) {
         TEST_ASSERT_EQUAL_HEX32(key_words[i], REG_READ(BLOCK_READ0_REG + (4*i)));
     }
-    // TODO: check no error bits are set
+
+    // TODO: use a ROM API for this
+    TEST_ASSERT_EQUAL(ETS_EFUSE_BLOCK_KEY0, BLOCK);
+    unsigned err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY0_ERR_NUM);
+    unsigned fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY0_FAIL);
+
+    TEST_ASSERT_EQUAL(0, err);
+    TEST_ASSERT_EQUAL(0, fail);
 }
 
 TEST_CASE("Soft-disable JTAG", "[esp32c][ignore]")
@@ -116,5 +123,98 @@ TEST_CASE("HMAC re-disable JTAG", "[esp32c][ignore]")
     printf("JTAG re-disabled? (Need manual confirmation)\n");
 }
 
+TEST_CASE("efuse key blocks test read/write disable", "[esp32c]")
+{
+        printf("ERR0 0x%08x ERR1 0x%08x\n",
+               REG_READ(EFUSE_RD_RS_ERR0_REG),
+               REG_READ(EFUSE_RD_RS_ERR1_REG));
+
+    for (ets_efuse_block_t block = ETS_EFUSE_BLOCK_KEY0; block <= ETS_EFUSE_BLOCK_KEY6; block++) {
+        uint32_t key_data[8] = { };
+        memset(key_data, (char)block, sizeof(key_data));
+
+        printf("Testing block %d...\n", block);
+
+        // Write key block
+        int r = ets_efuse_write_key(block, ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT, key_data, sizeof(key_data));
+        TEST_ASSERT_EQUAL(0, r);
+
+        // Check it's all there
+        uint32_t rd = ets_efuse_get_read_register_address(block);
+        for(int i = 0; i < 8; i++) {
+            TEST_ASSERT_EQUAL(key_data[i], REG_READ(rd + i * 4));
+        }
+
+        // Corrupt it
+        ets_efuse_clear_program_registers();
+        REG_WRITE(EFUSE_PGM_DATA0_REG, 0xCCCCCCCC);
+        REG_WRITE(EFUSE_PGM_DATA1_REG, 0xCCCCCCCC);
+        //REG_WRITE(EFUSE_PGM_CHECK_VALUE0_REG, 0xFFFFFFFF);
+        ets_efuse_program(block);
+
+        uint32_t new_word1 = REG_READ(rd);
+        printf("before 0x%08x after 0x%08x\n", key_data[0], new_word1);
+        TEST_ASSERT_NOT_EQUAL(key_data[0], new_word1);
+
+        // Write protect it
+        ets_efuse_clear_program_registers();
+        // TODO: ROM function for this
+        REG_WRITE(EFUSE_PGM_DATA0_REG, 1<<(block+19));
+        ets_efuse_program(ETS_EFUSE_BLOCK0);
+
+        // Try to corrupt it some more
+        ets_efuse_clear_program_registers();
+        REG_WRITE(EFUSE_PGM_DATA0_REG, 0x11111111);
+        ets_efuse_program(block);
+
+        // But it hasn't changed
+        uint32_t new_word2 = REG_READ(rd);
+        TEST_ASSERT_EQUAL(new_word1, new_word2);
+
+        // Now read protect it
+        ets_efuse_clear_program_registers();
+        // TODO: ROM function for this
+        REG_WRITE(EFUSE_PGM_DATA1_REG, 1<<(block-4));
+        ets_efuse_program(ETS_EFUSE_BLOCK0);
+
+        for(int i = 0; i < 8; i++) {
+            TEST_ASSERT_EQUAL(0, REG_READ(rd + i * 4));
+        }
+
+        printf("ERR0 0x%08x ERR1 0x%08x\n",
+               REG_READ(EFUSE_RD_RS_ERR0_REG),
+               REG_READ(EFUSE_RD_RS_ERR1_REG));
+
+    // TODO: use a ROM API for this
+    unsigned err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY0_ERR_NUM);
+    unsigned fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY0_FAIL);
+    printf("key0 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY1_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY1_FAIL);
+    printf("key1 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY2_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY2_FAIL);
+    printf("key2 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY3_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY3_FAIL);
+    printf("key3 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY4_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR0_REG, EFUSE_RD_KEY4_FAIL);
+    printf("key4 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR1_REG, EFUSE_RD_KEY5_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR1_REG, EFUSE_RD_KEY5_FAIL);
+    printf("key5 err %d fail %d\n", err, fail);
+
+    err = REG_GET_FIELD(EFUSE_RD_RS_ERR1_REG, EFUSE_RD_KEY6_ERR_NUM);
+    fail = REG_GET_BIT(EFUSE_RD_RS_ERR1_REG, EFUSE_RD_KEY6_FAIL);
+    printf("key6 err %d fail %d\n", err, fail);
+
+    }
+}
 
 #endif /* CONFIG_HARDWARE_IS_FPGA */
