@@ -69,6 +69,60 @@ typedef union {
     ps_cmd_t ps_cmd;
 } btc_avrc_args_t;
 
+/*****************************************************************************
+**  Constants & Macros
+******************************************************************************/
+/* for AVRC 1.4 need to change this */
+#define MAX_RC_NOTIFICATIONS AVRC_EVT_APP_SETTING_CHANGE
+
+#define MAX_VOLUME 128
+#define MAX_LABEL 16
+#define MAX_TRANSACTIONS_PER_SESSION 16
+#define MAX_CMD_QUEUE_LEN 8
+
+#define CHECK_ESP_RC_CONNECTED       do { \
+        BTC_TRACE_DEBUG("## %s ##", __FUNCTION__); \
+        if (btc_rc_vb.rc_connected == FALSE) { \
+            BTC_TRACE_WARNING("Function %s() called when RC is not connected", __FUNCTION__); \
+        return ESP_ERR_INVALID_STATE; \
+        } \
+    } while (0)
+
+/*****************************************************************************
+**  Local type definitions
+******************************************************************************/
+typedef struct {
+    UINT8 bNotify;
+    UINT8 label;
+} btc_rc_reg_notifications_t;
+
+typedef struct {
+    UINT8   label;
+    UINT8   ctype;
+    BOOLEAN is_rsp_pending;
+} btc_rc_cmd_ctxt_t;
+
+/* TODO : Merge btc_rc_reg_notifications_t and btc_rc_cmd_ctxt_t to a single struct */
+typedef struct {
+    BOOLEAN                     rc_connected;
+    UINT8                       rc_handle;
+    tBTA_AV_FEAT                rc_features;
+    BD_ADDR                     rc_addr;
+    UINT16                      rc_pending_play;
+    btc_rc_cmd_ctxt_t           rc_pdu_info[MAX_CMD_QUEUE_LEN];
+    btc_rc_reg_notifications_t  rc_notif[MAX_RC_NOTIFICATIONS];
+    unsigned int                rc_volume;
+    uint8_t                     rc_vol_label;
+} btc_rc_cb_t;
+
+/*****************************************************************************
+**  Static variables
+******************************************************************************/
+#if AVRC_DYNAMIC_MEMORY == TRUE
+extern btc_rc_cb_t *btc_rc_vb_ptr;
+#define btc_rc_vb (*btc_rc_vb_ptr)
+#endif ///AVRC_DYNAMIC_MEMORY == FALSE
+
 /** BT-RC Controller callback structure. */
 typedef void (* btrc_passthrough_rsp_callback) (int id, int key_state);
 

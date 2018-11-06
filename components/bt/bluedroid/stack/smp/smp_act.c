@@ -283,6 +283,7 @@ void smp_send_confirm(tSMP_CB *p_cb, tSMP_INT_DATA *p_data)
     smp_send_cmd(SMP_OPCODE_CONFIRM, p_cb);
 }
 
+#if 0 //Unused
 /*******************************************************************************
 ** Function     smp_send_init
 ** Description  process pairing initializer to slave device
@@ -292,6 +293,7 @@ void smp_send_init(tSMP_CB *p_cb, tSMP_INT_DATA *p_data)
     SMP_TRACE_DEBUG("%s\n", __func__);
     smp_send_cmd(SMP_OPCODE_INIT, p_cb);
 }
+#endif
 
 /*******************************************************************************
 ** Function     smp_send_rand
@@ -671,6 +673,7 @@ void smp_proc_confirm(tSMP_CB *p_cb, tSMP_INT_DATA *p_data)
     p_cb->flags |= SMP_PAIR_FLAGS_CMD_CONFIRM;
 }
 
+#if 0 //Unused
 /*******************************************************************************
 ** Function     smp_proc_init
 ** Description  process pairing initializer from peer device
@@ -690,6 +693,7 @@ void smp_proc_init(tSMP_CB *p_cb, tSMP_INT_DATA *p_data)
     /* save the SRand for comparison */
     STREAM_TO_ARRAY(p_cb->rrand, p, BT_OCTET16_LEN);
 }
+#endif
 
 /*******************************************************************************
 ** Function     smp_proc_rand
@@ -733,7 +737,7 @@ void smp_process_pairing_public_key(tSMP_CB *p_cb, tSMP_INT_DATA *p_data)
 
     STREAM_TO_ARRAY(p_cb->peer_publ_key.x, p, BT_OCTET32_LEN);
     STREAM_TO_ARRAY(p_cb->peer_publ_key.y, p, BT_OCTET32_LEN);
-    /* In order to prevent the x and y coordinates of the public key from being modified, 
+    /* In order to prevent the x and y coordinates of the public key from being modified,
        we need to check whether the x and y coordinates are on the given elliptic curve. */
     if (!ECC_CheckPointIsInElliCur_P256((Point *)&p_cb->peer_publ_key)) {
         SMP_TRACE_ERROR("%s, Invalid Public key.", __func__);
@@ -1930,10 +1934,10 @@ void smp_link_encrypted(BD_ADDR bda, UINT8 encr_enable)
         }
 
         smp_sm_event(&smp_cb, SMP_ENCRYPTED_EVT, &encr_enable);
-    } 
-    else if(p_dev_rec && !p_dev_rec->enc_init_by_we){ 
+    }
+    else if(p_dev_rec && !p_dev_rec->enc_init_by_we){
 
-        /* 
+        /*
         if enc_init_by_we is false, it means that client initiates encryption before slave calls esp_ble_set_encryption()
         we need initiate pairing_bda and p_cb->role then encryption, for example iPhones
         */

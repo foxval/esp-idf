@@ -771,7 +771,7 @@ BOOLEAN btm_ble_resolving_list_load_dev(tBTM_SEC_DEV_REC *p_dev_rec)
                     }
                     /* It will cause that scanner doesn't send scan request to advertiser
                      * which has sent IRK to us and we have stored the IRK in controller.
-                     * It is a design problem of hardware. The temporal solution is not to 
+                     * It is a design problem of hardware. The temporal solution is not to
                      * send the key to the controller and then resolve the random address in host. */
                     /*
                     BTM_TRACE_DEBUG("%s:adding device to controller resolving list\n", __func__);
@@ -880,6 +880,7 @@ void btm_ble_enable_resolving_list(UINT8 rl_mask)
     }
 }
 
+#if 0 //Unused
 /*******************************************************************************
 **
 ** Function         btm_ble_resolving_list_empty
@@ -894,6 +895,7 @@ BOOLEAN btm_ble_resolving_list_empty(void)
     return (controller_get_interface()->get_ble_resolving_list_max_size() ==
             btm_cb.ble_ctr_cb.resolving_list_avail_size);
 }
+#endif
 
 /*******************************************************************************
 **

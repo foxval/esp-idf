@@ -197,11 +197,11 @@ const UINT16 bta_av_rc_id_ac[] = {
     0x0000  /* bit mask: 0=not used, 1=F1, 2=F2, 3=F3,
                          4=F4, 5=F5 */
 };
-UINT16 *p_bta_av_rc_id_ac = (UINT16 *) bta_av_rc_id_ac;
+UINT16 *const p_bta_av_rc_id_ac = (UINT16 *) bta_av_rc_id_ac;
 #else
-UINT16 *p_bta_av_rc_id_ac = NULL;
+UINT16 *const p_bta_av_rc_id_ac = NULL;
 #endif
 
-UINT16 *p_bta_av_rc_id = (UINT16 *) bta_av_rc_id;
+UINT16 *const p_bta_av_rc_id = (UINT16 *) bta_av_rc_id;
 
 #endif /* if defined(BTA_AV_INCLUDED) && (BTA_AV_INCLUDED == TRUE) */

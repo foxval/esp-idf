@@ -35,64 +35,18 @@
 
 #if BTC_AV_INCLUDED
 
-/*****************************************************************************
-**  Constants & Macros
-******************************************************************************/
-/* for AVRC 1.4 need to change this */
-#define MAX_RC_NOTIFICATIONS AVRC_EVT_APP_SETTING_CHANGE
+// typedef struct {
+//     BOOLEAN in_use;
+//     UINT8 lbl;
+//     UINT8 handle;
+// } rc_transaction_t;
 
-#define MAX_VOLUME 128
-#define MAX_LABEL 16
-#define MAX_TRANSACTIONS_PER_SESSION 16
-#define MAX_CMD_QUEUE_LEN 8
+// typedef struct {
+//     osi_mutex_t lbllock;
+//     rc_transaction_t transaction[MAX_TRANSACTIONS_PER_SESSION];
+// } rc_device_t;
 
-#define CHECK_ESP_RC_CONNECTED       do { \
-        BTC_TRACE_DEBUG("## %s ##", __FUNCTION__); \
-        if (btc_rc_vb.rc_connected == FALSE) { \
-            BTC_TRACE_WARNING("Function %s() called when RC is not connected", __FUNCTION__); \
-        return ESP_ERR_INVALID_STATE; \
-        } \
-    } while (0)
-
-/*****************************************************************************
-**  Local type definitions
-******************************************************************************/
-typedef struct {
-    UINT8 bNotify;
-    UINT8 label;
-} btc_rc_reg_notifications_t;
-
-typedef struct {
-    UINT8   label;
-    UINT8   ctype;
-    BOOLEAN is_rsp_pending;
-} btc_rc_cmd_ctxt_t;
-
-/* TODO : Merge btc_rc_reg_notifications_t and btc_rc_cmd_ctxt_t to a single struct */
-typedef struct {
-    BOOLEAN                     rc_connected;
-    UINT8                       rc_handle;
-    tBTA_AV_FEAT                rc_features;
-    BD_ADDR                     rc_addr;
-    UINT16                      rc_pending_play;
-    btc_rc_cmd_ctxt_t           rc_pdu_info[MAX_CMD_QUEUE_LEN];
-    btc_rc_reg_notifications_t  rc_notif[MAX_RC_NOTIFICATIONS];
-    unsigned int                rc_volume;
-    uint8_t                     rc_vol_label;
-} btc_rc_cb_t;
-
-typedef struct {
-    BOOLEAN in_use;
-    UINT8 lbl;
-    UINT8 handle;
-} rc_transaction_t;
-
-typedef struct {
-    osi_mutex_t lbllock;
-    rc_transaction_t transaction[MAX_TRANSACTIONS_PER_SESSION];
-} rc_device_t;
-
-rc_device_t device;
+// rc_device_t device;
 
 static void handle_rc_connect (tBTA_AV_RC_OPEN *p_rc_open);
 static void handle_rc_disconnect (tBTA_AV_RC_CLOSE *p_rc_close);
@@ -102,7 +56,11 @@ static void handle_rc_metadata_rsp ( tBTA_AV_META_MSG *p_remote_rsp);
 /*****************************************************************************
 **  Static variables
 ******************************************************************************/
+#if AVRC_DYNAMIC_MEMORY == FALSE
 static btc_rc_cb_t btc_rc_vb;
+#else
+btc_rc_cb_t *btc_rc_vb_ptr;
+#endif ///AVRC_DYNAMIC_MEMORY == FALSE
 
 /*****************************************************************************
 **  Externs
@@ -421,7 +379,7 @@ static void btc_avrc_ct_init(void)
 {
     BTC_TRACE_DEBUG("## %s ##", __FUNCTION__);
 
-    memset (&btc_rc_vb, 0, sizeof(btc_rc_vb));
+    memset (&btc_rc_vb, 0, sizeof(btc_rc_cb_t));
     btc_rc_vb.rc_vol_label = MAX_LABEL;
     btc_rc_vb.rc_volume = MAX_VOLUME;
 }
@@ -441,6 +399,7 @@ static void btc_avrc_ct_deinit(void)
     BTC_TRACE_API("## %s ##", __FUNCTION__);
 
     memset(&btc_rc_vb, 0, sizeof(btc_rc_cb_t));
+
     BTC_TRACE_API("## %s ## completed", __FUNCTION__);
 }
 

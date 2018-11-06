@@ -48,7 +48,7 @@ static void bta_gatts_send_request_cback (UINT16 conn_id,
         tGATTS_REQ_TYPE req_type, tGATTS_DATA *p_data);
 static void bta_gatts_cong_cback (UINT16 conn_id, BOOLEAN congested);
 
-static tGATT_CBACK bta_gatts_cback = {
+static const tGATT_CBACK bta_gatts_cback = {
     bta_gatts_conn_cback,
     NULL,
     NULL,
@@ -58,7 +58,7 @@ static tGATT_CBACK bta_gatts_cback = {
     bta_gatts_cong_cback
 };
 
-tGATT_APPL_INFO bta_gatts_nv_cback = {
+const tGATT_APPL_INFO bta_gatts_nv_cback = {
     bta_gatts_nv_save_cback,
     bta_gatts_nv_srv_chg_cback
 };
@@ -403,7 +403,7 @@ void bta_gatts_add_char(tBTA_GATTS_SRVC_CB *p_srvc_cb, tBTA_GATTS_DATA *p_msg)
     UINT16          attr_id = 0;
     tBTA_GATTS      cb_data;
 
-    tGATT_ATTR_VAL *p_attr_val = NULL; 
+    tGATT_ATTR_VAL *p_attr_val = NULL;
     tGATTS_ATTR_CONTROL *p_control = NULL;
 
     if(p_msg->api_add_char.attr_val.attr_max_len != 0){

@@ -55,7 +55,12 @@
 #define MIN_ADV_LENGTH                       2
 #define BTM_VSC_CHIP_CAPABILITY_RSP_LEN_L_RELEASE 9
 
-static tBTM_BLE_VSC_CB cmn_ble_vsc_cb;
+#if BTM_DYNAMIC_MEMORY == FALSE
+static tBTM_BLE_VSC_CB cmn_ble_gap_vsc_cb;
+#else
+static tBTM_BLE_VSC_CB *cmn_ble_gap_vsc_cb_ptr;
+#define cmn_ble_gap_vsc_cb (*cmn_ble_gap_vsc_cb_ptr)
+#endif
 
 #if BLE_VND_INCLUDED == TRUE
 static tBTM_BLE_CTRL_FEATURES_CBACK    *p_ctrl_le_feature_rd_cmpl_cback = NULL;
@@ -392,7 +397,7 @@ tBTM_STATUS BTM_BleObserve(BOOLEAN start, UINT32 duration,
             btm_ble_enable_resolving_list_for_platform(BTM_BLE_RL_SCAN);
 #endif
 
-            if (cmn_ble_vsc_cb.extended_scan_support == 0) {
+            if (cmn_ble_gap_vsc_cb.extended_scan_support == 0) {
                 btsnd_hcic_ble_set_scan_params(p_inq->scan_type, (UINT16)scan_interval,
                                                (UINT16)scan_window,
                                                btm_cb.ble_ctr_cb.addr_mgnt_cb.own_addr_type,
@@ -1283,7 +1288,7 @@ tBTM_STATUS BTM_BleSetAdvParamsStartAdv(UINT16 adv_int_min, UINT16 adv_int_max, 
 
     if (!BTM_BLE_ISVALID_PARAM(adv_int_min, BTM_BLE_ADV_INT_MIN, BTM_BLE_ADV_INT_MAX) ||
             !BTM_BLE_ISVALID_PARAM(adv_int_max, BTM_BLE_ADV_INT_MIN, BTM_BLE_ADV_INT_MAX)) {
-         BTM_TRACE_ERROR ("adv_int_min or adv_int_max is invalid\n");    
+         BTM_TRACE_ERROR ("adv_int_min or adv_int_max is invalid\n");
         if(adv_cb) {
             (* adv_cb)(HCI_ERR_ESP_VENDOR_FAIL);
         }
@@ -1764,7 +1769,7 @@ BOOLEAN BTM_BleGetCurrentAddress(BD_ADDR addr, uint8_t *addr_type)
         memset(addr, 0, BD_ADDR_LEN);
         return FALSE;
     }
-    return TRUE; 
+    return TRUE;
 }
 
 /*******************************************************************************
@@ -2747,7 +2752,7 @@ void btm_ble_cache_adv_data(BD_ADDR bda, tBTM_INQ_RESULTS *p_cur, UINT8 data_len
         memset(p_le_inq_cb->adv_data_cache, 0, BTM_BLE_CACHE_ADV_DATA_MAX);
         p_cur->adv_data_len = 0;
         p_cur->scan_rsp_len = 0;
-    } 
+    }
 
     //Clear the adv cache if the addresses are not equal
     if(memcmp(bda, p_le_inq_cb->adv_addr, BD_ADDR_LEN) != 0) {
@@ -3199,7 +3204,7 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
 #if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
         temp_addr_type = addr_type;
         memcpy(temp_bda, bda, BD_ADDR_LEN);
-        
+
         /* map address to security record */
         match = btm_identity_addr_to_random_pseudo(bda, &addr_type, FALSE);
 
@@ -3648,7 +3653,7 @@ tBTM_STATUS btm_ble_start_adv(void)
         btm_execute_wl_dev_operation();
         btm_cb.ble_ctr_cb.wl_state |= BTM_BLE_WL_ADV;
     }
-    /* The complete event comes up immediately after the 'btsnd_hcic_ble_set_adv_enable' being called in dual core, 
+    /* The complete event comes up immediately after the 'btsnd_hcic_ble_set_adv_enable' being called in dual core,
     this causes the 'adv_mode' and 'state' not be set yet, so we set the state first */
     tBTM_BLE_GAP_STATE temp_state = p_cb->state;
     UINT8 adv_mode = p_cb->adv_mode;
@@ -3957,7 +3962,7 @@ BOOLEAN btm_ble_clear_topology_mask (tBTM_BLE_STATE_MASK request_state_mask)
 **
 ** Description      Get BLE topology bit mask
 **
-** Returns          state mask.   
+** Returns          state mask.
 **
 *******************************************************************************/
 tBTM_BLE_STATE_MASK btm_ble_get_topology_mask (void)
@@ -4046,9 +4051,17 @@ void btm_ble_update_mode_operation(UINT8 link_role, BD_ADDR bd_addr, UINT8 statu
 *******************************************************************************/
 void btm_ble_init (void)
 {
-    tBTM_BLE_CB *p_cb = &btm_cb.ble_ctr_cb;
-
     BTM_TRACE_DEBUG("%s", __func__);
+
+#if BTM_DYNAMIC_MEMORY == TRUE
+    cmn_ble_gap_vsc_cb_ptr = (tBTM_BLE_VSC_CB *)osi_malloc(sizeof(tBTM_BLE_VSC_CB));
+    if (cmn_ble_gap_vsc_cb_ptr == NULL) {
+        BTM_TRACE_ERROR("%s malloc failed", __func__);
+        return;
+    }
+#endif
+
+    tBTM_BLE_CB *p_cb = &btm_cb.ble_ctr_cb;
 
     btu_free_timer(&p_cb->obs_timer_ent);
     btu_free_timer(&p_cb->scan_timer_ent);
@@ -4094,6 +4107,11 @@ void btm_ble_free (void)
     BTM_TRACE_DEBUG("%s", __func__);
 
     fixed_queue_free(p_cb->conn_pending_q, osi_free_func);
+
+#if BTM_DYNAMIC_MEMORY == TRUE
+    osi_free(cmn_ble_gap_vsc_cb_ptr);
+    cmn_ble_gap_vsc_cb_ptr = NULL;
+#endif
 }
 
 /*******************************************************************************

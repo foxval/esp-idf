@@ -52,6 +52,7 @@ tL2C_CB l2cb;
 tL2C_CB *l2c_cb_ptr;
 #endif
 
+#if 0 //Unused
 /*******************************************************************************
 **
 ** Function         l2c_bcst_msg
@@ -104,7 +105,7 @@ void l2c_bcst_msg( BT_HDR *p_buf, UINT16 psm )
         bte_main_hci_send(p_buf, BT_EVT_TO_LM_HCI_ACL);
     }
 }
-
+#endif
 
 /*******************************************************************************
 **
@@ -880,7 +881,7 @@ void l2c_free(void)
     l2cb.rcv_pending_q = NULL;
 #if L2C_DYNAMIC_MEMORY
     FREE_AND_RESET(l2c_cb_ptr);
-#endif 
+#endif
 }
 
 /*******************************************************************************

@@ -110,7 +110,7 @@ BOOLEAN GATTS_AddHandleRange(tGATTS_HNDL_RANGE *p_hndl_range)
 ** Returns          TRUE if registered OK, else FALSE
 **
 *******************************************************************************/
-BOOLEAN  GATTS_NVRegister (tGATT_APPL_INFO *p_cb_info)
+BOOLEAN  GATTS_NVRegister (const tGATT_APPL_INFO *p_cb_info)
 {
     BOOLEAN status = FALSE;
     if (p_cb_info) {
@@ -292,7 +292,7 @@ UINT16 GATTS_AddIncludeService (UINT16 service_handle, UINT16 include_svc_handle
 **
 *******************************************************************************/
 UINT16 GATTS_AddCharacteristic (UINT16 service_handle, tBT_UUID *p_char_uuid,
-                                tGATT_PERM perm, tGATT_CHAR_PROP property, 
+                                tGATT_PERM perm, tGATT_CHAR_PROP property,
                                 tGATT_ATTR_VAL *attr_val, tGATTS_ATTR_CONTROL *control)
 {
     tGATT_HDL_LIST_ELEM  *p_decl;
@@ -311,7 +311,7 @@ UINT16 GATTS_AddCharacteristic (UINT16 service_handle, tBT_UUID *p_char_uuid,
     return gatts_add_characteristic(&p_decl->svc_db,
                                     perm,
                                     property,
-                                    p_char_uuid, 
+                                    p_char_uuid,
                                     attr_val, control);
 }
 /*******************************************************************************
@@ -734,7 +734,7 @@ tGATT_STATUS GATTS_SetAttributeValue(UINT16 attr_handle, UINT16 length, UINT8 *v
         return GATT_INVALID_ATTR_LEN;
     }
     if ((p_decl = gatt_find_hdl_buffer_by_attr_handle(attr_handle)) == NULL) {
-        GATT_TRACE_DEBUG("Service not created\n"); 
+        GATT_TRACE_DEBUG("Service not created\n");
         return GATT_INVALID_HANDLE;
     }
 
@@ -1187,7 +1187,7 @@ void GATT_SetIdleTimeout (BD_ADDR bd_addr, UINT16 idle_tout, tBT_TRANSPORT trans
 ** Returns          0 for error, otherwise the index of the client registered with GATT
 **
 *******************************************************************************/
-tGATT_IF GATT_Register (tBT_UUID *p_app_uuid128, tGATT_CBACK *p_cb_info)
+tGATT_IF GATT_Register (tBT_UUID *p_app_uuid128, const tGATT_CBACK *p_cb_info)
 {
     tGATT_REG    *p_reg;
     UINT8        i_gatt_if = 0;
@@ -1507,7 +1507,7 @@ tGATT_STATUS GATT_SendServiceChangeIndication (BD_ADDR bd_addr)
             srv_chg_ind_pending = gatt_is_srv_chg_ind_pending(p_tcb);
 
             if (!srv_chg_ind_pending) {
-                status = gatt_send_srv_chg_ind(addr);    
+                status = gatt_send_srv_chg_ind(addr);
             } else {
                 status = GATT_BUSY;
                 GATT_TRACE_DEBUG("discard srv chg - already has one in the queue");
