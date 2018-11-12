@@ -31,9 +31,9 @@
 // #include "uipc_msg.h"
 #include "stack/sdp_api.h"
 
-#if BLE_INCLUDED == TRUE
+// #if BLE_INCLUDED == TRUE
 #include "stack/btm_ble_api.h"
-#endif
+// #endif
 
 /*****************************************************************************
 **  Constants and data types
@@ -312,7 +312,7 @@ typedef struct {
     UINT8  *bta_dm_eir_additional;          /* additional data */
 } tBTA_DM_EIR_CONF;
 
-#if BLE_INCLUDED == TRUE
+// #if BLE_INCLUDED == TRUE
 /* ADV data flag bit definition used for BTM_BLE_AD_TYPE_FLAG */
 #define BTA_BLE_LIMIT_DISC_FLAG     BTM_BLE_LIMIT_DISC_FLAG
 #define BTA_BLE_GEN_DISC_FLAG       BTM_BLE_GEN_DISC_FLAG
@@ -497,7 +497,7 @@ enum {
 typedef tBTM_BLE_BATCH_SCAN_EVT tBTA_BLE_BATCH_SCAN_EVT;
 
 typedef tBTM_BLE_TRACK_ADV_ACTION tBTA_BLE_TRACK_ADV_ACTION;
-#endif
+// #endif
 
 /* BLE customer specific feature function type definitions */
 /* data type used on customer specific feature for RSSI monitoring */
@@ -1441,10 +1441,12 @@ extern void BTA_DisableTestMode(void);
 *******************************************************************************/
 extern void BTA_DmSetDeviceName(const char *p_name);
 
+#if (BLE_INCLUDED == TRUE)
 extern void BTA_DmUpdateWhiteList(BOOLEAN add_remove,  BD_ADDR remote_addr, tBTA_ADD_WHITELIST_CBACK *add_wl_cb);
 
 extern void BTA_DmBleReadAdvTxPower(tBTA_CMPL_CB *cmpl_cb);
 
+#endif  ///BLE_INCLUDED == TRUE
 extern void BTA_DmBleReadRSSI(BD_ADDR remote_addr, tBTA_TRANSPORT transport, tBTA_CMPL_CB *cmpl_cb);
 
 /*******************************************************************************

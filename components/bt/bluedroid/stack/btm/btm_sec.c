@@ -35,6 +35,7 @@
 #include "l2c_int.h"
 #include "osi/fixed_queue.h"
 #include "osi/alarm.h"
+#include "stack/btm_ble_api.h"
 
 #if (BT_USE_TRACES == TRUE && BT_TRACE_VERBOSE == FALSE)
 /* needed for sprintf() */
@@ -368,6 +369,7 @@ BOOLEAN BTM_GetSecurityFlagsByTransport (BD_ADDR bd_addr, UINT8 *p_sec_flags,
     return (FALSE);
 }
 
+#if (CLASSIC_BT_INCLUDED == TRUE)
 /*******************************************************************************
 **
 ** Function         BTM_SetPinType
@@ -392,6 +394,7 @@ void BTM_SetPinType (UINT8 pin_type, PIN_CODE pin_code, UINT8 pin_code_len)
     btm_cb.cfg.pin_code_len = pin_code_len;
     memcpy (btm_cb.cfg.pin_code, pin_code, pin_code_len);
 }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 
 /*******************************************************************************
 **
@@ -824,6 +827,7 @@ void btm_sec_clr_temp_auth_service (BD_ADDR bda)
 **
 *******************************************************************************/
 #if (SMP_INCLUDED == TRUE)
+#if (CLASSIC_BT_INCLUDED == TRUE)
 void BTM_PINCodeReply (BD_ADDR bd_addr, UINT8 res, UINT8 pin_len, UINT8 *p_pin, UINT32 trusted_mask[])
 {
     tBTM_SEC_DEV_REC *p_dev_rec;
@@ -927,6 +931,7 @@ void BTM_PINCodeReply (BD_ADDR bd_addr, UINT8 res, UINT8 pin_len, UINT8 *p_pin, 
 #endif
     btsnd_hcic_pin_code_req_reply (bd_addr, pin_len, p_pin);
 }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 #endif  ///SMP_INCLUDED == TRUE
 
 
@@ -990,12 +995,14 @@ tBTM_STATUS btm_sec_bond_by_transport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
         return (BTM_NO_RESOURCES);
     }
 
+#if (CLASSIC_BT_INCLUDED == TRUE)
     /* Save the PIN code if we got a valid one */
     if (p_pin && (pin_len <= PIN_CODE_LEN) && (pin_len != 0)) {
         btm_cb.pin_code_len = pin_len;
         p_dev_rec->pin_code_length = pin_len;
         memcpy (btm_cb.pin_code, p_pin, PIN_CODE_LEN);
     }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 
     memcpy (btm_cb.pairing_bda, bd_addr, BD_ADDR_LEN);
 
@@ -1029,6 +1036,8 @@ tBTM_STATUS btm_sec_bond_by_transport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
 
 
     BTM_TRACE_DEBUG ("after update sec_flags=0x%x\n", p_dev_rec->sec_flags);
+
+#if (CLASSIC_BT_INCLUDED == TRUE)
     if (!controller_get_interface()->supports_simple_pairing()) {
         /* The special case when we authenticate keyboard.  Set pin type to fixed */
         /* It would be probably better to do it from the application, but it is */
@@ -1040,6 +1049,7 @@ tBTM_STATUS btm_sec_bond_by_transport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
             btsnd_hcic_write_pin_type (HCI_PIN_TYPE_FIXED);
         }
     }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 
     for (ii = 0; ii <= HCI_EXT_FEATURES_PAGE_MAX; ii++) {
         p_features = p_dev_rec->features[ii];
@@ -1126,6 +1136,7 @@ tBTM_STATUS btm_sec_bond_by_transport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
 tBTM_STATUS BTM_SecBondByTransport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
                                     UINT8 pin_len, UINT8 *p_pin, UINT32 trusted_mask[])
 {
+#if (BLE_INCLUDED == TRUE)
     tBT_DEVICE_TYPE     dev_type;
     tBLE_ADDR_TYPE      addr_type;
 
@@ -1135,6 +1146,8 @@ tBTM_STATUS BTM_SecBondByTransport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
             (transport == BT_TRANSPORT_BR_EDR && (dev_type & BT_DEVICE_TYPE_BREDR) == 0)) {
         return BTM_ILLEGAL_ACTION;
     }
+#endif  ///BLE_INCLUDED == TRUE
+
     return btm_sec_bond_by_transport(bd_addr, transport, pin_len, p_pin, trusted_mask);
 }
 #endif  ///SMP_INCLUDED == TRUE
@@ -1158,9 +1171,11 @@ tBTM_STATUS BTM_SecBondByTransport (BD_ADDR bd_addr, tBT_TRANSPORT transport,
 tBTM_STATUS BTM_SecBond (BD_ADDR bd_addr, UINT8 pin_len, UINT8 *p_pin, UINT32 trusted_mask[])
 {
     tBT_TRANSPORT   transport = BT_TRANSPORT_BR_EDR;
+#if (BLE_INCLUDED == TRUE)
     if (BTM_UseLeLink(bd_addr)) {
         transport = BT_TRANSPORT_LE;
     }
+#endif  ///BLE_INCLUDED == TRUE
     return btm_sec_bond_by_transport(bd_addr, transport, pin_len, p_pin, trusted_mask);
 }
 /*******************************************************************************
@@ -4102,8 +4117,10 @@ void btm_sec_encrypt_change (UINT16 handle, UINT8 status, UINT8 encr_enable)
                 if (p_dev_rec->no_smp_on_br) {
                     BTM_TRACE_DEBUG ("%s NO SM over BR/EDR\n", __func__);
                 } else {
+#if (CLASSIC_BT_INCLUDED == TRUE)
                     BTM_TRACE_DEBUG ("%s start SM over BR/EDR\n", __func__);
                     SMP_BR_PairWith(p_dev_rec->bd_addr);
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
                 }
             }
         } else {
@@ -4904,6 +4921,7 @@ static void btm_sec_pairing_timeout (TIMER_LIST_ENT *p_tle)
     }
 }
 
+#if (CLASSIC_BT_INCLUDED == TRUE)
 /*******************************************************************************
 **
 ** Function         btm_sec_pin_code_request
@@ -5070,6 +5088,7 @@ void btm_sec_pin_code_request (UINT8 *p_bda)
     }
     return;
 }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 #endif  ///SMP_INCLUDED == TRUE
 
 
@@ -5597,10 +5616,12 @@ static void btm_restore_mode(void)
         btsnd_hcic_write_auth_enable ((UINT8)(btm_cb.security_mode == BTM_SEC_MODE_LINK));
     }
 
+#if (CLASSIC_BT_INCLUDED == TRUE)
     if (btm_cb.pin_type_changed) {
         btm_cb.pin_type_changed = FALSE;
         btsnd_hcic_write_pin_type (btm_cb.cfg.pin_type);
     }
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 }
 #endif  ///SMP_INCLUDED == TRUE
 
@@ -5652,7 +5673,9 @@ static void btm_sec_change_pairing_state (tBTM_PAIRING_STATE new_state)
         btu_stop_timer (&btm_cb.pairing_tle);
 
         btm_cb.pairing_flags = 0;
+#if (CLASSIC_BT_INCLUDED == TRUE)
         btm_cb.pin_code_len  = 0;
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
 
         /* Make sure the the lcb shows we are not bonding */
         l2cu_update_lcb_4_bonding (btm_cb.pairing_bda, FALSE);
@@ -5776,9 +5799,11 @@ static BOOLEAN btm_sec_queue_mx_request (BD_ADDR bd_addr,  UINT16 psm,  BOOLEAN 
 }
 static BOOLEAN btm_sec_check_prefetch_pin (tBTM_SEC_DEV_REC  *p_dev_rec)
 {
+    BOOLEAN rv = FALSE;
+#if (CLASSIC_BT_INCLUDED == TRUE)
     UINT8 major = (UINT8)(p_dev_rec->dev_class[1] & BTM_COD_MAJOR_CLASS_MASK);
     UINT8 minor = (UINT8)(p_dev_rec->dev_class[2] & BTM_COD_MINOR_CLASS_MASK);
-    BOOLEAN rv = FALSE;
+    rv = TRUE;
 
     if ((major == BTM_COD_MAJOR_AUDIO)
             &&  ((minor == BTM_COD_MINOR_CONFM_HANDSFREE) || (minor == BTM_COD_MINOR_CAR_AUDIO)) ) {
@@ -5814,7 +5839,8 @@ static BOOLEAN btm_sec_check_prefetch_pin (tBTM_SEC_DEV_REC  *p_dev_rec)
 
         rv = TRUE;
     }
-
+#endif  ///CLASSIC_BT_INCLUDED == TRUE
+#
     return rv;
 }
 
@@ -5996,6 +6022,7 @@ static UINT16 btm_sec_set_serv_level4_flags(UINT16 cur_security, BOOLEAN is_orig
     return cur_security | sec_level4_flags;
 }
 #endif  ///SMP_INCLUDED == TRUE
+
 /*******************************************************************************
 **
 ** Function         btm_sec_clear_ble_keys
@@ -6007,6 +6034,7 @@ static UINT16 btm_sec_set_serv_level4_flags(UINT16 cur_security, BOOLEAN is_orig
 ** Returns          void
 **
 *******************************************************************************/
+#if (BLE_INCLUDED == TRUE)
 void btm_sec_clear_ble_keys (tBTM_SEC_DEV_REC  *p_dev_rec)
 {
 
@@ -6020,7 +6048,7 @@ void btm_sec_clear_ble_keys (tBTM_SEC_DEV_REC  *p_dev_rec)
 #endif
 #endif
 }
-
+#endif  ///BLE_INCLUDED == TRUE
 /*******************************************************************************
 **
 ** Function         btm_sec_is_a_bonded_dev
@@ -6037,7 +6065,7 @@ BOOLEAN btm_sec_is_a_bonded_dev (BD_ADDR bda)
     BOOLEAN is_bonded = FALSE;
 
     if (p_dev_rec &&
-#if (SMP_INCLUDED == TRUE)
+#if (SMP_INCLUDED == TRUE && BLE_INCLUDED == TRUE)
             ((p_dev_rec->ble.key_type && (p_dev_rec->sec_flags & BTM_SEC_LE_LINK_KEY_KNOWN)) ||
 #else
             (
@@ -6060,10 +6088,10 @@ BOOLEAN btm_sec_is_a_bonded_dev (BD_ADDR bda)
 *******************************************************************************/
 BOOLEAN btm_sec_is_le_capable_dev (BD_ADDR bda)
 {
-    tBTM_SEC_DEV_REC *p_dev_rec = btm_find_dev (bda);
     BOOLEAN le_capable = FALSE;
 
 #if (BLE_INCLUDED== TRUE)
+    tBTM_SEC_DEV_REC *p_dev_rec = btm_find_dev (bda);
     if (p_dev_rec && (p_dev_rec->device_type & BT_DEVICE_TYPE_BLE) == BT_DEVICE_TYPE_BLE) {
         le_capable  = TRUE;
     }
@@ -6080,6 +6108,7 @@ BOOLEAN btm_sec_is_le_capable_dev (BD_ADDR bda)
 ** Returns          TRUE - found a bonded device
 **
 *******************************************************************************/
+#if (BLE_INCLUDED == TRUE)
 BOOLEAN btm_sec_find_bonded_dev (UINT8 start_idx, UINT8 *p_found_idx, tBTM_SEC_DEV_REC **p_rec)
 {
     BOOLEAN found = FALSE;
@@ -6104,7 +6133,7 @@ BOOLEAN btm_sec_find_bonded_dev (UINT8 start_idx, UINT8 *p_found_idx, tBTM_SEC_D
 #endif
     return (found);
 }
-
+#endif  ///BLE_INCLUDED == TRUE
 /*******************************************************************************
 **
 ** Function         btm_sec_use_smp_br_chnl

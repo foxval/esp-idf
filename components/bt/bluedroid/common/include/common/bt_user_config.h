@@ -81,6 +81,12 @@
 #define UC_HFP_CLIENT_ENABLED               FALSE
 #endif
 
+//BLE
+#ifdef CONFIG_BLE_ENABLED
+#define UC_BLE_ENABLED               TRUE
+#else
+#define UC_BLE_ENABLED               FALSE
+#endif
 
 //GATTS
 #ifdef CONFIG_GATTS_ENABLE

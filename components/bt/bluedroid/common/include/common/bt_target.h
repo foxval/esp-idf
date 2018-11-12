@@ -108,6 +108,12 @@
 ** BLE features
 **
 ******************************************************************************/
+#if (UC_BLE_ENABLED ==TRUE)
+#define BLE_INCLUDED              TRUE
+#else
+#define BLE_INCLUDED              FALSE
+#endif /* UC_BLE_ENABLED */
+
 #if (UC_GATTS_ENABLED ==TRUE)
 #define GATTS_INCLUDED              TRUE
 #else
@@ -128,7 +134,11 @@
 
 #if (UC_SMP_ENABLED == TRUE)
 #define SMP_INCLUDED              TRUE
+#if (BLE_INCLUDED == TRUE)
 #define BLE_PRIVACY_SPT           TRUE
+#else
+#define BLE_PRIVACY_SPT           FALSE
+#endif  /*BLE_INCLUDED*/
 #else
 #define SMP_INCLUDED              FALSE
 #define BLE_PRIVACY_SPT           FALSE
@@ -979,7 +989,7 @@
 ******************************************************************************/
 
 #ifndef BLE_INCLUDED
-#define BLE_INCLUDED            TRUE
+#define BLE_INCLUDED            FALSE
 #endif
 
 #ifndef BLE_ANDROID_CONTROLLER_SCAN_FILTER
@@ -1128,12 +1138,6 @@
 #endif
 #endif
 
-
-#if SMP_INCLUDED == TRUE && BLE_INCLUDED == FALSE
-#error "can't have SMP without BLE"
-#endif
-
-
 /******************************************************************************
 **
 ** SMP
@@ -1145,10 +1149,6 @@
 #else
 #define SMP_INCLUDED         FALSE
 #endif
-#endif
-
-#if SMP_INCLUDED == TRUE && BLE_INCLUDED == FALSE
-#error "can't have SMP without BLE"
 #endif
 
 #ifndef SMP_DEBUG
