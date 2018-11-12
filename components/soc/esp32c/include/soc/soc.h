@@ -359,6 +359,10 @@
 #define ETS_SLC_INUM                            1
 #define ETS_UART0_INUM                          5
 #define ETS_UART1_INUM                          5
+//CPU0 Interrupt number used in ROM code only when module init function called, should pay attention here.
+#define ETS_FRC_TIMER2_INUM 10 /* use edge*/
+#define ETS_GPIO_INUM       4
+
 //Other interrupt number should be managed by the user
 
 //Invalid interrupt for number interrupt matrix

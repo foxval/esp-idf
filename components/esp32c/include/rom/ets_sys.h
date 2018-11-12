@@ -165,42 +165,6 @@ void ets_set_startup_callback(uint32_t callback);
 void ets_set_appcpu_boot_addr(uint32_t start);
 
 /**
-  * @brief  unpack the image in flash to iram and dram, no using cache.
-  *
-  * @param  uint32_t pos : Flash physical address.
-  *
-  * @param  uint32_t *entry_addr: the pointer of an variable that can store Entry code address.
-  *
-  * @param  bool jump : Jump into the code in the function or not.
-  *
-  * @param  bool config : Config the flash when unpacking the image, config should be done only once.
-  *
-  * @return ETS_OK     : unpack successful
-  * @return ETS_FAILED : unpack failed
-  */
-ETS_STATUS ets_unpack_flash_code_legacy(uint32_t pos, uint32_t *entry_addr, bool jump, bool config);
-
-/**
-  * @brief  unpack the image in flash to iram and dram, using cache, maybe decrypting.
-  *
-  * @param  uint32_t pos : Flash physical address.
-  *
-  * @param  uint32_t *entry_addr: the pointer of an variable that can store Entry code address.
-  *
-  * @param  bool jump : Jump into the code in the function or not.
-  *
-  * @param  bool sb_need_check : Do security boot check or not.
-  *
-  * @param  bool config : Config the flash when unpacking the image, config should be done only once.
-  *
-  * @param  bool legacy : will not use cache to load code if it is true.
-  *
-  * @return ETS_OK     : unpack successful
-  * @return ETS_FAILED : unpack failed
-  */
-ETS_STATUS ets_unpack_flash_code(uint32_t pos, uint32_t *entry_addr, bool jump, bool sb_need_check, bool config, bool legacy);
-
-/**
   * @}
   */
 
@@ -432,13 +396,24 @@ uint32_t ets_get_xtal_scale(void);
   *
   * @param  None
   *
+  * @return uint32_t : if stored in efuse(not 0)
+  *                         clock = ets_efuse_get_xtal_freq() * 1000000;
+  *                    else if analog_8M in efuse
+  *                         clock = ets_get_xtal_scale() * 625 / 16 * ets_efuse_get_8M_clock();
+  *                    else clock = 40M.
+  */
+uint32_t ets_get_xtal_freq(void);
+
+/**
+  * @brief  Get apb_freq value, If value not stored in RTC_STORE5, than store.
+  *
+  * @param  None
+  *
   * @return uint32_t : if rtc store the value (RTC_STORE5 high 16 bits and low 16 bits with same value), read from rtc register.
   *                         clock = (REG_READ(RTC_STORE5) & 0xffff) << 12;
-  *            else if analog_8M in efuse
-  *                         clock = ets_get_xtal_scale() * 15625 * ets_efuse_get_8M_clock() / 40;
-  *                    else clock = 26M.
+  *                    else store ets_get_detected_xtal_freq() in.
   */
-uint32_t ets_get_detected_xtal_freq(void);
+uint32_t ets_get_apb_freq(void);
 
 /**
   * @}

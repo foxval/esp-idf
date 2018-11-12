@@ -172,6 +172,17 @@ uint32_t calc_rtc_memory_crc(uint32_t start_addr, uint32_t crc_len);
 void set_rtc_memory_crc(void);
 
 /**
+  * @brief Fetch entry from RTC memory and RTC STORE reg
+  *
+  * @param uint32_t * entry_addr : the address to save entry 
+  *
+  * @param RESET_REASON reset_reason : reset reason this time
+  * 
+  * @return None
+  */
+void rtc_boot_control(uint32_t * entry_addr, RESET_REASON reset_reason);
+
+/**
   * @brief Software Reset digital core.
   *
   * It is not recommended to use this function in esp-idf, use
