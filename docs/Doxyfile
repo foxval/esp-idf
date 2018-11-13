@@ -204,7 +204,6 @@ INPUT = \
     ### System APIs
     ../../components/esp32/include/esp_system.h \
     ### Modbus controller component header file
-    ../../components/freemodbus/common/mbcontroller.h \
     ../../components/freemodbus/serial_slave/modbus_controller/mbcontroller_slave.h \
     ../../components/freemodbus/serial_master/modbus_controller/mbcontroller_master.h
 
