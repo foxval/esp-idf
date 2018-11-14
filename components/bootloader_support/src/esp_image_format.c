@@ -496,14 +496,26 @@ static esp_err_t verify_checksum(bootloader_sha256_handle_t sha_handle, uint32_t
 static esp_err_t verify_secure_boot_signature(bootloader_sha256_handle_t sha_handle, esp_image_metadata_t *data)
 {
     uint8_t image_hash[HASH_LEN] = { 0 };
+    uint32_t end = data->start_addr + data->image_len;
 
     // For secure boot, we calculate the signature hash over the whole file, which includes any "simple" hash
     // appended to the image for corruption detection
     if (data->image.hash_appended) {
-        const void *simple_hash = bootloader_mmap(data->start_addr + data->image_len - HASH_LEN, HASH_LEN);
+        const void *simple_hash = bootloader_mmap(end - HASH_LEN, HASH_LEN);
         bootloader_sha256_data(sha_handle, simple_hash, HASH_LEN);
         bootloader_munmap(simple_hash);
     }
+
+#ifdef CONFIG_CHIP_IS_ESP32C
+    // Pad to 4096 byte sector boundary
+    if (end % FLASH_SECTOR_SIZE != 0) {
+        uint32_t pad_len = FLASH_SECTOR_SIZE - (end % FLASH_SECTOR_SIZE);
+        const void *padding = bootloader_mmap(end, pad_len);
+        bootloader_sha256_data(sha_handle, padding, pad_len);
+        bootloader_munmap(padding);
+        end += pad_len;
+    }
+#endif
 
     bootloader_sha256_finish(sha_handle, image_hash);
 
@@ -511,9 +523,7 @@ static esp_err_t verify_secure_boot_signature(bootloader_sha256_handle_t sha_han
     bootloader_debug_buffer(image_hash, HASH_LEN, "Calculated secure boot hash");
 
     // Use hash to verify signature block
-    const esp_secure_boot_sig_block_t *sig_block = bootloader_mmap(data->start_addr + data->image_len, sizeof(esp_secure_boot_sig_block_t));
-    esp_err_t err = esp_secure_boot_verify_signature_block(sig_block, image_hash);
-    bootloader_munmap(sig_block);
+    esp_err_t err = esp_secure_boot_verify_signature_block(end, image_hash);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Secure boot signature verification failed");
 

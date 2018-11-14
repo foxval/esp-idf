@@ -62,25 +62,32 @@ esp_err_t esp_secure_boot_verify_signature(uint32_t src_addr, uint32_t length)
 #endif
 
     // Map the signature block and verify the signature
-    sigblock = (const esp_secure_boot_sig_block_t *)(data + length);
-    esp_err_t err = esp_secure_boot_verify_signature_block(sigblock, digest);
     bootloader_munmap(data);
-    return err;
+    return esp_secure_boot_verify_signature_block(src_addr + length, digest);
 }
 
-esp_err_t esp_secure_boot_verify_signature_block(const esp_secure_boot_sig_block_t *sig_block, const uint8_t *image_digest)
+esp_err_t esp_secure_boot_verify_signature_block(uint32_t sig_block_flash_offs, const uint8_t *image_digest)
 {
     ptrdiff_t keylen;
     bool is_valid;
 
+    const esp_secure_boot_sig_block_t *sig_block = bootloader_mmap(sig_block_flash_offs, sizeof(esp_secure_boot_sig_block_t));
+
+    if (sig_block == NULL) {
+        ESP_LOGE(TAG, "Failed to mmap data at offset 0x%x", sig_block_flash_offs);
+        return ESP_FAIL;
+    }
+
     keylen = signature_verification_key_end - signature_verification_key_start;
     if(keylen != SIGNATURE_VERIFICATION_KEYLEN) {
         ESP_LOGE(TAG, "Embedded public verification key has wrong length %d", keylen);
+        bootloader_munmap(sig_block);
         return ESP_FAIL;
     }
 
     if (sig_block->version != 0) {
         ESP_LOGE(TAG, "image has invalid signature version field 0x%08x", sig_block->version);
+        bootloader_munmap(sig_block);
         return ESP_FAIL;
     }
 
@@ -89,5 +96,8 @@ esp_err_t esp_secure_boot_verify_signature_block(const esp_secure_boot_sig_block
                                 DIGEST_LEN,
                                 sig_block->signature,
                                 uECC_secp256r1());
+
+    bootloader_munmap(sig_block);
+
     return is_valid ? ESP_OK : ESP_ERR_IMAGE_INVALID;
 }

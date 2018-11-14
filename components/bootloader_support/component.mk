@@ -20,6 +20,13 @@ endif
 #
 ifdef CONFIG_SECURE_BOOT_ENABLED
 
+ifdef CONFIG_CHIP_IS_ESP32C
+ifdef CONFIG_SECURE_BOOT_BUILD_SIGNED_BINARIES
+$(error Build system does not support signing ESP32C binaries. Disable 'Build Signed Binaries' and sign by hand.)
+endif
+endif # ESP32C
+
+ifdef CONFIG_CHIP_IS_ESP32
 # this path is created relative to the component build directory
 SECURE_BOOT_VERIFICATION_KEY := $(abspath signature_verification_key.bin)
 
@@ -48,4 +55,6 @@ COMPONENT_EXTRA_CLEAN += $(SECURE_BOOT_VERIFICATION_KEY)
 
 COMPONENT_EMBED_FILES := $(SECURE_BOOT_VERIFICATION_KEY)
 
-endif
+endif # ESP32
+endif # SECURE BOOT
+

@@ -34,7 +34,7 @@ extern "C" {
 
 typedef enum {
     ETS_EFUSE_KEY_PURPOSE_USER = 0,
-    ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT = 1,
+    ETS_EFUSE_KEY_PURPOSE_RESERVED = 1,
     ETS_EFUSE_KEY_PURPOSE_XTS_AES_256_KEY_1 = 2,
     ETS_EFUSE_KEY_PURPOSE_XTS_AES_256_KEY_2 = 3,
     ETS_EFUSE_KEY_PURPOSE_XTS_AES_128_KEY = 4,
@@ -42,6 +42,9 @@ typedef enum {
     ETS_EFUSE_KEY_PURPOSE_HMAC_DOWN_JTAG = 6,
     ETS_EFUSE_KEY_PURPOSE_HMAC_DOWN_DIGITAL_SIGNATURE = 7,
     ETS_EFUSE_KEY_PURPOSE_HMAC_UP = 8,
+    ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0 = 9,
+    ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST1 = 10,
+    ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST2 = 11,
     ETS_EFUSE_KEY_PURPOSE_MAX,
 } ets_efuse_purpose_t;
 
@@ -128,7 +131,6 @@ ets_efuse_purpose_t ets_efuse_get_key_purpose(ets_efuse_block_t key_block);
  */
 bool ets_efuse_find_purpose(ets_efuse_purpose_t purpose, ets_efuse_block_t *key_block);
 
-
 /**
  * Return true if the key block is unused, false otherwise.
  *
@@ -152,7 +154,6 @@ bool ets_efuse_key_block_unused(ets_efuse_block_t key_block);
  */
 ets_efuse_block_t ets_efuse_find_unused_key_block(void);
 
-
 /**
  * @brief Return the number of unused efuse key blocks (0-6)
  */
@@ -167,17 +168,26 @@ unsigned ets_efuse_count_unused_key_blocks(void);
 void ets_efuse_rs_calculate(const void *data, void *rs_values);
 
 /**
-  * @brief  Read 8M Analog Clock value(8 bit) in efuse, the analog clock will not change with temperature.
+  * @brief  Read 8M Analog Clock value(12 bits) in efuse, the analog clock will not change with temperature.
   *         It can be used to test the external xtal frequency, do not touch this efuse field.
   *
   * @param  null
   *
-  * @return u32: 1 for 100KHZ, range is 0 to 255.
+  * @return uint32_t: 1 for 10KHZ, range is 0 to 4095.
   */
 uint32_t ets_efuse_get_8M_clock(void);
 
 /**
-  * @brief  Read spi flash pin configuration from Efuse
+  * @brief  Read xtal frequency value(6 bits) in efuse.
+  *
+  * @param  null
+  *
+  * @return uint32_t: 1 for 1MHz, range is 0 to 63, 0 means the xtal frequency not record in efuse.
+  */
+uint32_t ets_efuse_get_xtal_freq(void);
+
+/**
+  * @brief  Read spi flash pads configuration from Efuse
   *
   * @return
   * - 0 for default SPI pins.
@@ -187,6 +197,102 @@ uint32_t ets_efuse_get_8M_clock(void);
   *   WP pin (for quad I/O modes) is not saved in efuse and not returned by this function.
   */
 uint32_t ets_efuse_get_spiconfig(void);
+
+/**
+  * @brief  Read spi flash wp pad from Efuse
+  *
+  * @return
+  * - 0x3f for invalid.
+  * - 0~46 is valid.
+  */
+uint32_t ets_efuse_get_wp_pad(void);
+
+/**
+  * @brief  Read if download mode disabled from Efuse
+  *
+  * @return
+  * - true for efuse disable download mode.
+  * - false for efuse doesn't disable download mode.
+  */
+bool ets_efuse_download_modes_disabled(void);
+
+/**
+  * @brief  Read if legacy spi flash boot mode disabled from Efuse
+  *
+  * @return
+  * - true for efuse disable legacy spi flash boot mode.
+  * - false for efuse doesn't disable legacy spi flash boot mode.
+  */
+bool ets_efuse_legacy_spi_boot_mode_disabled(void);
+
+/**
+  * @brief  Read if uart print control value from Efuse
+  *
+  * @return
+  * - 0 for uart force print.
+  * - 1 for uart print when GPIO46 is low when digital reset.
+  *   2 for uart print when GPIO46 is high when digital reset.
+  *   3 for uart force slient
+  */
+uint32_t ets_efuse_get_uart_print_control(void);
+
+/**
+  * @brief  Read which channel will used by ROM to print
+  *
+  * @return
+  * - 0 for UART0.
+  * - 1 for UART1.
+  */
+uint32_t ets_efuse_get_uart_print_channel(void);
+
+/**
+  * @brief  Read if usb dowload mode disabled from Efuse
+  *
+  * @return
+  * - true for efuse disable usb download mode.
+  * - false for efuse doesn't disable usb download mode.
+  */
+bool ets_efuse_usb_download_mode_disabled(void);
+
+/**
+  * @brief  Read if tiny basic mode disabled from Efuse
+  *
+  * @return
+  * - true for efuse disable tiny basic mode.
+  * - false for efuse doesn't disable tiny basic mode.
+  */
+bool ets_efuse_tiny_basic_mode_disabled(void);
+
+/**
+  * @brief  Read if usb module disabled from Efuse
+  *
+  * @return
+  * - true for efuse disable usb module.
+  * - false for efuse doesn't disable usb module.
+  */
+bool ets_efuse_usb_module_disabled(void);
+
+/**
+  * @brief  Read if security download modes enabled from Efuse
+  *
+  * @return
+  * - true for efuse enable security download mode.
+  * - false for efuse doesn't enable security download mode.
+  */
+bool ets_efuse_security_download_modes_enabled(void);
+
+/**
+ * @brief Return true if secure boot enable in EFuse
+ */
+bool ets_efuse_secure_boot_enabled(void);
+
+/**                                                                        
+  * @brief  return the time in us ROM boot need wait flash to power on from Efuse             
+  *                                                                        
+  * @return                                                                
+  * - uint32_t the time in us.
+  */
+uint32_t ets_efuse_get_flash_delay_us(void);
 
 #define EFUSE_SPICONFIG_SPI_DEFAULTS 0
 #define EFUSE_SPICONFIG_HSPI_DEFAULTS 1

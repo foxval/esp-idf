@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Espressif Systems (Shanghai) PTE LTD
+// Copyright 2015-2018 Espressif Systems (Shanghai) PTE LTD
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@
 #include <esp_err.h>
 #include "soc/efuse_reg.h"
 
+#ifdef CONFIG_CHIP_IS_ESP32C
+#include "rom/efuse.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,9 +33,8 @@ extern "C" {
 
 /** @brief Is secure boot currently enabled in hardware?
  *
- * Secure boot is enabled if the ABS_DONE_0 efuse is blown. This means
- * that the ROM bootloader code will only boot a verified secure
- * bootloader digest from now on.
+ * This means that the ROM bootloader code will only boot
+ * a verified secure bootloader from now on.
  *
  * @return true if secure boot is enabled.
  */
@@ -39,7 +42,7 @@ static inline bool esp_secure_boot_enabled(void) {
 #ifdef CONFIG_CHIP_IS_ESP32
     return REG_READ(EFUSE_BLK0_RDATA6_REG) & EFUSE_RD_ABS_DONE_0;
 #else
-    return false; // FIXME
+    return ets_efuse_secure_boot_enabled();
 #endif
 }
 
@@ -96,7 +99,7 @@ typedef struct {
     uint8_t signature[64];
 } esp_secure_boot_sig_block_t;
 
-esp_err_t esp_secure_boot_verify_signature_block(const esp_secure_boot_sig_block_t *sig_block, const uint8_t *image_digest);
+esp_err_t esp_secure_boot_verify_signature_block(uint32_t sig_block_flash_offs, const uint8_t *image_digest);
 
 #define FLASH_OFFS_SECURE_BOOT_IV_DIGEST 0
 
