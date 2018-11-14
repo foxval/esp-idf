@@ -20,31 +20,23 @@
 esp_err_t esp_secure_boot_permanently_enable(void)
 {
     uint8_t hash[32];
+
+    if (ets_efuse_secure_boot_enabled())
+    {
+        ESP_LOGI(TAG, "secure boot is already enabled, continuing..");
+        return ESP_OK;
+    }
+
     ESP_LOGI(TAG, "Verifying bootloader signature...\n");
-    int r = ets_secure_boot_verify_bootloader(hash);
+    int r = ets_secure_boot_verify_bootloader(hash, false);
     if (r != ESP_OK) {
         ESP_LOGE(TAG, "Failed to verify bootloader signature");
         return r;
     }
 
     ets_efuse_clear_program_registers();
-    ets_printf("Before 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x\n",
-               REG_READ(EFUSE_RD_REPEAT_DATA0_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA1_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA2_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA3_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA4_REG));
     REG_SET_BIT(EFUSE_PGM_DATA3_REG, EFUSE_SECURE_BOOT_EN);
     ets_efuse_program(ETS_EFUSE_BLOCK0);
-
-    ets_printf("After 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x\n",
-               REG_READ(EFUSE_RD_REPEAT_DATA0_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA1_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA2_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA3_REG),
-               REG_READ(EFUSE_RD_REPEAT_DATA4_REG));
-
-    ets_printf("reg val 0x%x\n", REG_GET_BIT(EFUSE_RD_REPEAT_DATA2_REG, EFUSE_SECURE_BOOT_EN));
 
     assert(ets_efuse_secure_boot_enabled());
     ESP_LOGI(TAG, "Secure boot permanently enabled");

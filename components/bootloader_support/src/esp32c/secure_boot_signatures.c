@@ -35,6 +35,11 @@ void temp_load_keys_efuse()
         0xad, 0x96, 0xba, 0xef, 0x28, 0xcc, 0x89, 0xcf
     };
 
+    ets_efuse_clear_program_registers();
+    REG_SET_BIT(EFUSE_PGM_DATA3_REG, EFUSE_SECURE_BOOT_AGGRESSIVE_REVOKE);
+    ets_efuse_program(ETS_EFUSE_BLOCK0);
+    ESP_LOGE(TAG, "Aggressive revoke enabled");
+
     if(!ets_efuse_find_purpose(ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0, NULL) && ets_efuse_key_block_unused(ETS_EFUSE_BLOCK_KEY0)) {
         ESP_LOGI(TAG, "Writing digest of secure_boot_signing_key0.pem to key slot 0...");
         ets_efuse_write_key(ETS_EFUSE_BLOCK_KEY0,

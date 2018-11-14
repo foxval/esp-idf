@@ -32,10 +32,13 @@ typedef struct ets_secure_boot_key_digests ets_secure_boot_key_digests_t;
 /* Verify bootloader image (reconfigures cache to map,
  loads trusted key digests from efuse)
 
+ If allow_key_revoke is true and aggressive revoke efuse is set,
+ any failed signature has its associated key revoked in efuse.
+
  If result is ETS_OK, the "simple hash" of the bootloader
  is copied into verified_hash.
 */
-int ets_secure_boot_verify_bootloader(uint8_t *verified_hash);
+int ets_secure_boot_verify_bootloader(uint8_t *verified_hash, bool allow_key_revoke);
 
 /* Verify bootloader image (reconfigures cache to map), with
    key digests provided as parameters.)
@@ -91,6 +94,7 @@ _Static_assert(sizeof(ets_secure_boot_signature_t) == 4096, "invalid sig sector 
 
 struct ets_secure_boot_key_digests {
     const void *key_digests[3];
+    bool allow_key_revoke;
 };
 
 #ifdef __cplusplus
