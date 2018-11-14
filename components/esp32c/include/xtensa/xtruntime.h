@@ -88,7 +88,7 @@ typedef _xtos_handler_func *_xtos_handler;
  *  these macros are sometimes used to delineate critical sections;
  *  function calls are natural barriers (the compiler does not know
  *  whether a function modifies memory) unless declared to be inlined.  */
-# define XTOS_SET_INTLEVEL(intlevel)		({ unsigned __tmp; \
+# define XTOS_SET_INTLEVEL(intlevel)	__extension__({ unsigned __tmp; \
 			__asm__ __volatile__(	"rsil	%0, " XTSTR(intlevel) "\n" \
 						: "=a" (__tmp) : : "memory" ); \
 			__tmp;})

@@ -2,7 +2,7 @@
  * Xtensa Special Register symbolic names
  */
 
-/* $Id: //depot/rel/Foxhill/dot.8/Xtensa/OS/include/xtensa/specreg.h#1 $ */
+/* $Id: //depot/rel/Foxhill/dot.9/Xtensa/OS/include/xtensa/specreg.h#1 $ */
 
 /*
  * Copyright (c) 2005-2011 Tensilica Inc.

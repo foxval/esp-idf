@@ -118,6 +118,7 @@
  * SIMCALL for simulation mode switching
  */
 #define SYS_sim_mode_switch  1030
+#define SYS_sim_mode         1031
 
 /*
  * SIMCALLs for XTMP/XTSC event notify and core stall

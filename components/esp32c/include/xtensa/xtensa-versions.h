@@ -6,10 +6,11 @@
    It also provides a bit of information about which ones are current.
    This file changes every release, as versions/releases get added.
 
+*/
+//   $Id: //depot/rel/Foxhill/dot.9/Xtensa/Software/misc/xtensa-versions.h.tpp#1 $
 
-   $Id: //depot/rel/Foxhill/dot.8/Xtensa/Software/misc/xtensa-versions.h.tpp#1 $
-
-   Copyright (c) 2006-2010 Tensilica Inc.
+/* 
+   Copyright (c) 2006-2018 Tensilica Inc.
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -79,16 +80,16 @@
 #define  XTENSA_HWCIDSCHEME_T1040_0	 10
 #define  XTENSA_HWCIDVERS_T1040_0	 15
 #define XTENSA_HWVERSION_T1040_1	104001	/* versions T1040.1 */
-#define  XTENSA_HWCIDSCHEME_T1040_1	 01
+#define  XTENSA_HWCIDSCHEME_T1040_1	 1
 #define  XTENSA_HWCIDVERS_T1040_1	 32
 #define XTENSA_HWVERSION_T1040_1P	104001	/* versions T1040.1-prehotfix */
 #define  XTENSA_HWCIDSCHEME_T1040_1P	 10
 #define  XTENSA_HWCIDVERS_T1040_1P	 16
 #define XTENSA_HWVERSION_T1040_2	104002	/* versions T1040.2 */
-#define  XTENSA_HWCIDSCHEME_T1040_2	 01
+#define  XTENSA_HWCIDSCHEME_T1040_2	 1
 #define  XTENSA_HWCIDVERS_T1040_2	 33
 #define XTENSA_HWVERSION_T1040_3	104003	/* versions T1040.3 */
-#define  XTENSA_HWCIDSCHEME_T1040_3	 01
+#define  XTENSA_HWCIDSCHEME_T1040_3	 1
 #define  XTENSA_HWCIDVERS_T1040_3	 34
 #define XTENSA_HWVERSION_T1050_0	105000	/* versions T1050.0 */
 #define  XTENSA_HWCIDSCHEME_T1050_0	 1100
@@ -249,6 +250,9 @@
 #define XTENSA_HWVERSION_RG_2017_8	270008	/* versions LX7.0.8 */
 #define  XTENSA_HWCIDSCHEME_RG_2017_8	 1100
 #define  XTENSA_HWCIDVERS_RG_2017_8	 136
+#define XTENSA_HWVERSION_RG_2018_9	270009	/* versions LX7.0.9 */
+#define  XTENSA_HWCIDSCHEME_RG_2018_9	 1100
+#define  XTENSA_HWCIDVERS_RG_2018_9	 137
 #define XTENSA_HWVERSION_RH_2016_0	280000	/* versions LX8.0.0, NX1.0.0, SX1.0.0 */
 #define  XTENSA_HWCIDSCHEME_RH_2016_0	 1100
 #define  XTENSA_HWCIDVERS_RH_2016_0	 144
@@ -322,6 +326,7 @@
 #define XTENSA_SWVERSION_RG_2017_6	1200006	/* versions 12.0.6 */
 #define XTENSA_SWVERSION_RG_2017_7	1200007	/* versions 12.0.7 */
 #define XTENSA_SWVERSION_RG_2017_8	1200008	/* versions 12.0.8 */
+#define XTENSA_SWVERSION_RG_2018_9	1200009	/* versions 12.0.9 */
 #define XTENSA_SWVERSION_RH_2016_0	1300000	/* versions 13.0.0 */
 #define XTENSA_SWVERSION_T1040_1_PREHOTFIX	XTENSA_SWVERSION_T1040_1P	/* T1040.1-prehotfix */
 #define XTENSA_SWVERSION_6_0_0	XTENSA_SWVERSION_RA_2004_1	/* 6.0.0 */
@@ -371,18 +376,19 @@
 #define XTENSA_SWVERSION_12_0_6	XTENSA_SWVERSION_RG_2017_6	/* 12.0.6 */
 #define XTENSA_SWVERSION_12_0_7	XTENSA_SWVERSION_RG_2017_7	/* 12.0.7 */
 #define XTENSA_SWVERSION_12_0_8	XTENSA_SWVERSION_RG_2017_8	/* 12.0.8 */
+#define XTENSA_SWVERSION_12_0_9	XTENSA_SWVERSION_RG_2018_9	/* 12.0.9 */
 #define XTENSA_SWVERSION_13_0_0	XTENSA_SWVERSION_RH_2016_0	/* 13.0.0 */
 
 
 /*  The current release:  */
-#define XTENSA_RELEASE_NAME		"RG-2017.8"
-#define XTENSA_RELEASE_CANONICAL_NAME	"RG-2017.8"
+#define XTENSA_RELEASE_NAME		"RG-2018.9"
+#define XTENSA_RELEASE_CANONICAL_NAME	"RG-2018.9"
 
 /*  The product versions within the current release:  */
-#define XTENSA_SWVERSION		XTENSA_SWVERSION_RG_2017_8
-#define XTENSA_SWVERSION_NAME		"12.0.8"
-#define XTENSA_SWVERSION_NAME_IDENT	 12_0_8 
-#define XTENSA_SWVERSION_CANONICAL_NAME	"12.0.8"
+#define XTENSA_SWVERSION		XTENSA_SWVERSION_RG_2018_9
+#define XTENSA_SWVERSION_NAME		"12.0.9"
+#define XTENSA_SWVERSION_NAME_IDENT	 12_0_9 
+#define XTENSA_SWVERSION_CANONICAL_NAME	"12.0.9"
 #define XTENSA_SWVERSION_MAJORMID_NAME	"12.0"
 #define XTENSA_SWVERSION_MAJOR_NAME	"12"
 /*  For product licensing (not necessarily same as *_MAJORMID_NAME):  */

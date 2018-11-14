@@ -181,7 +181,8 @@ typedef struct {
 
 
 extern const trax_regdef_t	trax_reglist[];
-extern const signed char	trax_readable_regs[];
+extern const signed int 	trax_readable_regs[];
+extern const signed int 	trax_unamed_header_regs[];
 
 #ifdef  __cplusplus
 extern "C" {

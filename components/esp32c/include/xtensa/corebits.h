@@ -5,7 +5,7 @@
  *  This file is not generated, ie. it is processor configuration independent.)
  */
 
-/* $Id: //depot/rel/Foxhill/dot.8/Xtensa/OS/include/xtensa/corebits.h#1 $ */
+/* $Id: //depot/rel/Foxhill/dot.9/Xtensa/OS/include/xtensa/corebits.h#1 $ */
 
 /*
  * Copyright (c) 2005-2011 Tensilica Inc.
@@ -52,10 +52,12 @@
 # define EXCCAUSE_LEVEL1INTERRUPT	4	/* (backward compatibility macro, deprecated, avoid) */
 #define EXCCAUSE_ALLOCA			5	/* Stack Extension Assist (MOVSP instruction) for alloca */
 #define EXCCAUSE_DIVIDE_BY_ZERO		6	/* Integer Divide by Zero */
-#define EXCCAUSE_SPECULATION		7	/* Use of Failed Speculative Access (not implemented) */
+# define EXCCAUSE_SPECULATION		7	/* Use of Failed Speculative Access (deprecated) */
+#define EXCCAUSE_PC_ERROR		7	/* Next PC Value Illegal */
 #define EXCCAUSE_PRIVILEGED		8	/* Privileged Instruction */
 #define EXCCAUSE_UNALIGNED		9	/* Unaligned Load or Store */
-/* Reserved				10..11 */
+#define EXCCAUSE_EXTREG_PRIVILEGE	10	/* External Register Privilege Error */
+#define EXCCAUSE_EXCLUSIVE_ERROR	11	/* Load exclusive to unsupported memory type or unaligned address */
 #define EXCCAUSE_INSTR_DATA_ERROR	12	/* PIF Data Error on Instruction Fetch (RB-200x and later) */
 #define EXCCAUSE_LOAD_STORE_DATA_ERROR	13	/* PIF Data Error on Load or Store (RB-200x and later) */
 #define EXCCAUSE_INSTR_ADDR_ERROR	14	/* PIF Address Error on Instruction Fetch (RB-200x and later) */

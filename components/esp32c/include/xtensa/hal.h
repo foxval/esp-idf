@@ -12,7 +12,7 @@
    the XTHAL_RELEASE_xxx macros (or additions made in later versions).
 
 
-   $Id: //depot/rel/Foxhill/dot.8/Xtensa/OS/target-os-src/hal.h.tpp#1 $
+   $Id: //depot/rel/Foxhill/dot.9/Xtensa/OS/target-os-src/hal.h.tpp#1 $
 
    Copyright (c) 1999-2015 Cadence Design Systems, Inc.
 
@@ -39,7 +39,6 @@
 #ifndef XTENSA_HAL_H
 #define XTENSA_HAL_H
 
-
 /****************************************************************************
 	    Definitions Useful for Any Code, USER or PRIVILEGED
  ****************************************************************************/
@@ -59,11 +58,11 @@
  *	making the distinction irrelevant.  This is no longer the case.
  */
 #define XTHAL_RELEASE_MAJOR	12000
-#define XTHAL_RELEASE_MINOR	8
-#define XTHAL_RELEASE_NAME	"12.0.8"
+#define XTHAL_RELEASE_MINOR	9
+#define XTHAL_RELEASE_NAME	"12.0.9"
 #define XTHAL_REL_12	1
 #define XTHAL_REL_12_0	1
-#define XTHAL_REL_12_0_8	1
+#define XTHAL_REL_12_0_9	1
 
 /*  HAL version numbers (these names are for backward compatibility):  */
 #define XTHAL_MAJOR_REV		XTHAL_RELEASE_MAJOR
@@ -139,6 +138,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdint.h>
+#include <stddef.h>
 
 /*----------------------------------------------------------------------
 				HAL
@@ -1146,8 +1148,8 @@ extern int xthal_set_region_translation_raw(void *vaddr, void *paddr, unsigned c
  */
 typedef struct xthal_MPU_entry
 {
-	unsigned as;	/* virtual start address, and valid bit */
-	unsigned at;	/* access rights, and memory type (and space for entry index) */
+	uint32_t as;	/* virtual start address, and valid bit */
+	uint32_t at;	/* access rights, and memory type (and space for entry index) */
 } xthal_MPU_entry;
 
 extern const xthal_MPU_entry Xthal_mpu_bgmap[];
@@ -1198,12 +1200,12 @@ extern const xthal_MPU_entry Xthal_mpu_bgmap[];
  * supplied memory type has the property specified by the function name,
  * otherwise they return 0.
  */
-extern int xthal_is_kernel_readable(int accessRights); 
-extern int xthal_is_kernel_writeable(int accessRights); 
-extern int xthal_is_kernel_executable(int accessRights); 
-extern int xthal_is_user_readable(int accessRights); 
-extern int xthal_is_user_writeable (int accessRights); 
-extern int xthal_is_user_executable(int accessRights); 
+extern int32_t xthal_is_kernel_readable(uint32_t accessRights); 
+extern int32_t xthal_is_kernel_writeable(uint32_t accessRights); 
+extern int32_t xthal_is_kernel_executable(uint32_t accessRights); 
+extern int32_t xthal_is_user_readable(uint32_t accessRights); 
+extern int32_t xthal_is_user_writeable (uint32_t accessRights); 
+extern int32_t xthal_is_user_executable(uint32_t accessRights); 
 
 
 /*
@@ -1218,7 +1220,7 @@ extern int xthal_is_user_executable(int accessRights);
  * This function first checks that the supplied constants are a valid and
  * supported combination.  If not, it returns XTHAL_BAD_MEMORY_TYPE.
  */
-extern int xthal_encode_memory_type(unsigned int x);
+extern int xthal_encode_memory_type(uint32_t x);
 
 /*
  * This function accepts a 9-bit memory type value (such as returned by
@@ -1226,9 +1228,9 @@ extern int xthal_encode_memory_type(unsigned int x);
  * return 1 if the memoryType has the property specified in the function
  * name and 0 otherwise.
  */
-extern int xthal_is_cacheable(unsigned int memoryType);
-extern int xthal_is_writeback(unsigned int memoryType);
-extern int xthal_is_device(unsigned int memoryType);
+extern int32_t xthal_is_cacheable(uint32_t memoryType);
+extern int32_t xthal_is_writeback(uint32_t memoryType);
+extern int32_t xthal_is_device(uint32_t  memoryType);
 
 /*
  * Copies the current MPU entry list into 'entries' which
@@ -1239,7 +1241,7 @@ extern int xthal_is_device(unsigned int memoryType);
  * XTHAL_INVALID, or
  * XTHAL_UNSUPPORTED.
  */
-extern int xthal_read_map(struct xthal_MPU_entry* entries);
+extern int32_t xthal_read_map(struct xthal_MPU_entry* entries);
 
 /*
  * Writes the map pointed to by 'entries' to the MPU. Before updating
@@ -1274,7 +1276,7 @@ extern int xthal_read_map(struct xthal_MPU_entry* entries);
  *    2) The interrupt code must not access the MPU.
  *
  */
-extern void xthal_write_map(const struct xthal_MPU_entry* entries, unsigned n);
+extern void xthal_write_map(const struct xthal_MPU_entry* entries, uint32_t n);
 
 /*
  * Checks if entry vector 'entries' of length 'n' is a valid MPU access map.
@@ -1286,7 +1288,7 @@ extern void xthal_write_map(const struct xthal_MPU_entry* entries, unsigned n);
  *    XTHAL_OUT_OF_ORDER_MAP, or
  *    XTHAL_UNSUPPORTED if config doesn't have an MPU.
  */
-extern int xthal_check_map(const struct xthal_MPU_entry* entries, unsigned n);
+extern int xthal_check_map(const struct xthal_MPU_entry* entries, uint32_t n);
 
 /*
  * Returns the MPU entry that maps 'vaddr'. If 'infgmap' is non-NULL then
@@ -1294,7 +1296,7 @@ extern int xthal_check_map(const struct xthal_MPU_entry* entries, unsigned n);
  * *infgmap is set to 0 if 'vaddr' is mapped by the background map.
  */
 extern struct xthal_MPU_entry xthal_get_entry_for_address(void* vaddr, 
-	int* infgmap);
+	int32_t* infgmap);
 
 /* 
  * Scans the supplied MPU map and returns a value suitable for writing to
@@ -1304,8 +1306,8 @@ extern struct xthal_MPU_entry xthal_get_entry_for_address(void* vaddr,
  * Bits 8-31   -> undefined.
  * This function can accept a partial memory map in the same manner
  * xthal_write_map() does, */
-extern unsigned int 
-xthal_calc_cacheadrdis(const struct xthal_MPU_entry* e, unsigned n);
+extern uint32_t 
+xthal_calc_cacheadrdis(const struct xthal_MPU_entry* e, uint32_t n);
 
 /*
  * This function is intended as an MPU specific version of 
@@ -1355,8 +1357,8 @@ xthal_calc_cacheadrdis(const struct xthal_MPU_entry* e, unsigned n);
  * 
  */
 
-extern int xthal_mpu_set_region_attribute(void* vaddr, unsigned size, 
-	int accessRights, int memoryType, unsigned flags);
+extern int xthal_mpu_set_region_attribute(void* vaddr, size_t size, 
+	int32_t accessRights, int32_t memoryType, uint32_t flags);
 
 /* The following are internal implementation macros.  These should not
  * be directly used except by the hal code and headers.
@@ -1440,7 +1442,7 @@ extern int xthal_mpu_set_region_attribute(void* vaddr, unsigned size,
 #define XTHAL_MEM_SW_SHAREABLE 0
 
 #define xthal_is_cached(memoryType) (xthal_is_cacheable((memoryType)))
-extern int xthal_read_background_map(struct xthal_MPU_entry* entries);
+extern int32_t xthal_read_background_map(struct xthal_MPU_entry* entries);
 
 /* end deprecated functions and constants */
 
@@ -1462,18 +1464,6 @@ extern int xthal_read_background_map(struct xthal_MPU_entry* entries);
 #if !defined(_ASMLANGUAGE) && !defined(_NOCLANGUAGE) && !defined(__ASSEMBLER__)
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef INCLUDE_DEPRECATED_HAL_CODE
-extern const unsigned char Xthal_have_old_exc_arch;
-extern const unsigned char Xthal_have_mmu;
-extern const unsigned int  Xthal_num_regs;
-extern const unsigned char Xthal_num_iroms;
-extern const unsigned char Xthal_num_irams;
-extern const unsigned char Xthal_num_droms;
-extern const unsigned char Xthal_num_drams;
-extern const unsigned int  Xthal_configid0;
-extern const unsigned int  Xthal_configid1;
 #endif
 
 #ifdef INCLUDE_DEPRECATED_HAL_DEBUG_CODE
