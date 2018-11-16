@@ -19,7 +19,7 @@ MEMORY
   iram_loader_seg (RWX) :           org = 0x40022000, len = 0x2000  /* 32KB, APP CPU cache */
   iram_seg (RWX) :                  org = 0x40024000, len = 0x4000
   /* 64k at the end of DRAM, after ROM bootloader stack */
-  dram_seg (RW) :                  	org = 0x3FFF8000, len = 0x4000
+  dram_seg (RW) :                  	org = 0x3FFF6000, len = 0x2000
 }
 
 /*  Default entry point:  */
