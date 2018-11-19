@@ -125,13 +125,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 //    { 0x40070000, 0x40078000 }, //CPU0 cache region
 //    { 0x40078000, 0x40080000 }, //CPU1 cache region
 
-    { 0x3fffc000, (intptr_t)&_data_start_xtos}, //ROM data region
-
-#if CONFIG_BT_ENABLED
-    { 0x3ffb0000, 0x3ffc0000 }, //Reserve BT hardware shared memory & BT data region
-    { 0x3ffae000, 0x3ffb0000 }, //Reserve ROM data region, inc region needed for BT ROM routines
-#else
-#endif
+    { 0x3fff8000, (intptr_t)&_data_start_xtos}, //ROM data region
 
 #if CONFIG_MEMMAP_TRACEMEM
 #if CONFIG_MEMMAP_TRACEMEM_TWOBANKS
