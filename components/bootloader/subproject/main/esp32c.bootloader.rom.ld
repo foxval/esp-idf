@@ -1,6 +1,6 @@
 /*
 ESP32C ROM address table
 Generated for ROM with MD5sum:
-57fdc5b9a266bf1f88bae4192b48cf2e  /home/jack/esp-rom/rom//.output/eagle/release/image/eagle.pro.rom.out
+5ff889642ee073ce9096a3bd32d4058c  /home/jack/esp-rom/rom//.output/eagle/release/image/eagle.pro.rom.out
 */
-PROVIDE ( ets_update_cpu_frequency = 0x400107b0 );
+PROVIDE ( ets_update_cpu_frequency = 0x40010804 );
