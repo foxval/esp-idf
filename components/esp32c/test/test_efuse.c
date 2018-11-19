@@ -59,7 +59,7 @@ TEST_CASE("efuse write key block", "[esp32c]")
     const uint32_t *key_words = (const uint32_t *)key_data;
 
     printf("Calling ets_efuse_write_key...\n");
-    int r = ets_efuse_write_key(BLOCK, ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT, key_data, sizeof(key_data));
+    int r = ets_efuse_write_key(BLOCK, ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0, key_data, sizeof(key_data));
     TEST_ASSERT_EQUAL(0, r);
 
     printf("After:\n");
@@ -136,7 +136,7 @@ TEST_CASE("efuse key blocks test read/write disable", "[esp32c]")
         printf("Testing block %d...\n", block);
 
         // Write key block
-        int r = ets_efuse_write_key(block, ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT, key_data, sizeof(key_data));
+        int r = ets_efuse_write_key(block, ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0, key_data, sizeof(key_data));
         TEST_ASSERT_EQUAL(0, r);
 
         // Check it's all there
