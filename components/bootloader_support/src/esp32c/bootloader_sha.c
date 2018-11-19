@@ -38,8 +38,7 @@ void bootloader_sha256_data(bootloader_sha256_handle_t handle, const void *data,
 {
     assert(handle != NULL);
     assert(data_len % 4 == 0);
-    bool ctx_in_hardware = true; /* we're the only user in the bootloader */
-    ets_sha_update(&ctx, data, data_len, &ctx_in_hardware, false);
+    ets_sha_update(&ctx, data, data_len, false);
 }
 
 void bootloader_sha256_finish(bootloader_sha256_handle_t handle, uint8_t *digest)
@@ -50,5 +49,5 @@ void bootloader_sha256_finish(bootloader_sha256_handle_t handle, uint8_t *digest
         bzero(&ctx, sizeof(ctx));
         return;
     }
-    ets_sha_finish(&ctx, digest, true);
+    ets_sha_finish(&ctx, digest);
 }

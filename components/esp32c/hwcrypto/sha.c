@@ -172,14 +172,13 @@ void esp_sha_block(esp_sha_type sha_type, const void *data_block, bool is_first_
 void esp_sha(esp_sha_type sha_type, const unsigned char *input, size_t ilen, unsigned char *output)
 {
     SHA_CTX ctx;
-    bool state_in_hardware = false;
 
     esp_sha_lock_engine(sha_type);
 
     ets_sha_init(&ctx, sha_type);
     ets_sha_starts(&ctx, 0);
-    ets_sha_update(&ctx, input, ilen, &state_in_hardware, false);
-    ets_sha_finish(&ctx, output, state_in_hardware);
+    ets_sha_update(&ctx, input, ilen, false);
+    ets_sha_finish(&ctx, output);
 
     esp_sha_unlock_engine(sha_type);
 }

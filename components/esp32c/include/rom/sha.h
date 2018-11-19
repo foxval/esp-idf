@@ -44,6 +44,7 @@ typedef enum {
 
 typedef struct SHAContext {
     bool start;
+    bool in_hardware;               // Is this context currently in peripheral? Needs to be manually cleared if multiple SHAs are interleaved
     SHA_TYPE type;
     uint32_t state[16];             // For SHA1/SHA224/SHA256, used 8, other used 16
     unsigned char buffer[128];      // For SHA1/SHA224/SHA256, used 64, other used 128
@@ -60,11 +61,11 @@ ets_status_t ets_sha_starts(SHA_CTX *ctx, uint16_t sha512_t);
 
 void ets_sha_get_state(SHA_CTX *ctx);
 
-void ets_sha_process(SHA_CTX *ctx, const unsigned char *input, bool *ctx_in_hardware);
+void ets_sha_process(SHA_CTX *ctx, const unsigned char *input);
 
-void ets_sha_update(SHA_CTX *ctx, const unsigned char *input, uint32_t input_bytes, bool *ctx_in_hardware, bool update_ctx);
+void ets_sha_update(SHA_CTX *ctx, const unsigned char *input, uint32_t input_bytes, bool update_ctx);
 
-ets_status_t ets_sha_finish(SHA_CTX *ctx, unsigned char *output, bool ctx_in_hardware);
+ets_status_t ets_sha_finish(SHA_CTX *ctx, unsigned char *output);
 
 #ifdef __cplusplus
 }

@@ -60,39 +60,35 @@ TEST_CASE("simple SHA ROM functions", "[esp32c]")
     size_t len_input = 1000;
     uint8_t *input = malloc(len_input);
     uint8_t digest[64] = {};
-    bool state_in_hardware = false;
 
     ets_sha_enable();
 
     memset(input, 'a', len_input);
 
     ets_sha_init(&ctx, SHA1);
-    ets_sha_update(&ctx, input, len_input, &state_in_hardware, false);
-    ets_sha_finish(&ctx, digest, state_in_hardware);
+    ets_sha_update(&ctx, input, len_input, false);
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha1_thousand_as, digest, sizeof(sha1_thousand_as));
 
     bzero(digest, sizeof(digest));
     memset(input, 'b', len_input);
     ets_sha_init(&ctx, SHA2_256);
-    state_in_hardware = false;
-    ets_sha_update(&ctx, input, len_input, &state_in_hardware, false);
-    ets_sha_finish(&ctx, digest, state_in_hardware);
+    ets_sha_update(&ctx, input, len_input, false);
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha256_thousand_bs, digest, sizeof(sha256_thousand_bs));
 
     bzero(digest, sizeof(digest));
     memset(input, 'b', len_input);
     ets_sha_init(&ctx, SHA2_384);
-    state_in_hardware = false;
-    ets_sha_update(&ctx, input, len_input, &state_in_hardware, false);
-    ets_sha_finish(&ctx, digest, state_in_hardware);
+    ets_sha_update(&ctx, input, len_input, false);
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha384_thousand_bs, digest, sizeof(sha384_thousand_bs));
 
     bzero(digest, sizeof(digest));
     memset(input, 'b', len_input);
     ets_sha_init(&ctx, SHA2_512);
-    state_in_hardware = false;
-    ets_sha_update(&ctx, input, len_input, &state_in_hardware, false);
-    ets_sha_finish(&ctx, digest, state_in_hardware);
+    ets_sha_update(&ctx, input, len_input, false);
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha512_thousand_bs, digest, sizeof(sha512_thousand_bs));
 
     free(input);
@@ -101,7 +97,6 @@ TEST_CASE("simple SHA ROM functions", "[esp32c]")
 TEST_CASE("multi update SHA ROM function", "[esp32c]")
 {
     SHA_CTX ctx;
-    bool state_in_hardware;
     const size_t len_input = 1000;
     uint8_t *input = malloc(len_input);
     uint8_t digest[64] = {};
@@ -112,36 +107,33 @@ TEST_CASE("multi update SHA ROM function", "[esp32c]")
 
     ets_sha_init(&ctx, SHA1);
     assert(len_input % 10 == 0);
-    state_in_hardware = false;
     for (int i = 0; i < len_input; i += 10) {
-        ets_sha_update(&ctx, &input[i], 10, &state_in_hardware, false);
+        ets_sha_update(&ctx, &input[i], 10, false);
     }
-    TEST_ASSERT(state_in_hardware); // at least one SHA finished
-    ets_sha_finish(&ctx, digest, state_in_hardware);
+    TEST_ASSERT(ctx.in_hardware); // at least one SHA finished
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha1_thousand_as, digest, sizeof(sha1_thousand_as));
 
     bzero(digest, sizeof(digest));
     memset(input, 'b', len_input);
 
     ets_sha_init(&ctx, SHA2_256);
-    state_in_hardware = false;
     for (int i = 0; i < len_input; i += 10) {
-        ets_sha_update(&ctx, &input[i], 10, &state_in_hardware, true);
+        ets_sha_update(&ctx, &input[i], 10, true);
     }
-    TEST_ASSERT(state_in_hardware); // at least one SHA block finished
-    ets_sha_finish(&ctx, digest, true);
+    TEST_ASSERT(ctx.in_hardware); // at least one SHA block finished
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha256_thousand_bs, digest, sizeof(sha256_thousand_bs));
 
     bzero(digest, sizeof(digest));
     memset(input, 'b', len_input);
     ets_sha_init(&ctx, SHA2_384);
-    state_in_hardware = false;
     assert(len_input % 4 == 0);
     for (int i = 0; i < len_input; i += 4) {
-        ets_sha_update(&ctx, &input[i], 4, &state_in_hardware, true);
+        ets_sha_update(&ctx, &input[i], 4, true);
     }
-    TEST_ASSERT(state_in_hardware); // at least one SHA block finished
-    ets_sha_finish(&ctx, digest, true);
+    TEST_ASSERT(ctx.in_hardware); // at least one SHA block finished
+    ets_sha_finish(&ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha384_thousand_bs, digest, sizeof(sha384_thousand_bs));
 
     free(input);
@@ -151,7 +143,6 @@ TEST_CASE("multi update SHA ROM function", "[esp32c]")
 TEST_CASE("interleaved SHA ROM functions", "[esp32c]")
 {
     SHA_CTX sha1_ctx, sha256_ctx, sha384_ctx, sha512_ctx;
-    bool state_in_hardware;
     size_t len_input = 1000;
     uint8_t *input_as = malloc(len_input);
     uint8_t *input_bs = malloc(len_input);
@@ -169,32 +160,33 @@ TEST_CASE("interleaved SHA ROM functions", "[esp32c]")
 
     assert(len_input % 8 == 0);
     for (int i = 0; i < len_input; i += 8) {
-        state_in_hardware = false;
-        ets_sha_update(&sha1_ctx, &input_as[i], 4, &state_in_hardware, false);
-        ets_sha_update(&sha1_ctx, &input_as[i+4], 4, &state_in_hardware, true);
+        sha1_ctx.in_hardware = false;
+        ets_sha_update(&sha1_ctx, &input_as[i], 4, false);
+        ets_sha_update(&sha1_ctx, &input_as[i+4], 4, true);
 
-        ets_sha_update(&sha256_ctx, &input_bs[i], 8, NULL, true);
+        sha256_ctx.in_hardware = false;
+        ets_sha_update(&sha256_ctx, &input_bs[i], 8, true);
 
-        state_in_hardware = false;
-        ets_sha_update(&sha384_ctx, &input_bs[i], 4, NULL, true);
+        sha384_ctx.in_hardware = false;
+        ets_sha_update(&sha384_ctx, &input_bs[i], 4, true);
 
-        state_in_hardware = false;
-        ets_sha_update(&sha512_ctx, &input_bs[i], 8, NULL, true);
+        sha512_ctx.in_hardware = false;
+        ets_sha_update(&sha512_ctx, &input_bs[i], 8, true);
 
-        state_in_hardware = false;
-        ets_sha_update(&sha384_ctx, &input_bs[i+4], 4, NULL, true);
+        sha384_ctx.in_hardware = false;
+        ets_sha_update(&sha384_ctx, &input_bs[i+4], 4, true);
     }
 
-    ets_sha_finish(&sha384_ctx, digest, state_in_hardware); // state_in_hardware matches last update
+    ets_sha_finish(&sha384_ctx, digest); // state_in_hardware matches last update
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha384_thousand_bs, digest, sizeof(sha384_thousand_bs));
 
-    ets_sha_finish(&sha1_ctx, digest, false);
+    ets_sha_finish(&sha1_ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha1_thousand_as, digest, sizeof(sha1_thousand_as));
 
-    ets_sha_finish(&sha256_ctx, digest, false);
+    ets_sha_finish(&sha256_ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha256_thousand_bs, digest, sizeof(sha256_thousand_bs));
 
-    ets_sha_finish(&sha512_ctx, digest, false);
+    ets_sha_finish(&sha512_ctx, digest);
     TEST_ASSERT_EQUAL_HEX8_ARRAY(sha512_thousand_bs, digest, sizeof(sha512_thousand_bs));
 
     free(input_as);
