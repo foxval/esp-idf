@@ -360,6 +360,7 @@ static void load_image(const esp_image_metadata_t* image_data)
            so issue a system reset to ensure flash encryption
            cache resets properly */
         ESP_LOGI(TAG, "Resetting with flash encryption enabled...");
+        uart_tx_wait_idle(0);
         REG_WRITE(RTC_CNTL_OPTIONS0_REG, RTC_CNTL_SW_SYS_RST);
         return;
     }

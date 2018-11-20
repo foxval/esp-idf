@@ -24,34 +24,6 @@ static const char* TAG = "secure_boot";
 
 #define DIGEST_LEN 32
 
-// TODO: This is just for testing, needs replacing with a proper
-// workflow for secure boot key digest loading
-void temp_load_keys_efuse()
-{
-    // digest of secure_boot_signing_key0.pem
-    const unsigned char digest0_bin[] = {
-        0x91, 0x90, 0xb7, 0xf9, 0x47, 0x3c, 0x11, 0x80, 0x76, 0x89, 0x69, 0x92,
-        0x2f, 0xcf, 0xba, 0xc0, 0x38, 0x92, 0xe2, 0x77, 0x86, 0x52, 0x65, 0xd6,
-        0xad, 0x96, 0xba, 0xef, 0x28, 0xcc, 0x89, 0xcf
-    };
-
-    ets_efuse_clear_program_registers();
-    REG_SET_BIT(EFUSE_PGM_DATA3_REG, EFUSE_SECURE_BOOT_AGGRESSIVE_REVOKE);
-    ets_efuse_program(ETS_EFUSE_BLOCK0);
-    ESP_LOGE(TAG, "Aggressive revoke enabled");
-
-    if(!ets_efuse_find_purpose(ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0, NULL) && ets_efuse_key_block_unused(ETS_EFUSE_BLOCK_KEY0)) {
-        ESP_LOGI(TAG, "Writing digest of secure_boot_signing_key0.pem to key slot 0...");
-        ets_efuse_write_key(ETS_EFUSE_BLOCK_KEY0,
-                            ETS_EFUSE_KEY_PURPOSE_SECURE_BOOT_DIGEST0,
-                            digest0_bin,
-                            sizeof(digest0_bin));
-    } else {
-        ESP_LOGI(TAG, "Efuse already written");
-    }
-}
-
-
 // TODO: This function is basically the same as its ESP32 equivalent
 esp_err_t esp_secure_boot_verify_signature(uint32_t src_addr, uint32_t length)
 {
@@ -83,8 +55,6 @@ esp_err_t esp_secure_boot_verify_signature(uint32_t src_addr, uint32_t length)
 
 esp_err_t esp_secure_boot_verify_signature_block(uint32_t sig_block_flash_offs, const uint8_t *image_digest)
 {
-    temp_load_keys_efuse();
-
     ets_secure_boot_key_digests_t trusted_keys;
 
     assert(sig_block_flash_offs % 4096 == 0); // TODO: enforce this in a better way

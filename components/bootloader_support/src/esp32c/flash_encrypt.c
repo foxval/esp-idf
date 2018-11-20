@@ -260,9 +260,10 @@ static esp_err_t encrypt_partition(int index, const esp_partition_info_t *partit
     }
     else {
         /* should_encrypt */
-        ESP_LOGI(TAG, "Encrypting partition %d at offset 0x%x...", index, partition->pos.offset);
+        ESP_LOGI(TAG, "Encrypting partition %d at offset 0x%x (length 0x%x)...", index, partition->pos.offset, partition->pos.size);
 
         err = esp_flash_encrypt_region(partition->pos.offset, partition->pos.size);
+        ESP_LOGI(TAG, "Done encrypting");
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "Failed to encrypt partition %d", index);
         }

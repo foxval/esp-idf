@@ -15,6 +15,7 @@
 #include <sys/param.h>
 
 #include <rom/rtc.h>
+#include <rom/secure_boot.h>
 #include <soc/cpu.h>
 #include <esp_image_format.h>
 #include <esp_secure_boot.h>
@@ -168,13 +169,21 @@ goto err;
         FAIL_LOAD("Image length %d doesn't fit in partition length %d", data->image_len, part->size);
     }
 
-    bool is_bootloader = (data->start_addr == ESP_BOOTLOADER_OFFSET);
-    /* For secure boot, we don't verify signature on bootloaders.
+    /* For ESP32, we don't verify either Secure Boot signature or "simple" SHA-256 hash on bootloaders.
+
+       For ESP32C, we do verify Secure Boot signature on bootloaders.
 
        For non-secure boot, we don't verify any SHA-256 hash appended to the bootloader because esptool.py may have
        rewritten the header - rely on esptool.py having verified the bootloader at flashing time, instead.
     */
-    if (!is_bootloader) {
+    bool should_verify;
+#if defined(CONFIG_SECURE_BOOT_ENABLED) && defined(CONFIG_CHIP_IS_ESP32C)
+    should_verify = true;
+#else // ESP32, or 32C without secure boot enabled
+    should_verify = (data->start_addr != ESP_BOOTLOADER_OFFSET);
+#endif
+
+    if (should_verify) {
 #ifdef CONFIG_SECURE_BOOT_ENABLED
         // secure boot images have a signature appended
         err = verify_secure_boot_signature(sha_handle, data);
@@ -190,7 +199,7 @@ goto err;
 #endif
         }
 #endif // CONFIG_SECURE_BOOT_ENABLED
-    } else { // is_bootloader
+    } else { // !should_verify
         // bootloader may still have a sha256 digest handle open
         if (sha_handle != NULL) {
             bootloader_sha256_finish(sha_handle, NULL);
@@ -542,6 +551,11 @@ static esp_err_t verify_secure_boot_signature(bootloader_sha256_handle_t sha_han
         }
         return ESP_ERR_IMAGE_INVALID;
     }
+
+#ifdef CONFIG_CHIP_IS_ESP32C
+    // Adjust image length result to include the appended signature
+    data->image_len = end - data->start_addr + sizeof(ets_secure_boot_signature_t);
+#endif
 
     return ESP_OK;
 }
