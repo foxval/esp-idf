@@ -27,7 +27,7 @@
 /* Configuration registers */
 #define RSA_M_DASH_REG                (DR_REG_RSA_BASE + 0x800)
 #define RSA_LENGTH_REG                (DR_REG_RSA_BASE + 0x804)
-#define RSA_CONSTANT_TIME_DISABLE_REG (DR_REG_RSA_BASE + 0x820)
+#define RSA_CONSTANT_TIME_REG         (DR_REG_RSA_BASE + 0x820)
 #define RSA_SEARCH_OPEN_REG           (DR_REG_RSA_BASE + 0x824)
 #define RSA_SEARCH_POS_REG            (DR_REG_RSA_BASE + 0x828)
 
@@ -73,5 +73,35 @@
 #define AES_KEY_BASE            ((DR_REG_AES_BASE) + 0x00)
 #define AES_TEXT_IN_BASE        ((DR_REG_AES_BASE) + 0x20)
 #define AES_TEXT_OUT_BASE       ((DR_REG_AES_BASE) + 0x30)
+
+/* HMAC Module */
+#define HMAC_SET_START_REG             ((DR_REG_HMAC_BASE) + 0x40)
+#define HMAC_SET_PARA_PURPOSE_REG      ((DR_REG_HMAC_BASE) + 0x44)
+#define HMAC_SET_PARA_KEY_REG          ((DR_REG_HMAC_BASE) + 0x48)
+#define HMAC_SET_PARA_FINISH_REG       ((DR_REG_HMAC_BASE) + 0x4c)
+#define HMAC_SET_MESSAGE_ONE_REG       ((DR_REG_HMAC_BASE) + 0x50)
+#define HMAC_SET_MESSAGE_ING_REG       ((DR_REG_HMAC_BASE) + 0x54)
+#define HMAC_SET_MESSAGE_END_REG       ((DR_REG_HMAC_BASE) + 0x58)
+#define HMAC_SET_RESULT_FINISH_REG     ((DR_REG_HMAC_BASE) + 0x5c)
+#define HMAC_SET_INVALIDATE_JTAG_REG   ((DR_REG_HMAC_BASE) + 0x60)
+#define HMAC_SET_INVALIDATE_DS_REG     ((DR_REG_HMAC_BASE) + 0x64)
+#define HMAC_QUERY_ERROR_REG           ((DR_REG_HMAC_BASE) + 0x68)
+#define HMAC_QUERY_BUSY_REG            ((DR_REG_HMAC_BASE) + 0x6c)
+
+
+#define HMAC_WDATA_BASE                ((DR_REG_HMAC_BASE) + 0x80)
+#define HMAC_RDATA_BASE                ((DR_REG_HMAC_BASE) + 0xC0)
+#define HMAC_SET_MESSAGE_PAD_REG       ((DR_REG_HMAC_BASE) + 0xF0)
+
+/* AES-XTS registers */
+#define AES_XTS_PLAIN_BASE        ((DR_REG_AES_BASE) + 0x80)
+#define AES_XTS_SIZE_REG          ((DR_REG_AES_BASE) + 0xC0)
+#define AES_XTS_DESTINATION_REG   ((DR_REG_AES_BASE) + 0xC4)
+#define AES_XTS_PHYSICAL_ADDR_REG ((DR_REG_AES_BASE) + 0xC8)
+
+#define AES_XTS_TRIGGER_REG       ((DR_REG_AES_BASE) + 0xCC)
+#define AES_XTS_RELEASE_REG       ((DR_REG_AES_BASE) + 0xD0)
+#define AES_XTS_DESTROY_REG       ((DR_REG_AES_BASE) + 0xD4)
+#define AES_XTS_STATE_REG         ((DR_REG_AES_BASE) + 0xD8)
 
 #endif

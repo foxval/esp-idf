@@ -281,6 +281,8 @@
 #define SOC_IRAM_HIGH   0x40070000
 #define SOC_RTC_IRAM_LOW  0x40070000
 #define SOC_RTC_IRAM_HIGH 0x40072000
+#define SOC_RTC_DRAM_LOW  0x3ff9e000
+#define SOC_RTC_DRAM_HIGH 0x3ffa0000
 #define SOC_RTC_DATA_LOW  0x50000000
 #define SOC_RTC_DATA_HIGH 0x50002000
 #define SOC_EXTRAM_DATA_LOW 0x3F500000
@@ -299,12 +301,12 @@
 #define SOC_DMA_HIGH 0x40000000
 
 // Region of memory that is byte-accessible. See esp_ptr_byte_accessible().
-#define SOC_BYTE_ACCESSIBLE_LOW     0x3FFA0000
+#define SOC_BYTE_ACCESSIBLE_LOW     0x3FF9E000
 #define SOC_BYTE_ACCESSIBLE_HIGH    0x40000000
 
 //Region of memory that is internal, as in on the same silicon die as the ESP32 CPUs
 //(excluding RTC data region, that's checked separately.) See esp_ptr_internal().
-#define SOC_MEM_INTERNAL_LOW        0x3FFA0000
+#define SOC_MEM_INTERNAL_LOW        0x3FF9E000
 #define SOC_MEM_INTERNAL_HIGH       0x40072000
 
 //interrupt cpu using table, Please see the core-isa.h
