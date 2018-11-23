@@ -40,12 +40,18 @@ extern "C" {
 #define EFUSE_SDIO_MODECURLIM_M  (BIT(29))
 #define EFUSE_SDIO_MODECURLIM_V  0x1
 #define EFUSE_SDIO_MODECURLIM_S  29
-/* EFUSE_USB_DRES : RO ;bitpos:[28:26] ;default: 3'b0 ; */
+/* EFUSE_USB_DRES : R/W ;bitpos:[28:27] ;default: 2'b0 ; */
 /*description: */
-#define EFUSE_USB_DRES  0x00000007
+#define EFUSE_USB_DRES  0x00000003
 #define EFUSE_USB_DRES_M  ((EFUSE_USB_DRES_V)<<(EFUSE_USB_DRES_S))
-#define EFUSE_USB_DRES_V  0x7
-#define EFUSE_USB_DRES_S  26
+#define EFUSE_USB_DRES_V  0x3
+#define EFUSE_USB_DRES_S  27
+/* EFUSE_USB_FORCE_B : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_USB_FORCE_B  (BIT(26))
+#define EFUSE_USB_FORCE_B_M  (BIT(26))
+#define EFUSE_USB_FORCE_B_V  0x1
+#define EFUSE_USB_FORCE_B_S  26
 /* EFUSE_USB_EXT_PHY_ENABLE : RO ;bitpos:[25] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_USB_EXT_PHY_ENABLE  (BIT(25))
@@ -440,12 +446,18 @@ extern "C" {
 #define EFUSE_SDIO_MODECURLIM_M  (BIT(29))
 #define EFUSE_SDIO_MODECURLIM_V  0x1
 #define EFUSE_SDIO_MODECURLIM_S  29
-/* EFUSE_USB_DRES : RO ;bitpos:[28:26] ;default: 3'b0 ; */
+/* EFUSE_USB_DRES : RO ;bitpos:[28:27] ;default: 2'b0 ; */
 /*description: */
-#define EFUSE_USB_DRES  0x00000007
+#define EFUSE_USB_DRES  0x00000003
 #define EFUSE_USB_DRES_M  ((EFUSE_USB_DRES_V)<<(EFUSE_USB_DRES_S))
-#define EFUSE_USB_DRES_V  0x7
-#define EFUSE_USB_DRES_S  26
+#define EFUSE_USB_DRES_V  0x3
+#define EFUSE_USB_DRES_S  27
+/* EFUSE_USB_FORCE_B : RO ;bitpos:[26] ;default: 1'b0 ; */
+/*description: */
+#define EFUSE_USB_FORCE_B  (BIT(26))
+#define EFUSE_USB_FORCE_B_M  (BIT(26))
+#define EFUSE_USB_FORCE_B_V  0x1
+#define EFUSE_USB_FORCE_B_S  26
 /* EFUSE_USB_EXT_PHY_ENABLE : RO ;bitpos:[25] ;default: 1'b0 ; */
 /*description: */
 #define EFUSE_USB_EXT_PHY_ENABLE  (BIT(25))

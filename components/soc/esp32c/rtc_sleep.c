@@ -173,11 +173,13 @@ void rtc_sleep_init(rtc_sleep_config_t cfg)
         CLEAR_PERI_REG_MASK(RTC_CNTL_DIG_PWC_REG, RTC_CNTL_WIFI_PD_EN);
     }
 
+#ifdef CONFIG_CHIP_IS_ESP32
     if (cfg.rom_mem_pd_en) {
         SET_PERI_REG_MASK(RTC_CNTL_DIG_PWC_REG, RTC_CNTL_CPU_ROM_RAM_PD_EN);
     } else {
         CLEAR_PERI_REG_MASK(RTC_CNTL_DIG_PWC_REG, RTC_CNTL_CPU_ROM_RAM_PD_EN);
     }
+#endif
 
     if (cfg.deep_slp) {
         CLEAR_PERI_REG_MASK(RTC_CNTL_DIG_ISO_REG,

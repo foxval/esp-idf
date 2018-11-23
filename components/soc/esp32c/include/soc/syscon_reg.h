@@ -787,8 +787,9 @@ extern "C" {
 #define DPORT_WIFI_CLK_EN_V  0xFFFFFFFF
 #define DPORT_WIFI_CLK_EN_S  0
 
-/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15 */
-#define DPORT_WIFI_CLK_WIFI_EN  0x000007cf
+/* Mask for all Wifi clock bits - 0, 1, 2, 3, 6, 7, 8, 9, 10, 15, 19, 20, 21
+   Bit15 not included here because of the bit now can't be cleared */
+#define DPORT_WIFI_CLK_WIFI_EN  0x003807cf
 #define DPORT_WIFI_CLK_WIFI_EN_M  ((DPORT_WIFI_CLK_WIFI_EN_V)<<(DPORT_WIFI_CLK_WIFI_EN_S))
 #define DPORT_WIFI_CLK_WIFI_EN_V  0x7cf
 #define DPORT_WIFI_CLK_WIFI_EN_S  0
