@@ -180,16 +180,16 @@ choice SCAN_DUPLICATE_TYPE
     default SCAN_DUPLICATE_BY_DEVICE_ADDR
     depends on BLE_SCAN_DUPLICATE
     help
-        Scan duplicate have three ways. one is "Scan Duplicate By Device Address", This way is to use advertiser address 
-        filtering. The adv packet of the same address is only allowed to be reported once. Another way is "Scan Duplicate 
-        By Device Address And Advertising Data". This way is to use advertising data and device address filtering. All 
-        different adv packets with the same address are allowed to be reported. The last way is "Scan Duplicate By Advertising 
+        Scan duplicate have three ways. one is "Scan Duplicate By Device Address", This way is to use advertiser address
+        filtering. The adv packet of the same address is only allowed to be reported once. Another way is "Scan Duplicate
+        By Device Address And Advertising Data". This way is to use advertising data and device address filtering. All
+        different adv packets with the same address are allowed to be reported. The last way is "Scan Duplicate By Advertising
         Data". This way is to use advertising data filtering. All same advertising data only allow to be reported once even though
         they are from different devices.
 
 config SCAN_DUPLICATE_BY_DEVICE_ADDR
     bool "Scan Duplicate By Device Address"
-    help 
+    help
         This way is to use advertiser address filtering. The adv packet of the same address is only allowed to be reported once
 
 config SCAN_DUPLICATE_BY_ADV_DATA
@@ -201,7 +201,7 @@ config SCAN_DUPLICATE_BY_ADV_DATA
 config SCAN_DUPLICATE_BY_ADV_DATA_AND_DEVICE_ADDR
     bool "Scan Duplicate By Device Address And Advertising Data"
     help
-    This way is to use advertising data and device address filtering. All different adv packets with the same address are 
+    This way is to use advertising data and device address filtering. All different adv packets with the same address are
     allowed to be reported.
 endchoice
 
@@ -335,16 +335,23 @@ choice HFP_AUDIO_DATA_PATH
 config HFP_AUDIO_DATA_PATH_PCM
     bool "PCM"
     help
-        This enables the Serial Port Profile
+        This enables the PCM interface
 config HFP_AUDIO_DATA_PATH_HCI
     bool "HCI"
     help
-        This enables the Serial Port Profile
+        This enables the HCI interface
 endchoice
+
+config BLE_ENABLED
+    bool "Bluetooth Low Energy"
+    depends on BLUEDROID_ENABLED && (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+    default y
+    help
+        This enables Bluetooth Low Energy
 
 config GATTS_ENABLE
     bool "Include GATT server module(GATTS)"
-    depends on BLUEDROID_ENABLED && (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+    depends on BLE_ENABLED
     default y
     help
         This option can be disabled when the app work only on gatt client mode
@@ -377,7 +384,7 @@ config GATTS_SEND_SERVICE_CHANGE_MODE
 
 config GATTC_ENABLE
     bool "Include GATT client module(GATTC)"
-    depends on BLUEDROID_ENABLED && (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+    depends on BLE_ENABLED
     default y
     help
         This option can be close when the app work only on gatt server mode
@@ -391,7 +398,7 @@ config GATTC_CACHE_NVS_FLASH
 
 config BLE_SMP_ENABLE
    bool "Include BLE security module(SMP)"
-   depends on BLUEDROID_ENABLED && (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+   depends on BLE_ENABLED
    default y
    help
        This option can be close when the app not used the ble security connect.
