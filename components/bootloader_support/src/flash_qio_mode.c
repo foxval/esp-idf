@@ -20,6 +20,7 @@
 #include "rom/efuse.h"
 #include "soc/spi_mem_struct.h"
 #include "soc/efuse_reg.h"
+#include "soc/io_mux_reg.h"
 #include "sdkconfig.h"
 
 /* SPI flash controller */
@@ -252,7 +253,15 @@ static esp_err_t enable_qio_mode(read_status_fn_t read_status_fn,
 
     esp_rom_spiflash_config_readmode(mode);
 
+#ifdef CONFIG_CHIP_IS_ESP32
     esp_rom_spiflash_select_qio_pins(CONFIG_BOOTLOADER_SPI_WP_PIN, spiconfig);
+#else
+    if (ets_efuse_get_wp_pad() <= MAX_PAD_GPIO_NUM) {
+        esp_rom_spiflash_select_qio_pins(ets_efuse_get_wp_pad(), spiconfig);
+    } else {
+        esp_rom_spiflash_select_qio_pins(CONFIG_BOOTLOADER_SPI_WP_PIN, spiconfig);
+    }
+#endif
 
     return ESP_OK;
 }
