@@ -23,21 +23,22 @@
 #define BTC_LE_LOCAL_KEY_DHK      (1<<2)
 #define BTC_LE_LOCAL_KEY_ER       (1<<3)
 
-#define BTC_BLE_STORAGE_DEV_TYPE_STR                "DevType"
-#define BTC_BLE_STORAGE_ADDR_TYPE_STR               "AddrType"
-#define BTC_BLE_STORAGE_LINK_KEY_STR                "LinkKey"
-#define BTC_BLE_STORAGE_LE_KEY_PENC_STR             "LE_KEY_PENC"
-#define BTC_BLE_STORAGE_LE_KEY_PID_STR              "LE_KEY_PID"
-#define BTC_BLE_STORAGE_LE_KEY_PCSRK_STR            "LE_KEY_PCSRK"
-#define BTC_BLE_STORAGE_LE_KEY_LENC_STR             "LE_KEY_LENC"
-#define BTC_BLE_STORAGE_LE_KEY_LID_STR              "LE_KEY_LID"
-#define BTC_BLE_STORAGE_LE_KEY_LCSRK_STR            "LE_KEY_LCSRK"
+#define BTC_BLE_STORAGE_DEV_TYPE                BTC_CONFIG_DEV_TYPE
+#define BTC_BLE_STORAGE_ADDR_TYPE               BTC_CONFIG_ADDR_TYPE
+#define BTC_BLE_STORAGE_LINK_KEY                BTC_CONFIG_LINK_KEY
+#define BTC_BLE_STORAGE_LE_KEY_PENC             BTC_CONFIG_LE_KEY_PENC
+#define BTC_BLE_STORAGE_LE_KEY_PID              BTC_CONFIG_LE_KEY_PID
+#define BTC_BLE_STORAGE_LE_KEY_PCSRK            BTC_CONFIG_LE_KEY_PCSRK
+#define BTC_BLE_STORAGE_LE_KEY_LENC             BTC_CONFIG_LE_KEY_LENC
+#define BTC_BLE_STORAGE_LE_KEY_LID              BTC_CONFIG_LE_KEY_LID
+#define BTC_BLE_STORAGE_LE_KEY_LCSRK            BTC_CONFIG_LE_KEY_LCSRK
+
+#define BTC_BLE_STORAGE_LE_LOCAL_KEY_IR         BTC_CONFIG_LE_LOCAL_KEY_IR
+#define BTC_BLE_STORAGE_LE_LOCAL_KEY_IRK        BTC_CONFIG_LE_LOCAL_KEY_IRK
+#define BTC_BLE_STORAGE_LE_LOCAL_KEY_DHK        BTC_CONFIG_LE_LOCAL_KEY_DHK
+#define BTC_BLE_STORAGE_LE_LOCAL_KEY_ER         BTC_CONFIG_LE_LOCAL_KEY_ER
 
 #define BTC_BLE_STORAGE_LOCAL_ADAPTER_STR           "Adapter"
-#define BTC_BLE_STORAGE_LE_LOCAL_KEY_IR_STR         "LE_LOCAL_KEY_IR"
-#define BTC_BLE_STORAGE_LE_LOCAL_KEY_IRK_STR        "LE_LOCAL_KEY_IRK"
-#define BTC_BLE_STORAGE_LE_LOCAL_KEY_DHK_STR        "LE_LOCAL_KEY_DHK"
-#define BTC_BLE_STORAGE_LE_LOCAL_KEY_ER_STR         "LE_LOCAL_KEY_ER"
 
 /************************************************************************************
 **  Local type definitions
@@ -57,8 +58,6 @@ bt_status_t btc_storage_add_ble_bonding_key( bt_bdaddr_t *remote_bd_addr, char *
 bt_status_t btc_storage_get_ble_bonding_key(bt_bdaddr_t *remote_bd_addr, uint8_t key_type, char *key_value, int key_length);
 
 bt_status_t btc_storage_remove_ble_bonding_keys(bt_bdaddr_t *remote_bd_addr);
-
-bool btc_storage_compare_address_key_value(bt_bdaddr_t *remote_bd_addr, uint8_t key_type, void *key_value, int key_length);
 
 bt_status_t btc_storage_add_ble_local_key(char *key, uint8_t key_type, uint8_t key_length);
 

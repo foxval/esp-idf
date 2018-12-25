@@ -21,10 +21,10 @@
 #include "esp_gap_bt_api.h"
 
 
-#define BTC_STORAGE_DEV_CLASS_STR       "DevClass"
-#define BTC_STORAGE_LINK_KEY_STR        "LinkKey"    /* same as the ble */
-#define BTC_STORAGE_LINK_KEY_TYPE_STR   "LinkKeyType"
-#define BTC_STORAGE_PIN_LENGTH_STR      "PinLength"
+#define BTC_STORAGE_DEV_CLASS       BTC_CONFIG_DEV_CLASS
+#define BTC_STORAGE_LINK_KEY        BTC_CONFIG_LINK_KEY
+#define BTC_STORAGE_LINK_KEY_TYPE   BTC_CONFIG_LINK_KEY_TYPE
+#define BTC_STORAGE_PIN_LENGTH      BTC_CONFIG_PIN_LENGTH
 
 /*******************************************************************************
 **

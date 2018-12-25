@@ -28,43 +28,33 @@
 #include "osi/mutex.h"
 
 #include "stack/bt_types.h"
+#include "btc/btc_config.h"
+
+const char *btc_key_name[] = {
+    "",
+    "DEV_CLASS",            /* BTC_CONFIG_DEV_CLASS */
+    "PIN_LENGTH",           /* BTC_CONFIG_PIN_LENGTH */
+    "LINK_KEY_TYPE",        /* BTC_CONFIG_LINK_KEY_TYPE */
+    "LINK_KEY",             /* BTC_CONFIG_LINK_KEY */
+    "DEV_TYPE",             /* BTC_CONFIG_DEV_TYPE */
+    "ADDR_TYPE",            /* BTC_CONFIG_ADDR_TYPE */
+    "LE_KEY_PENC",          /* BTC_CONFIG_LE_KEY_PENC */
+    "LE_KEY_PID",           /* BTC_CONFIG_LE_KEY_PID */
+    "LE_KEY_PCSRK",         /* BTC_CONFIG_LE_KEY_PCSRK */
+    "LE_KEY_LENC",          /* BTC_CONFIG_LE_KEY_LENC */
+    "LE_KEY_LID",           /* BTC_CONFIG_LE_KEY_LID */
+    "LE_KEY_LCSRK",         /* BTC_CONFIG_LE_KEY_LCSRK */
+    "LE_LOCAL_KEY_IR",      /* BTC_CONFIG_LE_LOCAL_KEY_IR */
+    "LE_LOCAL_KEY_IRK",     /* BTC_CONFIG_LE_LOCAL_KEY_IRK */
+    "LE_LOCAL_KEY_DHK",     /* BTC_CONFIG_LE_LOCAL_KEY_DHK */
+    "LE_LOCAL_KEY_ER"       /* BTC_CONFIG_LE_LOCAL_KEY_ER */
+};
 
 static const char *CONFIG_FILE_PATH = "bt_config.conf";
 static const period_ms_t CONFIG_SETTLE_PERIOD_MS = 3000;
 
-static void btc_key_value_to_string(uint8_t *key_value, char *value_str, int key_length);
 static osi_mutex_t lock;  // protects operations on |config|.
 static config_t *config;
-
-bool btc_compare_address_key_value(const char *section, const char *key_type, void *key_value, int key_length)
-{
-    assert(key_value != NULL);
-    bool status = false;
-    char value_str[100] = {0};
-    if(key_length > sizeof(value_str)/2) {
-        return false;
-    }
-    btc_key_value_to_string((uint8_t *)key_value, value_str, key_length);
-    if ((status = config_has_key_in_section(config, key_type, value_str)) == true) {
-        config_remove_section(config, section);
-    }
-    return status;
-}
-
-static void btc_key_value_to_string(uint8_t *key_value, char *value_str, int key_length)
-{
-    const char *lookup = "0123456789abcdef";
-
-    assert(key_value != NULL);
-    assert(value_str != NULL);
-
-    for (size_t i = 0; i < key_length; ++i) {
-        value_str[(i * 2) + 0] = lookup[(key_value[i] >> 4) & 0x0F];
-        value_str[(i * 2) + 1] = lookup[key_value[i] & 0x0F];
-    }
-
-    return;
-}
 
 // Module lifecycle functions
 
@@ -73,25 +63,12 @@ bool btc_config_init(void)
     osi_mutex_new(&lock);
     config = config_new(CONFIG_FILE_PATH);
     if (!config) {
-        BTC_TRACE_WARNING("%s unable to load config file; starting unconfigured.\n", __func__);
-        config = config_new_empty();
-        if (!config) {
-            BTC_TRACE_ERROR("%s unable to allocate a config object.\n", __func__);
-            goto error;
-        }
-    }
-    if (config_save(config, CONFIG_FILE_PATH)) {
-        // unlink(LEGACY_CONFIG_FILE_PATH);
+        BTC_TRACE_ERROR("%s unable to allocate a config object.\n", __func__);
+        osi_mutex_free(&lock);
+        return false;
     }
 
     return true;
-
-error:;
-    config_free(config);
-    osi_mutex_free(&lock);
-    config = NULL;
-    BTC_TRACE_ERROR("%s failed\n", __func__);
-    return false;
 }
 
 bool btc_config_shut_down(void)
@@ -118,147 +95,99 @@ bool btc_config_has_section(const char *section)
     return config_has_section(config, section);
 }
 
-bool btc_config_exist(const char *section, const char *key)
+bool btc_config_exist(const char *section, btc_key_type_t key)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
 
     return config_has_key(config, section, key);
 }
 
-bool btc_config_get_int(const char *section, const char *key, int *value)
+bool btc_config_get_int(const char *section, btc_key_type_t key, int *value)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
     assert(value != NULL);
 
-    bool ret = config_has_key(config, section, key);
-    if (ret) {
-        *value = config_get_int(config, section, key, *value);
+    uint16_t length = sizeof(int);
+    int val = 0;
+    bool ret = config_get(config, section, key, &val, &length);
+    if (ret && length == sizeof(int)) {
+        *value = val;
+        return true;
     }
 
-    return ret;
+    return false;
 }
 
-bool btc_config_set_int(const char *section, const char *key, int value)
+bool btc_config_set_int(const char *section, btc_key_type_t key, int value)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
 
-    config_set_int(config, section, key, value);
+    config_set(config, section, key, &value, sizeof(int));
 
     return true;
 }
 
-bool btc_config_get_str(const char *section, const char *key, char *value, int *size_bytes)
+bool btc_config_get_str(const char *section, btc_key_type_t key, char *value, int *size_bytes)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
     assert(value != NULL);
     assert(size_bytes != NULL);
 
-    const char *stored_value = config_get_string(config, section, key, NULL);
+    bool ret = config_get(config, section, key, value, (uint16_t *)size_bytes);
 
-    if (!stored_value) {
+    if (!ret) {
         return false;
     }
 
-    strlcpy(value, stored_value, *size_bytes);
-    *size_bytes = strlen(value) + 1;
-
     return true;
 }
 
-bool btc_config_set_str(const char *section, const char *key, const char *value)
+bool btc_config_set_str(const char *section, btc_key_type_t key, const char *value)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
     assert(value != NULL);
 
-    config_set_string(config, section, key, value, false);
+    config_set(config, section, key, (void *)value, strlen(value));
 
     return true;
 }
 
-bool btc_config_get_bin(const char *section, const char *key, uint8_t *value, size_t *length)
+bool btc_config_get_bin(const char *section, btc_key_type_t key, uint8_t *value, size_t *length)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
     assert(value != NULL);
     assert(length != NULL);
 
-    const char *value_str = config_get_string(config, section, key, NULL);
-
-    if (!value_str) {
-        return false;
-    }
-
-    size_t value_len = strlen(value_str);
-    if ((value_len % 2) != 0 || *length < (value_len / 2)) {
-        return false;
-    }
-
-    for (size_t i = 0; i < value_len; ++i)
-        if (!isxdigit((unsigned char)value_str[i])) {
-            return false;
-        }
-
-    for (*length = 0; *value_str; value_str += 2, *length += 1) {
-        unsigned int val;
-        sscanf(value_str, "%02x", &val);
-        value[*length] = (uint8_t)(val);
-    }
-
-    return true;
+    return config_get(config, section, key, value, (uint16_t *)length);
 }
 
-size_t btc_config_get_bin_length(const char *section, const char *key)
+size_t btc_config_get_bin_length(const char *section, btc_key_type_t key)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
 
-    const char *value_str = config_get_string(config, section, key, NULL);
+    uint16_t length = 0;
+    config_get(config, section, key, NULL, &length);
 
-    if (!value_str) {
-        return 0;
-    }
-
-    size_t value_len = strlen(value_str);
-    return ((value_len % 2) != 0) ? 0 : (value_len / 2);
+    return (size_t)length;
 }
 
-bool btc_config_set_bin(const char *section, const char *key, const uint8_t *value, size_t length)
+bool btc_config_set_bin(const char *section, btc_key_type_t key, const uint8_t *value, size_t length)
 {
-    const char *lookup = "0123456789abcdef";
-
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
 
     if (length > 0) {
         assert(value != NULL);
     }
 
-    char *str = (char *)osi_calloc(length * 2 + 1);
-    if (!str) {
-        return false;
-    }
-
-    for (size_t i = 0; i < length; ++i) {
-        str[(i * 2) + 0] = lookup[(value[i] >> 4) & 0x0F];
-        str[(i * 2) + 1] = lookup[value[i] & 0x0F];
-    }
-
-    config_set_string(config, section, key, str, false);
-
-    osi_free(str);
+    config_set(config, section, key, (void *)value, length);
     return true;
 }
 
@@ -290,11 +219,10 @@ const char *btc_config_section_name(const btc_config_section_iter_t *section)
 
 
 
-bool btc_config_remove(const char *section, const char *key)
+bool btc_config_remove(const char *section, btc_key_type_t key)
 {
     assert(config != NULL);
     assert(section != NULL);
-    assert(key != NULL);
 
     return config_remove_key(config, section, key);
 }
@@ -311,21 +239,14 @@ void btc_config_flush(void)
 {
     assert(config != NULL);
 
-    config_save(config, CONFIG_FILE_PATH);
+    config_save(config);
 }
 
-int btc_config_clear(void)
+void btc_config_clear(void)
 {
     assert(config != NULL);
 
-    config_free(config);
-
-    config = config_new_empty();
-    if (config == NULL) {
-        return false;
-    }
-    int ret = config_save(config, CONFIG_FILE_PATH);
-    return ret;
+    config_clear(config);
 }
 
 void btc_config_lock(void)
@@ -338,3 +259,117 @@ void btc_config_unlock(void)
     osi_mutex_unlock(&lock);
 }
 
+static void btc_config_show_section(const char *sec_name) {
+    btc_key_type_t key;
+    int value_int;
+    uint8_t value[BTC_CONFIG_FILE_MAX_SIZE];
+    size_t length = BTC_CONFIG_FILE_MAX_SIZE;
+
+    printf("[%s]\n", sec_name);
+    for (key = BTC_CONFIG_DEV_CLASS; key <= BTC_CONFIG_LE_LOCAL_KEY_ER; key++) {
+        if (btc_config_exist(sec_name, key)) {
+            if (key == BTC_CONFIG_PIN_LENGTH ||
+                key == BTC_CONFIG_LINK_KEY_TYPE ||
+                key == BTC_CONFIG_DEV_TYPE ||
+                key == BTC_CONFIG_ADDR_TYPE) {
+                btc_config_get_int(sec_name, key, &value_int);
+                printf("%s = ", btc_key_name[key]);
+                printf("%d\n", value_int);
+            } else {
+                length = BTC_CONFIG_FILE_MAX_SIZE;
+                btc_config_get_bin(sec_name, key, value, &length);
+                printf("%s = ", btc_key_name[key]);
+                for (int i = 0; i < length; ++i) {
+                    printf("%02x", value[i]);
+                }
+                printf("\n");
+            }
+        }
+    }
+    printf("\n");
+}
+
+/**
+ * This function is used for debug. It print all message in config.
+ * Extern then call it when you needed.
+ */
+void btc_config_show(void)
+{
+    assert(config != NULL);
+
+    const btc_config_section_iter_t *sec;
+    const char *sec_name;
+
+    printf("\n----------------------------\n");
+    for (sec = btc_config_section_begin(); sec != btc_config_section_end(); sec = btc_config_section_next(sec)) {
+        sec_name = btc_config_section_name(sec);
+        btc_config_show_section(sec_name);
+    }
+    printf("----------------------------\n\n");
+}
+
+static inline bool ets_isxdigit(char c)
+{
+    if ((c >= '0') && (c <= '9')) {
+        return true;
+    }
+    if ((c >= 'a') && (c <= 'f')) {
+        return true;
+    }
+    return ((c >= 'A') && (c <= 'F'));
+}
+
+const char *bdaddr_to_section_name(const bt_bdaddr_t *addr, char *string, size_t size)
+{
+    assert(addr != NULL);
+    assert(string != NULL);
+
+    if (size < 18) {
+        return NULL;
+    }
+
+    const uint8_t *ptr = addr->address;
+    sprintf(string, "%02x%02x%02x%02x%02x%02x",
+            ptr[0], ptr[1], ptr[2],
+            ptr[3], ptr[4], ptr[5]);
+    return string;
+}
+
+bool section_name_is_bdaddr(const char *string)
+{
+    assert(string != NULL);
+
+    size_t len = strlen(string);
+    if (len != 12) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; ++i) {
+        // All chars must be a hex digit.
+        if (!ets_isxdigit(string[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool section_name_to_bdaddr(const char *string, bt_bdaddr_t *addr)
+{
+    assert(string != NULL);
+    assert(addr != NULL);
+
+    bt_bdaddr_t new_addr;
+    uint8_t *ptr = new_addr.address;
+    uint32_t ptr_32[6];
+    bool ret  = sscanf(string, "%02x%02x%02x%02x%02x%02x",
+                      &ptr_32[0], &ptr_32[1], &ptr_32[2], &ptr_32[3], &ptr_32[4], &ptr_32[5]) == 6;
+    if (ret) {
+        for (uint8_t i = 0; i < 6; i++){
+            ptr[i] = (uint8_t) ptr_32[i];
+        }
+        memcpy(addr, &new_addr, sizeof(bt_bdaddr_t));
+    }
+
+    return ret;
+}
