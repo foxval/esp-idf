@@ -3,7 +3,6 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(COMPONENT_SRCS 
-                    "common/esp_modbus_common.c"
                     "common/esp_modbus_master.c"
                     "common/esp_modbus_slave.c"
                     "modbus/mb.c"

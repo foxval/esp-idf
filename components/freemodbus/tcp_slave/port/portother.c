@@ -62,7 +62,7 @@ int64_t xMBTCPGetTimeStamp()
 
 #ifdef MB_TCP_DEBUG
 void
-prvvMBTCPLogFrame( CHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
+prvvMBTCPLogFrame( const CHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
 {
     int             i;
     int             res = 0;

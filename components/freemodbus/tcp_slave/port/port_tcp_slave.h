@@ -86,7 +86,7 @@ typedef enum
 #ifdef MB_TCP_DEBUG
 void vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule,
                                                 const CHAR * szFmt, ... );
-void prvvMBTCPLogFrame( CHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen );
+void prvvMBTCPLogFrame( const CHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen );
 #endif
 
 int64_t xMBTCPGetTimeStamp( );
