@@ -73,6 +73,7 @@ const soc_memory_region_t soc_memory_regions[] = {
     { SOC_SLOW_EXTRAM_DATA_LOW, SOC_SLOW_EXTRAM_DATA_HIGH - SOC_SLOW_EXTRAM_DATA_LOW, 5, 0}, //SPI SRAM, if available
 #endif
 #endif
+#if 0 // karl
 #if CONFIG_INSTRUCTION_CACHE_8KB
 #if CONFIG_DATA_CACHE_0KB
     { 0x3FFB2000, 0x2000, 0, 0x400B2000}, //Block 1, can be use as I/D cache memory
@@ -111,6 +112,9 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFF4000, 0x4000, 0, 0x40064000}, //Block 19,  can be used for MAC dump, can be used as trace memory
     { 0x3FFF8000, 0x4000, 0, 0x40068000}, //Block 20,  can be used for MAC dump, can be used as trace memory
     { 0x3FFFC000, 0x4000, 1, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory, used for startup stack
+#endif /* #if 0 // karl */
+    { 0x3FF90000, 0x6C000, 0, 0},
+    { 0x3FFFC000, 0x4000,  1, 0}, // used for startup stack
 };
 
 const size_t soc_memory_region_count = sizeof(soc_memory_regions)/sizeof(soc_memory_region_t);

@@ -28,11 +28,11 @@ MEMORY
   are connected to the data port of the CPU and eg allow bytewise access. */
 
   /* IRAM for PRO cpu. Not sure if happy with this, this is MMU area... */
-  iram0_0_seg (RX) :                 org = 0x40028000, len = 0x18000
+  iram0_0_seg (RX) :                 org = 0x40028000, len = 0x98000
 
   /* Even though the segment name is iram, it is actually mapped to flash
   */
-  iram0_2_seg (RX) :                 org = 0x40080018, len = 0xb80000-0x18
+  iram0_2_seg (RX) :                 org = 0x400d0018, len = 0x330000-0x18
 
   /*
     (0x18 offset above is a convenience for the app binary image generation. Flash cache has 64KB pages. The .bin file
@@ -50,24 +50,24 @@ MEMORY
      in heap at runtime. However due to static ROM memory usage at this 176KB mark, the
      additional static memory temporarily cannot be used.
   */
-  dram0_0_seg (RW) :                 org = 0x3FFD0000 + CONFIG_BT_RESERVE_DRAM,
-                                     len = 0x28000 - CONFIG_BT_RESERVE_DRAM
+  dram0_0_seg (RW) :                 org = 0x3FF90000 + CONFIG_BT_RESERVE_DRAM,
+                                     len = 0x70000 - CONFIG_BT_RESERVE_DRAM
 
-  /* Flash mapped constant data */
+  /* Flash mapped constant data, ??? */
   drom0_0_seg (R) :                  org = 0x3F000018, len = 0x3f0000-0x18
 
   /* (See iram0_2_seg for meaning of 0x18 offset in the above.) */
 
   /* RTC fast memory (executable). Persists over deep sleep.
    */
-  rtc_iram_seg(RWX) :                org = 0x40070000, len = 0x2000
+  rtc_iram_seg(RWX) :                org = 0x400C0000, len = 0x2000
 
   /* RTC slow memory (data accessible). Persists over deep sleep.
 
-     Start of RTC slow memory is reserved for ULP co-processor code + data, if enabled.
+     Start of RTC slow memory is reserved for ULP co-processor code + data, if enabled. ???
   */
-  rtc_slow_seg(RW)  :                org = 0x50000000 + CONFIG_ULP_COPROC_RESERVE_MEM,
-                                     len = 0x1000 - CONFIG_ULP_COPROC_RESERVE_MEM
+  rtc_slow_seg(RW)  :                org = 0x3FF7E000 + CONFIG_ULP_COPROC_RESERVE_MEM,
+                                     len = 0x2000 - CONFIG_ULP_COPROC_RESERVE_MEM
 }
 
 /* Heap ends at top of dram0_0_seg */
