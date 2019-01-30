@@ -259,17 +259,17 @@
 //}}
 
 //Periheral Clock {{
-#define  APB_CLK_FREQ_ROM                            ( 40*1000000 )
+#define  APB_CLK_FREQ_ROM                            ( 80*1000000 )
 #define  CPU_CLK_FREQ_ROM                            APB_CLK_FREQ_ROM
 #define  UART_CLK_FREQ_ROM                           APB_CLK_FREQ_ROM
 #define  CPU_CLK_FREQ                                APB_CLK_FREQ
-#define  APB_CLK_FREQ                                ( 40*1000000 )       //unit: Hz
+#define  APB_CLK_FREQ                                ( 80*1000000 )       //unit: Hz
 #define  REF_CLK_FREQ                                ( 1000000 )
 #define  UART_CLK_FREQ                               APB_CLK_FREQ
 #define  WDT_CLK_FREQ                                APB_CLK_FREQ
 #define  TIMER_CLK_FREQ                              (80000000>>4) //80MHz divided by 16
 #define  SPI_CLK_DIV                                 4
-#define  TICKS_PER_US_ROM                            40              // CPU is 80MHz
+#define  TICKS_PER_US_ROM                            80              // CPU is 80MHz
 //}}
 
 /* Overall memory map */
@@ -283,12 +283,12 @@
 #define SOC_RTC_IRAM_HIGH 0x400C2000
 #define SOC_RTC_DRAM_LOW  0x3ff7e000
 #define SOC_RTC_DRAM_HIGH 0x3ff80000
-#define SOC_RTC_DATA_LOW  0x50000000 // ?
-#define SOC_RTC_DATA_HIGH 0x50002000 // ?
-#define SOC_EXTRAM_DATA_LOW 0x3F500000 // ?
-#define SOC_EXTRAM_DATA_HIGH 0x3FF90000 // ?
-#define SOC_SLOW_EXTRAM_DATA_LOW 0x61800000 // ? 
-#define SOC_SLOW_EXTRAM_DATA_HIGH 0x61c00000 // ?
+#define SOC_RTC_DATA_LOW  0x50000000
+#define SOC_RTC_DATA_HIGH 0x50002000
+#define SOC_EXTRAM_DATA_LOW 0x3F500000
+#define SOC_EXTRAM_DATA_HIGH 0x3FF90000
+#define SOC_SLOW_EXTRAM_DATA_LOW 0x61800000
+#define SOC_SLOW_EXTRAM_DATA_HIGH 0x61c00000
 
 //First and last words of the D/IRAM region, for both the DRAM address as well as the IRAM alias.
 #define SOC_DIRAM_IRAM_LOW    0x40020000
