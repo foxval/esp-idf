@@ -1198,7 +1198,7 @@ config SMP_ENABLE
 # Memory reserved at start of DRAM for Bluetooth stack
 config BT_RESERVE_DRAM
     hex
-    default 0x10000 if BT_ENABLED
+    default 0x8000 if BT_ENABLED
     default 0
 
 endmenu
