@@ -843,6 +843,7 @@
 #define HCI_LISBON_EVENT_MASK               "\x0D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
 #define HCI_LISBON_EVENT_MASK_EXT           "\x1D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
 #define HCI_DUMO_EVENT_MASK_EXT             "\x3D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
+#define HCI_LE_ONLY_EVENT_MASK              "\x20\x00\x00\x00\x00\x00\x00\x00"
 /*  0x00001FFF FFFFFFFF Default - no Lisbon events
     0x00000800 00000000 Synchronous Connection Complete Event
     0x00001000 00000000 Synchronous Connection Changed Event

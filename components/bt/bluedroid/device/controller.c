@@ -34,6 +34,7 @@ const bt_event_mask_t BLE_EVENT_MASK = { "\x00\x00\x00\x00\x00\x00\x06\x7f" };
 
 #if (BLE_INCLUDED)
 const bt_event_mask_t CLASSIC_EVENT_MASK = { HCI_DUMO_EVENT_MASK_EXT };
+const bt_event_mask_t LE_ONLY_EVENT_MASK = { HCI_LE_ONLY_EVENT_MASK  };
 #else
 const bt_event_mask_t CLASSIC_EVENT_MASK = { HCI_LISBON_EVENT_MASK_EXT };
 #endif
@@ -89,12 +90,22 @@ static void start_up(void)
     response = AWAIT_COMMAND(packet_factory->make_reset());
     packet_parser->parse_generic_command_complete(response);
 
-    // Request the classic buffer size next
-    response = AWAIT_COMMAND(packet_factory->make_read_buffer_size());
-    packet_parser->parse_read_buffer_size_response(
-        response, &acl_data_size_classic, &acl_buffer_count_classic,
-        &sco_data_size, &sco_buffer_count);
+    response = AWAIT_COMMAND(packet_factory->make_read_local_supported_features());
+    packet_parser->parse_read_local_supported_features_response(
+        response,
+        &features_classic[0]);
 
+    bool le_controller_supported = !!(HCI_LE_SPT_SUPPORTED(features_classic[0].as_array));
+    bool bredr_controller_supported = !(HCI_BREDR_NOT_SPT_SUPPORTED(features_classic[0].as_array));
+    assert(le_controller_supported || bredr_controller_supported);
+
+    if (bredr_controller_supported) {
+        // Request the classic buffer size next
+        response = AWAIT_COMMAND(packet_factory->make_read_buffer_size());
+        packet_parser->parse_read_buffer_size_response(
+            response, &acl_data_size_classic, &acl_buffer_count_classic,
+            &sco_data_size, &sco_buffer_count);
+    }
     // Tell the controller about our buffer sizes and buffer counts next
     // TODO(zachoverflow): factor this out. eww l2cap contamination. And why just a hardcoded 10?
     response = AWAIT_COMMAND(
@@ -125,67 +136,80 @@ static void start_up(void)
         HCI_SUPPORTED_COMMANDS_ARRAY_SIZE
     );
 
-    // Read page 0 of the controller features next
-    uint8_t page_number = 0;
-    response = AWAIT_COMMAND(packet_factory->make_read_local_extended_features(page_number));
-    packet_parser->parse_read_local_extended_features_response(
-        response,
-        &page_number,
-        &last_features_classic_page_index,
-        features_classic,
-        MAX_FEATURES_CLASSIC_PAGE_COUNT
-    );
+    if (bredr_controller_supported) {
+        // Inform the controller what page 0 features we support, based on what
+        // it told us it supports. We need to do this first before we request the
+        // next page, because the controller's response for page 1 may be
+        // dependent on what we configure from page 0
+        simple_pairing_supported = HCI_SIMPLE_PAIRING_SUPPORTED(features_classic[0].as_array);
+        if (simple_pairing_supported) {
+            response = AWAIT_COMMAND(packet_factory->make_write_simple_pairing_mode(HCI_SP_MODE_ENABLED));
+            packet_parser->parse_generic_command_complete(response);
+        }
 
-    assert(page_number == 0);
-    page_number++;
-
-    // Inform the controller what page 0 features we support, based on what
-    // it told us it supports. We need to do this first before we request the
-    // next page, because the controller's response for page 1 may be
-    // dependent on what we configure from page 0
-    simple_pairing_supported = HCI_SIMPLE_PAIRING_SUPPORTED(features_classic[0].as_array);
-    if (simple_pairing_supported) {
-        response = AWAIT_COMMAND(packet_factory->make_write_simple_pairing_mode(HCI_SP_MODE_ENABLED));
-        packet_parser->parse_generic_command_complete(response);
-    }
-
-#if (BLE_INCLUDED == TRUE)
-    if (HCI_LE_SPT_SUPPORTED(features_classic[0].as_array)) {
         uint8_t simultaneous_le_host = HCI_SIMUL_LE_BREDR_SUPPORTED(features_classic[0].as_array) ? BTM_BLE_SIMULTANEOUS_HOST : 0;
         response = AWAIT_COMMAND(
-                       packet_factory->make_ble_write_host_support(BTM_BLE_HOST_SUPPORT, simultaneous_le_host)
-                   );
+                       packet_factory->make_ble_write_host_support(BTM_BLE_HOST_SUPPORT, simultaneous_le_host));
 
         packet_parser->parse_generic_command_complete(response);
-    }
-#endif
 
-    // Done telling the controller about what page 0 features we support
-    // Request the remaining feature pages
-    while (page_number <= last_features_classic_page_index &&
-            page_number < MAX_FEATURES_CLASSIC_PAGE_COUNT) {
+        uint8_t page_number = 0;
         response = AWAIT_COMMAND(packet_factory->make_read_local_extended_features(page_number));
         packet_parser->parse_read_local_extended_features_response(
             response,
             &page_number,
             &last_features_classic_page_index,
             features_classic,
-            MAX_FEATURES_CLASSIC_PAGE_COUNT
-        );
+            MAX_FEATURES_CLASSIC_PAGE_COUNT);
 
+        assert(page_number == 0);
         page_number++;
-    }
+
+        while (page_number <= last_features_classic_page_index &&
+               page_number < MAX_FEATURES_CLASSIC_PAGE_COUNT) {
+            response = AWAIT_COMMAND(packet_factory->make_read_local_extended_features(page_number));
+            packet_parser->parse_read_local_extended_features_response(
+                response,
+                &page_number,
+                &last_features_classic_page_index,
+                features_classic,
+                MAX_FEATURES_CLASSIC_PAGE_COUNT);
+
+            page_number++;
+        }
 
 #if (SC_MODE_INCLUDED == TRUE)
-    secure_connections_supported = HCI_SC_CTRLR_SUPPORTED(features_classic[2].as_array);
-    if (secure_connections_supported) {
-        response = AWAIT_COMMAND(packet_factory->make_write_secure_connections_host_support(HCI_SC_MODE_ENABLED));
+        secure_connections_supported = HCI_SC_CTRLR_SUPPORTED(features_classic[2].as_array);
+        if (secure_connections_supported) {
+            response = AWAIT_COMMAND(packet_factory->make_write_secure_connections_host_support(HCI_SC_MODE_ENABLED));
+            packet_parser->parse_generic_command_complete(response);
+        }
+#endif
+#if (BTM_SCO_HCI_INCLUDED == TRUE)
+        response = AWAIT_COMMAND(packet_factory->make_write_sync_flow_control_enable(1));
+        packet_parser->parse_generic_command_complete(response);
+#endif
+        if (simple_pairing_supported) {
+            response = AWAIT_COMMAND(packet_factory->make_set_event_mask(&CLASSIC_EVENT_MASK));
+            packet_parser->parse_generic_command_complete(response);
+        } else {
+            // todo: what if secure simple pairing not supported in BR/EDR controller
+        }
+    } else {
+        // set event mask to include LE meta event only
+        response = AWAIT_COMMAND(packet_factory->make_set_event_mask(&LE_ONLY_EVENT_MASK));
         packet_parser->parse_generic_command_complete(response);
     }
-#endif
 
 #if (BLE_INCLUDED == TRUE)
-    ble_supported = last_features_classic_page_index >= 1 && HCI_LE_HOST_SUPPORTED(features_classic[1].as_array);
+    if (bredr_controller_supported) {
+        ble_supported = (last_features_classic_page_index >= 1) && HCI_LE_HOST_SUPPORTED(features_classic[1].as_array);
+    } else if (le_controller_supported) {
+        ble_supported = true;
+    } else {
+        ble_supported = false;
+    }
+
     if (ble_supported) {
         // Request the ble white list size next
         response = AWAIT_COMMAND(packet_factory->make_ble_read_white_list_size());
@@ -244,15 +268,6 @@ static void start_up(void)
     }
 #endif
 
-    if (simple_pairing_supported) {
-        response = AWAIT_COMMAND(packet_factory->make_set_event_mask(&CLASSIC_EVENT_MASK));
-        packet_parser->parse_generic_command_complete(response);
-    }
-
-#if (BTM_SCO_HCI_INCLUDED == TRUE)
-    response = AWAIT_COMMAND(packet_factory->make_write_sync_flow_control_enable(1));
-    packet_parser->parse_generic_command_complete(response);
-#endif
     readable = true;
     // return future_new_immediate(FUTURE_SUCCESS);
     return;

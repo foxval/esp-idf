@@ -73,6 +73,11 @@ static BT_HDR *make_read_local_supported_commands(void)
     return make_command_no_params(HCI_READ_LOCAL_SUPPORTED_CMDS);
 }
 
+static BT_HDR *make_read_local_supported_features(void)
+{
+    return make_command_no_params(HCI_READ_LOCAL_FEATURES);
+}
+
 static BT_HDR *make_read_local_extended_features(uint8_t page_number)
 {
     uint8_t *stream;
@@ -224,6 +229,7 @@ static const hci_packet_factory_t interface = {
     make_read_local_version_info,
     make_read_bd_addr,
     make_read_local_supported_commands,
+    make_read_local_supported_features,
     make_read_local_extended_features,
     make_write_simple_pairing_mode,
     make_write_secure_connections_host_support,

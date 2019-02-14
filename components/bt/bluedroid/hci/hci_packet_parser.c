@@ -98,6 +98,17 @@ static void parse_read_local_supported_commands_response(
     buffer_allocator->free(response);
 }
 
+static void parse_read_local_supported_features_response(
+    BT_HDR *response,
+    bt_device_features_t *feature_pages)
+{
+    uint8_t *stream = read_command_complete_header(response, HCI_READ_LOCAL_FEATURES, sizeof(bt_device_features_t) /* bytes after */);
+    if (stream != NULL) {
+        STREAM_TO_ARRAY(feature_pages->as_array, stream, (int)sizeof(bt_device_features_t));
+    }
+    buffer_allocator->free(response);
+}
+
 static void parse_read_local_extended_features_response(
     BT_HDR *response,
     uint8_t *page_number_ptr,
@@ -215,6 +226,7 @@ static uint8_t *read_command_complete_header(
 
     // Check the event header values against what we expect
     assert(event_code == HCI_COMMAND_COMPLETE_EVT);
+
     assert(parameter_length >= (parameter_bytes_we_read_here + minimum_bytes_after));
 
     // Read the command complete header
@@ -244,6 +256,7 @@ static const hci_packet_parser_t interface = {
     parse_read_local_version_info_response,
     parse_read_bd_addr_response,
     parse_read_local_supported_commands_response,
+    parse_read_local_supported_features_response,
     parse_read_local_extended_features_response,
     parse_ble_read_white_list_size_response,
     parse_ble_read_buffer_size_response,

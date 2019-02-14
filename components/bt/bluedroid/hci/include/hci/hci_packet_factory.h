@@ -29,6 +29,7 @@ typedef struct {
     BT_HDR *(*make_read_local_version_info)(void);
     BT_HDR *(*make_read_bd_addr)(void);
     BT_HDR *(*make_read_local_supported_commands)(void);
+    BT_HDR *(*make_read_local_supported_features)(void);
     BT_HDR *(*make_read_local_extended_features)(uint8_t page_number);
     BT_HDR *(*make_write_simple_pairing_mode)(uint8_t mode);
     BT_HDR *(*make_write_secure_connections_host_support)(uint8_t mode);

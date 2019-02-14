@@ -55,6 +55,11 @@ typedef struct {
         size_t supported_commands_length
     );
 
+    void (*parse_read_local_supported_features_response)(
+        BT_HDR *response,
+        bt_device_features_t *feature_pages
+    );
+
     void (*parse_read_local_extended_features_response)(
         BT_HDR *response,
         uint8_t *page_number_ptr,
