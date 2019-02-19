@@ -114,8 +114,10 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFFC000, 0x4000, 1, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory, used for startup stack
 #endif /* #if 0 // karl */
     { 0x3FF90000, 0x8000, 0, 0},
-    { 0x3FF98000, 0x64000, 0, 0},
+    { 0x3FF98000, 0x5c000, 0, 0},
+    { 0x3fff4000, 0x1000, 0, 0},
     { 0x3FFFC000, 0x4000,  1, 0}, // used for startup stack
+
 };
 
 const size_t soc_memory_region_count = sizeof(soc_memory_regions)/sizeof(soc_memory_region_t);
@@ -134,7 +136,7 @@ const soc_reserved_region_t soc_reserved_regions[] = {
 #if CONFIG_BT_ENABLED
     { 0x3ff90000, 0x3ff98000 }, //Reserve BT hardware shared memory & BT data region
 #endif
-
+    { 0x3fff4000, 0x3fff5000},
 #if CONFIG_MEMMAP_TRACEMEM
 #if CONFIG_MEMMAP_TRACEMEM_TWOBANKS
     { 0x3fff8000, 0x40000000 }, //Reserve trace mem region

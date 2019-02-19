@@ -112,7 +112,25 @@ SECTIONS
     INCLUDE esp32.spiram.rom-functions-iram.ld
     _iram_text_end = ABSOLUTE(.);
   } > iram0_0_seg
-  
+
+  .dramuhci.data :
+  {
+    *libbtdm_app.a:uart.o(.data)
+    *libbtdm_app.a:uart.o(.data.*)
+    *libbtdm_app.a:uart.o(.gnu.linkonce.d.*)
+    *libbtdm_app.a:uart.o(.data1)
+    *libbtdm_app.a:uart.o(.sdata)
+    *libbtdm_app.a:uart.o(.sdata.*)
+    *libbtdm_app.a:uart.o(.gnu.linkonce.s.*)
+    *libbtdm_app.a:uart.o(.sdata2)
+    *libbtdm_app.a:uart.o(.sdata2.*)
+    *libbtdm_app.a:uart.o(.gnu.linkonce.s2.*)
+    *libbtdm_app.a:uart.o(.jcr)
+    *libbtdm_app.a:uart.o(.dram1 .dram1.*)
+    *libbtdm_app.a:uart.o(.rodata .rodata.*)
+    . = ALIGN(4);
+  } > dram0_1_seg
+
   .dram0.data :
   {
     _data_start = ABSOLUTE(.);
@@ -135,6 +153,7 @@ SECTIONS
     *libgcov.a:(.rodata .rodata.*)
     *libheap.a:multi_heap.o(.rodata .rodata.*)
     *libheap.a:multi_heap_poisoning.o(.rodata .rodata.*)
+    *libbtdm_app.a:uart.o(.rodata .rodata.*)
     INCLUDE esp32.spiram.rom-functions-dram.ld
     _data_end = ABSOLUTE(.);
     . = ALIGN(4);
