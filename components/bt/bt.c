@@ -222,6 +222,9 @@ extern uint32_t _bt_data_end;
 extern uint32_t _btdm_data_start;
 extern uint32_t _btdm_data_end;
 
+extern char _bt_tmp_bss_start;
+extern char _bt_tmp_bss_end;
+
 /* Local Function Declare
  *********************************************************************
  */
@@ -925,9 +928,12 @@ static uint32_t btdm_config_mask_load(void)
     return mask;
 }
 
-#ifdef BTDM_CONTROLLER_MEM_OPTIMIZATION
+
 static void btdm_controller_mem_init(void)
 {
+    memset(&_bt_tmp_bss_start, 0, &_bt_tmp_bss_end - &_bt_tmp_bss_start);
+
+#ifdef BTDM_CONTROLLER_MEM_OPTIMIZATION
     /* initialise .data section */
     memcpy(&_data_start_btdm, (void *)_data_start_btdm_rom, &_data_end_btdm - &_data_start_btdm);
     ESP_LOGD(BTDM_LOG_TAG, ".data initialise [0x%08x] <== [0x%08x]", (uint32_t)&_data_start_btdm, _data_start_btdm_rom);
@@ -939,8 +945,9 @@ static void btdm_controller_mem_init(void)
             ESP_LOGD(BTDM_LOG_TAG, ".bss initialise [0x%08x] - [0x%08x]", btdm_dram_available_region[i].start, btdm_dram_available_region[i].end);
         }
     }
+#endif
 }
-
+#ifdef BTDM_CONTROLLER_MEM_OPTIMIZATION
 static esp_err_t try_heap_caps_add_region(intptr_t start, intptr_t end)
 {
     int ret = heap_caps_add_region(start, end);
@@ -1059,6 +1066,8 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
     esp_err_t err;
     uint32_t btdm_cfg_mask = 0;
 
+    btdm_controller_mem_init();
+
     osi_funcs_p = (struct osi_funcs_t *)malloc_internal_wrapper(sizeof(struct osi_funcs_t));
     if (osi_funcs_p == NULL) {
         return ESP_ERR_NO_MEM;
@@ -1133,7 +1142,6 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
     }
 #endif
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
-    // btdm_controller_mem_init();
 
     // periph_module_enable(PERIPH_BT_MODULE);
 #ifdef BTDM_MODEM_SLEEP_ENABLE

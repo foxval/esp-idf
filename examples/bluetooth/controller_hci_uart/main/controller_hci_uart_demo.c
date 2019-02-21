@@ -17,6 +17,7 @@ static const char *tag = "CONTROLLER_UART_HCI";
 
 static void uart_gpio_reset(void)
 {
+    ESP_LOGI(tag, "HCI UART%d enable", CONFIG_BT_HCI_UART_NO);
 #if CONFIG_BT_HCI_UART_NO == 1
     periph_module_enable(PERIPH_UART1_MODULE);
 #elif CONFIG_BT_HCI_UART_NO == 2
@@ -27,7 +28,7 @@ static void uart_gpio_reset(void)
 #ifdef CONFIG_BT_HCI_UART_NO
     ESP_LOGI(tag, "HCI UART%d Pin select: TX 5, RX, 18, CTS 23, RTS 19", CONFIG_BT_HCI_UART_NO);
 
-    uart_set_pin(CONFIG_BT_HCI_UART_NO, 5, 18, 19, 23);
+    // uart_set_pin(CONFIG_BT_HCI_UART_NO, 5, 18, 19, 23); // for FPGA there is no need to set UART PIN
 #endif
 }
 
@@ -54,7 +55,7 @@ void app_main()
         return;
     }
 
-    ret = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
+    ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
     if (ret != ESP_OK) {
         ESP_LOGE(tag, "Bluetooth Controller initialize failed: %s", esp_err_to_name(ret));
         return;

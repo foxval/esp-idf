@@ -113,22 +113,47 @@ SECTIONS
     _iram_text_end = ABSOLUTE(.);
   } > iram0_0_seg
 
-  .dramuhci.data :
+  .drambt.data :
   {
-    *libbtdm_app.a:uart.o(.data)
-    *libbtdm_app.a:uart.o(.data.*)
-    *libbtdm_app.a:uart.o(.gnu.linkonce.d.*)
-    *libbtdm_app.a:uart.o(.data1)
-    *libbtdm_app.a:uart.o(.sdata)
-    *libbtdm_app.a:uart.o(.sdata.*)
-    *libbtdm_app.a:uart.o(.gnu.linkonce.s.*)
-    *libbtdm_app.a:uart.o(.sdata2)
-    *libbtdm_app.a:uart.o(.sdata2.*)
-    *libbtdm_app.a:uart.o(.gnu.linkonce.s2.*)
-    *libbtdm_app.a:uart.o(.jcr)
-    *libbtdm_app.a:uart.o(.dram1 .dram1.*)
-    *libbtdm_app.a:uart.o(.rodata .rodata.*)
     . = ALIGN(4);
+    _bt_tmp_data_start = ABSOLUTE(.);
+    *libbtdm_app.a:(.data)
+    *libbtdm_app.a:(.data.*)
+    *libbtdm_app.a:(.gnu.linkonce.d.*)
+    *libbtdm_app.a:(.data1)
+    *libbtdm_app.a:(.sdata)
+    *libbtdm_app.a:(.sdata.*)
+    *libbtdm_app.a:(.gnu.linkonce.s.*)
+    *libbtdm_app.a:(.sdata2)
+    *libbtdm_app.a:(.sdata2.*)
+    *libbtdm_app.a:(.gnu.linkonce.s2.*)
+    *libbtdm_app.a:(.jcr)
+    *libbtdm_app.a:(.dram1 .dram1.*)
+    *libbtdm_app.a:(.dram1 .dram1.*)
+    *libbtdm_app.a:(.rodata .rodata.*)
+    _bt_tmp_data_end = ABSOLUTE(.);
+  } > dram0_1_seg
+
+  /* Shared RAM */
+  .drambt.bss (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _bt_tmp_bss_start = ABSOLUTE(.);
+    *libbtdm_app.a:(.dynsbss)
+    *libbtdm_app.a:(.sbss)
+    *libbtdm_app.a:(.sbss.*)
+    *libbtdm_app.a:(.gnu.linkonce.sb.*)
+    *libbtdm_app.a:(.scommon)
+    *libbtdm_app.a:(.sbss2)
+    *libbtdm_app.a:(.sbss2.*)
+    *libbtdm_app.a:(.gnu.linkonce.sb2.*)
+    *libbtdm_app.a:(.dynbss)
+    *libbtdm_app.a:(.bss)
+    *libbtdm_app.a:(.bss.*)
+    *libbtdm_app.a:(.share.mem)
+    *libbtdm_app.a:(.gnu.linkonce.b.*)
+    *libbtdm_app.a:(COMMON)
+    _bt_tmp_bss_end = ABSOLUTE(.);
   } > dram0_1_seg
 
   .dram0.data :
@@ -153,7 +178,6 @@ SECTIONS
     *libgcov.a:(.rodata .rodata.*)
     *libheap.a:multi_heap.o(.rodata .rodata.*)
     *libheap.a:multi_heap_poisoning.o(.rodata .rodata.*)
-    *libbtdm_app.a:uart.o(.rodata .rodata.*)
     INCLUDE esp32.spiram.rom-functions-dram.ld
     _data_end = ABSOLUTE(.);
     . = ALIGN(4);
