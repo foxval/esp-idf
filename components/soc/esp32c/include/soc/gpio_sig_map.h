@@ -230,6 +230,11 @@
 #define I2S0O_DATA_OUT21_IDX			164
 #define I2S0O_DATA_OUT22_IDX			165
 #define I2S0O_DATA_OUT23_IDX			166
+#define RW_TX_ON_IDX			177
+#define RW_RX_ON_IDX			178
+#define EVT_REQ_P_IDX			179
+#define EVT_STOP_P_IDX			180
+#define BT_MODE_ON_IDX			181
 #define I2S0I_H_SYNC_IDX			193
 #define I2S0I_V_SYNC_IDX			194
 #define I2S0I_H_ENABLE_IDX			195
@@ -284,5 +289,5 @@
 #define PRO_ALONEGPIO_IN7_IDX			242
 #define PRO_ALONEGPIO_OUT7_IDX			242
 #define CLK_I2S_MUX_IDX			251
-#define SIG_GPIO_OUT_IDX            256
-#define GPIO_MAP_DATE_IDX			0x18102600
+#define SIG_GPIO_OUT_IDX                256
+#define GPIO_MAP_DATE_IDX			0x1901240
