@@ -843,7 +843,6 @@
 #define HCI_LISBON_EVENT_MASK               "\x0D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
 #define HCI_LISBON_EVENT_MASK_EXT           "\x1D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
 #define HCI_DUMO_EVENT_MASK_EXT             "\x3D\xBF\xFF\xFF\xFF\xFF\xFF\xFF"
-#define HCI_LE_ONLY_EVENT_MASK              "\x20\x00\x00\x00\x00\x00\x00\x00"
 /*  0x00001FFF FFFFFFFF Default - no Lisbon events
     0x00000800 00000000 Synchronous Connection Complete Event
     0x00001000 00000000 Synchronous Connection Changed Event
@@ -865,6 +864,15 @@
     0x20000000 00000000 LE Meta Event
  */
 
+#define HCI_LE_ONLY_EVENT_MASK              "\x20\x00\x80\x00\x02\x00\x88\x90"
+/*  0x00000000 00000010 Disconnection complete event
+    0x00000000 00000080 Encryption change event
+    0x00000000 00000800 Read remote version information complete event
+    0x00000000 00008000 Hardware error event
+    0x00000000 02000000 Data buffer overflow event
+    0x00008000 00000000 Encryption key refresh complete event
+    0x20000000 00000000 LE Meta Event
+*/
 
 /* the event mask for AMP controllers */
 #define HCI_AMP_EVENT_MASK_3_0               "\x00\x00\x00\x00\x00\x00\x3F\xFF"
