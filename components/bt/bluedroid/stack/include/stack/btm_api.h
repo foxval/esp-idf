@@ -169,6 +169,8 @@ typedef void (tBTM_VS_EVT_CB) (UINT8 len, UINT8 *p);
 */
 typedef void (tBTM_CMPL_CB) (void *p1);
 
+typedef void (tBTM_INQ_DIS_CB) (uint32_t num_dis);
+
 /* VSC callback function for notifying an application that a synchronous
 ** BTM function is complete. The pointer contains the address of any returned data.
 */
@@ -676,7 +678,6 @@ typedef struct {
     tBTM_STATUS status;
     UINT8       num_resp;       /* Number of results from the current inquiry */
 } tBTM_INQUIRY_CMPL;
-
 
 /* Structure returned with remote name  request */
 typedef struct {
@@ -1642,6 +1643,7 @@ typedef struct {
     UINT8 sec_level;
     BOOLEAN is_pair_cancel;
     BOOLEAN smp_over_br;
+    tSMP_AUTH_REQ auth_mode;
 } tBTM_LE_COMPLT;
 #endif
 
@@ -2811,8 +2813,8 @@ tBTM_STATUS BTM_SwitchRole (BD_ADDR remote_bd_addr,
 **
 ** Function         BTM_ReadRSSI
 **
-** Description      This function is called to read the link policy settings.
-**                  The address of link policy results are returned in the callback.
+** Description      This function is called to read the RSSI for a particular transport.
+**                  The RSSI of results are returned in the callback.
 **                  (tBTM_RSSI_RESULTS)
 **
 ** Returns          BTM_CMD_STARTED if command issued to controller.
@@ -2822,7 +2824,7 @@ tBTM_STATUS BTM_SwitchRole (BD_ADDR remote_bd_addr,
 **
 *******************************************************************************/
 //extern
-tBTM_STATUS BTM_ReadRSSI (BD_ADDR remote_bda, tBTM_CMPL_CB *p_cb);
+tBTM_STATUS BTM_ReadRSSI (BD_ADDR remote_bda, tBT_TRANSPORT transport, tBTM_CMPL_CB *p_cb);
 
 
 /*******************************************************************************
@@ -3417,8 +3419,7 @@ BOOLEAN BTM_SecAddDevice (BD_ADDR bd_addr, DEV_CLASS dev_class,
 **
 *******************************************************************************/
 //extern
-BOOLEAN BTM_SecDeleteDevice (BD_ADDR bd_addr);
-
+BOOLEAN BTM_SecDeleteDevice (BD_ADDR bd_addr, tBT_TRANSPORT transport);
 
 /*******************************************************************************
 **

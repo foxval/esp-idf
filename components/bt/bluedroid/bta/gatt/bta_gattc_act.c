@@ -672,6 +672,8 @@ void bta_gattc_conn(tBTA_GATTC_CLCB *p_clcb, tBTA_GATTC_DATA *p_data)
             if (bta_gattc_cache_load(p_clcb)) {
                 p_clcb->p_srcb->state = BTA_GATTC_SERV_IDLE;
                 bta_gattc_reset_discover_st(p_clcb->p_srcb, BTA_GATT_OK);
+                //register service change
+                bta_gattc_register_service_change_notify(p_clcb->bta_conn_id, p_clcb->bda);
             } else 
 #endif
             { /* cache is building */
@@ -981,6 +983,7 @@ void bta_gattc_start_discover(tBTA_GATTC_CLCB *p_clcb, tBTA_GATTC_DATA *p_data)
             } else {
                 p_clcb->disc_active = TRUE;
             }
+            p_clcb->searched_service_source = BTA_GATTC_SERVICE_INFO_FROM_REMOTE_DEVICE;
         } else {
             APPL_TRACE_ERROR("unknown device, can not start discovery");
         }
@@ -1296,6 +1299,7 @@ void bta_gattc_write_cmpl(tBTA_GATTC_CLCB *p_clcb, tBTA_GATTC_OP_CMPL *p_data)
     cb_data.write.conn_id = p_clcb->bta_conn_id;
     if (p_conn && p_conn->svc_change_descr_handle == cb_data.write.handle) {
         if(cb_data.write.status != BTA_GATT_OK) {
+            p_conn->write_remote_svc_change_ccc_done = FALSE;
             APPL_TRACE_ERROR("service change write ccc failed");
         }
         return;
@@ -1468,6 +1472,7 @@ void bta_gattc_search(tBTA_GATTC_CLCB *p_clcb, tBTA_GATTC_DATA *p_data)
     }
     cb_data.search_cmpl.status  = status;
     cb_data.search_cmpl.conn_id = p_clcb->bta_conn_id;
+    cb_data.search_cmpl.searched_service_source = p_clcb->searched_service_source;
 
     /* end of search or no server cache available */
     ( *p_clcb->p_rcb->p_cback)(BTA_GATTC_SEARCH_CMPL_EVT,  &cb_data);
@@ -1875,6 +1880,10 @@ BOOLEAN bta_gattc_process_srvc_chg_ind(UINT16 conn_id,
 
             /* if connection available, refresh cache by doing discovery now */
             if (p_clcb != NULL) {
+                tBTA_GATTC_CONN *p_conn = bta_gattc_conn_find(p_clcb->bda);
+                if(p_conn) {
+                    p_conn->write_remote_svc_change_ccc_done = FALSE;
+                }
                 bta_gattc_sm_execute(p_clcb, BTA_GATTC_INT_DISCOVER_EVT, NULL);
             }
         }
@@ -2280,6 +2289,10 @@ tBTA_GATTC_FIND_SERVICE_CB bta_gattc_register_service_change_notify(UINT16 conn_
     tBT_UUID gatt_service_uuid = {LEN_UUID_16, {UUID_SERVCLASS_GATT_SERVER}};
     tBT_UUID gatt_service_change_uuid = {LEN_UUID_16, {GATT_UUID_GATT_SRV_CHGD}};
     tBT_UUID gatt_ccc_uuid = {LEN_UUID_16, {GATT_UUID_CHAR_CLIENT_CONFIG}};
+    tBTA_GATTC_CONN *p_conn = bta_gattc_conn_find_alloc(remote_bda);
+    if(p_conn && p_conn->write_remote_svc_change_ccc_done) {
+        return SERVICE_CHANGE_CCC_WRITTEN_SUCCESS;
+    }
 
     p_srcb = bta_gattc_find_srcb(remote_bda);
     if ((p_srcb != NULL) && (p_srcb->p_srvc_cache != NULL)) {
@@ -2344,9 +2357,9 @@ tBTA_GATTC_FIND_SERVICE_CB bta_gattc_register_service_change_notify(UINT16 conn_
     }
 
     if (gatt_ccc_found == TRUE){
-        tBTA_GATTC_CONN *p_conn = bta_gattc_conn_find_alloc(remote_bda);
         if (p_conn) {
             p_conn->svc_change_descr_handle = p_desc->handle;
+            p_conn->write_remote_svc_change_ccc_done = TRUE;
         }
         result = SERVICE_CHANGE_CCC_WRITTEN_SUCCESS;
         uint16_t indicate_value = GATT_CLT_CONFIG_INDICATION;

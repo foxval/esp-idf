@@ -326,8 +326,12 @@ bool esp_vhci_host_check_send_available(void);
 
 /** @brief esp_vhci_host_send_packet
  * host send packet to controller
+ *
+ * Should not call this function from within a critical section
+ * or when the scheduler is suspended.
+ *
  * @param data the packet point
- *,@param len the packet length
+ * @param len the packet length
  */
 void esp_vhci_host_send_packet(uint8_t *data, uint16_t len);
 

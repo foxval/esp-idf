@@ -167,7 +167,7 @@ static BOOLEAN process_read_multi_rsp (tGATT_SR_CMD *p_cmd, tGATT_STATUS status,
     GATT_TRACE_DEBUG ("process_read_multi_rsp status=%d mtu=%d", status, mtu);
 
 	if (p_cmd->multi_rsp_q == NULL) {
-        p_cmd->multi_rsp_q = fixed_queue_new(SIZE_MAX);
+        p_cmd->multi_rsp_q = fixed_queue_new(QUEUE_SIZE_MAX);
 	}
 
     /* Enqueue the response */
@@ -557,7 +557,7 @@ void gatt_process_read_multi_req (tGATT_TCB *p_tcb, UINT8 op_code, UINT16 len, U
                                                           key_size,
                                                           trans_id);
 
-                    if (err == GATT_SUCCESS) {
+                    if (err == GATT_SUCCESS || err == GATT_STACK_RSP) {
                         gatt_sr_process_app_rsp(p_tcb, gatt_cb.sr_reg[i_rcb].gatt_if , trans_id, op_code, GATT_SUCCESS, p_msg);
                     }
                     /* either not using or done using the buffer, release it now */
@@ -572,9 +572,8 @@ void gatt_process_read_multi_req (tGATT_TCB *p_tcb, UINT8 op_code, UINT16 len, U
             err = GATT_NO_RESOURCES;
         }
     }
-
     /* in theroy BUSY is not possible(should already been checked), protected check */
-    if (err != GATT_SUCCESS && err != GATT_PENDING && err != GATT_BUSY) {
+    if (err != GATT_SUCCESS && err != GATT_STACK_RSP && err != GATT_PENDING && err != GATT_BUSY) {
         gatt_send_error_rsp(p_tcb, err, op_code, handle, FALSE);
     }
 }
@@ -1290,7 +1289,7 @@ void gatt_attr_process_prepare_write (tGATT_TCB *p_tcb, UINT8 i_rcb, UINT16 hand
             queue_data->offset = offset;
             memcpy(queue_data->value, p, len);
             if (prepare_record->queue == NULL) {
-                prepare_record->queue = fixed_queue_new(SIZE_MAX);
+                prepare_record->queue = fixed_queue_new(QUEUE_SIZE_MAX);
             }
             fixed_queue_enqueue(prepare_record->queue, queue_data);
         }
@@ -1596,8 +1595,10 @@ void gatts_process_value_conf(tGATT_TCB *p_tcb, UINT8 op_code)
                 if (p_rcb->in_use && p_rcb->s_hdl <= handle && p_rcb->e_hdl >= handle) {
                     trans_id = gatt_sr_enqueue_cmd(p_tcb, op_code, handle);
                     conn_id = GATT_CREATE_CONN_ID(p_tcb->tcb_idx, p_rcb->gatt_if);
+                    tGATTS_DATA p_data = {0};
+                    p_data.handle = handle;
                     gatt_sr_send_req_callback(conn_id,
-                                              trans_id, GATTS_REQ_TYPE_CONF, (tGATTS_DATA *)&handle);
+                                              trans_id, GATTS_REQ_TYPE_CONF, &p_data);
                 }
             }
         }

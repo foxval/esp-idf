@@ -116,7 +116,11 @@ static void start_up(void)
                        10
                    )
                );
-
+#if (C2H_FLOW_CONTROL_INCLUDED == TRUE)
+    // Enable controller to host flow control
+    response = AWAIT_COMMAND(packet_factory->make_set_c2h_flow_control(HCI_HOST_FLOW_CTRL_ACL_ON));
+    packet_parser->parse_generic_command_complete(response);
+#endif ///C2H_FLOW_CONTROL_INCLUDED == TRUE
     packet_parser->parse_generic_command_complete(response);
 
     // Read the local version info off the controller next, including
@@ -188,6 +192,9 @@ static void start_up(void)
 #if (BTM_SCO_HCI_INCLUDED == TRUE)
         response = AWAIT_COMMAND(packet_factory->make_write_sync_flow_control_enable(1));
         packet_parser->parse_generic_command_complete(response);
+
+        response = AWAIT_COMMAND(packet_factory->make_write_default_erroneous_data_report(1));
+        packet_parser->parse_generic_command_complete(response);
 #endif
         if (simple_pairing_supported) {
             response = AWAIT_COMMAND(packet_factory->make_set_event_mask(&CLASSIC_EVENT_MASK));
@@ -211,6 +218,11 @@ static void start_up(void)
     }
 
     if (ble_supported) {
+#if (BLE_ADV_REPORT_FLOW_CONTROL == TRUE)
+        // Enable adv flow control
+        response = AWAIT_COMMAND(packet_factory->make_set_adv_report_flow_control(HCI_HOST_FLOW_CTRL_ADV_REPORT_ON, (uint16_t)BLE_ADV_REPORT_FLOW_CONTROL_NUM, (uint16_t)BLE_ADV_REPORT_DISCARD_THRSHOLD));
+        packet_parser->parse_generic_command_complete(response);
+#endif
         // Request the ble white list size next
         response = AWAIT_COMMAND(packet_factory->make_ble_read_white_list_size());
         packet_parser->parse_ble_read_white_list_size_response(response, &ble_white_list_size);

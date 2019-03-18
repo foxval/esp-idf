@@ -1367,7 +1367,11 @@ esp_err_t esp_ble_tx_power_set(esp_ble_power_type_t power_type, esp_power_level_
 
 esp_power_level_t esp_ble_tx_power_get(esp_ble_power_type_t power_type)
 {
+#if 0 // todo:
     return (esp_power_level_t)ble_txpwr_get(power_type);
+#else
+    return 0;
+#endif
 }
 
 esp_err_t esp_bredr_tx_power_set(esp_power_level_t min_power_level, esp_power_level_t max_power_level)

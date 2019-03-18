@@ -18,15 +18,12 @@
 
 #include "common/bt_defs.h"
 
-#include "hci/buffer_allocator.h"
 #include "stack/bt_types.h"
 #include "stack/hcimsgs.h"
 #include "hci/hci_layer.h"
 #include "hci/hci_packet_parser.h"
 
 static const command_opcode_t NO_OPCODE_CHECKING = 0;
-
-static const allocator_t *buffer_allocator;
 
 static uint8_t *read_command_complete_header(
     BT_HDR *response,
@@ -37,7 +34,7 @@ static void parse_generic_command_complete(BT_HDR *response)
 {
     read_command_complete_header(response, NO_OPCODE_CHECKING, 0 /* bytes after */);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_buffer_size_response(
@@ -54,7 +51,7 @@ static void parse_read_buffer_size_response(
     STREAM_TO_UINT8(*sco_data_size_ptr, stream);
     STREAM_TO_UINT16(*acl_buffer_count_ptr, stream);
     STREAM_TO_UINT16(*sco_buffer_count_ptr, stream);
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_local_version_info_response(
@@ -70,7 +67,7 @@ static void parse_read_local_version_info_response(
     STREAM_TO_UINT16(bt_version->manufacturer, stream);
     STREAM_TO_UINT16(bt_version->lmp_subversion, stream);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_bd_addr_response(
@@ -82,7 +79,7 @@ static void parse_read_bd_addr_response(
     assert(stream != NULL);
     STREAM_TO_BDADDR(address_ptr->address, stream);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_local_supported_commands_response(
@@ -95,7 +92,7 @@ static void parse_read_local_supported_commands_response(
     assert(stream != NULL);
     STREAM_TO_ARRAY(supported_commands_ptr, stream, (int)supported_commands_length);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_local_supported_features_response(
@@ -106,7 +103,7 @@ static void parse_read_local_supported_features_response(
     if (stream != NULL) {
         STREAM_TO_ARRAY(feature_pages->as_array, stream, (int)sizeof(bt_device_features_t));
     }
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_read_local_extended_features_response(
@@ -129,7 +126,7 @@ static void parse_read_local_extended_features_response(
                   "THIS MAY INDICATE A FIRMWARE/CONTROLLER ISSUE.", __func__);
     }
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_white_list_size_response(
@@ -141,7 +138,7 @@ static void parse_ble_read_white_list_size_response(
     assert(stream != NULL);
     STREAM_TO_UINT8(*white_list_size_ptr, stream);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_buffer_size_response(
@@ -155,7 +152,7 @@ static void parse_ble_read_buffer_size_response(
     STREAM_TO_UINT16(*data_size_ptr, stream);
     STREAM_TO_UINT8(*acl_buffer_count_ptr, stream);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_supported_states_response(
@@ -168,7 +165,7 @@ static void parse_ble_read_supported_states_response(
     assert(stream != NULL);
     STREAM_TO_ARRAY(supported_states, stream, (int)supported_states_size);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_local_supported_features_response(
@@ -180,7 +177,7 @@ static void parse_ble_read_local_supported_features_response(
     assert(stream != NULL);
     STREAM_TO_ARRAY(supported_features->as_array, stream, (int)sizeof(bt_device_features_t));
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_resolving_list_size_response(
@@ -191,7 +188,7 @@ static void parse_ble_read_resolving_list_size_response(
     uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_RESOLVING_LIST_SIZE, 1 /* bytes after */);
     STREAM_TO_UINT8(*resolving_list_size_ptr, stream);
 
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 static void parse_ble_read_suggested_default_data_length_response(
@@ -203,7 +200,7 @@ static void parse_ble_read_suggested_default_data_length_response(
     uint8_t *stream = read_command_complete_header(response, HCI_BLE_READ_DEFAULT_DATA_LENGTH, 2 /* bytes after */);
     STREAM_TO_UINT16(*ble_default_packet_length_ptr, stream);
     STREAM_TO_UINT16(*ble_default_packet_txtime_ptr, stream);
-    buffer_allocator->free(response);
+    osi_free(response);
 }
 
 // Internal functions
@@ -226,7 +223,6 @@ static uint8_t *read_command_complete_header(
 
     // Check the event header values against what we expect
     assert(event_code == HCI_COMMAND_COMPLETE_EVT);
-
     assert(parameter_length >= (parameter_bytes_we_read_here + minimum_bytes_after));
 
     // Read the command complete header
@@ -268,7 +264,6 @@ static const hci_packet_parser_t interface = {
 
 const hci_packet_parser_t *hci_packet_parser_get_interface()
 {
-    buffer_allocator = buffer_allocator_get_interface();
     return &interface;
 }
 
