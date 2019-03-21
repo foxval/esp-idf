@@ -659,7 +659,10 @@ esp_err_t uart_param_config(uart_port_t uart_num, const uart_config_t *uart_conf
     r = uart_set_stop_bits(uart_num, uart_config->stop_bits);
     //A hardware reset does not reset the fifo,
     //so we need to reset the fifo manually.
-    uart_reset_rx_fifo(uart_num);
+
+    // do not reset uart RX fifo, in order to workaround the issue for UART0 whose fifo seems to be filled
+    // with dummy bytes sometimes, e.g. in using SSC
+    // uart_reset_rx_fifo(uart_num);
     return r;
 }
 
