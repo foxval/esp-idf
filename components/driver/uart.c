@@ -287,13 +287,11 @@ esp_err_t uart_get_hw_flow_ctrl(uart_port_t uart_num, uart_hw_flowcontrol_t* flo
 static esp_err_t uart_reset_rx_fifo(uart_port_t uart_num)
 {
     UART_CHECK((uart_num < UART_NUM_MAX), "uart_num error", ESP_FAIL);
-    //Due to hardware issue, we can not use fifo_rst to reset uart fifo.
-    //See description about UART_TXFIFO_RST and UART_RXFIFO_RST in <<esp32_technical_reference_manual>> v2.6 or later.
-
-    // we read the data out and make `fifo_len == 0 && rd_addr == wr_addr`.
-    while(UART[uart_num]->status.rxfifo_cnt != 0 || (UART[uart_num]->mem_rx_status.rx_waddr != UART[uart_num]->mem_rx_status.apb_rx_raddr)) {
-        READ_PERI_REG(UART_FIFO_AHB_REG(uart_num));
-    }
+    // ESP32 has a hardware issue that we cannot use fifo_rst to reset uart FIFO,
+    // See description about UART_TXFIFO_RST and UART_RXFIFO_RST in <<esp32_technical_reference_manual>> v2.6 or later.
+    // The issue for ESP32 is fixed so no longer need to read the bytes to clear the RX FIFO
+    UART[uart_num]->conf0.rxfifo_rst = 1;
+    UART[uart_num]->conf0.rxfifo_rst = 0;
     return ESP_OK;
 }
 
@@ -662,7 +660,7 @@ esp_err_t uart_param_config(uart_port_t uart_num, const uart_config_t *uart_conf
 
     // do not reset uart RX fifo, in order to workaround the issue for UART0 whose fifo seems to be filled
     // with dummy bytes sometimes, e.g. in using SSC
-    // uart_reset_rx_fifo(uart_num);
+    uart_reset_rx_fifo(uart_num);
     return r;
 }
 
