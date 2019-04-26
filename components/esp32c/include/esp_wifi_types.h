@@ -93,6 +93,7 @@ typedef enum {
     WIFI_REASON_AUTH_FAIL                = 202,
     WIFI_REASON_ASSOC_FAIL               = 203,
     WIFI_REASON_HANDSHAKE_TIMEOUT        = 204,
+    WIFI_REASON_CONNECTION_FAIL          = 205,
 } wifi_err_reason_t;
 
 typedef enum {
@@ -186,6 +187,8 @@ typedef struct {
     wifi_auth_mode_t    authmode;         /**< The weakest authmode to accept in the fast scan mode */
 }wifi_fast_scan_threshold_t;
 
+typedef wifi_fast_scan_threshold_t wifi_scan_threshold_t;    /**< wifi_fast_scan_threshold_t only used in fast scan mode once, now it enabled in all channel scan, the wifi_fast_scan_threshold_t will be remove in version 4.0 */
+
 typedef enum {
     WIFI_PS_NONE,        /**< No power save */
     WIFI_PS_MIN_MODEM,   /**< Minimum modem power saving. In this mode, station wakes up to receive beacon every DTIM period */
@@ -206,9 +209,9 @@ typedef enum {
 
 /** @brief Soft-AP configuration settings for the ESP32 */
 typedef struct {
-    uint8_t ssid[32];           /**< SSID of ESP32 soft-AP */
-    uint8_t password[64];       /**< Password of ESP32 soft-AP */
-    uint8_t ssid_len;           /**< Length of SSID. If softap_config.ssid_len==0, check the SSID until there is a termination character; otherwise, set the SSID length according to softap_config.ssid_len. */
+    uint8_t ssid[32];           /**< SSID of ESP32 soft-AP. If ssid_len field is 0, this must be a Null terminated string. Otherwise, length is set according to ssid_len. */
+    uint8_t password[64];       /**< Password of ESP32 soft-AP. Null terminated string. */
+    uint8_t ssid_len;           /**< Optional length of SSID field. */
     uint8_t channel;            /**< Channel of ESP32 soft-AP */
     wifi_auth_mode_t authmode;  /**< Auth mode of ESP32 soft-AP. Do not support AUTH_WEP in soft-AP mode */
     uint8_t ssid_hidden;        /**< Broadcast SSID or not, default 0, broadcast the SSID */
@@ -218,15 +221,15 @@ typedef struct {
 
 /** @brief STA configuration settings for the ESP32 */
 typedef struct {
-    uint8_t ssid[32];      /**< SSID of target AP*/
-    uint8_t password[64];  /**< password of target AP*/
+    uint8_t ssid[32];      /**< SSID of target AP. Null terminated string. */
+    uint8_t password[64];  /**< Password of target AP. Null terminated string.*/
     wifi_scan_method_t scan_method;    /**< do all channel scan or fast scan */
     bool bssid_set;        /**< whether set MAC address of target AP or not. Generally, station_config.bssid_set needs to be 0; and it needs to be 1 only when users need to check the MAC address of the AP.*/
     uint8_t bssid[6];     /**< MAC address of target AP*/
     uint8_t channel;       /**< channel of target AP. Set to 1~13 to scan starting from the specified channel before connecting to AP. If the channel of AP is unknown, set it to 0.*/
     uint16_t listen_interval;   /**< Listen interval for ESP32 station to receive beacon when WIFI_PS_MAX_MODEM is set. Units: AP beacon intervals. Defaults to 3 if set to 0. */
     wifi_sort_method_t sort_method;    /**< sort the connect AP in the list by rssi or security mode */
-    wifi_fast_scan_threshold_t  threshold;     /**< When scan_method is set to WIFI_FAST_SCAN, only APs which have an auth mode that is more secure than the selected auth mode and a signal stronger than the minimum RSSI will be used. */
+    wifi_scan_threshold_t  threshold;     /**< When scan_method is set, only APs which have an auth mode that is more secure than the selected auth mode and a signal stronger than the minimum RSSI will be used. */
 } wifi_sta_config_t;
 
 /** @brief Configuration data for ESP32 AP or STA.
@@ -260,7 +263,7 @@ typedef struct {
 } wifi_sta_list_t;
 
 typedef enum {
-    WIFI_STORAGE_FLASH,  /**< all configuration will strore in both memory and flash */
+    WIFI_STORAGE_FLASH,  /**< all configuration will store in both memory and flash */
     WIFI_STORAGE_RAM,    /**< all configuration will only store in the memory */
 } wifi_storage_t;
 
@@ -447,6 +450,34 @@ typedef struct {
     uint8_t         enabled_ant0: 4,      /**< Index (in antenna GPIO configuration) of enabled WIFI_ANT_MODE_ANT0 */
                     enabled_ant1: 4;      /**< Index (in antenna GPIO configuration) of enabled WIFI_ANT_MODE_ANT1 */
 } wifi_ant_config_t;
+
+/**
+  * @brief WiFi ioctl command type
+  *
+  */
+typedef enum {
+    WIFI_IOCTL_SET_STA_HT2040_COEX = 1, /**< Set the configuration of STA's HT2040 coexist management */
+    WIFI_IOCTL_GET_STA_HT2040_COEX,     /**< Get the configuration of STA's HT2040 coexist management */
+    WIFI_IOCTL_MAX,
+} wifi_ioctl_cmd_t;
+
+/**
+ * @brief Configuration for STA's HT2040 coexist management
+ *
+ */
+typedef struct {
+    int enable;                         /**< Indicate whether STA's HT2040 coexist management is enabled or not */
+} wifi_ht2040_coex_t;
+
+/**
+  * @brief Configuration for WiFi ioctl
+  *
+  */
+typedef struct {
+    union {
+        wifi_ht2040_coex_t ht2040_coex; /**< Configuration of STA's HT2040 coexist management */
+    } data;                             /**< Configuration of ioctl command */
+} wifi_ioctl_config_t;
 
 #ifdef __cplusplus
 }
