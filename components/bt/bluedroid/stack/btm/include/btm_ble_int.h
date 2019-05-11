@@ -132,6 +132,16 @@ typedef struct {
 
 #define BTM_BLE_ADV_DATA_LEN_MAX        31
 #define BTM_BLE_CACHE_ADV_DATA_MAX      62
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+#define BTM_BLE_EXT_ADV_DATA_LEN_MAX    251
+#define BTM_BLE_PERIODIC_ADV_DATA_LEN_MAX 252
+
+#define BTM_BLE_ADV_DATA_OP_INTERMEDIATE_FRAG    0
+#define BTM_BLE_ADV_DATA_OP_FIRST_FRAG           1
+#define BTM_BLE_ADV_DATA_OP_LAST_FRAG            2
+#define BTM_BLE_ADV_DATA_OP_COMPLETE             3
+#define BTM_BLE_ADV_DATA_OP_UNCHANGED_DATA       4
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 
 #define BTM_BLE_ISVALID_PARAM(x, min, max)  (((x) >= (min) && (x) <= (max)) || ((x) == BTM_BLE_CONN_PARAM_UNDEF))
 
@@ -501,6 +511,18 @@ void btm_ble_set_test_local_sign_cntr_value(BOOLEAN enable, UINT32 test_local_si
 void btm_set_random_address(BD_ADDR random_bda);
 void btm_ble_set_keep_rfu_in_auth_req(BOOLEAN keep_rfu);
 #endif
+
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+void btm_ble_update_phy_evt(tBTM_BLE_UPDATE_PHY *params);
+void btm_ble_scan_timeout_evt(void);
+void btm_ble_adv_set_terminated_evt(tBTM_BLE_ADV_TERMINAT *params);
+void btm_ble_ext_adv_report_evt(tBTM_BLE_EXT_ADV_REPORT *params);
+void btm_ble_scan_req_received_evt(tBTM_BLE_SCAN_REQ_RECEIVED *params);
+void btm_ble_channel_select_algorithm_evt(tBTM_BLE_CHANNEL_SEL_ALG *params);
+void btm_ble_periodic_adv_report_evt(tBTM_PERIOD_ADV_REPORT *params);
+void btm_ble_periodic_adv_sync_lost_evt(tBTM_BLE_PERIOD_ADV_SYNC_LOST *params);
+void btm_ble_periodic_adv_sync_establish_evt(tBTM_BLE_PERIOD_ADV_SYNC_ESTAB *params);
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 
 /*
 #ifdef __cplusplus

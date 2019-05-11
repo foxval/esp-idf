@@ -166,6 +166,42 @@ typedef enum {
     ESP_GAP_BLE_READ_RSSI_COMPLETE_EVT,                     /*!< When read the rssi complete, the event comes */
     ESP_GAP_BLE_UPDATE_WHITELIST_COMPLETE_EVT,              /*!< When add or remove whitelist complete, the event comes */
     ESP_GAP_BLE_UPDATE_DUPLICATE_EXCEPTIONAL_LIST_COMPLETE_EVT,  /*!< When update duplicate exceptional list complete, the event comes */
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    ESP_GAP_BLE_READ_PHY_COMPLETE_EVT,
+    ESP_GAP_BLE_SET_PREFERED_DEFAULT_PHY_COMPLETE_EVT,
+    ESP_GAP_BLE_SET_PREFERED_PHY_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_SET_RAND_ADDR_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_SET_PARAMS_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_DATA_SET_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_SCAN_RSP_DATA_SET_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_START_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_STOP_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_SET_REMOVE_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_SET_CLEAR_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_SET_PARAMS_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_DATA_SET_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_START_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_STOP_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_CREATE_SYNC_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_SYNC_CANCEL_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_SYNC_TERMINATE_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_ADD_DEV_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_REMOVE_DEV_COMPLETE_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_CLEAR_DEV_COMPLETE_EVT,
+    ESP_GAP_BLE_SET_EXT_SCAN_PARAMS_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_SCAN_START_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_SCAN_STOP_COMPLETE_EVT,
+    ESP_GAP_BLE_PREFER_EXT_CONN_PARAMS_SET_COMPLETE_EVT,
+    ESP_GAP_BLE_PHY_UPDATE_COMPLETE_EVT,
+    ESP_GAP_BLE_EXT_ADV_REPORT_EVT,
+    ESP_GAP_BLE_SCAN_TIMEOUT_EVT,
+    ESP_GAP_BLE_ADV_TERMINATED_EVT,
+    ESP_GAP_BLE_SCAN_REQ_RECEIVED_EVT,
+    ESP_GAP_BLE_CHANNEL_SELETE_ALGORITHM_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_REPORT_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_SYNC_LOST_EVT,
+    ESP_GAP_BLE_PERIODIC_ADV_SYNC_ESTAB_EVT,
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
     ESP_GAP_BLE_EVT_MAX,
 } esp_gap_ble_cb_event_t;
 /// This is the old name, just for backwards compatibility
@@ -599,6 +635,162 @@ typedef enum {
 
 typedef uint8_t esp_duplicate_info_t[ESP_BD_ADDR_LEN];
 
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_NONCONN_NONSCANNABLE_UNDIRECTED      (0 << 0) // Non-Connectable and Non-Scannable Undirected advertising
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_CONNECTABLE                          (1 << 0) // Connectable advertising
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_SCANNABLE                            (1 << 1) // Scannable advertising
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_DIRECTED                             (1 << 2) // Directed advertising
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_HD_DIRECTED                          (1 << 3) // High Duty Cycle Directed Connectable advertising (<= 3.75 ms Advertis- ing Interval)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY                               (1 << 4) // Use legacy advertising PDUs
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_ANON_ADV                             (1 << 5) // Omit advertiser's address from all PDUs ("anonymous advertising")
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_INCLUDE_TX_PWR                       (1 << 6) // Include TxPower in the extended header of the advertising PDU
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_MASK                                 (0x7F)   // Reserved for future use
+
+/*  If extended advertising PDU types are being used (bit 4 = 0) then:
+    The advertisement shall not be both connectable and scannable.
+    High duty cycle directed connectable advertising (<= 3.75 ms advertising interval) shall not be used (bit 3 = 0) 
+*/
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY_IND        (ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_CONNECTABLE |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_SCANNABLE)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY_LD_DIR     (ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_CONNECTABLE |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_DIRECTED)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY_HD_DIR     (ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_CONNECTABLE |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_HD_DIRECTED)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY_SCAN       (ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY |\
+                                                        ESP_BLE_GAP_SET_EXT_ADV_PROP_SCANNABLE)
+#define ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY_NONCONN    (ESP_BLE_GAP_SET_EXT_ADV_PROP_LEGACY)
+typedef uint16_t esp_ble_ext_adv_type_mask_t;
+
+#define ESP_BLE_GAP_PHY_1M                             1
+#define ESP_BLE_GAP_PHY_2M                             2
+#define ESP_BLE_GAP_PHY_CODED                          3
+typedef uint8_t esp_ble_gap_phy_t;
+
+#define ESP_BLE_GAP_PHY_NO_TX_PREF_MASK                (1 << 0)
+#define ESP_BLE_GAP_PHY_NO_RX_PREF_MASK                (1 << 1)
+#define ESP_BLE_GAP_PHY_1M_PREF_MASK                   (1 << 2)
+#define ESP_BLE_GAP_PHY_2M_PREF_MASK                   (1 << 3)
+#define ESP_BLE_GAP_PHY_CODED_PREF_MASK                (1 << 4)
+typedef uint8_t esp_ble_gap_phy_mask_t;
+
+#define ESP_BLE_GAP_EXT_SCAN_CFG_UNCODE_MASK           0x01
+#define ESP_BLE_GAP_EXT_SCAN_CFG_CODE_MASK             0x02
+typedef uint8_t esp_ble_ext_scan_cfg_mask_t;
+
+#define ESP_BLE_GAP_EXT_ADV_DATA_COMPLETE              0x00
+#define ESP_BLE_GAP_EXT_ADV_DATA_INCOMPLETE            0x01
+#define ESP_BLE_GAP_EXT_ADV_DATA_TRUNCATED             0x02
+typedef uint8_t esp_ble_gap_ext_adv_data_status_t;
+
+
+typedef struct {
+    esp_ble_ext_adv_type_mask_t type;
+    uint32_t interval_min;
+    uint32_t interval_max;
+    esp_ble_adv_channel_t channel_map;
+    esp_ble_addr_type_t own_addr_type;
+    esp_ble_addr_type_t peer_addr_type;
+    esp_bd_addr_t peer_addr;
+    esp_ble_adv_filter_t filter_policy;
+    int8_t tx_power;
+    esp_ble_gap_phy_t primary_phy;
+    uint8_t max_skip;
+    esp_ble_gap_phy_t secondary_phy;
+    uint8_t sid;
+    bool scan_req_notif;
+} esp_ble_gap_ext_adv_params_t;
+
+typedef struct {
+    esp_ble_scan_type_t scan_type;
+    uint16_t scan_interval;
+    uint16_t scan_window;
+} esp_ble_ext_scan_cfg_t;
+
+typedef struct {
+    esp_ble_scan_type_t     scan_type;
+    esp_ble_addr_type_t own_addr_type;
+    esp_ble_scan_filter_t filter_policy;
+    esp_ble_scan_duplicate_t  scan_duplicate;
+    esp_ble_ext_scan_cfg_mask_t cfg_mask;
+    esp_ble_ext_scan_cfg_t uncoded_cfg;
+    esp_ble_ext_scan_cfg_t coded_cfg;
+} esp_ble_ext_scan_params_t;
+
+typedef struct {
+    uint16_t scan_interval;
+    uint16_t scan_window;
+    uint16_t interval_min;
+    uint16_t interval_max;
+    uint16_t latency;
+    uint16_t supervision_timeout;
+    uint16_t min_ce_len;
+    uint16_t max_ce_len;
+} esp_ble_gap_conn_params_t;
+
+typedef struct {
+    uint8_t instance;
+    int duration;
+    int max_events;
+} esp_ble_gap_ext_adv_t;
+
+typedef struct {
+    uint16_t interval_min;
+    uint16_t interval_max;
+    uint8_t  properties;
+} esp_ble_gap_periodic_adv_params_t;
+
+typedef struct {
+    uint8_t filter_policy;
+    uint8_t sid;
+    esp_ble_addr_type_t addr_type;
+    esp_bd_addr_t addr;
+    uint16_t skip;
+    uint16_t sync_timeout;
+} esp_ble_gap_periodic_adv_sync_params_t;
+
+typedef struct {
+    uint8_t props;
+    uint8_t legacy_event_type;
+    uint8_t addr_type;
+    esp_bd_addr_t addr;
+    esp_ble_gap_phy_t primary_phy;
+    esp_ble_gap_phy_t secondly_phy;
+    uint8_t sid;
+    uint8_t tx_power;
+    int8_t rssi;
+    uint16_t per_adv_interval;
+    uint8_t dir_addr_type;
+    esp_bd_addr_t dir_addr;
+    esp_ble_gap_ext_adv_data_status_t data_status;
+    uint8_t adv_data_len;
+    uint8_t adv_data[251];
+} esp_ble_gap_ext_adv_reprot_t;
+
+typedef struct {
+    uint16_t sync_handle;
+    uint8_t tx_power;
+    int8_t rssi;
+    esp_ble_gap_ext_adv_data_status_t data_status;
+    uint8_t data_length;
+    uint8_t data[251];
+} esp_ble_gap_periodic_adv_report_t;
+
+typedef struct {
+    uint8_t status;
+    uint16_t sync_handle;
+    uint8_t sid;
+    esp_ble_addr_type_t addr_type;
+    esp_bd_addr_t adv_addr;
+    esp_ble_gap_phy_t adv_phy;
+    uint16_t period_adv_interval;
+    uint8_t adv_clk_accuracy;
+} esp_ble_gap_periodic_adv_sync_estab_t;
+
+#endif //#if (BLE_50_FEATURE_SUPPORT == TRUE)
+
 /**
  * @brief Gap callback parameters union
  */
@@ -754,6 +946,230 @@ typedef union {
         uint16_t         length;                     /*!< The length of device_info */
         esp_duplicate_info_t device_info;           /*!< device information, when subcode is ESP_BLE_DUPLICATE_EXCEPTIONAL_LIST_CLEAN, the value is invalid */
     } update_duplicate_exceptional_list_cmpl;       /*!< Event parameter of ESP_GAP_BLE_UPDATE_DUPLICATE_EXCEPTIONAL_LIST_COMPLETE_EVT */
+
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    /**
+     * @brief ESP_GAP_BLE_READ_PHY_COMPLETE_EVT
+     */
+    struct ble_read_phy_cmpl_evt_param {
+        esp_bt_status_t status;
+        esp_ble_gap_phy_t tx_phy;
+        esp_ble_gap_phy_t rx_phy;
+    } read_phy;
+    /**
+     * @brief ESP_GAP_BLE_SET_PREFERED_DEFAULT_PHY_COMPLETE_EVT
+     */
+    struct ble_set_perf_def_phy_cmpl_evt_param {
+        esp_bt_status_t status;
+    } set_perf_def_phy;
+    /**
+     * @brief ESP_GAP_BLE_SET_PREFERED_PHY_COMPLETE_EVT
+     */
+    struct ble_set_perf_phy_cmpl_evt_param {
+        esp_bt_status_t status;
+    } set_perf_phy;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_SET_RAND_ADDR_COMPLETE_EVT
+     */
+    struct ble_ext_adv_set_rand_addr_cmpl_evt_param {
+        esp_bt_status_t status;
+    } ext_adv_set_rand_addr;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_SET_PARAMS_COMPLETE_EVT
+     */
+    struct ble_ext_adv_set_params_cmpl_evt_param {
+        esp_bt_status_t status;
+    } ext_adv_set_params;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_DATA_SET_COMPLETE_EVT
+     */
+     struct ble_ext_adv_data_set_cmpl_evt_param {
+        esp_bt_status_t status;
+    } ext_adv_data_set;
+    /**
+     * @brief ESP_GAP_BLE_EXT_SCAN_RSP_DATA_SET_COMPLETE_EVT
+     */
+    struct ble_ext_adv_scan_rsp_set_cmpl_evt_param {
+        esp_bt_status_t status;
+    } scan_rsp_set;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_START_COMPLETE_EVT
+     */
+    struct ble_ext_adv_start_cmpl_evt_param {
+        esp_bt_status_t status;                     /*!< Indicate advertising start operation success status */
+    } ext_adv_start;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_STOP_COMPLETE_EVT
+     */
+    struct ble_ext_adv_stop_cmpl_evt_param {
+        esp_bt_status_t status;                     /*!< Indicate advertising stop operation success status */
+    } ext_adv_stop;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_SET_REMOVE_COMPLETE_EVT
+     */
+    struct ble_ext_adv_set_remove_cmpl_evt_param {
+        esp_bt_status_t status;                     /*!< Indicate advertising stop operation success status */
+    } ext_adv_remove;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_SET_CLEAR_COMPLETE_EVT
+     */
+    struct ble_ext_adv_set_clear_cmpl_evt_param {
+        esp_bt_status_t status;                     /*!< Indicate advertising stop operation success status */
+    } ext_adv_clear; 
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_SET_PARAMS_COMPLETE_EVT
+     */
+    struct ble_periodic_adv_set_params_cmpl_param {
+        esp_bt_status_t status;
+    } peroid_adv_set_params;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_DATA_SET_COMPLETE_EVT
+     */
+    struct ble_periodic_adv_data_set_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_data_set;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_START_COMPLETE_EVT
+     */
+    struct ble_periodic_adv_start_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_start;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_STOP_COMPLETE_EVT
+     */
+    struct ble_periodic_adv_stop_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_stop;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_CREATE_SYNC_COMPLETE_EVT
+     */
+    struct ble_period_adv_create_sync_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_create_sync;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_SYNC_CANCEL_COMPLETE_EVT
+     */
+    struct ble_period_adv_sync_cancel_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_sync_cancel;
+     /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_SYNC_TERMINATE_COMPLETE_EVT
+     */
+    struct ble_period_adv_sync_terminate_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_sync_term;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_ADD_DEV_COMPLETE_EVT
+     */
+    struct ble_period_adv_add_dev_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_add_dev;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_REMOVE_DEV_COMPLETE_EVT
+     */
+    struct ble_period_adv_remove_dev_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_remove_dev;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_CLEAR_DEV_COMPLETE_EVT
+     */
+    struct ble_period_adv_clear_dev_cmpl_param {
+        esp_bt_status_t status;
+    } period_adv_clear_dev;
+    /**
+     * @brief ESP_GAP_BLE_SET_EXT_SCAN_PARAMS_COMPLETE_EVT
+     */
+    struct ble_set_ext_scan_params_cmpl_param {
+        esp_bt_status_t status;
+    } set_ext_scan_params;
+    /**
+     * @brief ESP_GAP_BLE_EXT_SCAN_START_COMPLETE_EVT
+     */
+    struct ble_ext_scan_start_cmpl_param {
+        esp_bt_status_t status;
+    } ext_scan_start;
+    /**
+     * @brief ESP_GAP_BLE_EXT_SCAN_STOP_COMPLETE_EVT
+     */
+    struct ble_ext_scan_stop_cmpl_param {
+        esp_bt_status_t status;
+    } ext_scan_stop;
+    /**
+     * @brief ESP_GAP_BLE_PREFER_EXT_CONN_PARAMS_SET_COMPLETE_EVT
+     */
+    struct ble_ext_conn_params_set_cmpl_param {
+        esp_bt_status_t status;   
+    } ext_conn_params_set;
+    /**
+     * @brief ESP_GAP_BLE_ADV_TERMINATED_EVT
+     */
+    struct ble_adv_terminate_param {
+        uint8_t status; 
+        /*  status 0x3c indicates that advertising for a fixed duration completed or,
+            for directed advertising, that advertising completed without a connection
+            being created;
+            status 0x00 indicates that advertising successfully ended with a connection being created.
+        */
+        uint8_t adv_instance;
+        uint16_t conn_idx;
+        uint8_t completed_event;
+    } adv_terminate;
+    /**
+     * @brief ESP_GAP_BLE_SCAN_REQ_RECEIVED_EVT
+     */
+    struct ble_scan_req_received_param {
+        uint8_t adv_instance;
+        esp_ble_addr_type_t scan_addr_type;
+        esp_bd_addr_t scan_addr;
+    } scan_req_received;
+    /**
+     * @brief ESP_GAP_BLE_CHANNEL_SELETE_ALGORITHM_EVT
+     */
+    struct ble_channel_sel_alg_param {
+        uint16_t conn_handle;
+        uint8_t channel_sel_alg;
+    } channel_sel_alg;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_SYNC_LOST_EVT
+     */
+    struct ble_periodic_adv_sync_lost_param {
+        uint16_t sync_handle;
+    } periodic_adv_sync_lost;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_SYNC_ESTAB_EVT
+     */
+    struct ble_periodic_adv_sync_estab_param {
+        uint8_t status;
+        uint16_t sync_handle;
+        uint8_t sid;
+        esp_ble_addr_type_t adv_addr_type;
+        esp_bd_addr_t adv_addr;
+        esp_ble_gap_phy_t adv_phy;
+        uint16_t period_adv_interval;
+        uint8_t adv_clk_accuracy;
+    } periodic_adv_sync_estab;
+    /**
+     * @brief ESP_GAP_BLE_PHY_UPDATE_COMPLETE_EVT
+     */
+    struct ble_phy_update_cmpl_param {
+        esp_bt_status_t status;
+        uint16_t conn_idx;
+        esp_ble_gap_phy_t tx_phy;
+        esp_ble_gap_phy_t rx_phy;
+    } phy_update;
+    /**
+     * @brief ESP_GAP_BLE_EXT_ADV_REPORT_EVT
+     */
+    struct ble_ext_adv_report_param {
+        esp_ble_gap_ext_adv_reprot_t params;
+    } ext_adv_report;
+    /**
+     * @brief ESP_GAP_BLE_PERIODIC_ADV_REPORT_EVT
+     */
+    struct ble_periodic_adv_report_param {
+        esp_ble_gap_periodic_adv_report_t params;
+    } period_adv_report;
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 } esp_ble_gap_cb_param_t;
 
 /**
@@ -1223,6 +1639,76 @@ esp_err_t esp_ble_oob_req_reply(esp_bd_addr_t bd_addr, uint8_t *TK, uint8_t len)
 *
 */
 esp_err_t esp_ble_gap_disconnect(esp_bd_addr_t remote_device);
+
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+
+esp_err_t esp_ble_gap_read_phy(uint16_t conn_id);
+
+esp_err_t esp_ble_gap_set_prefered_default_phy(esp_ble_gap_phy_mask_t tx_phy_mask,
+                                                                   esp_ble_gap_phy_mask_t rx_phy_mask);
+
+esp_err_t esp_ble_gap_set_prefered_phy(uint16_t conn_idx, 
+                                                        esp_ble_gap_phy_mask_t tx_phy_mask,
+                                                        esp_ble_gap_phy_mask_t rx_phy_mask,
+                                                        uint16_t phy_operations);
+
+esp_err_t esp_ble_gap_ext_adv_set_rand_addr(uint8_t instance, esp_bd_addr_t rand_addr);
+
+esp_err_t esp_ble_gap_ext_adv_set_params(uint8_t instance, 
+                                                           const esp_ble_gap_ext_adv_params_t *params);
+
+esp_err_t esp_ble_gap_config_ext_adv_data_raw(uint8_t instance, uint16_t length,
+                                                                   const uint8_t *data);
+
+esp_err_t esp_ble_gap_config_ext_scan_rsp_data_raw(uint8_t instance, uint16_t length,
+                                                                   const uint8_t *scan_rsp_data);
+
+esp_err_t esp_ble_gap_ext_adv_start(uint8_t num_adv, const esp_ble_gap_ext_adv_t *ext_adv);
+
+esp_err_t esp_ble_gap_ext_adv_stop(uint8_t num_adv, const uint8_t *ext_adv_inst);
+
+esp_err_t esp_ble_gap_ext_adv_set_remove(uint8_t instance);
+
+esp_err_t esp_ble_gap_ext_adv_set_clear(void);
+
+esp_err_t esp_ble_gap_periodic_adv_set_params(uint8_t instance, const esp_ble_gap_periodic_adv_params_t *params);
+
+esp_err_t esp_ble_gap_config_periodic_adv_data_raw(uint8_t instance, uint16_t length,
+                                                                           const uint8_t *data);
+
+esp_err_t esp_ble_gap_periodic_adv_start(uint8_t instance);
+
+esp_err_t esp_ble_gap_periodic_adv_stop(uint8_t instance);
+
+esp_err_t esp_ble_gap_set_ext_scan_params(const esp_ble_ext_scan_params_t *params, uint8_t limit);
+
+esp_err_t esp_ble_gap_start_ext_scan(uint32_t duration, uint16_t period);
+
+esp_err_t esp_ble_gap_stop_ext_scan(void);
+
+esp_err_t esp_ble_gap_periodic_adv_create_sync(const esp_ble_gap_periodic_adv_sync_params_t *params);
+
+esp_err_t esp_ble_gap_periodic_adv_sync_cancel(void);
+
+esp_err_t esp_ble_gap_periodic_adv_sync_terminate(uint16_t sync_handle);
+
+esp_err_t esp_ble_gap_periodic_adv_add_dev_to_list(esp_ble_addr_type_t addr_type,
+                                                                         esp_bd_addr_t addr,
+                                                                         uint16_t sid);
+
+esp_err_t esp_ble_gap_periodic_adv_remove_dev_from_list(esp_ble_addr_type_t addr_type,
+                                                                         esp_bd_addr_t addr,
+                                                                         uint16_t sid);
+
+esp_err_t esp_ble_gap_periodic_adv_clear_dev(void);
+
+esp_err_t esp_ble_gap_prefer_ext_connect_params_set(esp_bd_addr_t addr,
+                                                    esp_ble_gap_phy_mask_t phy_mask,
+                                                    const esp_ble_gap_conn_params_t *phy_1m_conn_params,
+                                                    const esp_ble_gap_conn_params_t *phy_2m_conn_params,
+                                                    const esp_ble_gap_conn_params_t *phy_coded_conn_params);
+
+#endif //#if (BLE_50_FEATURE_SUPPORT == TRUE)
 
 #ifdef __cplusplus
 }

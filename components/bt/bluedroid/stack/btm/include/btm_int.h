@@ -493,7 +493,7 @@ typedef struct {
 #endif
     UINT16 auth_mode;                   /* Authentication mode */
 #endif
-#if (BLE_PRIVACY_SPT == TRUE)
+#if (BLE_PRIVACY_SPT == TRUE && (!CONTROLLER_RPA_LIST_ENABLE))
     tBLE_ADDR_TYPE      current_addr_type; /* current adv addr type*/
     BD_ADDR             current_addr;      /* current adv addr*/
     bool                current_addr_valid; /* current addr info is valid or not*/
@@ -609,6 +609,9 @@ typedef struct {
 #if BLE_INCLUDED == TRUE
     tBTM_SEC_BLE        ble;
     tBTM_LE_CONN_PRAMS  conn_params;
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    tBTM_EXT_CONN_PARAMS ext_conn_params;
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 #endif
 
 // btla-specific ++

@@ -219,6 +219,12 @@ static BT_HDR *make_write_default_erroneous_data_report(uint8_t enable)
     UINT8_TO_STREAM(stream, enable);
     return packet;
 }
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+static BT_HDR *make_read_max_adv_data_len(void)
+{
+    return make_command_no_params(HCI_BLE_RD_MAX_ADV_DATA_LEN);
+}
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 // Internal functions
 
 static BT_HDR *make_command_no_params(uint16_t opcode)
@@ -272,6 +278,9 @@ static const hci_packet_factory_t interface = {
     make_ble_read_supported_states,
     make_ble_read_local_supported_features,
     make_ble_read_resolving_list_size,
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    make_read_max_adv_data_len,
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
     make_ble_read_suggested_default_data_length,
     make_ble_write_suggested_default_data_length,
     make_ble_set_event_mask,

@@ -102,6 +102,13 @@
 #define CONFIG_GATTC_CACHE_NVS_FLASH         FALSE
 #endif /* CONFIG_GATTC_CACHE_NVS_FLASH */
 
+#ifndef CONFIG_BTDM_CONTROLLER_RPA_SUPPORTED
+#define CONFIG_BTDM_CONTROLLER_RPA_SUPPORTED FALSE
+#endif
+#ifndef CONFIG_BTDM_CONTROLLER_BLE_50_FEATURES_SUPPORTED
+#define CONFIG_BTDM_CONTROLLER_BLE_50_FEATURES_SUPPORTED FALSE
+#endif
+
 /******************************************************************************
 **
 ** BLE features
@@ -1030,6 +1037,13 @@
 #ifndef BLE_PRIVACY_SPT
 #define BLE_PRIVACY_SPT         FALSE
 #endif
+
+/*
+  Enable controller RPA function, it is for new chip RPA and whitelist test
+*/
+
+#define CONTROLLER_RPA_LIST_ENABLE      CONFIG_BTDM_CONTROLLER_RPA_SUPPORTED
+#define BLE_50_FEATURE_SUPPORT          CONFIG_BTDM_CONTROLLER_BLE_50_FEATURES_SUPPORTED
 
 /*
  * Enables or disables support for local privacy (ex. address rotation)

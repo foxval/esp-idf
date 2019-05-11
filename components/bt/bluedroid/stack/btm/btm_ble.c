@@ -1955,8 +1955,11 @@ void btm_ble_conn_complete(UINT8 *p, UINT16 evt_len, BOOLEAN enhanced)
         * Once the connection is successful, resolve device address whether it is
         * slave or master*/
 
-        /* if (!match && role == HCI_ROLE_SLAVE && BTM_BLE_IS_RESOLVE_BDA(bda)) { */
+#if CONTROLLER_RPA_LIST_ENABLE
+        if (!match && role == HCI_ROLE_SLAVE && BTM_BLE_IS_RESOLVE_BDA(bda)) {
+#else
         if (!match && BTM_BLE_IS_RESOLVE_BDA(bda)) {
+#endif
             // save the enhanced value to used in btm_ble_resolve_random_addr_on_conn_cmpl func.
             temp_enhanced = enhanced;
             btm_ble_resolve_random_addr(bda, btm_ble_resolve_random_addr_on_conn_cmpl, p_data);

@@ -262,6 +262,7 @@ tBTA_GATT_STATUS bta_gattc_co_cache_open(BD_ADDR server_bda, BOOLEAN to_save, UI
 tBTA_GATT_STATUS bta_gattc_co_cache_load(tBTA_GATTC_NV_ATTR *attr, UINT8 index)
 {
     UINT16              num_attr = 0;
+    UNUSED(num_attr);
     tBTA_GATT_STATUS    status = BTA_GATT_ERROR;
     size_t length = 0;
     // Read the size of memory space required for blob
@@ -308,6 +309,7 @@ void bta_gattc_co_cache_save (BD_ADDR server_bda, UINT16 num_attr,
                               tBTA_GATTC_NV_ATTR *p_attr_list)
 {
     tBTA_GATT_STATUS    status = BTA_GATT_OK;
+    UNUSED(status);
     hash_key_t hash_key = {0};
     UINT8 index = INVALID_ADDR_NUM;
     //calculate  the hash value of the attribute table which should be added to the nvs flash.

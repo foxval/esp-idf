@@ -639,6 +639,7 @@ BOOLEAN bta_gattc_mark_bg_conn (tBTA_GATTC_IF client_if,  BD_ADDR_PTR remote_bda
         if (remote_bda_ptr) {
             // bdstr_t bdstr = {0};
             char bdstr[18] = {0};
+	    UNUSED(bdstr);
             APPL_TRACE_ERROR("%s unable to find the bg connection mask for: %s", __func__,
                              bdaddr_to_string((bt_bdaddr_t *)remote_bda_ptr, bdstr, sizeof(bdstr)));
         }

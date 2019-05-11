@@ -3346,9 +3346,11 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
     UINT8               data_len;
 #if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
     BOOLEAN             match = FALSE;
+#if (!CONTROLLER_RPA_LIST_ENABLE)
     BD_ADDR             temp_bda;
     UINT8               temp_addr_type = 0;
-#endif
+#endif // (!CONTROLLER_RPA_LIST_ENABLE)
+#endif//(defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
 
     /* Only process the results if the inquiry is still active */
     if (!BTM_BLE_IS_SCAN_ACTIVE(btm_cb.ble_ctr_cb.scan_activity)) {
@@ -3366,8 +3368,11 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
         //BTM_TRACE_ERROR("btm_ble_process_adv_pkt:bda= %0x:%0x:%0x:%0x:%0x:%0x\n",
         //                              bda[0],bda[1],bda[2],bda[3],bda[4],bda[5]);
 #if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
+
+#if (!CONTROLLER_RPA_LIST_ENABLE)
         temp_addr_type = addr_type;
         memcpy(temp_bda, bda, BD_ADDR_LEN);
+#endif // (!CONTROLLER_RPA_LIST_ENABLE)
         
         /* map address to security record */
         match = btm_identity_addr_to_random_pseudo(bda, &addr_type, FALSE);
@@ -3380,7 +3385,7 @@ void btm_ble_process_adv_pkt (UINT8 *p_data)
         } else
 #endif
         btm_ble_process_adv_pkt_cont(bda, addr_type, evt_type, p);
-#if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE)
+#if (defined BLE_PRIVACY_SPT && BLE_PRIVACY_SPT == TRUE && (!CONTROLLER_RPA_LIST_ENABLE))
         //save current adv addr information if p_dev_rec!= NULL
         tBTM_SEC_DEV_REC *p_dev_rec = btm_find_dev (bda);
         if(p_dev_rec) {

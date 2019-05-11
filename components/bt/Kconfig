@@ -289,6 +289,20 @@ menu Bluetooth
                 of ADV packets lost in the controller reaches this threshold. It is better to set a larger value.
                 If you set `BLE_ADV_REPORT_DISCARD_THRSHOLD` to a small value or printf every adv lost event, it
                 may cause adv packets lost more.
+        
+        config BTDM_CONTROLLER_RPA_SUPPORTED
+            bool "Controller enable RPA"
+            depends on (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+            default n
+            help
+                This enables controller RPA list function.
+
+        config BTDM_CONTROLLER_BLE_50_FEATURES_SUPPORTED
+            bool "Enable BLE 5.0 features"
+            depends on (BTDM_CONTROLLER_MODE_BTDM || BTDM_CONTROLLER_MODE_BLE_ONLY)
+            default n
+            help
+                This enables BLE 5.0 features.
 
     endmenu
 

@@ -29,8 +29,11 @@
 #include "stack/btm_ble_api.h"
 #include "device/version.h"
 #include "osi/future.h"
-
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+const bt_event_mask_t BLE_EVENT_MASK = { "\x00\x00\x00\x00\x00\x0f\xff\xff" };
+#else
 const bt_event_mask_t BLE_EVENT_MASK = { "\x00\x00\x00\x00\x00\x00\x06\x7f" };
+#endif 
 
 #if (BLE_INCLUDED)
 const bt_event_mask_t CLASSIC_EVENT_MASK = { HCI_DUMO_EVENT_MASK_EXT };
@@ -77,6 +80,9 @@ static bool readable;
 static bool ble_supported;
 static bool simple_pairing_supported;
 static bool secure_connections_supported;
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+static uint16_t ble_adv_max_len;
+#endif //#if (BLE_50_FEATURE_SUPPORT == TRUE)
 
 #define AWAIT_COMMAND(command) future_await(hci->transmit_command_futured(command))
 
@@ -261,7 +267,14 @@ static void start_up(void)
                 response,
                 &ble_resolving_list_max_size);
         }
-
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+        if (HCI_LE_ENHANCED_PRIVACY_SUPPORTED(features_ble.as_array)) {
+            response = AWAIT_COMMAND(packet_factory->make_read_max_adv_data_len());
+            packet_parser->parse_ble_read_adv_max_len_response(
+                response,
+                &ble_adv_max_len);
+        }
+#endif //#if (BLE_50_FEATURE_SUPPORT == TRUE)
         if (HCI_LE_DATA_LEN_EXT_SUPPORTED(features_ble.as_array)) {
             /* set default tx data length to MAX 251 */
             response = AWAIT_COMMAND(packet_factory->make_ble_write_suggested_default_data_length(BTM_BLE_DATA_SIZE_MAX, BTM_BLE_DATA_TX_TIME_MAX));
@@ -482,7 +495,14 @@ static void set_ble_resolving_list_max_size(int resolving_list_max_size)
     assert(ble_supported);
     ble_resolving_list_max_size = resolving_list_max_size;
 }
-
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+static uint16_t ble_get_adv_max_len(void)
+{
+    assert(readable);
+    assert(ble_supported);
+    return ble_adv_max_len;
+}
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 #if (BTM_SCO_HCI_INCLUDED == TRUE)
 static uint8_t get_sco_data_size(void)
 {
@@ -540,6 +560,9 @@ static const controller_t interface = {
 
     get_ble_resolving_list_max_size,
     set_ble_resolving_list_max_size,
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    ble_get_adv_max_len,
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 #if (BTM_SCO_HCI_INCLUDED == TRUE)
     get_sco_data_size,
     get_sco_buffer_count,

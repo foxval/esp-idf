@@ -278,6 +278,7 @@ static void hci_hal_h4_hdl_rx_packet(BT_HDR *packet)
     packet->len--;
     if (type == HCI_BLE_EVENT) {
         uint8_t len = 0;
+        UNUSED(len);
         STREAM_TO_UINT8(len, stream);
         HCI_TRACE_ERROR("Workround stream corrupted during LE SCAN: pkt_len=%d ble_event_len=%d\n",
                   packet->len, len);

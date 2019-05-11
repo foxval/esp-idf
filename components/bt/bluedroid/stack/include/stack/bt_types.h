@@ -22,6 +22,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "osi/mutex.h"
+
 #ifndef FALSE
 #  define FALSE  false
 #endif
@@ -200,6 +202,7 @@ typedef struct {
     uint16_t          len;
     uint16_t          offset;
     uint16_t          layer_specific;
+    osi_mutex_t       mutex;
     uint8_t           data[];
 } BT_HDR;
 

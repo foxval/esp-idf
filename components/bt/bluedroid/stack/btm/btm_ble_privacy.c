@@ -769,18 +769,23 @@ BOOLEAN btm_ble_resolving_list_load_dev(tBTM_SEC_DEV_REC *p_dev_rec)
                         memcpy(p_dev_rec->ble.static_addr, p_dev_rec->bd_addr, BD_ADDR_LEN);
                         p_dev_rec->ble.static_addr_type = p_dev_rec->ble.ble_addr_type;
                     }
-                    /* It will cause that scanner doesn't send scan request to advertiser
-                     * which has sent IRK to us and we have stored the IRK in controller.
-                     * It is a hardware limitation. The preliminary solution is not to
-                     * send key to the controller, but to resolve the random address in host. */
-                    /*
+
+#if CONTROLLER_RPA_LIST_ENABLE
                     BTM_TRACE_DEBUG("%s:adding device to controller resolving list\n", __func__);
                     UINT8 *peer_irk = p_dev_rec->ble.keys.irk;
                     UINT8 *local_irk = btm_cb.devcb.id_keys.irk;
                     //use identical IRK for now
                     rt = btsnd_hcic_ble_add_device_resolving_list(p_dev_rec->ble.static_addr_type,
                            p_dev_rec->ble.static_addr, peer_irk, local_irk);
-                    */
+#else
+                    // do nothing
+                    /* It will cause that scanner doesn't send scan request to advertiser
+                     * which has sent IRK to us and we have stored the IRK in controller.
+                     * It is a hardware limitation. The preliminary solution is not to
+                     * send key to the controller, but to resolve the random address in host. */
+
+#endif
+
                 } else {
                     UINT8 param[40] = {0};
                     UINT8 *p = param;
@@ -809,6 +814,8 @@ BOOLEAN btm_ble_resolving_list_load_dev(tBTM_SEC_DEV_REC *p_dev_rec)
                 } else {
                     btm_ble_enable_resolving_list(BTM_BLE_RL_INIT);
                 }
+            } else {
+                BTM_TRACE_WARNING("%s Resolving list full ", __func__);
             }
         } else {
             BTM_TRACE_DEBUG("Device already in Resolving list\n");

@@ -5215,7 +5215,188 @@ void btm_dm_ble_multi_adv_disable(tBTA_DM_MSG *p_data)
                                     p_data->ble_multi_adv_disable.inst_id, p_ref, BTA_FAILURE);
     }
 }
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+void bta_dm_ble_gap_read_phy(tBTA_DM_MSG *p_data)
+{
+    //tBTM_STATUS btm_status = 0;
+    UINT8 tx_phy = 0, rx_phy = 0;
 
+    APPL_TRACE_API("%s, conn_idx = %d", __func__, p_data->ble_read_phy.conn_id);
+
+    BTM_BleReadPhy(p_data->ble_read_phy.conn_id, &tx_phy, &rx_phy);
+
+}
+
+void bta_dm_ble_gap_set_prefer_default_phy(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, tx_phy_mask = %d, rx_phy_mask = %d", __func__, p_data->ble_set_per_def_phy.tx_phy_mask, p_data->ble_set_per_def_phy.rx_phy_mask);
+    BTM_BleSetPreferDefaultPhy(p_data->ble_set_per_def_phy.tx_phy_mask, p_data->ble_set_per_def_phy.rx_phy_mask);
+}
+
+void bta_dm_ble_gap_set_prefer_phy(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, conn_idx = %d, tx_phy_mask = %d, rx_phy_mask = %d, phy_operations = %d", 
+                     __func__, p_data->ble_read_phy.conn_id, p_data->ble_set_per_phy.tx_phy_mask,
+                     p_data->ble_set_per_phy.rx_phy_mask, p_data->ble_set_per_phy.phy_operations);
+    BTM_BleSetPreferPhy(p_data->ble_set_per_phy.conn_idx, p_data->ble_set_per_phy.tx_phy_mask, 
+                        p_data->ble_set_per_phy.rx_phy_mask, p_data->ble_set_per_phy.phy_operations);
+}
+
+void bta_dm_ble_gap_ext_adv_set_rand_addr(tBTA_DM_MSG *p_data)
+{
+    BTM_BleSetExtendedAdvRandaddr(p_data->ble_set_ext_adv_rand_addr.instance, p_data->ble_set_ext_adv_rand_addr.rand_addr);
+}
+void bta_dm_ble_gap_ext_adv_set_params(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, instance = %d", __func__, p_data->ble_set_ext_adv_params.instance);
+
+    BTM_BleSetExtendedAdvParams(p_data->ble_set_ext_adv_params.instance,
+                                (tBTM_BLE_GAP_EXT_ADV_PARAMS *)&p_data->ble_set_ext_adv_params.params);
+}
+
+void bta_dm_ble_gap_config_ext_adv_data_raw(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, instance = %d, len = %d", __func__, p_data->ble_cfg_ext_adv_data.instance,
+         p_data->ble_cfg_ext_adv_data.length);
+
+    BTM_BleConfigExtendedAdvDataRaw(p_data->ble_cfg_ext_adv_data.is_scan_rsp, 
+                                   p_data->ble_cfg_ext_adv_data.instance,
+                                   p_data->ble_cfg_ext_adv_data.length,
+                                   p_data->ble_cfg_ext_adv_data.data);
+}
+
+void bta_dm_ble_gap_start_ext_adv(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, enable = %d, num = %d", __func__, p_data->ble_start_ext_adv.enable,
+             p_data->ble_start_ext_adv.num);
+    BTM_BleStartExtAdv(p_data->ble_start_ext_adv.enable, p_data->ble_start_ext_adv.num, 
+                       (tBTM_BLE_EXT_ADV *)p_data->ble_start_ext_adv.ext_adv);
+}
+
+void bta_dm_ble_gap_ext_adv_set_remove(tBTA_DM_MSG *p_data)
+{
+    BTM_BleExtAdvSetRemove(p_data->ble_ext_adv_set_remove.instance);
+}
+
+void bta_dm_ble_gap_ext_adv_set_clear(tBTA_DM_MSG *p_data)
+{
+    BTM_BleExtAdvSetClear();
+}
+
+void bta_dm_ble_gap_periodic_adv_set_params(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, instance = %d", __func__, p_data->ble_set_periodic_adv_params.instance);
+    BTM_BlePeriodicAdvSetParams(p_data->ble_set_periodic_adv_params.instance,
+                               (tBTM_BLE_Periodic_Adv_Params *)&p_data->ble_set_periodic_adv_params.params);
+}
+
+void bta_dm_ble_gap_periodic_adv_cfg_data_raw(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, instance = %d, length = %d", __func__, p_data->ble_cfg_periodic_adv_data.instance,
+                     p_data->ble_cfg_periodic_adv_data.length);
+
+    BTM_BlePeriodicAdvCfgDataRaw(p_data->ble_cfg_periodic_adv_data.instance, 
+                                 p_data->ble_cfg_periodic_adv_data.length,
+                                 p_data->ble_cfg_periodic_adv_data.data);
+}
+
+void bta_dm_ble_gap_periodic_adv_enable(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, instance = %d, enable = %d", __func__, p_data->ble_enable_periodic_adv.instance,
+                         p_data->ble_enable_periodic_adv.enable);
+
+    BTM_BlePeriodicAdvEnable(p_data->ble_enable_periodic_adv.instance,
+                             p_data->ble_enable_periodic_adv.enable);
+}
+
+void bta_dm_ble_gap_periodic_adv_create_sync(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s", __func__);
+    BTM_BlePeriodicAdvCreateSync((tBTM_BLE_Periodic_Sync_Params *)&p_data->ble_periodic_adv_sync.params);
+}
+
+void bta_dm_ble_gap_periodic_adv_sync_cancel(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s", __func__);
+    BTM_BlePeriodicAdvSyncCancel();
+}
+
+void bta_dm_ble_gap_periodic_adv_sync_terminate(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s", __func__);
+    BTM_BlePeriodicAdvSyncTerm(p_data->ble_periodic_adv_sync_term.sync_handle);
+}
+
+void bta_dm_ble_gap_periodic_adv_add_dev_to_list(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, addr_type = %d, sid = %d", __func__, p_data->ble_periodic_adv_add_dev_to_list.addr_type,
+                    p_data->ble_periodic_adv_add_dev_to_list.sid);
+
+    BTM_BlePeriodicAdvAddDevToList(p_data->ble_periodic_adv_add_dev_to_list.addr_type,
+                                   p_data->ble_periodic_adv_add_dev_to_list.addr,
+                                   p_data->ble_periodic_adv_add_dev_to_list.sid);
+}
+
+void bta_dm_ble_gap_periodic_adv_remove_dev_from_list(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, addr_type = %d, sid = %d", __func__, p_data->ble_periodic_adv_remove_dev_from_list.addr_type,
+                        p_data->ble_periodic_adv_remove_dev_from_list.sid);
+
+    BTM_BlePeriodicAdvRemoveDevFromList(p_data->ble_periodic_adv_remove_dev_from_list.addr_type,
+                                        p_data->ble_periodic_adv_remove_dev_from_list.addr,
+                                        p_data->ble_periodic_adv_remove_dev_from_list.sid);
+
+}
+
+void bta_dm_ble_gap_periodic_adv_clear_dev(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s", __func__);
+    BTM_BlePeriodicAdvClearDev();
+}
+
+
+void bta_dm_ble_gap_set_ext_scan_params(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s", __func__);
+    BTM_BleSetExtendedScanParams((tBTM_BLE_EXT_SCAN_PARAMS *)&p_data->ble_set_ext_scan_params.params,
+                                 p_data->ble_set_ext_scan_params.limit);
+}
+
+void bta_dm_ble_gap_ext_scan(tBTA_DM_MSG *p_data)
+{
+    APPL_TRACE_API("%s, start = %d, duration = %d, period = %d", __func__, p_data->ble_ext_scan.start, p_data->ble_ext_scan.duration,
+                    p_data->ble_ext_scan.period);
+    BTM_BleExtendedScan(p_data->ble_ext_scan.start, p_data->ble_ext_scan.duration, 
+                        p_data->ble_ext_scan.period);
+}
+
+void bta_dm_ble_gap_set_prefer_ext_conn_params(tBTA_DM_MSG *p_data)
+{
+    tBTM_EXT_CONN_PARAMS conn_params;
+    conn_params.phy_mask = p_data->ble_set_per_ext_conn_params.phy_mask;
+
+    APPL_TRACE_API("%s, start = %d, duration = %d, period = %d", __func__, p_data->ble_ext_scan.start, p_data->ble_ext_scan.duration,
+                    p_data->ble_ext_scan.period);
+
+    if (conn_params.phy_mask & 0x01) {
+        memcpy(&conn_params.phy_1m_conn_params, &p_data->ble_set_per_ext_conn_params.phy_1m_conn_params,
+               sizeof(tBTA_DM_BLE_CONN_PARAMS));
+    }
+
+    if (conn_params.phy_mask & 0x02) {
+        memcpy(&conn_params.phy_2m_conn_params, &p_data->ble_set_per_ext_conn_params.phy_2m_conn_params,
+               sizeof(tBTA_DM_BLE_CONN_PARAMS));
+    }
+
+    if (conn_params.phy_mask & 0x04) {
+        memcpy(&conn_params.phy_coded_conn_params, &p_data->ble_set_per_ext_conn_params.phy_coded_conn_params,
+               sizeof(tBTA_DM_BLE_CONN_PARAMS));
+    }
+
+    BTM_BleSetPreferExtenedConnParams(p_data->ble_set_per_ext_conn_params.bd_addr, &conn_params);
+}
+
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
 /*******************************************************************************
 **
 ** Function         bta_dm_ble_setup_storage
@@ -5791,7 +5972,7 @@ void btm_dm_start_gatt_discovery (BD_ADDR bd_addr)
         btm_dm_start_disc_gatt_services(bta_dm_search_cb.conn_id);
     } else {
         //TODO need to add addr_type in future
-        BTA_GATTC_Open(bta_dm_search_cb.client_if, bd_addr, BLE_ADDR_UNKNOWN_TYPE, TRUE, BTA_GATT_TRANSPORT_LE);
+        BTA_GATTC_Open(bta_dm_search_cb.client_if, bd_addr, BLE_ADDR_UNKNOWN_TYPE, TRUE, BTA_GATT_TRANSPORT_LE, FALSE);
     }
 }
 #endif /* #if (GATTC_INCLUDED == TRUE) */

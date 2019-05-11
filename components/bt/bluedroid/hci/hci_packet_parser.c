@@ -202,6 +202,19 @@ static void parse_ble_read_suggested_default_data_length_response(
     STREAM_TO_UINT16(*ble_default_packet_txtime_ptr, stream);
     osi_free(response);
 }
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+static void parse_ble_read_adv_max_len_response(
+    BT_HDR *response,
+    uint16_t *adv_max_len_ptr)
+{
+
+    uint8_t *stream = read_command_complete_header(response, HCI_BLE_RD_MAX_ADV_DATA_LEN, 1 /* bytes after */);
+    STREAM_TO_UINT8(*adv_max_len_ptr, stream);
+
+    osi_free(response);
+}
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
+
 
 // Internal functions
 
@@ -259,6 +272,9 @@ static const hci_packet_parser_t interface = {
     parse_ble_read_supported_states_response,
     parse_ble_read_local_supported_features_response,
     parse_ble_read_resolving_list_size_response,
+#if (BLE_50_FEATURE_SUPPORT == TRUE)
+    parse_ble_read_adv_max_len_response,
+#endif // #if (BLE_50_FEATURE_SUPPORT == TRUE)
     parse_ble_read_suggested_default_data_length_response
 };
 
