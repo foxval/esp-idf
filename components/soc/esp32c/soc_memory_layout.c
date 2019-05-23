@@ -114,7 +114,7 @@ const soc_memory_region_t soc_memory_regions[] = {
     { 0x3FFFC000, 0x4000, 1, 0x4006C000}, //Block 21,  can be used for MAC dump, can be used as trace memory, used for startup stack
 #endif /* #if 0 // karl */
 
-    { 0x3FF90000, 0x48000, 0, 0},
+    { 0x3FF88000, 0x50000, 0, 0},
     { 0x3FFd8000, 0x8000, 0, 0}, // exchange memory
     { 0x3FFe0000, 0x14000, 0, 0},
     { 0x3FFFC000, 0x4000,  1, 0}, // used for startup stack
