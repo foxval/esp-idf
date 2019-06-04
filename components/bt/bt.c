@@ -1306,6 +1306,14 @@ esp_err_t esp_bt_controller_enable(esp_bt_mode_t mode)
         return ESP_ERR_INVALID_STATE;
     }
 
+    do { //disable 1.1.4 update
+        uint32_t test_reg = 0x60031048;
+        uint32_t test_bit = READ_PERI_REG(test_reg);
+        ets_printf("=== before test_reg = 0x%x\n", READ_PERI_REG(test_reg));
+        WRITE_PERI_REG(test_reg, test_bit & 0xFFFFFFFB);
+        ets_printf("=== test_reg = 0x%x\n", READ_PERI_REG(test_reg));
+    } while (0);
+
     btdm_controller_status = ESP_BT_CONTROLLER_STATUS_ENABLED;
 
     return ESP_OK;
