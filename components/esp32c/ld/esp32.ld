@@ -50,8 +50,8 @@ MEMORY
      in heap at runtime. However due to static ROM memory usage at this 176KB mark, the
      additional static memory temporarily cannot be used.
   */
-  dram0_0_seg (RW) :                 org = 0x3FF90000,
-                                     len = 0x50000 - CONFIG_BT_RESERVE_DRAM
+  dram0_0_seg (RW) :                 org = 0x3FF88000,
+                                     len = 0x58000 - CONFIG_BT_RESERVE_DRAM
 
   dram0_1_seg (RW) :                 org = 0x3ffe0000, len = 0x14000
 
