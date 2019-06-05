@@ -64,6 +64,55 @@ static volatile bool s_is_modem_sleep_en = false;
 
 static _lock_t s_modem_sleep_lock;
 
+int16_t rom_read_hw_noisefloor(void);
+
+void rom_bb_wdt_int_enable(bool enable);
+
+uint32_t rom_bb_wdt_get_status(void);
+
+void rom_bb_wdt_timeout_clear(void);
+
+void rom_disable_agc(void);
+
+void rom_enable_agc(void);
+
+void rom_phy_chan_filt_set(bool en, bool merge);
+
+int16_t read_hw_noisefloor(void)
+{
+    return rom_read_hw_noisefloor();
+}
+
+void bb_wdt_int_enable(bool enable)
+{
+    rom_bb_wdt_int_enable(enable);
+}
+
+uint32_t bb_wdt_get_status(void)
+{
+    return rom_bb_wdt_get_status();
+}
+
+void bb_wdt_timeout_clear(void)
+{
+    rom_bb_wdt_timeout_clear();
+}
+
+void ram_disable_agc(void)
+{
+    rom_disable_agc();
+}
+
+void ram_enable_agc(void)
+{
+    rom_enable_agc();
+}
+
+void phy_chan_filt_set(bool en, bool merge)
+{
+    rom_phy_chan_filt_set(en, merge);
+}
+
 uint32_t IRAM_ATTR phy_enter_critical(void)
 {
     return portENTER_CRITICAL_NESTED();
