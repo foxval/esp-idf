@@ -167,11 +167,11 @@ struct osi_funcs_t {
     void (* _btdm_sleep_exit_phase1)(void);  /* called from ISR */
     void (* _btdm_sleep_exit_phase2)(void);  /* called from ISR */
     void (* _btdm_sleep_exit_phase3)(void);  /* called from task */
-    int (* _coex_bt_request)(uint32_t event, uint32_t latency, uint32_t duration);
-    int (* _coex_bt_release)(uint32_t event);
-    int (* _coex_register_bt_cb)(coex_func_cb_t cb);
-    uint32_t (* _coex_bb_reset_lock)(void);
-    void (* _coex_bb_reset_unlock)(uint32_t restore);
+    //int (* _coex_bt_request)(uint32_t event, uint32_t latency, uint32_t duration);
+    // int (* _coex_bt_release)(uint32_t event);
+    // int (* _coex_register_bt_cb)(coex_func_cb_t cb);
+    // uint32_t (* _coex_bb_reset_lock)(void);
+    // void (* _coex_bb_reset_unlock)(uint32_t restore);
     uint32_t _magic;
 };
 
@@ -337,11 +337,11 @@ static const struct osi_funcs_t osi_funcs_ro = {
     ._btdm_sleep_exit_phase2 = NULL,
     ._btdm_sleep_exit_phase3 = NULL,
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
-    ._coex_bt_request = coex_bt_request_wrapper,
-    ._coex_bt_release = coex_bt_release_wrapper,
-    ._coex_register_bt_cb = coex_register_bt_cb_wrapper,
-    ._coex_bb_reset_lock = coex_bb_reset_lock_wrapper,
-    ._coex_bb_reset_unlock = coex_bb_reset_unlock_wrapper,
+    //._coex_bt_request = coex_bt_request_wrapper,
+    //._coex_bt_release = coex_bt_release_wrapper,
+    // ._coex_register_bt_cb = coex_register_bt_cb_wrapper,
+    // ._coex_bb_reset_lock = coex_bb_reset_lock_wrapper,
+    //._coex_bb_reset_unlock = coex_bb_reset_unlock_wrapper,
     ._magic = OSI_MAGIC_VALUE,
 };
 
@@ -1160,7 +1160,10 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
 #endif
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
 
-    // periph_module_enable(PERIPH_BT_MODULE);
+    periph_module_enable(PERIPH_BT_MODULE);
+    // must do fpga_init and phy init before controller init
+    esp_phy_load_cal_and_init(PHY_BT_MODULE);
+
 #ifdef BTDM_MODEM_SLEEP_ENABLE
     btdm_lpcycle_us_frac = RTC_CLK_CAL_FRACT;
     btdm_lpcycle_us = 32 << btdm_lpcycle_us_frac;
@@ -1233,6 +1236,7 @@ esp_err_t esp_bt_controller_deinit(void)
     btdm_controller_deinit();
 
     periph_module_disable(PERIPH_BT_MODULE);
+    esp_phy_rf_deinit(PHY_BT_MODULE);
 #ifdef BTDM_MODEM_SLEEP_ENABLE
 #ifdef CONFIG_PM_ENABLE
     esp_pm_lock_delete(s_light_sleep_pm_lock);
