@@ -257,13 +257,14 @@ eMBMasterDisable( void )
 eMBErrorCode
 eMBMasterPoll( void )
 {
-    static UCHAR   *ucMBFrame;
+    static UCHAR    *ucMBFrame = NULL;
     static UCHAR    ucRcvAddress;
     static UCHAR    ucFunctionCode;
     static USHORT   usLength;
     static eMBException eException;
 
-    int             i , j;
+    int             i;
+    int             j;
     eMBErrorCode    eStatus = MB_ENOERR;
     eMBMasterEventType    eEvent;
     eMBMasterErrorEventType errorType;
@@ -316,11 +317,16 @@ eMBMasterPoll( void )
             }
             break;
         case EV_MASTER_EXECUTE:
+            if ( !ucMBFrame ) 
+            {
+                return MB_EILLSTATE;
+            }
             ESP_LOGD(MB_PORT_TAG, "%s:EV_MASTER_EXECUTE", __func__);
             ucFunctionCode = ucMBFrame[MB_PDU_FUNC_OFF];
             eException = MB_EX_ILLEGAL_FUNCTION;
             /* If receive frame has exception. The receive function code highest bit is 1.*/
-            if(ucFunctionCode >> 7) {
+            if (ucFunctionCode & MB_FUNC_ERROR) 
+            {
                 eException = (eMBException)ucMBFrame[MB_PDU_DATA_OFF];
             }
             else
@@ -328,22 +334,26 @@ eMBMasterPoll( void )
                 for (i = 0; i < MB_FUNC_HANDLERS_MAX; i++)
                 {
                     /* No more function handlers registered. Abort. */
-                    if (xMasterFuncHandlers[i].ucFunctionCode == 0)    {
+                    if (xMasterFuncHandlers[i].ucFunctionCode == 0)
+                    {
                         break;
                     }
-                    else if (xMasterFuncHandlers[i].ucFunctionCode == ucFunctionCode) {
+                    if (xMasterFuncHandlers[i].ucFunctionCode == ucFunctionCode) 
+                    {
                         vMBMasterSetCBRunInMasterMode(TRUE);
                         /* If master request is broadcast,
                          * the master need execute function for all slave.
                          */
-                        if ( xMBMasterRequestIsBroadcast() ) {
+                        if ( xMBMasterRequestIsBroadcast() ) 
+                        {
                             usLength = usMBMasterGetPDUSndLength();
                             for(j = 1; j <= MB_MASTER_TOTAL_SLAVE_NUM; j++){
                                 vMBMasterSetDestAddress(j);
                                 eException = xMasterFuncHandlers[i].pxHandler(ucMBFrame, &usLength);
                             }
                         }
-                        else {
+                        else 
+                        {
                             eException = xMasterFuncHandlers[i].pxHandler(ucMBFrame, &usLength);
                         }
                         vMBMasterSetCBRunInMasterMode(FALSE);
@@ -398,6 +408,9 @@ eMBMasterPoll( void )
                 break;
             }
             vMBMasterRunResRelease();
+            break;
+        default:
+            assert(0); // unknown event
             break;
         }
     } else {
