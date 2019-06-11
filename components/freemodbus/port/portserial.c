@@ -55,11 +55,6 @@
 #include "sdkconfig.h"              // for KConfig options
 #include "port_serial_slave.h"
 
-// Definitions of UART default pin numbers
-#define MB_UART_RXD   (CONFIG_MB_UART_RXD)
-#define MB_UART_TXD   (CONFIG_MB_UART_TXD)
-#define MB_UART_RTS   (CONFIG_MB_UART_RTS)
-
 #define MB_BAUD_RATE_DEFAULT        (115200)
 #define MB_QUEUE_LENGTH             (CONFIG_FMB_QUEUE_LENGTH)
 
