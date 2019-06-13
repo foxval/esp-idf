@@ -26,6 +26,7 @@
 #include "soc/fe_reg.h"
 #include "soc/rtc.h"
 #include "rom/ets_sys.h"
+#include "rom/gpio.h"
 
 #define MHZ (1000000)
 
@@ -89,6 +90,7 @@ static void rtc_sleep_pd(rtc_sleep_pd_config_t cfg)
     DPORT_REG_SET_FIELD(DPORT_MEM_PD_MASK_REG, DPORT_LSLP_MEM_PD_MASK, ~cfg.cpu_pd);
     REG_SET_FIELD(I2S_PD_CONF_REG(0), I2S_PLC_MEM_FORCE_PU, ~cfg.i2s_pd);
     REG_SET_FIELD(I2S_PD_CONF_REG(0), I2S_FIFO_FORCE_PU, ~cfg.i2s_pd);
+#ifndef CONFIG_HARDWARE_IS_FPGA
     REG_SET_FIELD(BBPD_CTRL, BB_FFT_FORCE_PU, ~cfg.bb_pd);
     REG_SET_FIELD(BBPD_CTRL, BB_DC_EST_FORCE_PU, ~cfg.bb_pd);
     REG_SET_FIELD(NRXPD_CTRL, NRX_RX_ROT_FORCE_PU, ~cfg.nrx_pd);
@@ -96,6 +98,7 @@ static void rtc_sleep_pd(rtc_sleep_pd_config_t cfg)
     REG_SET_FIELD(NRXPD_CTRL, NRX_DEMAP_FORCE_PU, ~cfg.nrx_pd);
     REG_SET_FIELD(FE_GEN_CTRL, FE_IQ_EST_FORCE_PU, ~cfg.fe_pd);
     REG_SET_FIELD(FE2_TX_INTERP_CTRL, FE2_TX_INF_FORCE_PU, ~cfg.fe_pd);
+#endif
 }
 
 void rtc_sleep_init(rtc_sleep_config_t cfg)
@@ -218,6 +221,65 @@ void rtc_sleep_set_wakeup_time(uint64_t t)
     WRITE_PERI_REG(RTC_CNTL_SLP_TIMER1_REG, t >> 32);
 }
 
+void rtc_sleep_enable_wakeup_time(void)
+{
+    REG_SET_BIT(RTC_CNTL_SLP_TIMER1_REG, RTC_CNTL_MAIN_TIMER_ALARM_EN);
+}
+
+void rtc_sleep_disable_wakeup_time(void)
+{
+    REG_CLR_BIT(RTC_CNTL_SLP_TIMER1_REG, RTC_CNTL_MAIN_TIMER_ALARM_EN);
+}
+
+void rtc_sleep_wakeup_handle(void)
+{
+    uint32_t wakeup_cause = REG_GET_FIELD(RTC_CNTL_WAKEUP_STATE_REG, RTC_CNTL_WAKEUP_CAUSE);
+    if (wakeup_cause & RTC_TIMER_TRIG_EN) {
+#ifdef CONFIG_PM_TRACE
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+        GPIO_OUTPUT_SET(21, 0);
+#else
+        GPIO_OUTPUT_SET(8, 0);
+#endif
+#endif
+#endif
+        rtc_sleep_disable_wakeup_time();
+        uint32_t timer_st = REG_GET_FIELD(RTC_CNTL_INT_RAW_REG, RTC_CNTL_MAIN_TIMER_INT_RAW);
+        if (timer_st != 0) {
+            REG_SET_BIT(RTC_CNTL_INT_CLR_REG, RTC_CNTL_MAIN_TIMER_INT_CLR);
+        }
+#ifdef CONFIG_PM_TRACE
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+        GPIO_OUTPUT_SET(21, 1);
+#else
+        GPIO_OUTPUT_SET(8, 1);
+#endif
+#endif
+#endif
+    }
+#ifdef CONFIG_PM_TRACE
+    else if (wakeup_cause & RTC_MAC_TRIG_EN) {
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+        GPIO_OUTPUT_SET(4, 0);
+#else
+        GPIO_OUTPUT_SET(5, 0);
+#endif
+#endif
+        ets_delay_us(1);
+#ifdef CONFIG_CHIP_IS_ESP32C
+#ifdef CONFIG_HARDWARE_IS_FPGA
+        GPIO_OUTPUT_SET(4, 1);
+#else
+        GPIO_OUTPUT_SET(5, 1);
+#endif
+#endif
+    }
+#endif
+}
+
 uint32_t rtc_sleep_start(uint32_t wakeup_opt, uint32_t reject_opt)
 {
     REG_SET_FIELD(RTC_CNTL_WAKEUP_STATE_REG, RTC_CNTL_WAKEUP_ENA, wakeup_opt);
@@ -232,8 +294,13 @@ uint32_t rtc_sleep_start(uint32_t wakeup_opt, uint32_t reject_opt)
     }
     /* In deep sleep mode, we never get here */
     uint32_t reject = REG_GET_FIELD(RTC_CNTL_INT_RAW_REG, RTC_CNTL_SLP_REJECT_INT_RAW);
+    uint32_t wakeup = REG_GET_FIELD(RTC_CNTL_INT_RAW_REG, RTC_CNTL_SLP_WAKEUP_INT_RAW);
+    if (wakeup) {
+        rtc_sleep_wakeup_handle();
+    }
     SET_PERI_REG_MASK(RTC_CNTL_INT_CLR_REG,
             RTC_CNTL_SLP_REJECT_INT_CLR | RTC_CNTL_SLP_WAKEUP_INT_CLR);
+
 
     /* restore DBG_ATTEN to the default value */
     REG_SET_FIELD(RTC_CNTL_BIAS_CONF_REG, RTC_CNTL_DBG_ATTEN, RTC_CNTL_DBG_ATTEN_DEFAULT);

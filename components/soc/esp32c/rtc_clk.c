@@ -258,6 +258,20 @@ void rtc_clk_apll_enable(bool enable, uint32_t sdm0, uint32_t sdm1, uint32_t sdm
     }
 }
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
+void rtc_clk_slow_enable(bool enable)
+{
+    if (enable) {
+        REG_SET_FIELD(DPORT_BT_LPCK_DIV_INT_REG, DPORT_BT_LPCK_DIV_NUM, 0);
+        CLEAR_PERI_REG_MASK(DPORT_BT_LPCK_DIV_FRAC_REG, DPORT_LPCLK_SEL_8M);
+        SET_PERI_REG_MASK(DPORT_BT_LPCK_DIV_FRAC_REG, DPORT_LPCLK_SEL_RTC_SLOW);
+    }
+    else {
+    	CLEAR_PERI_REG_MASK(DPORT_BT_LPCK_DIV_FRAC_REG, DPORT_LPCLK_SEL_RTC_SLOW);
+    }
+}
+#endif
+
 void rtc_clk_slow_freq_set(rtc_slow_freq_t slow_freq)
 {
     REG_SET_FIELD(RTC_CNTL_CLK_CONF_REG, RTC_CNTL_ANA_CLK_RTC_SEL, slow_freq);
@@ -751,7 +765,11 @@ static uint32_t clk_val_to_reg_val(uint32_t val) {
 rtc_xtal_freq_t rtc_clk_xtal_freq_get()
 {
     /* We may have already written XTAL value into RTC_XTAL_FREQ_REG */
+#ifndef CONFIG_HARDWARE_IS_FPGA
     uint32_t xtal_freq_reg = READ_PERI_REG(RTC_XTAL_FREQ_REG);
+#else
+    uint32_t xtal_freq_reg = RTC_XTAL_FREQ_40M | (RTC_XTAL_FREQ_40M << 16);
+#endif
     if (!clk_val_is_valid(xtal_freq_reg)) {
         SOC_LOGW(TAG, "invalid RTC_XTAL_FREQ_REG value: 0x%08x", xtal_freq_reg);
         return RTC_XTAL_FREQ_AUTO;
@@ -807,7 +825,11 @@ void rtc_clk_apb_freq_update(uint32_t apb_freq)
 
 uint32_t rtc_clk_apb_freq_get()
 {
+#ifndef CONFIG_HARDWARE_IS_FPGA
     uint32_t freq_hz = reg_val_to_clk_val(READ_PERI_REG(RTC_APB_FREQ_REG)) << 12;
+#else
+    uint32_t freq_hz = 80 * MHZ;
+#endif
     // round to the nearest MHz
     freq_hz += MHZ / 2;
     uint32_t remainder = freq_hz % MHZ;

@@ -184,9 +184,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     .macro  dispatch_c_isr    level  mask
 
     #ifdef CONFIG_PM_TRACE
+    #ifdef CONFIG_CHIP_IS_ESP32
     movi a6, 0 /* = ESP_PM_TRACE_IDLE */
     getcoreid a7
     call4 esp_pm_trace_exit
+    #endif // CONFIG_CHIP_IS_ESP32
     #endif // CONFIG_PM_TRACE
 
     /* Get mask of pending, enabled interrupts at this level into a2. */

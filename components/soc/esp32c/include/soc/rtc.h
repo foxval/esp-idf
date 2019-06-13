@@ -240,6 +240,10 @@ bool rtc_clk_8md256_enabled();
 void rtc_clk_apll_enable(bool enable, uint32_t sdm0, uint32_t sdm1,
         uint32_t sdm2, uint32_t o_div);
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
+void rtc_clk_slow_enable(bool enable);
+#endif
+
 /**
  * @brief Select source for RTC_SLOW_CLK
  * @param slow_freq clock source (one of rtc_slow_freq_t values)
@@ -504,6 +508,8 @@ void rtc_sleep_init(rtc_sleep_config_t cfg);
  *          only the lower 48 bits are used
  */
 void rtc_sleep_set_wakeup_time(uint64_t t);
+
+void rtc_sleep_enable_wakeup_time(void);
 
 
 #define RTC_EXT0_TRIG_EN    BIT(0)  //!< EXT0 GPIO wakeup

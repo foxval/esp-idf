@@ -43,8 +43,15 @@ typedef struct {
     struct arg_end *end;
 } wifi_scan_arg_t;
 
+typedef struct {
+    struct arg_int *ifx;
+    struct arg_str *mode;
+    struct arg_end *end;
+} wifi_phy_arg_t;
+
 static wifi_args_t sta_args;
 static wifi_scan_arg_t scan_args;
+static wifi_phy_arg_t phy_args;
 static wifi_args_t ap_args;
 static bool reconnect = true;
 static const char *TAG="iperf";
@@ -101,14 +108,36 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
     return ESP_OK;
 }
 
+typedef enum {
+    WIFI_CASE_RXTIMESTAMP,
+    WIFI_CASE_NOBUFACK,
+    WIFI_CASE_MCS32,
+    WIFI_CASE_LASTRXBUF,
+    WIFI_CASE_CSI,
+    WIFI_CASE_AMPDU,
+    WIFI_CASE_SLEEP,
+    WIFI_CASE_MACTIMER,
+    WIFI_CASE_TBTTBUG,
+    WIFI_CASE_TSF,
+    WIFI_CASE_COEX,
+    WIFI_CASE_MAX,
+} wifi_case_t;
+
+extern bool wifi_verify_set(wifi_case_t wifi_case, void *arg);
+
 void initialise_wifi(void)
 {
-    esp_log_level_set("wifi", ESP_LOG_WARN);
+    //esp_log_level_set("wifi", ESP_LOG_WARN);
     static bool initialized = false;
 
     if (initialized) {
         return;
     }
+
+    wifi_verify_set(WIFI_CASE_RXTIMESTAMP, NULL);
+    wifi_verify_set(WIFI_CASE_NOBUFACK, 0xffffffff);
+    //wifi_verify_set(WIFI_CASE_LASTRXBUF, 0xffffffff);
+    wifi_verify_set(WIFI_CASE_AMPDU, 2);
 
     tcpip_adapter_init();
     wifi_event_group = xEventGroupCreate();
@@ -141,6 +170,7 @@ static bool wifi_cmd_sta_join(const char* ssid, const char* pass)
 
     reconnect = true;
     ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
+    ESP_ERROR_CHECK( esp_wifi_set_ps(WIFI_PS_NONE) );
     ESP_ERROR_CHECK( esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config) );
     ESP_ERROR_CHECK( esp_wifi_connect() );
 
@@ -192,6 +222,41 @@ static int wifi_cmd_scan(int argc, char** argv)
     return 0;
 }
 
+static bool wifi_cmd_set_phy_mode(int ifx, const char* mode)
+{
+    ESP_ERROR_CHECK( esp_wifi_set_mode(ifx + 1) );
+
+    if ( strncmp(mode, "B", strlen("B")) == 0 ) {
+        ESP_ERROR_CHECK( esp_wifi_set_protocol(ifx, WIFI_PROTOCOL_11B) );
+    } else if ( strncmp(mode, "G", strlen("G")) == 0 ) {
+        ESP_ERROR_CHECK( esp_wifi_set_protocol(ifx, WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G) );
+    } else if ( strncmp(mode, "N", strlen("N")) == 0 ) {
+        ESP_ERROR_CHECK( esp_wifi_set_protocol(ifx, WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N) );
+    } else {
+        ESP_LOGE(TAG, "phy mode error");
+        return false;
+    }
+
+    return true;
+}
+
+static int wifi_cmd_phy(int argc, char** argv)
+{
+    int nerrors = arg_parse(argc, argv, (void**) &phy_args);
+
+    if (nerrors != 0) {
+        arg_print_errors(stderr, phy_args.end, argv[0]);
+        return 1;
+    }
+
+    ESP_LOGI(TAG, "set phy mode");
+    if ( phy_args.ifx->count == 1 && phy_args.mode->count == 1 ) {
+        wifi_cmd_set_phy_mode(phy_args.ifx->ival[0], phy_args.mode->sval[0]);
+    } else {
+        ESP_LOGE(TAG, "input error");
+    }
+    return 0;
+}
 
 static bool wifi_cmd_ap_set(const char* ssid, const char* pass)
 {
@@ -410,12 +475,25 @@ void register_wifi()
         .argtable = &scan_args
     };
 
+    ESP_ERROR_CHECK( esp_console_cmd_register(&scan_cmd) );
+
+    phy_args.ifx = arg_int0(NULL, NULL, "<ifx>", "interface of WiFi");
+    phy_args.mode = arg_str0(NULL, NULL, "<mode>", "phy mode of interface of WiFi");
+    phy_args.end = arg_end(2);
+
+    const esp_console_cmd_t phy_cmd = {
+        .command = "phy",
+        .help = "set phy mode of station or AP",
+        .hint = NULL,
+        .func = &wifi_cmd_phy,
+        .argtable = &phy_args
+    };
+
+    ESP_ERROR_CHECK( esp_console_cmd_register(&phy_cmd) );
+
     ap_args.ssid = arg_str1(NULL, NULL, "<ssid>", "SSID of AP");
     ap_args.password = arg_str0(NULL, NULL, "<pass>", "password of AP");
     ap_args.end = arg_end(2);
-
-
-    ESP_ERROR_CHECK( esp_console_cmd_register(&scan_cmd) );
 
     const esp_console_cmd_t ap_cmd = {
         .command = "ap",

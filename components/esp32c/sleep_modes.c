@@ -17,6 +17,9 @@
 #include <sys/param.h>
 #include "esp_attr.h"
 #include "esp_sleep.h"
+#ifdef CONFIG_CHIP_IS_ESP32C
+#include "pm_trace.h"
+#endif
 #include "esp_timer_impl.h"
 #include "esp_log.h"
 #include "esp_clk.h"
@@ -79,6 +82,8 @@ static sleep_config_t s_config = {
     .pd_options = { ESP_PD_OPTION_AUTO, ESP_PD_OPTION_AUTO, ESP_PD_OPTION_AUTO },
     .wakeup_triggers = 0
 };
+
+bool s_light_sleep_wakeup = false;
 
 /* Updating RTC_MEMORY_CRC_REG register via set_rtc_memory_crc()
    is not thread-safe. */
@@ -153,7 +158,7 @@ void esp_deep_sleep(uint64_t time_in_us)
 static void IRAM_ATTR suspend_uarts()
 {
     for (int i = 0; i < 2; ++i) {
-        REG_SET_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XOFF);
+        REG_SET_BIT(UART_FLOW_CONF_REG(i), UART_FORCE_XON);
         uart_tx_wait_idle(i);
     }
 }
@@ -172,9 +177,11 @@ static uint32_t IRAM_ATTR esp_sleep_start(uint32_t pd_flags)
     // Stop UART output so that output is not lost due to APB frequency change
     suspend_uarts();
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
     // Save current frequency and switch to XTAL
     rtc_cpu_freq_t cpu_freq = rtc_clk_cpu_freq_get();
     rtc_clk_cpu_freq_set(RTC_CPU_FREQ_XTAL);
+#endif
 
     // Configure pins for external wakeup
     if (s_config.wakeup_triggers & RTC_EXT0_TRIG_EN) {
@@ -198,10 +205,19 @@ static uint32_t IRAM_ATTR esp_sleep_start(uint32_t pd_flags)
         s_config.sleep_duration > 0) {
         timer_wakeup_prepare();
     }
+#ifdef CONFIG_CHIP_IS_ESP32C
+    int core_id = xPortGetCoreID();
+    ESP_PM_TRACE_ENTER(SLEEP, core_id);
+#endif
     uint32_t result = rtc_sleep_start(s_config.wakeup_triggers, 0);
+#ifdef CONFIG_CHIP_IS_ESP32C
+    ESP_PM_TRACE_EXIT(SLEEP, core_id);
+#endif
 
+#ifndef CONFIG_HARDWARE_IS_FPGA
     // Restore CPU frequency
     rtc_clk_cpu_freq_set(cpu_freq);
+#endif
 
     // re-enable UART output
     resume_uarts();
@@ -310,6 +326,7 @@ esp_err_t esp_light_sleep_start()
     const uint32_t flash_enable_time_us = VDD_SDIO_POWERUP_TO_FLASH_READ_US
                                           + CONFIG_ESP32_DEEP_SLEEP_WAKEUP_DELAY;
 
+#ifdef CONFIG_CHIP_IS_ESP32
 #ifndef CONFIG_SPIRAM_SUPPORT
     const uint32_t vddsdio_pd_sleep_duration = MAX(FLASH_PD_MIN_SLEEP_TIME_US,
             flash_enable_time_us + LIGHT_SLEEP_TIME_OVERHEAD_US + LIGHT_SLEEP_MIN_TIME_US);
@@ -319,6 +336,7 @@ esp_err_t esp_light_sleep_start()
         s_config.sleep_time_adjustment += flash_enable_time_us;
     }
 #endif //CONFIG_SPIRAM_SUPPORT
+#endif
 
     rtc_vddsdio_config_t vddsdio_config = rtc_vddsdio_get_config();
 
@@ -328,6 +346,8 @@ esp_err_t esp_light_sleep_start()
     // Enter sleep, then wait for flash to be ready on wakeup
     esp_err_t err = esp_light_sleep_inner(pd_flags,
             flash_enable_time_us, vddsdio_config);
+
+    s_light_sleep_wakeup = true;
 
     // FRC1 has been clock gated for the duration of the sleep, correct for that.
     uint64_t rtc_ticks_at_end = rtc_time_get();
@@ -421,6 +441,7 @@ static void timer_wakeup_prepare()
     int64_t rtc_count_delta = rtc_time_us_to_slowclk(sleep_duration, period);
 
     rtc_sleep_set_wakeup_time(s_config.rtc_ticks_at_sleep_start + rtc_count_delta);
+    rtc_sleep_enable_wakeup_time();
 }
 
 esp_err_t esp_sleep_enable_touchpad_wakeup()
@@ -560,9 +581,22 @@ uint64_t esp_sleep_get_ext1_wakeup_status()
     return gpio_mask;
 }
 
+esp_err_t esp_sleep_enable_mac_wakeup()
+{
+    if(s_config.wakeup_triggers & RTC_MAC_TRIG_EN) {
+        ESP_LOGE(TAG, "Conflicting wake-up trigger: mac");
+        return ESP_ERR_INVALID_STATE;
+    }
+    s_config.wakeup_triggers |= RTC_MAC_TRIG_EN;
+#ifndef CONFIG_HARDWARE_IS_FPGA
+    rtc_clk_slow_enable(true);
+#endif
+    return ESP_OK;
+}
+
 esp_sleep_wakeup_cause_t esp_sleep_get_wakeup_cause()
 {
-    if (rtc_get_reset_reason(0) != DEEPSLEEP_RESET) {
+    if (rtc_get_reset_reason(0) != DEEPSLEEP_RESET && !s_light_sleep_wakeup) {
         return ESP_SLEEP_WAKEUP_UNDEFINED;
     }
 
@@ -577,6 +611,8 @@ esp_sleep_wakeup_cause_t esp_sleep_get_wakeup_cause()
         return ESP_SLEEP_WAKEUP_TOUCHPAD;
     } else if (wakeup_cause & RTC_ULP_TRIG_EN) {
         return ESP_SLEEP_WAKEUP_ULP;
+    } else if (wakeup_cause & RTC_MAC_TRIG_EN) {
+        return ESP_SLEEP_WAKEUP_MAC;
     } else {
         return ESP_SLEEP_WAKEUP_UNDEFINED;
     }

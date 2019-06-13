@@ -799,7 +799,11 @@ extern "C" {
 #define DPORT_WIFI_CLK_BT_EN_V  0x61
 #define DPORT_WIFI_CLK_BT_EN_S  11
 /* Mask for clock bits used by both WIFI and Bluetooth, bit 0, 3, 6, 7, 8, 9 */
+#ifdef CONFIG_HARDWARE_IS_FPGA
 #define DPORT_WIFI_CLK_WIFI_BT_COMMON_M 0x000003c9
+#else
+#define DPORT_WIFI_CLK_WIFI_BT_COMMON_M 0xffffffff
+#endif
 
 /* Digital team to check */
 //bluetooth baseband bit11

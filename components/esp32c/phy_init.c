@@ -36,7 +36,7 @@
 #include "freertos/portmacro.h"
 #include "phy.h"
 #include "phy_init_data.h"
-#include "coexist_internal.h"
+#include "esp_coexist_internal.h"
 #include "driver/periph_ctrl.h"
 #include "esp_wifi_internal.h"
 
@@ -63,6 +63,55 @@ static uint32_t s_modem_sleep_module_register = 0;
 static volatile bool s_is_modem_sleep_en = false;
 
 static _lock_t s_modem_sleep_lock;
+
+int16_t rom_read_hw_noisefloor(void);
+
+void rom_bb_wdt_int_enable(bool enable);
+
+uint32_t rom_bb_wdt_get_status(void);
+
+void rom_bb_wdt_timeout_clear(void);
+
+void rom_disable_agc(void);
+
+void rom_enable_agc(void);
+
+void rom_phy_chan_filt_set(bool en, bool merge);
+
+int16_t read_hw_noisefloor(void)
+{
+    return rom_read_hw_noisefloor();
+}
+
+void bb_wdt_int_enable(bool enable)
+{
+    rom_bb_wdt_int_enable(enable);
+}
+
+uint32_t bb_wdt_get_status(void)
+{
+    return rom_bb_wdt_get_status();
+}
+
+void bb_wdt_timeout_clear(void)
+{
+    rom_bb_wdt_timeout_clear();
+}
+
+void ram_disable_agc(void)
+{
+    rom_disable_agc();
+}
+
+void ram_enable_agc(void)
+{
+    rom_enable_agc();
+}
+
+void phy_chan_filt_set(bool en, bool merge)
+{
+    rom_phy_chan_filt_set(en, merge);
+}
 
 uint32_t IRAM_ATTR phy_enter_critical(void)
 {
@@ -120,8 +169,15 @@ esp_err_t esp_phy_rf_init(const esp_phy_init_data_t* init_data, esp_phy_calibrat
             // Enable WiFi/BT common peripheral clock
             periph_module_enable(PERIPH_WIFI_BT_COMMON_MODULE);
             phy_set_wifi_mode_only(0);
+#ifdef CONFIG_HARDWARE_IS_FPGA
             int fpga_init(void);
             fpga_init();
+            static bool s_fpga_init = false;
+            if (s_fpga_init == false) {
+            	ESP_LOGI(TAG, "FPGA init");
+                fpga_init();
+            }
+#endif
 
             if (ESP_CAL_DATA_CHECK_FAIL == register_chipv7_phy(init_data, calibration_data, mode)) {
                 ESP_LOGW(TAG, "saving new calibration data because of checksum failure, mode(%d)", mode);
@@ -132,13 +188,16 @@ esp_err_t esp_phy_rf_init(const esp_phy_init_data_t* init_data, esp_phy_calibrat
 #endif
             }
 
-extern esp_err_t wifi_osi_funcs_register(wifi_osi_funcs_t *osi_funcs);
-            status = wifi_osi_funcs_register(&g_wifi_osi_funcs);
-            if(status != ESP_OK) {
-                ESP_LOGE(TAG, "failed to register wifi os adapter, ret(%d)", status);
-                _lock_release(&s_phy_rf_init_lock);
-                return ESP_FAIL;
+#ifdef CONFIG_HARDWARE_IS_FPGA
+            if (s_fpga_init == false) {
+            	/* Select GPIO6 as the main RF antenna */
+            	ESP_LOGI(TAG, "Select GPIO6 as the main RF antenna");
+                REG_SET_BIT(0x6000456c, 216);
+                REG_SET_BIT(0x60004570, 215);
+                s_fpga_init = true;
             }
+#endif
+
             //coex_pti();
         }
     }
@@ -210,7 +269,9 @@ esp_err_t esp_phy_rf_deinit(phy_rf_module_t module)
             // Disable PHY and RF.
             phy_close_rf();
             // Disable WiFi/BT common peripheral clock. Do not disable clock for hardware RNG
+#ifdef CONFIG_HARDWARE_IS_FPGA
             periph_module_disable(PERIPH_WIFI_BT_COMMON_MODULE);
+#endif
         }
     }
 

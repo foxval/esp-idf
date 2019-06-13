@@ -86,11 +86,13 @@ void iperf_report_task(void* arg)
     uint32_t time = s_iperf_ctrl.cfg.time;
     uint32_t last_len = 0;
     uint32_t cur = 0;
+    uint32_t speed = 0;
 
     printf("\n%16s %s\n", "Interval", "Bandwidth");
     while (!s_iperf_ctrl.finish) {
         vTaskDelay(delay_interval);
-        printf("%4d-%4d sec       %.2f Mbits/sec\n", cur, cur+interval, (double)((s_iperf_ctrl.total_len - last_len)*8)/interval/1e6);
+        speed = ((s_iperf_ctrl.total_len - last_len)*8)/interval/1000;
+        printf("%4d-%4d sec       %u.%03u Mbits/sec, heap: %uKB\n", cur, cur+interval, speed/1000, speed%1000, heap_caps_get_minimum_free_size(MALLOC_CAP_DEFAULT)/1000);
         cur += interval;
         last_len = s_iperf_ctrl.total_len;
         if (cur == time) {
@@ -99,7 +101,8 @@ void iperf_report_task(void* arg)
     }
 
     if (cur != 0) {
-        printf("%4d-%4d sec       %.2f Mbits/sec\n", 0, time, (double)(s_iperf_ctrl.total_len*8)/cur/1e6);
+        speed = (s_iperf_ctrl.total_len*8)/cur/1000;
+        printf("%4d-%4d sec       %u.%03u Mbits/sec\n", 0, time, speed/1000, speed%1000);
     }
 
     s_iperf_ctrl.finish = true;

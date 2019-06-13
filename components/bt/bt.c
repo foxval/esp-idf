@@ -43,6 +43,7 @@
 #include "soc/rtc_cntl_reg.h"
 #include "soc/soc_memory_layout.h"
 #include "esp_clk.h"
+#include "esp_coexist_internal.h"
 
 
 #if CONFIG_BT_ENABLED
@@ -166,6 +167,11 @@ struct osi_funcs_t {
     void (* _btdm_sleep_exit_phase1)(void);  /* called from ISR */
     void (* _btdm_sleep_exit_phase2)(void);  /* called from ISR */
     void (* _btdm_sleep_exit_phase3)(void);  /* called from task */
+    //int (* _coex_bt_request)(uint32_t event, uint32_t latency, uint32_t duration);
+    // int (* _coex_bt_release)(uint32_t event);
+    // int (* _coex_register_bt_cb)(coex_func_cb_t cb);
+    // uint32_t (* _coex_bb_reset_lock)(void);
+    // void (* _coex_bb_reset_unlock)(uint32_t restore);
     uint32_t _magic;
 };
 
@@ -205,6 +211,12 @@ extern int bredr_txpwr_set(int min_power_level, int max_power_level);
 extern int bredr_txpwr_get(int *min_power_level, int *max_power_level);
 extern void bredr_sco_datapath_set(uint8_t data_path);
 extern void btdm_controller_scan_duplicate_list_clear(void);
+/* Coexistence */
+extern int coex_bt_request_wrapper(uint32_t event, uint32_t latency, uint32_t duration);
+extern int coex_bt_release_wrapper(uint32_t event);
+extern int coex_register_bt_cb_wrapper(coex_func_cb_t cb);
+extern uint32_t coex_bb_reset_lock_wrapper(void);
+extern void coex_bb_reset_unlock_wrapper(uint32_t restore);
 
 extern char _bss_start_btdm;
 extern char _bss_end_btdm;
@@ -325,6 +337,11 @@ static const struct osi_funcs_t osi_funcs_ro = {
     ._btdm_sleep_exit_phase2 = NULL,
     ._btdm_sleep_exit_phase3 = NULL,
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
+    //._coex_bt_request = coex_bt_request_wrapper,
+    //._coex_bt_release = coex_bt_release_wrapper,
+    // ._coex_register_bt_cb = coex_register_bt_cb_wrapper,
+    // ._coex_bb_reset_lock = coex_bb_reset_lock_wrapper,
+    //._coex_bb_reset_unlock = coex_bb_reset_unlock_wrapper,
     ._magic = OSI_MAGIC_VALUE,
 };
 
@@ -1143,7 +1160,10 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
 #endif
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
 
-    // periph_module_enable(PERIPH_BT_MODULE);
+    periph_module_enable(PERIPH_BT_MODULE);
+    // must do fpga_init and phy init before controller init
+    esp_phy_load_cal_and_init(PHY_BT_MODULE);
+
 #ifdef BTDM_MODEM_SLEEP_ENABLE
     btdm_lpcycle_us_frac = RTC_CLK_CAL_FRACT;
     btdm_lpcycle_us = 32 << btdm_lpcycle_us_frac;
@@ -1216,6 +1236,7 @@ esp_err_t esp_bt_controller_deinit(void)
     btdm_controller_deinit();
 
     periph_module_disable(PERIPH_BT_MODULE);
+    esp_phy_rf_deinit(PHY_BT_MODULE);
 #ifdef BTDM_MODEM_SLEEP_ENABLE
 #ifdef CONFIG_PM_ENABLE
     esp_pm_lock_delete(s_light_sleep_pm_lock);
@@ -1305,14 +1326,6 @@ esp_err_t esp_bt_controller_enable(esp_bt_mode_t mode)
 #endif // #ifdef BTDM_MODEM_SLEEP_ENABLE
         return ESP_ERR_INVALID_STATE;
     }
-
-    do { //disable 1.1.4 update
-        uint32_t test_reg = 0x60031048;
-        uint32_t test_bit = READ_PERI_REG(test_reg);
-        ets_printf("=== before test_reg = 0x%x\n", READ_PERI_REG(test_reg));
-        WRITE_PERI_REG(test_reg, test_bit & 0xFFFFFFFB);
-        ets_printf("=== test_reg = 0x%x\n", READ_PERI_REG(test_reg));
-    } while (0);
 
     btdm_controller_status = ESP_BT_CONTROLLER_STATUS_ENABLED;
 

@@ -58,7 +58,7 @@
 #include "esp_task_wdt.h"
 #include "esp_phy_init.h"
 #include "esp_cache_err_int.h"
-#include "esp_coexist.h"
+#include "esp_coexist_internal.h"
 #include "esp_panic.h"
 #include "esp_core_dump.h"
 #include "esp_app_trace.h"
@@ -344,6 +344,10 @@ void start_cpu0_default(void)
     esp_clk_init();
     esp_perip_clk_init();
 #else
+    extern void esp_clk_slowclk_cal_set(uint32_t new_cal);
+    uint32_t cal_val = (1<< 19) * 156 / 5;
+    ESP_EARLY_LOGI(TAG, "RTC_SLOW_CLK calibration value: %d", cal_val);
+    esp_clk_slowclk_cal_set(cal_val);
     ets_update_cpu_frequency(CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ);
 #endif
     intr_matrix_clear();
@@ -403,7 +407,9 @@ void start_cpu0_default(void)
 #endif
     //esp_cache_err_int_init();
     esp_crosscore_int_init();
+#ifdef CONFIG_CHIP_IS_ESP32
     esp_ipc_init();
+#endif
 #ifndef CONFIG_FREERTOS_UNICORE
     esp_dport_access_int_init();
 #endif
@@ -417,7 +423,12 @@ void start_cpu0_default(void)
     rtc_clk_cpu_freq_from_mhz(CONFIG_ESP32_DEFAULT_CPU_FREQ_MHZ, &max_freq);
     esp_pm_config_esp32_t cfg = {
             .max_cpu_freq = max_freq,
-            .min_cpu_freq = RTC_CPU_FREQ_XTAL
+#ifndef CONFIG_HARDWARE_IS_FPGA
+            .min_cpu_freq = RTC_CPU_FREQ_XTAL,
+#else
+            .min_cpu_freq = max_freq,
+#endif
+            .light_sleep_enable = true
     };
     esp_pm_configure(&cfg);
 #endif //CONFIG_PM_DFS_INIT_AUTO
@@ -425,6 +436,10 @@ void start_cpu0_default(void)
 
 #if CONFIG_ESP32_ENABLE_COREDUMP
     esp_core_dump_init();
+#endif
+
+#if CONFIG_SW_COEXIST_ENABLE
+    esp_coex_adapter_register(&g_coex_adapter_funcs);
 #endif
 
     portBASE_TYPE res = xTaskCreatePinnedToCore(&main_task, "main",

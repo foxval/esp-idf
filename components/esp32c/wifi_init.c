@@ -17,6 +17,9 @@
 #include "esp_log.h"
 #include "esp_wifi_internal.h"
 #include "esp_pm.h"
+#ifdef CONFIG_CHIP_IS_ESP32C
+#include "pm_trace.h"
+#endif
 #include "soc/rtc.h"
 #include "esp_mesh.h"
 
@@ -36,25 +39,85 @@ static void __attribute__((constructor)) s_set_default_wifi_log_level()
     esp_log_level_set("wifi", CONFIG_LOG_DEFAULT_LEVEL);
 }
 
+static void esp_wifi_set_debug_log()
+{
+    /* set WiFi log level and module */
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_ENABLE
+    uint32_t g_wifi_log_level = WIFI_LOG_INFO;
+    uint32_t g_wifi_log_module = 0;
+    uint32_t g_wifi_log_submodule = 0;
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_DEBUG
+    g_wifi_log_level = WIFI_LOG_DEBUG;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_VERBOSE
+    g_wifi_log_level = WIFI_LOG_VERBOSE;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_MODULE_ALL
+    g_wifi_log_module = WIFI_LOG_MODULE_ALL;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_MODULE_WIFI
+    g_wifi_log_module = WIFI_LOG_MODULE_WIFI;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_MODULE_COEX
+    g_wifi_log_module = WIFI_LOG_MODULE_COEX;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_MODULE_MESH
+    g_wifi_log_module = WIFI_LOG_MODULE_MESH;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_SUBMODULE_ALL
+    g_wifi_log_submodule |= WIFI_LOG_SUBMODULE_ALL;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_SUBMODULE_INIT
+    g_wifi_log_submodule |= WIFI_LOG_SUBMODULE_INIT;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_SUBMODULE_IOCTL
+    g_wifi_log_submodule |= WIFI_LOG_SUBMODULE_IOCTL;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_SUBMODULE_CONN
+    g_wifi_log_submodule |= WIFI_LOG_SUBMODULE_CONN;
+#endif
+#if CONFIG_ESP32_WIFI_DEBUG_LOG_SUBMODULE_SCAN
+    g_wifi_log_submodule |= WIFI_LOG_SUBMODULE_SCAN;
+#endif
+    esp_wifi_internal_set_log_level(g_wifi_log_level);
+    esp_wifi_internal_set_log_mod(g_wifi_log_module, g_wifi_log_submodule, true);
+
+#endif /* CONFIG_ESP32_WIFI_DEBUG_LOG_ENABLE*/
+
+}
+
 esp_err_t esp_wifi_init(const wifi_init_config_t *config)
 {
 #ifdef CONFIG_PM_ENABLE
     if (s_wifi_modem_sleep_lock == NULL) {
+#ifndef CONFIG_HARDWARE_IS_FPGA
         esp_err_t err = esp_pm_lock_create(ESP_PM_APB_FREQ_MAX, 0, "wifi",
                 &s_wifi_modem_sleep_lock);
+#else
+        esp_err_t err = esp_pm_lock_create(ESP_PM_CPU_FREQ_MAX, 0, "wifi",
+                &s_wifi_modem_sleep_lock);
+#endif
         if (err != ESP_OK) {
             return err;
         }
+        esp_sleep_enable_mac_wakeup();
     }
 #endif
     esp_event_set_default_wifi_handlers();
-    return esp_wifi_init_internal(config);
+    esp_err_t result = esp_wifi_init_internal(config);
+    esp_wifi_set_debug_log();
+
+    return result;
 }
 
 #ifdef CONFIG_PM_ENABLE
 void wifi_apb80m_request(void)
 {
     assert(s_wifi_modem_sleep_lock);
+#ifdef CONFIG_CHIP_IS_ESP32C
+    int core_id = xPortGetCoreID();
+    ESP_PM_TRACE_EXIT(WIFI, core_id);
+#endif
     esp_pm_lock_acquire(s_wifi_modem_sleep_lock);
     if (rtc_clk_apb_freq_get() != APB_CLK_FREQ) {
         ESP_LOGE(__func__, "WiFi needs 80MHz APB frequency to work, but got %dHz", rtc_clk_apb_freq_get());
@@ -65,5 +128,9 @@ void wifi_apb80m_release(void)
 {
     assert(s_wifi_modem_sleep_lock);
     esp_pm_lock_release(s_wifi_modem_sleep_lock);
+#ifdef CONFIG_CHIP_IS_ESP32C
+    int core_id = xPortGetCoreID();
+    ESP_PM_TRACE_ENTER(WIFI, core_id);
+#endif
 }
 #endif //CONFIG_PM_ENABLE

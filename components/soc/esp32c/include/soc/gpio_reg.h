@@ -9204,7 +9204,7 @@ extern "C" {
 #define GPIO_CLK_EN_S  0
 
 #define GPIO_DATE_REG          (DR_REG_GPIO_BASE + 0x6FC)
-/* GPIO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1809040 ; */
+/* GPIO_DATE : R/W ;bitpos:[27:0] ;default: 28'h1905061 ; */
 /*description: */
 #define GPIO_DATE  0x0FFFFFFF
 #define GPIO_DATE_M  ((GPIO_DATE_V)<<(GPIO_DATE_S))
