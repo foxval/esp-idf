@@ -26,46 +26,44 @@ menu Bluetooth
 
         endchoice
 
+        config BTDM_CONTROLLER_BLE_MAX_ACT
+            int "BLE Max Activiies"
+            depends on BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            default 10
+            range 1 10
+            help
+                BLE maximum air activities of bluetooth controller.
+
+        config BTDM_CONTROLLER_HL_PRESENT
+            bool "RWIP Host stack present"
+            depends on BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            default n
+
+        config BTDM_CONTROLLER_BLE_MAX_CONN_UPPER_LIMIT
+            int
+            depends on (BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM) && BTDM_CONTROLLER_HL_PRESENT
+            default 8 if BTDM_CONTROLLER_BLE_MAX_ACT > 8
+            default BTDM_CONTROLLER_BLE_MAX_ACT if BTDM_CONTROLLER_BLE_MAX_ACT <= 8
+            default 0
+
         config BTDM_CONTROLLER_BLE_MAX_CONN
             int "BLE Max Connections"
-            depends on BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM
-            default 3
-            range 1 9
-            help
-                BLE maximum connections of bluetooth controller.
-                Each connection uses 1KB static DRAM whenever the BT controller is enabled.
-
-        config BTDM_CONTROLLER_BR_EDR_MAX_ACL_CONN
-            int "BR/EDR ACL Max Connections"
-            depends on BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM
-            default 2
-            range 1 7
-            help
-                BR/EDR ACL maximum connections of bluetooth controller.
-                Each connection uses 1.2KB static DRAM whenever the BT controller is enabled.
-
-        config BTDM_CONTROLLER_BR_EDR_MAX_SYNC_CONN
-            int "BR/EDR Sync(SCO/eSCO) Max Connections"
-            depends on BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            depends on (BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM) && BTDM_CONTROLLER_HL_PRESENT
+            default BTDM_CONTROLLER_BLE_MAX_CONN_UPPER_LIMIT
             default 0
-            range 0 3
+            range 1 BTDM_CONTROLLER_BLE_MAX_CONN_UPPER_LIMIT
             help
-                BR/EDR Synchronize maximum connections of bluetooth controller.
-                Each connection uses 2KB static DRAM whenever the BT controller is enabled.
+                BLE maximum connections of bluetooth controller when RWIP host is present. Effective range is
+                1 to MIN(8, BTDM_CONTROLLER_BLE_MAX_ACT)
+
+        config BTDM_CONTROLLER_BLE_MAX_ACT_EFF
+            int
+            default BTDM_CONTROLLER_BLE_MAX_ACT if BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM
+            default 0
 
         config BTDM_CONTROLLER_BLE_MAX_CONN_EFF
             int
-            default BTDM_CONTROLLER_BLE_MAX_CONN if BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM
-            default 0
-
-        config BTDM_CONTROLLER_BR_EDR_MAX_ACL_CONN_EFF
-            int
-            default BTDM_CONTROLLER_BR_EDR_MAX_ACL_CONN if BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM  # NOERROR
-            default 0
-
-        config BTDM_CONTROLLER_BR_EDR_MAX_SYNC_CONN_EFF
-            int
-            default BTDM_CONTROLLER_BR_EDR_MAX_SYNC_CONN if BTDM_CONTROLLER_MODE_BR_EDR_ONLY || BTDM_CONTROLLER_MODE_BTDM  # NOERROR
+            default BTDM_CONTROLLER_BLE_MAX_CONN if (BTDM_CONTROLLER_MODE_BLE_ONLY || BTDM_CONTROLLER_MODE_BTDM) && BTDM_CONTROLLER_HL_PRESENT
             default 0
 
         choice BTDM_CONTROLLER_PINNED_TO_CORE_CHOICE

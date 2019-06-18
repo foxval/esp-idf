@@ -1116,12 +1116,10 @@ esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg)
     }
 
     //overwrite some parameters
-    cfg->bt_max_sync_conn = CONFIG_BTDM_CONTROLLER_BR_EDR_MAX_SYNC_CONN_EFF;
-    cfg->magic  = ESP_BT_CONTROLLER_CONFIG_MAGIC_VAL;
+    cfg->magic = ESP_BT_CONTROLLER_CONFIG_MAGIC_VAL;
 
-    if (((cfg->mode & ESP_BT_MODE_BLE) && (cfg->ble_max_conn <= 0 || cfg->ble_max_conn > BTDM_CONTROLLER_BLE_MAX_CONN_LIMIT))
-            || ((cfg->mode & ESP_BT_MODE_CLASSIC_BT) && (cfg->bt_max_acl_conn <= 0 || cfg->bt_max_acl_conn > BTDM_CONTROLLER_BR_EDR_MAX_ACL_CONN_LIMIT))
-            || ((cfg->mode & ESP_BT_MODE_CLASSIC_BT) && (cfg->bt_max_sync_conn > BTDM_CONTROLLER_BR_EDR_MAX_SYNC_CONN_LIMIT))) {
+    if (((cfg->mode & ESP_BT_MODE_BLE) && (cfg->ble_max_act <= 0 || cfg->ble_max_act > BTDM_CONTROLLER_BLE_MAX_ACT_LIMIT))
+        || ((cfg->mode & ESP_BT_MODE_BLE && cfg->ble_hl_present) && (cfg->ble_max_con <= 0 || cfg->ble_max_con > BTDM_CONTROLLER_BLE_MAX_CONN_LIMIT || cfg->ble_max_con > cfg->ble_max_act))) {
         return ESP_ERR_INVALID_ARG;
     }
 
