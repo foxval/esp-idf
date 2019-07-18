@@ -251,6 +251,9 @@
 #define CH_IDX0_IDX			185
 #define CH_IDX1_IDX			186
 #define RX_WINDOW_IDX			187
+#define UPDATE_RX_IDX			188
+#define RX_STATUS_IDX			189
+#define CLK_GPIO_IDX			190
 #define I2S0I_H_SYNC_IDX			193
 #define I2S0I_V_SYNC_IDX			194
 #define I2S0I_H_ENABLE_IDX			195
