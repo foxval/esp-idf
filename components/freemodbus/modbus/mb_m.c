@@ -48,7 +48,7 @@
 #include "mbrtu.h"
 #endif
 #if MB_MASTER_ASCII_ENABLED == 1
-#include "mbascii.h"
+#include "mbascii_m.h"
 #endif
 #if MB_MASTER_TCP_ENABLED == 1
 #include "mbtcp.h"
@@ -158,7 +158,7 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
         break;
 #endif
 #if MB_MASTER_ASCII_ENABLED > 0
-        case MB_ASCII:
+    case MB_ASCII:
         pvMBMasterFrameStartCur = eMBMasterASCIIStart;
         pvMBMasterFrameStopCur = eMBMasterASCIIStop;
         peMBMasterFrameSendCur = eMBMasterASCIISend;

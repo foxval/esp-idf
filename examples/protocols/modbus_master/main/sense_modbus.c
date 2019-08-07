@@ -92,7 +92,7 @@ esp_err_t sense_modbus_init(void)
 {
     mb_communication_info_t comm = {
             .port = MB_PORTNUM,
-            .mode = MB_MODE_RTU,
+            .mode = MB_MODE_ASCII,
             .baudrate = MB_BAUDRATE,
             .parity = MB_PARITY
     };

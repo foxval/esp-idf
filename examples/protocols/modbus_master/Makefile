@@ -3,6 +3,6 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := modbus_master_sense
+PROJECT_NAME := modbus_master
 
 include $(IDF_PATH)/make/project.mk
