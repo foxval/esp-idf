@@ -40,6 +40,7 @@
 #include "mb_m.h"
 #include "mbport.h"
 #include "port_serial_master.h"
+#include "sdkconfig.h"
 
 #define MB_US50_FREQ            (20000) // 20kHz 1/20000 = 50mks
 #define MB_TICK_TIME_US         (50)    // 50uS = one tick for timer
@@ -50,20 +51,24 @@
 #define MB_TIMER_WITH_RELOAD    (1)
 
 // Timer group and timer number to measure time (configurable in KConfig)
-#define MB_TIMER_INDEX CONFIG_FMB_TIMER_INDEX
-#define MB_TIMER_GROUP CONFIG_FMB_TIMER_GROUP
+#define MB_TIMER_INDEX          (CONFIG_FMB_TIMER_INDEX + 1) // Master uses the second timer in group
+#define MB_TIMER_GROUP          (CONFIG_FMB_TIMER_GROUP)
 
-#define MB_TIMER_IO_LED 0
 
 /* ----------------------- Variables ----------------------------------------*/
 static USHORT usT35TimeOut50us;
 
 static const USHORT usTimerIndex = MB_TIMER_INDEX;      // Initialize Modbus Timer index used by stack,
 static const USHORT usTimerGroupIndex = MB_TIMER_GROUP; // Timer group index used by stack
-
+static timer_isr_handle_t xTimerIntHandle;              // Timer interrupt handle
 static timg_dev_t *MB_TG[2] = { &TIMERG0, &TIMERG1 };
 
 /* ----------------------- static functions ---------------------------------*/
+
+static inline void vTimerGroupSetCounterEnableInISR(USHORT usTimerGroup, USHORT usTimer, BOOL xTimerState)
+{
+    MB_TG[usTimerGroup]->hw_timer[usTimer].config.enable = xTimerState;
+}
 
 static void IRAM_ATTR vTimerGroupIsr(void *param)
 {
@@ -115,7 +120,7 @@ BOOL xMBMasterPortTimersInit(USHORT usTimeOut50us)
                     (uint32_t)xErr);
     // Register ISR for timer
     xErr = timer_isr_register(usTimerGroupIndex, usTimerIndex,
-                                vTimerGroupIsr, NULL, ESP_INTR_FLAG_IRAM, NULL);
+                                vTimerGroupIsr, (void*)(uint32_t)usTimerIndex, MB_PORT_TIMER_ISR_FLAG, &xTimerIntHandle);
     MB_PORT_CHECK((xErr == ESP_OK), FALSE,
                     "timer set value failure, timer_isr_register() returned (0x%x).",
                     (uint32_t)xErr);
@@ -151,11 +156,10 @@ static BOOL xMBMasterPortTimersEnable(USHORT usTimerTics50us)
     MB_PORT_CHECK((xErr == ESP_OK), FALSE,
                             "timer start failure, timer_start() returned (0x%x).",
                             (uint32_t)xErr);
-    //ESP_LOGD(MB_PORT_TAG,"%s Init timer.", __func__);
     return TRUE;
 }
 
-void vMBMasterPortTimersT35Enable()
+void vMBMasterPortTimersT35Enable(void)
 {
     USHORT usTimerTicks = usT35TimeOut50us;
 
@@ -165,7 +169,7 @@ void vMBMasterPortTimersT35Enable()
     (void)xMBMasterPortTimersEnable(usTimerTicks);
 }
 
-void vMBMasterPortTimersConvertDelayEnable()
+void vMBMasterPortTimersConvertDelayEnable(void)
 {
     // Covert time in milliseconds into ticks
     USHORT usTimerTicks = ((MB_MASTER_DELAY_MS_CONVERT * 1000) / MB_TICK_TIME_US);
@@ -176,7 +180,7 @@ void vMBMasterPortTimersConvertDelayEnable()
     (void)xMBMasterPortTimersEnable(usTimerTicks);
 }
 
-void vMBMasterPortTimersRespondTimeoutEnable()
+void vMBMasterPortTimersRespondTimeoutEnable(void)
 {
     USHORT usTimerTicks = (MB_MASTER_TIMEOUT_MS_RESPOND * 1000 / MB_TICK_TIME_US);
 
@@ -185,17 +189,23 @@ void vMBMasterPortTimersRespondTimeoutEnable()
     (void)xMBMasterPortTimersEnable(usTimerTicks);
 }
 
-void vMBMasterPortTimersDisable()
+void MB_PORT_ISR_ATTR
+vMBMasterPortTimersDisable()
 {
-    // Stop timer and then reload timer counter value
-    ESP_ERROR_CHECK(timer_pause(usTimerGroupIndex, usTimerIndex));
-    ESP_ERROR_CHECK(timer_set_counter_value(usTimerGroupIndex, usTimerIndex, 0ULL));
-    // Disable timer interrupt
-    ESP_ERROR_CHECK(timer_disable_intr(usTimerGroupIndex, usTimerIndex));
+    if( (BOOL)xPortInIsrContext() ) {
+        vTimerGroupSetCounterEnableInISR(usTimerGroupIndex, usTimerIndex, TIMER_PAUSE);
+    } else {
+        // Stop timer and then reload timer counter value
+        ESP_ERROR_CHECK(timer_pause(usTimerGroupIndex, usTimerIndex));
+        ESP_ERROR_CHECK(timer_set_counter_value(usTimerGroupIndex, usTimerIndex, 0ULL));
+        // Disable timer interrupt
+        ESP_ERROR_CHECK(timer_disable_intr(usTimerGroupIndex, usTimerIndex));
+    }
 }
 
-void vMBMasterPortTimerClose()
+void vMBMasterPortTimerClose(void)
 {
     ESP_ERROR_CHECK(timer_pause(usTimerGroupIndex, usTimerIndex));
     ESP_ERROR_CHECK(timer_disable_intr(usTimerGroupIndex, usTimerIndex));
+    ESP_ERROR_CHECK(esp_intr_free(xTimerIntHandle));
 }

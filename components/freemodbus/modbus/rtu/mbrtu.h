@@ -35,6 +35,11 @@
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
+
+/* ----------------------- Defines ------------------------------------------*/
+#define MB_SER_PDU_SIZE_MIN     4       /*!< Minimum size of a Modbus RTU frame. */
+
+#if MB_SLAVE_RTU_ENABLED
     eMBErrorCode eMBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate,
                              eMBParity eParity );
 void            eMBRTUStart( void );
@@ -45,8 +50,9 @@ BOOL            xMBRTUReceiveFSM( void );
 BOOL            xMBRTUTransmitFSM( void );
 BOOL            xMBRTUTimerT15Expired( void );
 BOOL            xMBRTUTimerT35Expired( void );
+#endif
 
-#if MB_MASTER_RTU_ENABLED > 0
+#if MB_MASTER_RTU_ENABLED
 eMBErrorCode    eMBMasterRTUInit( UCHAR ucPort, ULONG ulBaudRate,eMBParity eParity );
 void            eMBMasterRTUStart( void );
 void            eMBMasterRTUStop( void );

@@ -37,6 +37,20 @@
 PR_BEGIN_EXTERN_C
 #endif
 
+#if CONFIG_UART_ISR_IN_IRAM
+#define MB_PORT_SERIAL_ISR_FLAG ESP_INTR_FLAG_IRAM
+#else
+#define MB_PORT_SERIAL_ISR_FLAG ESP_INTR_FLAG_LOWMED
+#endif
+
+#if MB_PORT_TIMER_ISR_IN_IRAM
+#define MB_PORT_ISR_ATTR IRAM_ATTR
+#define MB_PORT_TIMER_ISR_FLAG ESP_INTR_FLAG_IRAM
+#else
+#define MB_PORT_ISR_ATTR
+#define MB_PORT_TIMER_ISR_FLAG ESP_INTR_FLAG_LOWMED
+#endif
+
 /* ----------------------- Type definitions ---------------------------------*/
 
 typedef enum
@@ -44,7 +58,8 @@ typedef enum
     EV_READY = 0x01,                   /*!< Startup finished. */
     EV_FRAME_RECEIVED = 0x02,          /*!< Frame received. */
     EV_EXECUTE = 0x04,                 /*!< Execute function. */
-    EV_FRAME_SENT = 0x08               /*!< Frame sent. */
+    EV_FRAME_SENT = 0x08,              /*!< Frame sent. */
+    EV_FRAME_TRANSMIT = 0x10           /*!< Frame transmit. */
 } eMBEventType;
 
 #if MB_MASTER_RTU_ENABLED || MB_MASTER_ASCII_ENABLED 

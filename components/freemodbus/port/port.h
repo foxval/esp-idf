@@ -18,7 +18,6 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/xtensa_api.h"
-#include "freertos/portmacro.h"
 #include "esp_log.h"                // for ESP_LOGE macro
 #include "mbconfig.h"
 
@@ -27,6 +26,24 @@
 #define PR_END_EXTERN_C             }
 
 #define MB_PORT_TAG "MB_PORT_COMMON"
+
+#define MB_BAUD_RATE_DEFAULT        (115200)
+#define MB_QUEUE_LENGTH             (CONFIG_FMB_QUEUE_LENGTH)
+
+#define MB_SERIAL_TASK_PRIO         (CONFIG_FMB_SERIAL_TASK_PRIO)
+#define MB_SERIAL_TASK_STACK_SIZE   (CONFIG_FMB_SERIAL_TASK_STACK_SIZE)
+#define MB_SERIAL_TOUT              (3) // 3.5*8 = 28 ticks, TOUT=3 -> ~24..33 ticks
+
+// Set buffer size for transmission
+#define MB_SERIAL_BUF_SIZE          (CONFIG_FMB_SERIAL_BUF_SIZE)
+
+// common definitions for serial port implementations
+#define MB_SERIAL_TX_TOUT_MS        (CONFIG_FMB_MASTER_TIMEOUT_MS_RESPOND)
+#define MB_SERIAL_TX_TOUT_TICKS     pdMS_TO_TICKS(MB_SERIAL_TX_TOUT_MS) // timeout for transmission
+#define MB_SERIAL_RX_TOUT_MS        (1)
+#define MB_SERIAL_RX_TOUT_TICKS     pdMS_TO_TICKS(MB_SERIAL_RX_TOUT_MS) // timeout for receive
+
+#define MB_SERIAL_RESP_LEN_MIN      (4)
 
 #define MB_PORT_CHECK(a, ret_val, str, ...) \
     if (!(a)) { \
@@ -57,19 +74,21 @@ typedef short   SHORT;
 typedef unsigned long ULONG;
 typedef long    LONG;
 
-void vMBPortEnterCritical( );
-void vMBPortExitCritical( );
+void vMBPortEnterCritical(void);
+void vMBPortExitCritical(void);
 
-#define ENTER_CRITICAL_SECTION( ) { ESP_LOGD(MB_PORT_TAG,"%s: Port enter critical.", __func__); \
+#define ENTER_CRITICAL_SECTION( ) { ESP_EARLY_LOGD(MB_PORT_TAG,"%s: Port enter critical.", __func__); \
                                     vMBPortEnterCritical(); }
 
 #define EXIT_CRITICAL_SECTION( )  { vMBPortExitCritical(); \
-                                    ESP_LOGD(MB_PORT_TAG,"%s: Port exit critical", __func__); }
+                                    ESP_EARLY_LOGD(MB_PORT_TAG,"%s: Port exit critical", __func__); }
 #define MB_PORT_PARITY_GET(parity) ((parity != UART_PARITY_DISABLE) ? \
                                         ((parity == UART_PARITY_ODD) ? MB_PAR_ODD : MB_PAR_EVEN) : MB_PAR_NONE)
 
 #define MB_PORT_CHECK_EVENT( event, mask ) ( event & mask )
 #define MB_PORT_CLEAR_EVENT( event, mask ) do { event &= ~mask; } while(0)
+
+void vMBPortSetMode( UCHAR ucMode );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C

@@ -88,6 +88,7 @@ typedef struct {
     intr_handle_t intr_handle;          /*!< UART interrupt handle*/
     uart_mode_t uart_mode;              /*!< UART controller actual mode set by uart_set_mode() */
     bool coll_det_flg;                  /*!< UART collision detection flag */
+    bool rx_always_timeout_flg;         /*!< UART always detect rx timeout flag */
     
     //rx parameters
     int rx_buffered_len;                  /*!< UART cached data length */
@@ -513,7 +514,7 @@ esp_err_t uart_disable_pattern_det_intr(uart_port_t uart_num)
     return uart_disable_intr_mask(uart_num, UART_AT_CMD_CHAR_DET_INT_ENA_M);
 }
 
-esp_err_t uart_enable_rx_intr(uart_port_t uart_num)
+esp_err_t inline uart_enable_rx_intr(uart_port_t uart_num)
 {
     return uart_enable_intr_mask(uart_num, UART_RXFIFO_FULL_INT_ENA|UART_RXFIFO_TOUT_INT_ENA);
 }
@@ -768,6 +769,39 @@ static int UART_ISR_ATTR uart_find_pattern_from_last(uint8_t* buf, int length, u
     return len;
 }
 
+static UART_ISR_ATTR bool uart_is_tx_idle(uart_port_t uart_num)
+{
+    typeof(UART[uart_num]->status) status = UART[uart_num]->status;
+    return ((status.txfifo_cnt == 0) && (status.st_utx_out == 0));
+}
+
+static UART_ISR_ATTR uint32_t uart_get_rxfifo_len(uart_port_t uart_num)
+{
+    uint32_t fifo_cnt = UART[uart_num]->status.rxfifo_cnt;
+    typeof(UART[uart_num]->mem_rx_status) rx_status = UART[uart_num]->mem_rx_status;
+    uint32_t len = 0;
+
+    // When using DPort to read fifo, fifo_cnt is not credible, we need to calculate the real cnt based on the fifo read and write pointer.
+    // When using AHB to read FIFO, we can use fifo_cnt to indicate the data length in fifo.
+    if (rx_status.wr_addr > rx_status.rd_addr) {
+        len = rx_status.wr_addr - rx_status.rd_addr;
+    } else if (rx_status.wr_addr < rx_status.rd_addr) {
+        len = (rx_status.wr_addr + 128) - rx_status.rd_addr;
+    } else {
+        len = fifo_cnt > 0 ? 128 : 0;
+    }
+    return len;
+}
+
+static UART_ISR_ATTR void uart_read_rxfifo(uart_port_t uart_num, uint8_t* buf, uint32_t rd_len)
+{
+    //Get the UART APB fifo addr. Read fifo, we use APB address
+    uint32_t fifo_addr = UART_FIFO_REG(uart_num);
+    for(int i = 0; i < rd_len; i++) {
+        buf[i] = READ_PERI_REG(fifo_addr);
+    }
+}
+
 //internal isr handler for default driver code.
 static void UART_ISR_ATTR uart_rx_intr_handler_default(void *param)
 {
@@ -891,27 +925,16 @@ static void UART_ISR_ATTR uart_rx_intr_handler_default(void *param)
                 || (uart_intr_status & UART_RXFIFO_FULL_INT_ST_M)
                 || (uart_intr_status & UART_AT_CMD_CHAR_DET_INT_ST_M)
                 ) {
-            rx_fifo_len = uart_reg->status.rxfifo_cnt;
-            typeof(uart_reg->mem_rx_status) rx_status = uart_reg->mem_rx_status;
-            
-            // When using DPort to read fifo, fifo_cnt is not credible, we need to calculate the real cnt based on the fifo read and write pointer. 
-            // When using AHB to read FIFO, we can use fifo_cnt to indicate the data length in fifo.
-            if (rx_status.wr_addr > rx_status.rd_addr) {
-                rx_fifo_len = rx_status.wr_addr - rx_status.rd_addr;
-            } else if (rx_status.wr_addr < rx_status.rd_addr) {
-                rx_fifo_len = (rx_status.wr_addr + 128) - rx_status.rd_addr;
-            } else {
-                rx_fifo_len = rx_fifo_len > 0 ? 128 : 0;
-            }
-            if(pat_flg == 1) {
+            rx_fifo_len = uart_get_rxfifo_len(uart_num);
+            if (pat_flg == 1) {
                 uart_intr_status |= UART_AT_CMD_CHAR_DET_INT_ST_M;
                 pat_flg = 0;
             }
             if (p_uart->rx_buffer_full_flg == false) {
-                //We have to read out all data in RX FIFO to clear the interrupt signal
-                for(buf_idx = 0; buf_idx < rx_fifo_len; buf_idx++) {
-                    p_uart->rx_data_buf[buf_idx] = uart_reg->fifo.rw_byte;
+                if ((p_uart_obj[uart_num]->rx_always_timeout_flg) && !(uart_intr_status & UART_RXFIFO_TOUT_INT_ST_M)) {
+                    rx_fifo_len--; // leave one byte in the fifo in order to trigger UART_RXFIFO_TOUT_INT
                 }
+                uart_read_rxfifo(uart_num, p_uart->rx_data_buf, rx_fifo_len);
                 uint8_t pat_chr = uart_reg->at_cmd_char.data;
                 int pat_num = uart_reg->at_cmd_char.char_num;
                 int pat_idx = -1;
@@ -927,6 +950,7 @@ static void UART_ISR_ATTR uart_rx_intr_handler_default(void *param)
                     uart_clear_intr_status(uart_num, UART_RXFIFO_TOUT_INT_CLR_M | UART_RXFIFO_FULL_INT_CLR_M);
                     uart_event.type = UART_DATA;
                     uart_event.size = rx_fifo_len;
+                    uart_event.timeout_flag = (uart_intr_status & UART_RXFIFO_TOUT_INT_ST_M) ? true : false;
                     UART_ENTER_CRITICAL_ISR(&uart_selectlock);
                     if (p_uart->uart_select_notif_callback) {
                         p_uart->uart_select_notif_callback(uart_num, UART_SELECT_READ_NOTIF, &HPTaskAwoken);
@@ -1044,17 +1068,24 @@ static void UART_ISR_ATTR uart_rx_intr_handler_default(void *param)
             UART_EXIT_CRITICAL_ISR(&uart_spinlock[uart_num]);
             uart_event.type = UART_EVENT_MAX;
         } else if(uart_intr_status & UART_TX_DONE_INT_ST_M) {
-            uart_disable_intr_mask_from_isr(uart_num, UART_TX_DONE_INT_ENA_M);
-            uart_clear_intr_status(uart_num, UART_TX_DONE_INT_CLR_M);
-            // If RS485 half duplex mode is enable then reset FIFO and 
-            // reset RTS pin to start receiver driver
-            if (UART_IS_MODE_SET(uart_num, UART_MODE_RS485_HALF_DUPLEX)) {
+            if (UART_IS_MODE_SET(uart_num, UART_MODE_RS485_HALF_DUPLEX) && uart_is_tx_idle(uart_num) != true) {
+                // The TX_DONE interrupt is triggered but transmit is active
+                // then postpone interrupt processing for next interrupt
+                uart_event.type = UART_EVENT_MAX;
+            } else {
+                // Workaround for RS485: If the RS485 half duplex mode is active 
+                // and transmitter is in idle state then reset received buffer and reset RTS pin
+                // skip this behavior for other UART modes
                 UART_ENTER_CRITICAL_ISR(&uart_spinlock[uart_num]);
-                uart_reset_rx_fifo(uart_num); // Allows to avoid hardware issue with the RXFIFO reset
-                uart_reg->conf0.sw_rts = 1;
+                uart_disable_intr_mask_from_isr(uart_num, UART_TX_DONE_INT_ENA_M);
+                if (UART_IS_MODE_SET(uart_num, UART_MODE_RS485_HALF_DUPLEX)) {
+                    uart_reset_rx_fifo(uart_num); // Allows to avoid hardware issue with the RXFIFO reset
+                    uart_reg->conf0.sw_rts = 1;
+                }
                 UART_EXIT_CRITICAL_ISR(&uart_spinlock[uart_num]);
+                uart_clear_intr_status(uart_num, UART_TX_DONE_INT_CLR_M);
+                xSemaphoreGiveFromISR(p_uart_obj[uart_num]->tx_done_sem, &HPTaskAwoken);
             }
-            xSemaphoreGiveFromISR(p_uart_obj[uart_num]->tx_done_sem, &HPTaskAwoken);
         } else {
             uart_reg->int_clr.val = uart_intr_status; /*simply clear all other intr status*/
             uart_event.type = UART_EVENT_MAX;
@@ -1084,9 +1115,7 @@ esp_err_t uart_wait_tx_done(uart_port_t uart_num, TickType_t ticks_to_wait)
         return ESP_ERR_TIMEOUT;
     }
     xSemaphoreTake(p_uart_obj[uart_num]->tx_done_sem, 0);
-    typeof(UART0.status) status = UART[uart_num]->status;
-    //Wait txfifo_cnt = 0, and the transmitter state machine is in idle state.
-    if(status.txfifo_cnt == 0 && status.st_utx_out == 0) {
+    if(uart_is_tx_idle(uart_num)) {
         xSemaphoreGive(p_uart_obj[uart_num]->tx_mux);
         return ESP_OK;
     }
@@ -1389,6 +1418,7 @@ esp_err_t uart_driver_install(uart_port_t uart_num, int rx_buffer_size, int tx_b
         p_uart_obj[uart_num]->uart_num = uart_num;
         p_uart_obj[uart_num]->uart_mode = UART_MODE_UART;
         p_uart_obj[uart_num]->coll_det_flg = false;
+        p_uart_obj[uart_num]->rx_always_timeout_flg = false;
         p_uart_obj[uart_num]->tx_fifo_sem = xSemaphoreCreateBinary();
         xSemaphoreGive(p_uart_obj[uart_num]->tx_fifo_sem);
         p_uart_obj[uart_num]->tx_done_sem = xSemaphoreCreateBinary();
@@ -1431,8 +1461,6 @@ esp_err_t uart_driver_install(uart_port_t uart_num, int rx_buffer_size, int tx_b
         return ESP_FAIL;
     }
 
-    r=uart_isr_register(uart_num, uart_rx_intr_handler_default, p_uart_obj[uart_num], intr_alloc_flags, &p_uart_obj[uart_num]->intr_handle);
-    if (r!=ESP_OK) goto err;
     uart_intr_config_t uart_intr = {
         .intr_enable_mask = UART_RXFIFO_FULL_INT_ENA_M
                             | UART_RXFIFO_TOUT_INT_ENA_M
@@ -1444,6 +1472,10 @@ esp_err_t uart_driver_install(uart_port_t uart_num, int rx_buffer_size, int tx_b
         .rx_timeout_thresh = UART_TOUT_THRESH_DEFAULT,
         .txfifo_empty_intr_thresh = UART_EMPTY_THRESH_DEFAULT
     };
+    uart_disable_intr_mask(uart_num, UART_INTR_MASK);
+    uart_clear_intr_status(uart_num, UART_INTR_MASK);
+    r=uart_isr_register(uart_num, uart_rx_intr_handler_default, p_uart_obj[uart_num], intr_alloc_flags, &p_uart_obj[uart_num]->intr_handle);
+    if (r!=ESP_OK) goto err;
     r=uart_intr_config(uart_num, &uart_intr);
     if (r!=ESP_OK) goto err;
     return r;
@@ -1585,28 +1617,6 @@ esp_err_t uart_set_mode(uart_port_t uart_num, uart_mode_t mode)
     return ESP_OK;
 }
 
-esp_err_t uart_set_rx_timeout(uart_port_t uart_num, const uint8_t tout_thresh) 
-{
-    UART_CHECK((uart_num < UART_NUM_MAX), "uart_num error", ESP_ERR_INVALID_ARG);
-    UART_CHECK((tout_thresh < 127), "tout_thresh max value is 126", ESP_ERR_INVALID_ARG);
-    UART_ENTER_CRITICAL(&uart_spinlock[uart_num]);
-    // The tout_thresh = 1, defines TOUT interrupt timeout equal to  
-    // transmission time of one symbol (~11 bit) on current baudrate  
-    if (tout_thresh > 0) {
-        //Hardware issue workaround: when using ref_tick, the rx timeout threshold needs increase to 10 times.
-        //T_ref = T_apb * APB_CLK/(REF_TICK << CLKDIV_FRAG_BIT_WIDTH)
-        if(UART[uart_num]->conf0.tick_ref_always_on == 0) {
-            UART[uart_num]->conf1.rx_tout_thrhd = tout_thresh * UART_TOUT_REF_FACTOR_DEFAULT;
-        } else {
-            UART[uart_num]->conf1.rx_tout_thrhd = tout_thresh;
-        }
-        UART[uart_num]->conf1.rx_tout_en = 1;
-    } else {
-        UART[uart_num]->conf1.rx_tout_en = 0;
-    }
-    UART_EXIT_CRITICAL(&uart_spinlock[uart_num]);
-    return ESP_OK;
-}
 
 esp_err_t uart_get_collision_flag(uart_port_t uart_num, bool* collision_flag)
 {
@@ -1637,4 +1647,88 @@ esp_err_t uart_get_wakeup_threshold(uart_port_t uart_num, int* out_wakeup_thresh
 
     *out_wakeup_threshold = UART[uart_num]->sleep_conf.active_threshold + UART_MIN_WAKEUP_THRESH;
     return ESP_OK;
+}
+
+static uint8_t uart_get_symb_len(uart_port_t uart_num)
+{
+    uint8_t symbol_len = 1; // number of bits per symbol including start
+    uart_parity_t parity_mode;
+    uart_stop_bits_t stop_bit;
+    uart_word_length_t data_bit;
+    uart_get_word_length(uart_num, &data_bit);
+    uart_get_stop_bits(uart_num, &stop_bit);
+    uart_get_parity(uart_num, &parity_mode);
+    symbol_len += (data_bit < UART_DATA_BITS_MAX) ? (uint8_t)data_bit + 5 : 8;
+    symbol_len += (stop_bit > UART_STOP_BITS_1) ? 2 : 1;
+    symbol_len += (parity_mode > UART_PARITY_DISABLE) ? 1 : 0;
+    return symbol_len;
+}
+
+static void uart_set_rx_tout_thrd(uart_port_t uart_num, uint16_t tout_thr)
+{
+    if (UART[uart_num]->conf0.tick_ref_always_on == 0) {
+        //Hardware issue workaround: when using ref_tick, the rx timeout threshold needs increase to 10 times.
+        //T_ref = T_apb * APB_CLK/(REF_TICK << CLKDIV_FRAG_BIT_WIDTH)
+        tout_thr = tout_thr * UART_TOUT_REF_FACTOR_DEFAULT;
+    } else {
+        //If APB_CLK is used: counting rate is BAUD tick rate / 8
+        tout_thr = (tout_thr + 7) / 8;
+    }
+    if (tout_thr > 0) {
+        UART[uart_num]->conf1.rx_tout_thrhd = tout_thr;
+        UART[uart_num]->conf1.rx_tout_en = 1;
+    } else {
+        UART[uart_num]->conf1.rx_tout_en = 0;
+    }
+}
+
+static inline uint16_t uart_get_max_rx_timeout_thrd(uart_port_t uart_num)
+{
+    uint8_t symb_len = uart_get_symb_len(uart_num);
+    uint16_t max_tout_thresh = 0;
+    if (UART[uart_num]->conf0.tick_ref_always_on == 0) {
+        max_tout_thresh = (uint16_t)(UART_RX_TOUT_THRHD_V / UART_TOUT_REF_FACTOR_DEFAULT);
+    } else {
+        max_tout_thresh = (uint16_t)(UART_RX_TOUT_THRHD_V  << 3);
+    }
+    return (max_tout_thresh / symb_len);
+}
+
+esp_err_t uart_set_rx_timeout(uart_port_t uart_num, const uint8_t tout_thresh)
+{
+    UART_CHECK((uart_num < UART_NUM_MAX), "uart_num error", ESP_ERR_INVALID_ARG);
+    // get maximum timeout threshold
+    uint16_t tout_max_thresh = uart_get_max_rx_timeout_thrd(uart_num);
+    if (tout_thresh > tout_max_thresh) {
+        ESP_LOGE(UART_TAG, "tout_thresh = %d > maximum value = %d", tout_thresh, tout_max_thresh);
+        return ESP_ERR_INVALID_ARG;
+    }
+    UART_ENTER_CRITICAL(&uart_spinlock[uart_num]);
+    uint8_t symb_len = uart_get_symb_len(uart_num);
+    uart_set_rx_tout_thrd(uart_num, symb_len * tout_thresh);
+    UART_EXIT_CRITICAL(&uart_spinlock[uart_num]);
+    return ESP_OK;
+}
+
+static inline uint16_t uart_get_rx_tout_thr(uart_port_t uart_num)
+{
+    uint16_t tout_thrd = 0;
+    if (UART[uart_num]->conf1.rx_tout_en > 0) {
+        if (UART[uart_num]->conf0.tick_ref_always_on == 0) {
+            tout_thrd = (uint16_t)(UART[uart_num]->conf1.rx_tout_thrhd / UART_TOUT_REF_FACTOR_DEFAULT);
+        } else {
+            tout_thrd = (uint16_t)(UART[uart_num]->conf1.rx_tout_thrhd  << 3);
+        }
+    }
+    return tout_thrd;
+}
+
+void uart_set_always_rx_timeout(uart_port_t uart_num, bool always_rx_timeout)
+{
+    uint16_t rx_tout = uart_get_rx_tout_thr(uart_num);
+    if (rx_tout) {
+        p_uart_obj[uart_num]->rx_always_timeout_flg = always_rx_timeout;
+    } else {
+        p_uart_obj[uart_num]->rx_always_timeout_flg = false;
+    }
 }

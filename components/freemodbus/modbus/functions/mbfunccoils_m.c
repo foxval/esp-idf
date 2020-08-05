@@ -36,7 +36,6 @@
 #include "port.h"
 
 /* ----------------------- Modbus includes ----------------------------------*/
-//#include "mb.h"
 #include "mb_m.h"
 #include "mbframe.h"
 #include "mbproto.h"
@@ -72,8 +71,9 @@
 eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
-#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
-#if MB_FUNC_READ_COILS_ENABLED > 0
+#if MB_MASTER_RTU_ENABLED || MB_MASTER_ASCII_ENABLED
+
+#if MB_FUNC_READ_COILS_ENABLED
 
 /**
  * This function will request read coil.

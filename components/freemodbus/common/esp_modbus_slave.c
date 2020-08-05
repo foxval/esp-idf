@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "esp_err.h"            // for esp_err_t
-#include "sdkconfig.h"          // for KConfig defines
+#include "esp_err.h"                // for esp_err_t
+#include "sdkconfig.h"              // for KConfig defines
 #include "mbc_slave.h"              // for slave private type definitions
 #include "esp_modbus_common.h"      // for common defines
 #include "esp_modbus_slave.h"       // for public slave defines
@@ -77,7 +77,7 @@ esp_err_t mbc_slave_init(mb_port_type_t port_type, void** handler)
 /**
  * Modbus controller destroy function
  */
-esp_err_t mbc_slave_destroy()
+esp_err_t mbc_slave_destroy(void)
 {
     esp_err_t error = ESP_OK;
     // Is initialization done?
@@ -91,8 +91,7 @@ esp_err_t mbc_slave_destroy()
     // Call the slave port destroy function
     error = slave_interface_ptr->destroy();
     MB_SLAVE_CHECK((error == ESP_OK), 
-                    ESP_ERR_INVALID_STATE, 
-                    "SERIAL slave destroy failure error=(0x%x).", error);
+                    error, "Slave destroy failure error=(0x%x).", error);
     return error;
 }
 
@@ -110,15 +109,14 @@ esp_err_t mbc_slave_setup(void* comm_info)
                     "Slave interface is not correctly initialized.");
     error = slave_interface_ptr->setup(comm_info);
     MB_SLAVE_CHECK((error == ESP_OK), 
-                    ESP_ERR_INVALID_STATE, 
-                    "SERIAL slave setup failure error=(0x%x).", error);
+                    error, "Slave setup failure error=(0x%x).", error);
     return error;
 }
 
 /**
  * Start Modbus controller start function
  */
-esp_err_t mbc_slave_start()
+esp_err_t mbc_slave_start(void)
 {
     esp_err_t error = ESP_OK;
     MB_SLAVE_CHECK((slave_interface_ptr != NULL),
@@ -134,8 +132,7 @@ esp_err_t mbc_slave_start()
 #endif
     error = slave_interface_ptr->start();
     MB_SLAVE_CHECK((error == ESP_OK), 
-                    ESP_ERR_INVALID_STATE, 
-                    "SERIAL slave start failure error=(0x%x).", error);
+                    error, "Slave start failure error=(0x%x).", error);
     return error;
 } 
 
@@ -168,8 +165,7 @@ esp_err_t mbc_slave_get_param_info(mb_param_info_t* reg_info, uint32_t timeout)
                     "Slave interface is not correctly initialized.");
     error = slave_interface_ptr->get_param_info(reg_info, timeout);
     MB_SLAVE_CHECK((error == ESP_OK), 
-                    ESP_ERR_INVALID_STATE, 
-                    "SERIAL slave get parameter info failure error=(0x%x).", error);
+                    error, "Slave get parameter info failure error=(0x%x).", error);
     return error;
 }
 
@@ -187,8 +183,7 @@ esp_err_t mbc_slave_set_descriptor(mb_register_area_descriptor_t descr_data)
                     "Slave interface is not correctly initialized.");
     error = slave_interface_ptr->set_descriptor(descr_data);
     MB_SLAVE_CHECK((error == ESP_OK), 
-                    ESP_ERR_INVALID_STATE, 
-                    "SERIAL slave set descriptor failure error=(0x%x).", error);
+                    error, "Slave set descriptor failure error=(0x%x).", error);
     return error;
 }
 
@@ -203,7 +198,7 @@ eMBErrorCode eMBRegDiscreteCB(UCHAR * pucRegBuffer, USHORT usAddress,
                     ESP_ERR_INVALID_STATE,
                     "Slave interface is not correctly initialized.");
     MB_SLAVE_CHECK((slave_interface_ptr->slave_reg_cb_discrete != NULL), 
-                    ESP_ERR_INVALID_STATE,
+                    error,
                     "Slave interface is not correctly initialized.");
     error = slave_interface_ptr->slave_reg_cb_discrete(pucRegBuffer, usAddress, usNDiscrete);
     
