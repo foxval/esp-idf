@@ -1732,3 +1732,10 @@ void uart_set_always_rx_timeout(uart_port_t uart_num, bool always_rx_timeout)
         p_uart_obj[uart_num]->rx_always_timeout_flg = false;
     }
 }
+
+esp_err_t uart_wait_tx_idle_polling(uart_port_t uart_num)
+{
+    UART_CHECK((uart_num < UART_NUM_MAX), "uart_num error", ESP_ERR_INVALID_ARG);
+    while(!uart_is_tx_idle(uart_num));
+    return ESP_OK;
+}

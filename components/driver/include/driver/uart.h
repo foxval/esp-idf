@@ -855,6 +855,18 @@ esp_err_t uart_set_wakeup_threshold(uart_port_t uart_num, int wakeup_threshold);
 esp_err_t uart_get_wakeup_threshold(uart_port_t uart_num, int* out_wakeup_threshold);
 
 /**
+  * @brief Wait until UART tx memory empty and the last char send ok (polling mode).
+  *
+  * @param uart_num UART number
+  *
+  * * @return
+  *      - ESP_OK on success
+  *      - ESP_ERR_INVALID_ARG Parameter error
+  *      - ESP_FAIL Driver not installed
+  */
+esp_err_t uart_wait_tx_idle_polling(uart_port_t uart_num);
+
+/**
   * @brief Configure behavior of UART RX timeout interrupt.
   *
   * When always_rx_timeout is true, timeout interrupt is triggered even if FIFO is full.
