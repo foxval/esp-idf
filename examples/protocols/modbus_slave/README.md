@@ -69,6 +69,14 @@ HOLDING READ/WRITE: time_stamp(us):12104081, mb_addr:1, type:2, st_address:0x3ff
 ```
 The output lines describe type of operation, its timestamp, modbus address, access type, storage address in parameter structure and number of registers accordingly.
 
-Note: Refer to file below for more information about current implementation of Modbus:
+## Troubleshooting
+
+The Kconfig values below allow to solve some known communication issues:
+
+The CONFIG_FMB_SERIAL_TASK_PRIO value shall be configured to be higher than the highest priority of application tasks. If the application includes high priority WiFi or NVS read/write tasks it is recommended to disable CONFIG_FMB_TIMER_PORT_ENABLED. 
+
+The enabled CONFIG_FMB_TIMER_ISR_IN_IRAM option allows to avoid delays related to the processing of non-IRAM-safe interrupts if your application intensively performs Flash read/write operations and resolve some Modbus errors.
+
+Note: Refer to file below for more information about the current implementation of Modbus:
 
 * `components/freemodbus/README.rst`

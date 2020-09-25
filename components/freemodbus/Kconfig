@@ -151,7 +151,7 @@ menu "Modbus configuration"
 
     config FMB_TIMER_ISR_IN_IRAM
         bool "Place timer interrupt handler into IRAM"
-        default y
+        default n
         select UART_ISR_IN_IRAM
         help
                 This option places Modbus timer IRQ handler into IRAM.

@@ -131,4 +131,27 @@ I (73143) SENSE_MAIN: cid: 5, (RelayP1) = ON
 ```
 The example refreshes the characteristics from devices every 10 seconds, verifies if they exceeded limits and sets alarm accordingly. The output line describes Timestamp, Cid of characteristic, Characteristic name(Units), Characteristic value.
 
+## Troubleshooting
 
+If the examples does not work as expected and slave and master boards are not able to communicate correctly it is possible to find the reason for errors.
+The most important errors are described in master example output and formatted as below:
+
+```
+E (209733) SENSE_MAIN: Update failed for cid: 3, Humidity_2(%rH) = 0, ESP_ERR_TIMEOUT
+E (210143) MB_CONTROLLER_MASTER: mbc_master_get_parameter(111): SERIAL master get parameter failure error=(0x107) (ESP_ERR_TIMEOUT).
+```
+
+ESP_ERR_TIMEOUT (0x107) - Modbus slave device does not respond during configured timeout. Check the connection and ability for communication using uart_echo_rs485 example or increase
+Kconfig value CONFIG_FMB_MASTER_TIMEOUT_MS_RESPOND (CONFIG_FMB_SERIAL_ASCII_TIMEOUT_RESPOND_MS).
+
+ESP_ERR_NOT_SUPPORTED (0x106), ESP_ERR_INVALID_RESPONSE (0x108) - Modbus slave device does not support requested command or register and sent exeption response. 
+
+ESP_ERR_INVALID_STATE (0x103) - Modbus stack is not configured correctly or can't work correctly due to critical failure.
+
+The CONFIG_FMB_SERIAL_TASK_PRIO value shall be configured to be higher than the highest priority of application tasks. If the application includes high priority WiFi or NVS read/write tasks it is recommended to disable CONFIG_FMB_TIMER_PORT_ENABLED. 
+
+The enabled CONFIG_FMB_TIMER_ISR_IN_IRAM option allows to avoid delays related to the processing of non-IRAM-safe interrupts if your application intensively performs Flash read/write operations and resolve some Modbus errors.
+
+Note: Refer to file below for more information about current implementation of Modbus:
+
+* `components/freemodbus/README.rst`
