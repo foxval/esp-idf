@@ -11,9 +11,9 @@
 #include "deviceparams.h"       // for device parameters structures
 #include "esp_log.h"            // for log_write
 
-#define MB_PORT_NUM     (2)           // Number of UART port used for Modbus connection
-#define MB_DEV_ADDR     (1)           // The address of device in Modbus network
-#define MB_DEV_SPEED    (115200)      // The communication speed of the UART
+#define MB_PORT_NUM     (CONFIG_MB_UART_PORT_NUM)           // Number of UART port used for Modbus connection
+#define MB_DEV_ADDR     (CONFIG_MB_SLAVE_ADDR)              // The address of device in Modbus network
+#define MB_DEV_SPEED    (CONFIG_MB_UART_BAUD_RATE)          // The communication speed of the UART
 
 // Defines below are used to define register start address for each type of Modbus registers
 #define MB_REG_DISCRETE_INPUT_START         (0x0000)

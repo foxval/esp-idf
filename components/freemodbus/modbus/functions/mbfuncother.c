@@ -87,6 +87,6 @@ eMBFuncReportSlaveID( UCHAR * pucFrame, USHORT * usLen )
     return MB_EX_NONE;
 }
 
-#endif
+#endif // #if MB_FUNC_OTHER_REP_SLAVEID_ENABLED
 
-#endif
+#endif // #if MB_SLAVE_RTU_ENABLED || MB_SLAVE_ASCII_ENABLED

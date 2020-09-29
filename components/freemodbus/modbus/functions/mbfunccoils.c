@@ -196,7 +196,7 @@ eMBFuncWriteCoil( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_WRITE_COIL_ENABLED
 
 #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED > 0
 eMBException
@@ -266,8 +266,8 @@ eMBFuncWriteMultipleCoils( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED
 
-#endif
+#endif // #if MB_FUNC_READ_COILS_ENABLED
 
-#endif
+#endif // #if MB_SLAVE_RTU_ENABLED || MB_SLAVE_ASCII_ENABLED

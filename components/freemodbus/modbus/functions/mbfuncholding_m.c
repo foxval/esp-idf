@@ -36,7 +36,6 @@
 #include "port.h"
 
 /* ----------------------- Modbus includes ----------------------------------*/
-//#include "mb.h"
 #include "mb_m.h"
 #include "mbframe.h"
 #include "mbproto.h"
@@ -151,9 +150,10 @@ eMBMasterFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-#endif
 
-#if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
+#endif // #if MB_FUNC_WRITE_HOLDING_ENABLED
+
+#if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED
 
 /**
  * This function will request write multiple holding register.
@@ -247,9 +247,10 @@ eMBMasterFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-#endif
 
-#if MB_FUNC_READ_HOLDING_ENABLED > 0
+#endif // #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED
+
+#if MB_FUNC_READ_HOLDING_ENABLED
 
 /**
  * This function will request read holding register.
@@ -338,7 +339,7 @@ eMBMasterFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 
 #endif
 
-#if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
+#if MB_FUNC_READWRITE_HOLDING_ENABLED
 
 /**
  * This function will request read and write holding register.
@@ -450,6 +451,7 @@ eMBMasterFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen 
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_READWRITE_HOLDING_ENABLED
+
 #endif // #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 

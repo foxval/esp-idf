@@ -77,6 +77,6 @@ The CONFIG_FMB_SERIAL_TASK_PRIO value shall be configured to be higher than the 
 
 The enabled CONFIG_FMB_TIMER_ISR_IN_IRAM option allows to avoid delays related to the processing of non-IRAM-safe interrupts if your application intensively performs Flash read/write operations and resolve some Modbus errors.
 
-Note: Refer to file below for more information about the current implementation of Modbus:
+Note: Refer to file below for more information about current implementation of Modbus:
 
-* `components/freemodbus/README.rst`
+[freemodbus readme file](../../../components/freemodbus/README.rst)

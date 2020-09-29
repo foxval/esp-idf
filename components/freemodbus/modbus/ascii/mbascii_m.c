@@ -443,7 +443,7 @@ xMBMasterASCIITransmitFSM( void )
     return xNeedPoll;
 }
 
-BOOL
+BOOL MB_PORT_ISR_ATTR
 xMBMasterASCIITimerT1SExpired( void )
 {
     BOOL xNeedPoll = FALSE;
@@ -453,7 +453,6 @@ xMBMasterASCIITimerT1SExpired( void )
         /* Timer t35 expired. Startup phase is finished. */
     case STATE_M_RX_INIT:
         xNeedPoll = xMBMasterPortEventPost(EV_MASTER_READY);
-        ESP_EARLY_LOGI("xMBMasterASCIITimerT1SExpired", "RX_INIT_EXPIRED");
         break;    
         
         /* Start of message is not received during respond timeout.

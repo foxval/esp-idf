@@ -29,6 +29,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "sense_modbus.h"       // for Modbus defines
+#include "sdkconfig.h"
 
 // This module provide an easy way to work with characteristics instead of
 // Modbus parameters
@@ -42,8 +43,8 @@ static const char* TAG = "SENSE_MB";
     }
 
 // Define port options for the master application
-#define MB_BAUDRATE 115200
-#define MB_PORTNUM 2
+#define MB_BAUDRATE CONFIG_MB_UART_BAUD_RATE
+#define MB_PORTNUM CONFIG_MB_UART_PORT_NUM
 #define MB_PARITY UART_PARITY_DISABLE
 
 // Keep the pointer to active characteristic table and its size

@@ -175,9 +175,10 @@ eMBMasterFuncReadCoils( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-#endif
 
-#if MB_FUNC_WRITE_COIL_ENABLED > 0
+#endif // #if MB_FUNC_READ_COILS_ENABLED
+
+#if MB_FUNC_WRITE_COIL_ENABLED
 
 /**
  * This function will request write one coil.
@@ -267,9 +268,9 @@ eMBMasterFuncWriteCoil( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif // #if MB_FUNC_WRITE_COIL_ENABLED > 0
+#endif // #if MB_FUNC_WRITE_COIL_ENABLED
 
-#if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED > 0
+#if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED
 
 /**
  * This function will request write multiple coils.
@@ -387,5 +388,6 @@ eMBMasterFuncWriteMultipleCoils( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif // #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED > 0
-#endif // #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+#endif // #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED
+
+#endif // #if MB_MASTER_RTU_ENABLED || MB_MASTER_ASCII_ENABLED

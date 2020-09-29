@@ -104,9 +104,9 @@ eMBFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-#endif
+#endif // #if MB_FUNC_WRITE_HOLDING_ENABLED
 
-#if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
+#if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED
 eMBException
 eMBFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 {
@@ -163,9 +163,9 @@ eMBFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-#endif
+#endif // #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED
 
-#if MB_FUNC_READ_HOLDING_ENABLED > 0
+#if MB_FUNC_READ_HOLDING_ENABLED
 
 eMBException
 eMBFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
@@ -228,9 +228,9 @@ eMBFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_READ_HOLDING_ENABLED
 
-#if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
+#if MB_FUNC_READWRITE_HOLDING_ENABLED
 
 eMBException
 eMBFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
@@ -306,6 +306,6 @@ eMBFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_READWRITE_HOLDING_ENABLED
 
-#endif
+#endif // #if MB_SLAVE_RTU_ENABLED || MB_SLAVE_ASCII_ENABLED

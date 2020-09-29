@@ -121,6 +121,6 @@ eMBFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
     return eStatus;
 }
 
-#endif
+#endif // #if MB_FUNC_READ_INPUT_ENABLED
 
-#endif
+#endif // #if MB_SLAVE_RTU_ENABLED || MB_SLAVE_ASCII_ENABLED

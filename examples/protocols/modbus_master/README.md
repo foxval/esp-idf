@@ -154,4 +154,4 @@ The enabled CONFIG_FMB_TIMER_ISR_IN_IRAM option allows to avoid delays related t
 
 Note: Refer to file below for more information about current implementation of Modbus:
 
-* `components/freemodbus/README.rst`
+[freemodbus readme file](../../../components/freemodbus/README.rst)
